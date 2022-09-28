@@ -1,0 +1,19 @@
+# Vim files
+*.sw[a-p]
+
+# Node
+/renegade.fi/node_modules
+/renegade.fi/package-lock.json
+/docs.renegade.fi/node_modules
+/docs.renegade.fi/package-lock.json
+
+# Parcel
+/renegade.fi/.parcel-cache
+
+# Build
+/renegade.fi/dist
+/docs.renegade.fi/build
+
+# Docusaurus
+/docs.renegade.fi/.docusaurus
+
