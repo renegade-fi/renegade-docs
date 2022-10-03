@@ -2,6 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom'
+
+import {
   ChakraProvider,
   ColorModeScript,
   extendTheme,
@@ -28,8 +35,20 @@ const styles = {
     }
   }
 }
-
 const theme = extendTheme({ config, styles })
+
+interface ExternalNavigateProps {
+  to: string
+}
+class ExternalNavigate extends React.Component<ExternalNavigateProps> {
+  componentDidMount () {
+    window.open(this.props.to, '_self')
+  }
+
+  render () {
+    return null
+  }
+}
 
 function App () {
   const { colorMode, toggleColorMode } = useColorMode()
@@ -75,7 +94,13 @@ root.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/whitepaper" element={<ExternalNavigate to="/whitepaper.pdf" />} />
+          <Route path="/*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>
 )
