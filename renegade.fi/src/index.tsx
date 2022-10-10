@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
+import logo from './icons/logo.png'
+import logoDark from './icons/logo_dark.png'
+
 import {
   BrowserRouter,
   Routes,
@@ -17,6 +20,7 @@ import {
   Button,
   Center,
   Flex,
+  Image,
   Spacer,
   type ThemeConfig
 } from '@chakra-ui/react'
@@ -55,14 +59,11 @@ function App () {
   return (
     <Box w="100vw" maxW="100%" h="100vh" bg={colorMode === 'light' ? 'white' : 'black'}>
       <Center>
-        <Box
-          mt={['10vh', '40vh']}
-          p="0 2% 0 2%"
-          border={['2px', '4px']}
-          fontSize={['8vw', '4vw']}
-        >
-          RENEGADE
-        </Box>
+        <Image
+          src={colorMode === 'light' ? logo : logoDark}
+          mt={['10vh', '37vh']}
+          w={['70%', '40%']}
+        />
       </Center>
       <Box display={['none', 'block']}>
         <Flex
