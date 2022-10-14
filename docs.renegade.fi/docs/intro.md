@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+slug: /
 ---
 
 # Introduction
@@ -28,16 +29,16 @@ better prices:
 
 For a high-level overview of the system and to see how Renegade solves all three
 of these problems, ultimately leading to better order execution, check out the
-[Exchange Overview](/docs/exchange-overview/dark-pool-explainer) and [Trade
-Privacy and MEV](/docs/exchange-overview/mev).
+[Exchange Overview](/exchange-overview/dark-pool-explainer) and [Trade
+Privacy and MEV](/exchange-overview/mev).
 
 For more details on the network structure, check out the [Network
-Architecture](/docs/exchange-overview/trade-lifecycle), and for cryptographic
+Architecture](/exchange-overview/trade-lifecycle), and for cryptographic
 details on our zero-knowlege and multi-party computation schemes, check out the
-[Cryptography Details](/docs/exchange-overview/cryptography).
+[Cryptography Details](/exchange-overview/cryptography).
 
 For the most precise description of the protocol, see the detailed
-[Whitepaper](/docs/exchange-overview/whitepaper).
+[Whitepaper](/exchange-overview/whitepaper).
 
 ## Implementation Status
 
