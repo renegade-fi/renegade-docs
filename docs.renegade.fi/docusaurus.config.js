@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require('prism-react-renderer/themes/github')
+const darkCodeTheme = require('prism-react-renderer/themes/dracula')
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -18,7 +18,7 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en']
   },
 
   presets: [
@@ -29,13 +29,13 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          sidebarCollapsible: false,
+          sidebarCollapsible: false
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      }),
-    ],
+          customCss: require.resolve('./src/css/custom.css')
+        }
+      })
+    ]
   ],
 
   themeConfig:
@@ -45,26 +45,26 @@ const config = {
         logo: {
           alt: 'Renegade Logo',
           src: 'img/logo.svg',
-          srcDark: 'img/logo_dark.svg',
+          srcDark: 'img/logo_dark.svg'
         },
         items: [
           {
             type: 'doc',
             docId: 'intro',
             position: 'left',
-            label: 'Docs',
+            label: 'Docs'
           },
           {
             href: 'https://twitter.com/renegade_fi',
             label: 'Twitter',
-            position: 'right',
+            position: 'right'
           },
           {
             href: 'https://github.com/renegade-fi',
             label: 'GitHub',
-            position: 'right',
-          },
-        ],
+            position: 'right'
+          }
+        ]
       },
       footer: {
         style: 'dark',
@@ -74,48 +74,48 @@ const config = {
             items: [
               {
                 label: 'Introduction',
-                to: '/',
-              },
-            ],
+                to: '/'
+              }
+            ]
           },
           {
             title: 'Community',
             items: [
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/renegade_fi',
+                href: 'https://twitter.com/renegade_fi'
               },
               {
                 label: 'Discord',
-                href: 'https://discordapp.com/invite/TODO',
+                href: 'https://discordapp.com/invite/TODO'
               },
               {
                 label: 'Substack',
-                href: 'https://TODO',
-              },
-            ],
+                href: 'https://TODO'
+              }
+            ]
           },
           {
             title: 'Resources',
             items: [
               {
                 label: 'Whitepaper',
-                href: 'https://whitepaper.renegade.fi',
+                href: 'https://whitepaper.renegade.fi'
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/renegade-fi',
-              },
-            ],
-          },
+                href: 'https://github.com/renegade-fi'
+              }
+            ]
+          }
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Renegade.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Renegade.`
       },
       prism: {
         theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-      },
-    }),
-};
+        darkTheme: darkCodeTheme
+      }
+    })
+}
 
-module.exports = config;
+module.exports = config

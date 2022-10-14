@@ -14,18 +14,20 @@ trade privacy**. That means that your trading activity is completely obscured
 from all third-parties, both before a trade occurs and after it is filled. No
 one except you will know the details of your balances or trades.
 
-Renegade solves many problems in current DeFi spot markets, ultimately giving you
-better prices:
+Renegade solves many problems in current DeFi spot markets, ultimately giving
+you better prices:
 
-1. *Pre-trade privacy*. Before your trade is matched, no one can see any
-   details of your order. Larger trades that would normally move the market
-   when detected in the mempool can now be filled privately.
-2. *Post-trade privacy*. After an order is filled, only the counterparty learns
-   what assets were swapped. This prevents third-parties from tracking and
-   copying your trading strategies.
-3. *Zero MEV*. Since validators only ever see zero-knowledge proofs of valid
-   swaps, there is no ability for block producers to front-run, back-run, or
-   sandwich your trades.
+1.  **Pre-trade privacy**. Before your trade is matched, no one can see any
+    details of your order. Larger trades that would normally move the market
+    when detected in the mempool can now be filled privately.
+
+1.  **Post-trade privacy**. After an order is filled, only the counterparty
+    learns what assets were swapped. This prevents third-parties from tracking
+    and copying your trading strategies.
+
+1.  **Zero MEV**. Since validators only ever see zero-knowledge proofs of valid
+    swaps, there is no ability for block producers to front-run, back-run, or
+    sandwich your trades.
 
 For a high-level overview of the system and to see how Renegade solves all three
 of these problems, ultimately leading to better order execution, check out the
@@ -53,8 +55,7 @@ message](https://TODO) and/or [check out our jobs page](https://TODO).
 
 ## Contact
 
-* Twitter: [@renegade_fi](https://TODO)
-* Email: [chris@renegade.fi](https://TODO)
-* Discord: [Renegade](https://TODO)
-* Jobs: [Lever](https://jobs.renegade.fi)
-
+- Twitter: [@renegade_fi](https://TODO)
+- Email: [chris@renegade.fi](https://TODO)
+- Discord: [Renegade](https://TODO)
+- Jobs: [Lever](https://jobs.renegade.fi)

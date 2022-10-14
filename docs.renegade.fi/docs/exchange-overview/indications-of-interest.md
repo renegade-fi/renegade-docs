@@ -25,8 +25,8 @@ The solution to the liquidity problem is the set of Indications of Interest
 (IOI) flags. These flags allow a user to broadcast some details of their order,
 without having to reveal the entire order or history of exchange.
 
-We support the following IOI flags: Pair, Pair + Direction, Pair + Amount, Pair
-+ Direction + Amount, Pair + Direction + Amount + Price.
+We support the following IOI flags: Pair, Pair + Direction, Pair + Amount,
+Pair + Direction + Amount, Pair + Direction + Amount + Price.
 
 If a trader wants to attract more liquidity to fill their order, they could
 e.g. broadcast a ZKP that their order is of a certain asset pair and of a
@@ -38,4 +38,3 @@ entire contents of a user’s limit order, so that we can actually embed an
 entire lit CLOB into the DEX. This allows for a crossover dark-lit pool, where
 dark orders can intersect with fully transparent orders, driving additional
 liquidity network effects to the system.
-

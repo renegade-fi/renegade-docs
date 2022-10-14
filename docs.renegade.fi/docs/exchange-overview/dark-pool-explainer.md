@@ -17,7 +17,7 @@ dark venues obfuscate resting order information.
 
 ![](@site/static/img/orderbook.png)
 
-*In a lit market, anyone can see all the resting orders.*
+In a lit market, anyone can see all the resting orders.
 
 Because dark pools obfuscate the orderbook, they tend to be popular ventures
 for large “whale” traders who try to move large blocks of equities at once,
@@ -63,4 +63,3 @@ to steal trading strategies or portfolio compositions.
 In our case, the only permanent record left on-chain is a zero-knowledge proof
 of a valid match between traders. ZK proofs hide all information about specific
 assets/amounts/prices, leaking no information on-chain.
-

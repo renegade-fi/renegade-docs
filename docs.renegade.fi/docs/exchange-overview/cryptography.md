@@ -10,5 +10,4 @@ implemented as a Cairo contract on StarkNet.
 This verifier has a few different tasks:
 
 1. Accepts a zero-knowledge proof of either a SPEND or MATCH operation.
-2. …
-
+1. …
