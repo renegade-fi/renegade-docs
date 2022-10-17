@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import mixpanel from 'mixpanel-browser'
 
 import logo from './icons/logo.png'
 import logoDark from './icons/logo_dark.png'
@@ -24,6 +25,9 @@ import {
   Spacer,
   type ThemeConfig
 } from '@chakra-ui/react'
+
+mixpanel.init('91787e297d629eae158b8fcf156c845f')
+mixpanel.track('Initialization')
 
 const config: ThemeConfig = {
   initialColorMode: 'system',
@@ -74,7 +78,12 @@ function App () {
         >
           <Spacer />
           <Button
-            onClick={toggleColorMode}
+            onClick={() => {
+              mixpanel.track('Color Mode Toggled', {
+                to: colorMode === 'light' ? 'dark' : 'light'
+              })
+              toggleColorMode()
+            }}
             variant="ghost"
             p="25pt 10pt 22pt 10pt"
             mb="1vh"
