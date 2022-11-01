@@ -7,10 +7,13 @@
 :root {
   --ifm-color-primary: #000000;
   --ifm-code-font-size: 95%;
+  --ifm-link-color: #2aa3ef;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 [data-theme='dark'] {
   --ifm-color-primary: #ffffff;
+  --ifm-code-font-size: 95%;
+  --ifm-link-color: #78c2f0;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 

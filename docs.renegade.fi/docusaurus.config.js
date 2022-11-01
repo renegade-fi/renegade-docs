@@ -29,7 +29,7 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          sidebarCollapsible: false
+          sidebarCollapsible: true
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css')
@@ -50,7 +50,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'getting-started/intro',
             position: 'left',
             label: 'Docs'
           },
@@ -73,8 +73,16 @@ const config = {
             title: 'Documentation',
             items: [
               {
-                label: 'Introduction',
+                label: 'Getting Started',
                 to: '/'
+              },
+              {
+                label: 'Basic Concepts',
+                to: '/basic-concepts/dark-pool-explainer'
+              },
+              {
+                label: 'Advanced Concepts',
+                to: '/advanced-concepts/ioi'
               }
             ]
           },
