@@ -18,11 +18,8 @@ import {
   extendTheme,
   useColorMode,
   Box,
-  Button,
   Center,
-  Flex,
   Image,
-  Spacer,
   type ThemeConfig
 } from '@chakra-ui/react'
 
@@ -59,7 +56,7 @@ class ExternalNavigate extends React.Component<ExternalNavigateProps> {
 }
 
 function App () {
-  const { colorMode, toggleColorMode } = useColorMode()
+  const { colorMode } = useColorMode()
   return (
     <Box w="100vw" maxW="100%" h="100vh" bg={colorMode === 'light' ? 'white' : 'black'}>
       <Center>
@@ -69,32 +66,6 @@ function App () {
           w={['70%', '40%']}
         />
       </Center>
-      <Box display={['none', 'block']}>
-        <Flex
-          w="100vw"
-          maxW="100%"
-          position="fixed"
-          bottom="0"
-        >
-          <Spacer />
-          <Button
-            onClick={() => {
-              mixpanel.track('Color Mode Toggled', {
-                to: colorMode === 'light' ? 'dark' : 'light'
-              })
-              toggleColorMode()
-            }}
-            variant="ghost"
-            p="25pt 10pt 22pt 10pt"
-            mb="1vh"
-            mr="1vw"
-            fontSize="2.5em"
-            _hover={{ }}
-          >
-            {colorMode === 'light' ? '🌖' : '🌒'}
-          </Button>
-        </Flex>
-      </Box>
     </Box>
   )
 }
