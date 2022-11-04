@@ -95,11 +95,11 @@ const config = {
               },
               {
                 label: 'Discord',
-                href: 'https://discordapp.com/invite/TODO'
+                href: 'https://discord.gg/renegade-fi'
               },
               {
                 label: 'Substack',
-                href: 'https://TODO'
+                href: 'https://renegadefi.substack.com'
               }
             ]
           },

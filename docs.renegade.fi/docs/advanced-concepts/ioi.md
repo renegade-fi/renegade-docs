@@ -4,9 +4,9 @@ sidebar_position: 1
 
 # Indications of Interest
 
-The core protocol is quite simple: It allows for two traders to anonymously
-match spot orders, without leaking their trading activity either before or
-after the swap.
+As discussed in [[Anonymity Guarantees]](/basic-concepts/guarantees), the core
+protocol has very strong privacy properties: No information whatsover is leaked
+to third-parties, both before and after a trade is matched and settled.
 
 However, many advanced traders prefer order types beyond simple limit or
 midpoint orders. One such common order type is the TWAP over a period of time,
