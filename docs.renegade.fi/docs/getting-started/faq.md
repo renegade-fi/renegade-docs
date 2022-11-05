@@ -11,13 +11,14 @@ sidebar_position: 2
 > can follow along with our open-source code on
 > [GitHub](https://github.com/renegade-fi).
 
-### Zero price impact sounds too good to be true. What's the tradeoff?
+### Midpoint prices sound too good to be true. What's the tradeoff?
 > The core tradeoff in Renegade (and dark pools in general) is
 > *quality-of-execution* vs. *time-to-execution*. You are indeed always
 > guaranteed to trade at the midpoint price, so long as there is counter-flow in
 > the opposite direction to take the other side. During high-volatility
-> environments, the market is often skewed and it may take some time to fill
-> your trade.
+> environments, the market is often skewed and it may take some time to fill your
+> trade. To trade off quality-of-execution for time-to-execution and increase
+> counter-flow, see [[Indications of Interest]](/advanced-concepts/ioi).
 
 ### What are the fees? What governance power is there?
 > There is an in-protocol fee of 1 basis point (0.01%). Governance power is
@@ -38,7 +39,7 @@ sidebar_position: 2
 > and has no hardware trust assumptions.
 
 ### How fast is the protocol? Are gas fees expensive?
-> Order placement and cancellation is instant if you are running in super-relayer
+> Order placement and cancellation is <1ms if you are running in super-relayer
 > mode (see [[Super Relayers]](/advanced-concepts/super-relayers)). We are
 > constantly optimizing both latency and gas fees, but current estimates are
 > ~100-500ms to match an order (fully parallelizable over all outstanding
@@ -50,8 +51,8 @@ sidebar_position: 2
 > No, never. The protocol is open, permissionless, and immutable.
 
 ### Is Renegade Hiring?
-> Yes, we are [hiring](https://jobs.renegade.fi) across all roles.
-> For technical contributors, we work in-person in San Francisco.
+> Yes, we are [hiring](https://jobs.renegade.fi) across all roles. For technical
+> contributors, we work in-person in San Francisco, 6 days a week.
 
 ### How can I get in contact?
 > [Twitter DM](https://twitter.com/renegade_fi) or email (chris@renegade.fi) is

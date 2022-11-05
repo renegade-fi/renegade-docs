@@ -26,6 +26,12 @@ you better prices:
    valid trades, there is no ability for block producers to front-run, back-run,
    or sandwich your trades.
 
+By default, trades on Renegade are **anonymous crosses** that trade at the
+theoretically-optimal midpoint price, with no market makers taking a spread.
+However, Renegade optionally implements [[Indications of
+Interest]](/advanced-concepts/ioi) to allow for full price discovery and better
+liquidity provision.
+
 For a high-level background on the role of dark pools in traditional finance
 and how we can translate them into a crypto context, check out [[What is a Dark
 Pool]](/basic-concepts/dark-pool-explainer) and to better understand the idea

@@ -11,8 +11,7 @@ import MpcRealizedDark from '@site/static/img/mpc_realized_dark.png'
 # What is MPC?
 
 Multi-party computation (MPC) is a core cryptographic primitive that has been
-studied since the early 1980s, but has seen little use in crypto before
-Renegade.
+studied since the early 1980s, but has seen little use in DeFi before Renegade.
 
 To best understand MPC, it is easiest to compare to the "ideal functionality"
 that MPC implements. In this setting, multiple parties send some private data

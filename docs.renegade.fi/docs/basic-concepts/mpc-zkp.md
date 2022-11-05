@@ -78,7 +78,7 @@ computation protocols themselves have no guarantees about the validity of
 input data. To solve this, we re-compute the commitments to order data inside
 of the MPC. If the re-computed commitments disagree with the publicly-known
 commitments from the handshake tuple, then the output matches list is **zeroed
-out**.
+out**, which functions to prevent adversarial manipulation of fake orders.
 
 In addition to the input consistency problem, a naive application of MPC would
 lead to problems around **atomic settlement**. In particular, we must ensure
@@ -99,7 +99,8 @@ commitment to a matches tuple, both traders do indeed know valid input orders.
   LightImage={ValidMatchMpcLight}
   DarkImage={ValidMatchMpcDark}
   isSvg={false}
-  caption="The NP statement VALID MATCH MPC."
+  caption="The NP statement VALID MATCH MPC. Renegade relayers produce
+  collaborative proofs of this statement."
   width="60%"
 />
 
@@ -132,7 +133,7 @@ In summary, the MPC-ZKP lifecycle is as follows:
 So, by leveraging this MPC-ZKP framework, we allow for true trade anonymity,
 both pre-and-post-trade. For more discussion on the privacy properties that
 collaborative SNARKs enable, see [[Anonymity
-Guarantees]](/getting-started/guarantees).
+Guarantees]](/basic-concepts/guarantees).
 
 Also, for more details on the precise contents of the handshake tuple, and for
 more details about the various NP statements that are proven by each node, see

@@ -17,7 +17,7 @@ problems:
   orders themselves), so no information is learned about an order in advance of
   it matching.
 - **Post-trade privacy**. The on-chain state only consists of a Merkle tree of
-  *commitments* to orders, so balances, orders, and trades are never posted
+  *commitments* to wallets, so balances, orders, and trades are never posted
   in-the-clear, even after a valid match. Even the counterparty only learns
   what tokens were swapped; they cannot learn, for example, the full size
   behind a match.
