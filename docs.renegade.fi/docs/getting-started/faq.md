@@ -1,8 +1,9 @@
 ---
 sidebar_position: 2
+title: Frequently Asked Questions
 ---
 
-# Frequently Asked Questions
+# FAQs
 
 ### What is the current status of Renegade?
 > The project is under active development. As of November 2022, we have

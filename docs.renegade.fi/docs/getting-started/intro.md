@@ -1,11 +1,24 @@
 ---
 sidebar_position: 1
+title: Introduction
+hide_title: true
 slug: /
 ---
 
-# Introduction
+import Figure from '../../src/figure.js'
+import logoLight from '@site/static/img/logo_light.svg'
+import logoDark from '@site/static/img/logo_dark.svg'
 
-Renegade is a new type of decentralized exchange, an on-chain dark pool.
+<Figure
+  LightImage={logoLight}
+  DarkImage={logoDark}
+  isSvg={true}
+  suppressOnMobile={true}
+  paddingTop="35px"
+  width="40%"
+/>
+
+Renegade is a new type of decentralized exchange, an **on-chain dark pool**.
 
 Current DEXes are completely transparent: Anyone can see the trading history and
 balances of any user. In contrast, Renegade is designed to give you **universal
@@ -65,6 +78,7 @@ Renegade:
 - **AMM Takers**. Traders who move $5k+ at once through on-chain DEXes often
   incur significant price slippage and cross-exchange arbitrage; by using the
   dark pool, trades are always guaranteed to execute at midpoint prices.
+
 ## Contact Info
 - [@renegade_fi](https://twitter.com/renegade_fi) on Twitter.
 - [chris@renegade.fi](mailto:chris@renegade.fi) via email.

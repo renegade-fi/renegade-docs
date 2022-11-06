@@ -44,7 +44,7 @@ const config = {
       navbar: {
         logo: {
           alt: 'Renegade Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo_light.svg',
           srcDark: 'img/logo_dark.svg'
         },
         items: [

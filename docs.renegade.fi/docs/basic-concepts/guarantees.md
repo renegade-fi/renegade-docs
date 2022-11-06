@@ -26,5 +26,6 @@ problems:
   front-run trades.
 
 Put differently, **third-parties learn nothing about the state of the
-exchange**, and counterparties to your trades learn nothing except for what
-tokens were swapped in a particular trade.
+exchange** aside from global token in-flow and out-flows, and counterparties to
+your trades learn nothing except for what tokens were swapped in a particular
+trade.

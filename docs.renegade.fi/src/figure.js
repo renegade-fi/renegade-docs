@@ -1,4 +1,5 @@
 import React from 'react'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 import { useColorMode } from '@docusaurus/theme-common'
 
 const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
@@ -22,24 +23,32 @@ const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
   }
 }
 
-const Figure = ({ LightImage, DarkImage, isSvg, caption, linkTo, width }) => {
+const Figure = ({
+    LightImage, DarkImage, isSvg, caption, linkTo, width,
+    paddingTop, paddingBottom, suppressOnMobile
+}) => {
   return (
-    <div>
-      <div style={{"display": "flex", flexDirection: "column", alignItems: "center"}}>
-        <center style={{width: width || "40%", minWidth: "300px"}}>
-          <ImageSwitcher
-            LightImage={LightImage}
-            DarkImage={DarkImage}
-            isSvg={isSvg}
-            linkTo={linkTo}
-          />
-        </center>
-        <center style={{opacity: "60%", fontSize: "0.8em"}}>
-          {caption}
-        </center>
-      </div>
-      <div style={{height: "20px"}} />
-    </div>
+    <BrowserOnly>
+      {() => (suppressOnMobile && window.matchMedia("(max-width: 768px)").matches) ||
+        <div>
+          <div style={{height: paddingTop || "0px"}} />
+          <div style={{"display": "flex", flexDirection: "column", alignItems: "center"}}>
+            <center style={{width: width || "40%", minWidth: "300px"}}>
+              <ImageSwitcher
+                LightImage={LightImage}
+                DarkImage={DarkImage}
+                isSvg={isSvg}
+                linkTo={linkTo}
+              />
+            </center>
+            <center style={{opacity: "60%", fontSize: "0.8em"}}>
+              {caption}
+            </center>
+          </div>
+          <div style={{height: paddingBottom || "20px"}} />
+        </div>
+      }
+    </BrowserOnly>
   )
 }
 

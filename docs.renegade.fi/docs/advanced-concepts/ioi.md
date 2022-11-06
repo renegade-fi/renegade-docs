@@ -40,6 +40,7 @@ legitimate.
   isSvg={true}
   caption="Indications of interest are optional predicates to increase liquidity."
   width="70%"
+  paddingBottom="0px"
 />
 
 ## Lit Order Book
