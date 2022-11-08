@@ -10,7 +10,7 @@ import IoiDark from '@site/static/img/ioi_dark.svg'
 
 As discussed in [[Anonymity Guarantees]](/basic-concepts/guarantees), the
 base-layer protocol has very strong privacy properties: No information
-whatsover is leaked to third-parties, both before and after a trade is matched
+whatsoever is leaked to third-parties, both before and after a trade is matched
 and settled.
 
 This is optimal from an execution quality point-of-view, but comes with a
@@ -21,18 +21,18 @@ quality for execution latency.
 
 Indications of interest are optional flags that traders may include in their
 handshake, which advertise certain properties of the order. Renegade supports
-any subset of the following IoIs:
+any subset of the following indications:
 
 - **Order type** (limit or midpoint-pegged).
 - **Base/quote pair** (e.g. WETH/USDC).
 - **Side** (buy or sell).
 - **Limit price** (e.g. 1500 WETH/USDC).
-- **Size** (e.g., 100 ETH).
-- **Minimum Fill Size** (e.g., at least 10 ETH at a time).
+- **Size** (e.g., 100 WETH).
+- **Minimum Fill Size** (e.g., at least 10 WETH at a time).
 
-All of these IoIs are implement as zero-knowledge predicates, which must be
-proven inside of the handshake tuple to ensure that the indications are
-legitimate.
+All of these indications of interest are implement as zero-knowledge
+predicates, which must be proven inside of the handshake tuple to ensure that
+the indications are legitimate.
 
 <Figure
   LightImage={IoiLight}
@@ -47,7 +47,7 @@ legitimate.
 
 By using these indications of interest, traders can leak some privacy, in
 exchange for attracting counter-flow to their order. For example, the trader
-could broadcast that their order is a sell order for SOL/USDC at the midpoint,
+could broadcast that their order is a buy order for WETH/USDC at the midpoint,
 without revealing the true size behind the order.
 
 Interestingly, when all indications of interest are turned on and proven as a

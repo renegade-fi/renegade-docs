@@ -10,7 +10,7 @@ For all zero-knowledge proofs, we use
 [Bulletproofs](https://eprint.iacr.org/2017/1066). We chose this proving system
 as it has very low relative prover latency and is fully transparent, meaning
 that it does not require a trusted setup like Groth16. In addition, it is
-friendly to collaborative proving, unlike more modern transaprent schemes like
+friendly to collaborative proving, unlike more modern transparent schemes like
 FRI / STARKs. Bulletproofs are not succinct (so, technically Renegade does not
 use SNARKs, just NIZKs), but we currently use StarkWare for scalability, so the
 relatively-high verifier complexity is no issue.

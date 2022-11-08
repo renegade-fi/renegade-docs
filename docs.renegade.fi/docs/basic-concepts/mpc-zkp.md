@@ -73,10 +73,10 @@ information is leaked.
 
 ## Collaborative SNARKs
 
-As mentioned in [What is MPC](/basic-concepts/mpc-explainer), multi-party
-computation protocols themselves have no guarantees about the validity of
-input data. To solve this, we re-compute the commitments to order data inside
-of the MPC. If the re-computed commitments disagree with the publicly-known
+As mentioned in [[What is MPC]](/basic-concepts/mpc-explainer), multi-party
+computation protocols themselves have no guarantees about the validity of input
+data. To solve this, we re-compute the commitments to order data inside of the
+MPC. If the re-computed commitments disagree with the publicly-known
 commitments from the handshake tuple, then the output matches list is **zeroed
 out**, which functions to prevent adversarial manipulation of fake orders.
 
@@ -128,7 +128,8 @@ In summary, the MPC-ZKP lifecycle is as follows:
 1. Either party may send the VALID MATCH MPC proof to the smart contract,
    "encumbering" both wallets and forcing both of the relayers to settle out
    the matched tokens.
-1. Both parties settle the matches, and may again proceed with remaning orders.
+1. Both parties settle the matches, and may again proceed with remaining
+   orders.
 
 So, by leveraging this MPC-ZKP framework, we allow for true trade anonymity,
 both pre-and-post-trade. For more discussion on the privacy properties that

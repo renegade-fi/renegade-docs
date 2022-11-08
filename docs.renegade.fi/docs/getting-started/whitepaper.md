@@ -9,7 +9,7 @@ import whitepaperTeaserDark from '@site/static/img/whitepaper_teaser_dark.svg'
 # Whitepaper
 
 The full [whitepaper](https://whitepaper.renegade.fi) is the best resource to
-learn the techincal details. It includes a precise specification of **all
+learn the technical details. It includes a precise specification of **all
 state** (both on-chain and off-chain), a full walkthrough of the **trade
 lifecycle** from wallet creation to match settlement, and formalizations of all
 **NP statements** that are proven within the protocol. Available at

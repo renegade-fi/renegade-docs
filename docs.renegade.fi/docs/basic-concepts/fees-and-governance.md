@@ -11,7 +11,7 @@ All fees and governance parameters may change in advance of mainnet launch.
 ## Gas Fees and Protocol Fees
 
 Gas fees are ~10 USD for a new wallet creation, and ~1 USD for each deposit,
-withdraw, and transfer opration. If you run your own relayer in super-relayer
+withdraw, and transfer operation. If you run your own relayer in super-relayer
 mode (see [Super Relayers](/advanced-concepts/super-relayers)), order
 placements and cancellations are instant and incur no gas fee. If you are using
 someone else's relayer or not running in super-relayer mode, then gas fees for

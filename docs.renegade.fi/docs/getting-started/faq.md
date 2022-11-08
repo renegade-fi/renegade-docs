@@ -30,7 +30,7 @@ title: Frequently Asked Questions
 ### What blockchain is Renegade built on?
 > Peer discovery and order matching occurs on our independent p2p gossip network.
 > Consensus and security is inherited from Ethereum via StarkNet. We expect to
-> migrate the network to our own soverign rollup or similar as that technology
+> migrate the network to our own sovereign rollup or similar as that technology
 > comes online.
 
 ### Does Renegade use Trusted Execution Environments (TEEs)?

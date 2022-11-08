@@ -44,7 +44,7 @@ for the sophisticated whale trader.
 
 ## Dark Pools in Crypto
 
-Lit order books are often worse environments for traders, particlarly whale
+Lit order books are often worse environments for traders, particularly whale
 traders who are moving large size. In the context of decentralized crypto
 exchanges, however, the whale trade problem is even worse. Not only do current
 DEXes leak the current state of the order book, but they **leak all possible
@@ -85,7 +85,7 @@ Intuitively, it seems difficult to solve these problems in a crypto context:
 Isn't the whole point of a blockchain that state is replicated across many
 permissionless validators? However, by leveraging recent advances in
 cryptography, we can create a system that is both trustless and verifiable,
-while maintainting universal trade privacy.
+while maintaining universal trade privacy.
 
 With Renegade, we solve (or at least significantly mitigate) all of these
 problems. Using multi-party computation (MPC) to determine order matching and
