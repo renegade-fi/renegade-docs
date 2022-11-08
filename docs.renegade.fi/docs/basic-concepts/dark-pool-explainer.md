@@ -57,7 +57,7 @@ looking at the mempool.
   DarkImage={StateDark}
   isSvg={true}
   caption="With a blockchain, state is necessarily public."
-  width="60%"
+  width="70%"
 />
 
 Since exchange state is always public, it exposes traders to even worse forms

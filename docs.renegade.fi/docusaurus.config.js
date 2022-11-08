@@ -52,7 +52,7 @@ const config = {
             type: 'doc',
             docId: 'getting-started/intro',
             position: 'left',
-            label: 'Docs'
+            label: 'Documentation'
           },
           {
             href: 'https://twitter.com/renegade_fi',
@@ -60,8 +60,8 @@ const config = {
             position: 'right'
           },
           {
-            href: 'https://github.com/renegade-fi',
-            label: 'GitHub',
+            href: 'https://discord.gg/renegade-fi',
+            label: 'Discord',
             position: 'right'
           }
         ]
