@@ -12,7 +12,7 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "lint:js": "npx eslint docusaurus.config.js sidebars.js --fix --config ./.eslintrc.js --no-eslintrc",
+    "lint:js": "npx eslint docusaurus.config.js sidebars.js src/**/*.js --fix --config ./.eslintrc.js --no-eslintrc",
     "lint:md": "npx eslint docs/ --ext .md --fix --config ./.eslintrc.js --no-eslintrc",
     "lint": "npm run lint:js && npm run lint:md",
     "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
@@ -38,7 +38,8 @@
     "eslint-plugin-md": "^1.0.19",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
-    "eslint-plugin-react": "^7.28.0"
+    "eslint-plugin-react": "^7.28.0",
+    "prop-types": "^15.8.1"
   },
   "eslintConfig": {
     "extends": [

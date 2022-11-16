@@ -44,16 +44,10 @@ const config = {
       navbar: {
         logo: {
           alt: 'Renegade Logo',
-          src: 'img/logo_light.svg',
-          srcDark: 'img/logo_dark.svg'
+          src: 'img/logo_glyph_light.svg',
+          srcDark: 'img/logo_glyph_dark.svg'
         },
         items: [
-          {
-            type: 'doc',
-            docId: 'getting-started/intro',
-            position: 'left',
-            label: 'Documentation'
-          },
           {
             href: 'https://twitter.com/renegade_fi',
             label: 'Twitter',
@@ -63,61 +57,32 @@ const config = {
             href: 'https://discord.gg/renegade-fi',
             label: 'Discord',
             position: 'right'
+          },
+          {
+            href: 'https://renegadefi.substack.com',
+            label: 'Substack',
+            position: 'right'
+          },
+          {
+            label: 'Whitepaper',
+            href: 'https://whitepaper.renegade.fi',
+            position: 'right'
+          },
+          {
+            label: 'GitHub',
+            href: 'https://github.com/renegade-fi',
+            position: 'right'
           }
         ]
       },
       footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Documentation',
-            items: [
-              {
-                label: 'Getting Started',
-                to: '/'
-              },
-              {
-                label: 'Basic Concepts',
-                to: '/basic-concepts/dark-pool-explainer'
-              },
-              {
-                label: 'Advanced Concepts',
-                to: '/advanced-concepts/ioi'
-              }
-            ]
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/renegade_fi'
-              },
-              {
-                label: 'Discord',
-                href: 'https://discord.gg/renegade-fi'
-              },
-              {
-                label: 'Substack',
-                href: 'https://renegadefi.substack.com'
-              }
-            ]
-          },
-          {
-            title: 'Resources',
-            items: [
-              {
-                label: 'Whitepaper',
-                href: 'https://whitepaper.renegade.fi'
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/renegade-fi'
-              }
-            ]
-          }
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} Renegade.`
+        style: 'light',
+        logo: {
+          alt: 'Renegade Logo',
+          src: 'img/logo_light.svg',
+          srcDark: 'img/logo_dark.svg',
+          width: '300px'
+        }
       },
       prism: {
         theme: lightCodeTheme,
@@ -127,3 +92,53 @@ const config = {
 }
 
 module.exports = config
+
+// links: [
+//   {
+//     title: 'Documentation',
+//     items: [
+//       {
+//         label: 'Getting Started',
+//         to: '/'
+//       },
+//       {
+//         label: 'Core Concepts',
+//         to: '/core-concepts/dark-pool-explainer'
+//       },
+//       {
+//         label: 'Advanced Concepts',
+//         to: '/advanced-concepts/ioi'
+//       }
+//     ]
+//   },
+//   {
+//     title: 'Community',
+//     items: [
+//       {
+//         label: 'Twitter',
+//         href: 'https://twitter.com/renegade_fi'
+//       },
+//       {
+//         label: 'Discord',
+//         href: 'https://discord.gg/renegade-fi'
+//       },
+//       {
+//         label: 'Substack',
+//         href: 'https://renegadefi.substack.com'
+//       }
+//     ]
+//   },
+//   {
+//     title: 'Resources',
+//     items: [
+//       {
+//         label: 'Whitepaper',
+//         href: 'https://whitepaper.renegade.fi'
+//       },
+//       {
+//         label: 'GitHub',
+//         href: 'https://github.com/renegade-fi'
+//       }
+//     ]
+//   }
+// ]

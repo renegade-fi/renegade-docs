@@ -18,18 +18,20 @@ relatively-high verifier complexity is no issue.
 ## Multi-Party Computation
 
 For MPC, we use maliciously-secure two-party
-[SPDZ](https://eprint.iacr.org/2011/535). Since our circuits are arithmetic
-(rather than boolean) and we may potentially expand to more than two parties in
-the future, we chose a fast secret-sharing-style scheme.
+[SPDZ](https://eprint.iacr.org/2011/535). We chose a fast secret-sharing-style
+scheme, as our circuits are arithmetic and we may potentially expand to more
+than two parties in the future.
 
-## Hashing and Asymmetric Cryptography
+## Hash Functions
 
 For hashes, we use arithmetic-friendly
 [Poseidon](https://eprint.iacr.org/2019/458) everywhere.
+
+## Asymmetric Cryptography
 
 For public-key cryptography (used to encrypt matching outputs and to encrypt
 plaintext wallets to store them on-chain), we use
 [ElGamal](https://wwwmayr.in.tum.de/konferenzen/Jass05/courses/1/papers/meier_paper.pdf),
 usually combined with Poseidon hashes to turn asymmetric schemes into faster
 symmetric ones. ElGamal also has the benefit of being *key-private*, so that
-third-party observers can never tell the destination address of any tokens.
+third-party observers cannot determine the destination address of any tokens.

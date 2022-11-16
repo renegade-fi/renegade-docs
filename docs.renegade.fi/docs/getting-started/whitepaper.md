@@ -21,5 +21,5 @@ statements** that are proven within the protocol. Available at
   DarkImage={whitepaperTeaserDark}
   isSvg={true}
   linkTo="https://whitepaper.renegade.fi"
-  width="60%"
+  paddingTop="15px"
 />

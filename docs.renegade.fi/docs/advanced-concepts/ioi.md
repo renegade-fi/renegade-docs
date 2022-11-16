@@ -8,7 +8,7 @@ import IoiDark from '@site/static/img/ioi_dark.svg'
 
 # Indications of Interest
 
-As discussed in [[Anonymity Guarantees]](/basic-concepts/guarantees), the
+As discussed in [[Lifecycle and Privacy]](/core-concepts/privacy), the
 base-layer protocol has very strong privacy properties: No information
 whatsoever is leaked to third-parties, both before and after a trade is matched
 and settled.
@@ -39,7 +39,6 @@ the indications are legitimate.
   DarkImage={IoiDark}
   isSvg={true}
   caption="Indications of interest are optional predicates to increase liquidity."
-  width="70%"
   paddingBottom="0px"
 />
 

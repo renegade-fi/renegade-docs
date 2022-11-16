@@ -3,8 +3,10 @@ sidebar_position: 3
 ---
 
 import Figure from '../../src/figure.js'
-import NetworkDocsLight from '@site/static/img/network_docs_light.svg'
-import NetworkDocsDark from '@site/static/img/network_docs_dark.svg'
+import TreeLight from '@site/static/img/tree_light.svg'
+import TreeDark from '@site/static/img/tree_dark.svg'
+import NetworkArchitectureLight from '@site/static/img/network_architecture_light.png'
+import NetworkArchitectureDark from '@site/static/img/network_architecture_dark.png'
 import ValidMatchMpcLight from '@site/static/img/valid_match_mpc_light.png'
 import ValidMatchMpcDark from '@site/static/img/valid_match_mpc_dark.png'
 
@@ -12,9 +14,9 @@ import ValidMatchMpcDark from '@site/static/img/valid_match_mpc_dark.png'
 
 The core difference between Renegade and all other exchanges (both centralized
 and decentralized) is that *state is kept locally*. Instead of balances and
-orders being maintained by a centralized server (e.g. FTX) or on many thousands
-of distributed servers (e.g. Uniswap), all Renegade state is maintained by
-individual traders.
+orders being maintained by a centralized server (e.g. Binance) or on many
+thousands of distributed servers (e.g. Uniswap), all Renegade state is
+maintained by individual traders.
 
 Some terminology:
 - A **wallet** is a list of orders and balances for a trader. Each trader's
@@ -28,13 +30,37 @@ Some terminology:
   groups of relayers, and allow for automatic failovers and parallel MPCs.
 
 As previously mentioned, individual wallets are never revealed in plaintext.
-Instead, traders post *commitments* of individual wallets on-chain. When a
-trader wants to perform an operation on their wallet (depositing tokens,
-settling a match, etc.), they must post a commitment to their new wallet,
-alongside a zero-knowledge-proof that the new wallet is indeed valid (e.g., the
-trader must prove that they haven't just created new tokens in their balances
-out of thin air). The smart contract maintains a global **commitment Merkle
-tree**, essentially a list of commitments of valid wallets.
+Instead, traders post "commitments" of individual wallets on-chain, where a
+commitment to a wallet is essentialy a hash of a wallet combined with some
+randomness. Just knowing a wallet commitment does not tell you anything about
+the underlying wallet data.
+
+## The Commit-Reveal Scheme
+
+When a trader wants to perform an operation on their wallet (depositing tokens,
+settling a match, etc.), they must know their old and new wallets and send
+three pieces of information to the smart contract:
+- The commitment to the new wallet.
+- Two "nullifiers" of their old wallet, which serve to prevent double-spends of
+  the old wallet.
+- A zero-knowledge proof that: The commitments are properly computed, the
+  nullifiers are properly computed, the old commitment exists somewhere in the
+  global Merkle tree, and that the changes from the old to new wallet are valid
+  (e.g., the user hasn't arbitrarily increased their balances).
+
+The smart contract maintains a global Merkle tree of all previous commitments,
+plus a set of nullifiers that have been used to reveal previous wallets.
+
+<Figure
+  LightImage={TreeLight}
+  DarkImage={TreeDark}
+  isSvg={true}
+  caption="Renegade keeps track of valid wallets with a commit-reveal scheme."
+/>
+
+By using this commit-reveal scheme, we allow for full wallet privacy (i.e., no
+information about the wallet is leaked on-chain), while maintaining full state
+consistency and protection against double-spend attacks.
 
 ## Network Architecture
 
@@ -44,11 +70,11 @@ as new orders enter the system. Relayers never custody assets, and are merely
 given view access to the wallet in order to compute pairwise MPCs.
 
 <Figure
-  LightImage={NetworkDocsLight}
-  DarkImage={NetworkDocsDark}
-  isSvg={true}
+  LightImage={NetworkArchitectureLight}
+  DarkImage={NetworkArchitectureDark}
+  isSvg={false}
   caption="The network architecture."
-  width="50%"
+  width="75%"
 />
 
 In the above diagram, there are three independent relay clusters: The Public
@@ -65,31 +91,31 @@ detected, will contact the origination cluster and proceed with an MPC.
 
 The MPC computes *matching engine execution*. That is, given the two orders
 (each held privately by different relayers), the two parties will compute a MPC
-that implementing matching engine execution on those two orders. This allows
-for full anonymity, as no information whatsoever is leaked about the order in
+that implements matching engine execution on those two orders. This allows for
+full anonymity, as no information whatsoever is leaked about the order in
 advance of the MPC. After the MPC, the parties only learn what tokens were
-swapped, so if there was no match between the orders, then no additional
+swapped; if there was no match between the orders, then no additional
 information is leaked.
 
 ## Collaborative SNARKs
 
-As mentioned in [[What is MPC]](/basic-concepts/mpc-explainer), multi-party
+As mentioned in [[What is MPC]](/core-concepts/mpc-explainer), multi-party
 computation protocols themselves have no guarantees about the validity of input
 data. To solve this, we re-compute the commitments to order data inside of the
 MPC. If the re-computed commitments disagree with the publicly-known
 commitments from the handshake tuple, then the output matches list is **zeroed
-out**, which functions to prevent adversarial manipulation of fake orders.
+out**, which functions to prevent adversarial manipulation with fake orders.
 
 In addition to the input consistency problem, a naive application of MPC would
 lead to problems around **atomic settlement**. In particular, we must ensure
 that the MPC output cannot be revealed without it being possible for either
-party to settle the match. If either party could learn the MPC output and
-hangup the connection before actually swapping tokens, then the protocol would
-leak order information.
+party to record the match on-chain. If either party could learn the MPC output
+and hangup the connection before actually swapping tokens, then the protocol
+would leak order information.
 
-To solve this atomic settlement problem, we use the [**collaborative
-SNARK**](https://eprint.iacr.org/2021/1530) framework from Ozdemir and Boneh.
-By wrapping zero-knowledge proof generation inside of a MPC algorithm,
+To solve this atomic settlement problem, we use the [collaborative
+SNARK](https://eprint.iacr.org/2021/1530) framework from Ozdemir and Boneh. By
+wrapping zero-knowledge proof generation inside of a MPC algorithm,
 collaborative SNARKs allow for the relayers to collaboratively prove a
 particular NP statement, VALID MATCH MPC. This statement essentially claims
 that given the publicly-known commitments to order information and a public
@@ -99,43 +125,22 @@ commitment to a matches tuple, both traders do indeed know valid input orders.
   LightImage={ValidMatchMpcLight}
   DarkImage={ValidMatchMpcDark}
   isSvg={false}
-  caption="The NP statement VALID MATCH MPC. Renegade relayers produce
-  collaborative proofs of this statement."
-  width="60%"
+  caption="Renegade relayers produce collaborative proofs of the NP statement
+  VALID MATCH MPC."
 />
 
 Once this collaborative proof of VALID MATCH MPC has been computed, either
 party can submit it to the smart contract, thereby actually swapping the
-tokens.
+tokens. Instead of just running matching engine execution directly,
+collaborative proving gives both parties assurance that matching (i.e.,
+determining what tokens are swapped) is atomic with settlement (i.e., actually
+swapping the tokens).
 
-By generating a collaborative proof inside of the MPC (instead of just running
-matching engine execution directly), both parties have assurance that matching
-(i.e., determining what tokens are swapped between the parties) is atomic with
-settlement (i.e., actually swapping the tokens).
+So, by realizing this MPC-ZKP framework via collaborative SNARKs, we have
+created a DEX that is both completely atomic (i.e., neither party may back out
+after the MPC has been performed) and completely private, both pre-trade and
+post-trade.
 
-## Lifecycle Summary
-
-In summary, the MPC-ZKP lifecycle is as follows:
-1. Two relayers each maintain a private wallet that has been committed to in
-   the global Merkle tree of all valid wallet commitments. Each relayer
-   generates a handshake tuple, which contains a zero-knowledge proof of wallet
-   validity alongside hiding commitments to each of their orders.
-1. The two relayers exchange handshake tuples, and assuming both zero-knowledge
-   proofs are accepted, the relayers proceed with the MPC. The MPC consists of
-   an execution of the matching engine on the two private orders, followed by a
-   collaborative of a proof of the statement VALID MATCH MPC. The proof and a
-   commitment to the matches tuple are both opened as the output of the MPC.
-1. Either party may send the VALID MATCH MPC proof to the smart contract,
-   "encumbering" both wallets and forcing both of the relayers to settle out
-   the matched tokens.
-1. Both parties settle the matches, and may again proceed with remaining
-   orders.
-
-So, by leveraging this MPC-ZKP framework, we allow for true trade anonymity,
-both pre-and-post-trade. For more discussion on the privacy properties that
-collaborative SNARKs enable, see [[Anonymity
-Guarantees]](/basic-concepts/guarantees).
-
-Also, for more details on the precise contents of the handshake tuple, and for
-more details about the various NP statements that are proven by each node, see
-the full [whitepaper](/getting-started/whitepaper).
+For more details on the precise contents of the handshake tuple, and for more
+details about the various NP statements that are proven by each node, see the
+full [[Whitepaper]](/getting-started/whitepaper).

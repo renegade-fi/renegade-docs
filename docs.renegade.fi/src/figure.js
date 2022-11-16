@@ -1,10 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import BrowserOnly from '@docusaurus/BrowserOnly'
 import { useColorMode } from '@docusaurus/theme-common'
 
 const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
-  const { colorMode, setColorMode } = useColorMode()
-  let image;
+  const { colorMode } = useColorMode()
+  let image
   if (isSvg) {
     image = colorMode === 'dark'
       ? <DarkImage width="100%" height="100%" />
@@ -24,16 +25,16 @@ const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
 }
 
 const Figure = ({
-    LightImage, DarkImage, isSvg, caption, linkTo, width,
-    paddingTop, paddingBottom, suppressOnMobile
+  LightImage, DarkImage, isSvg, caption, linkTo, width,
+  paddingTop, paddingBottom, suppressOnMobile
 }) => {
   return (
     <BrowserOnly>
-      {() => (suppressOnMobile && window.matchMedia("(max-width: 768px)").matches) ||
+      {() => (suppressOnMobile && window.matchMedia('(max-width: 768px)').matches) ||
         <div>
-          <div style={{height: paddingTop || "0px"}} />
-          <div style={{"display": "flex", flexDirection: "column", alignItems: "center"}}>
-            <center style={{width: width || "40%", minWidth: "300px"}}>
+          <div style={{ height: paddingTop || '0px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <center style={{ width: width || '90%', minWidth: '300px' }}>
               <ImageSwitcher
                 LightImage={LightImage}
                 DarkImage={DarkImage}
@@ -41,15 +42,34 @@ const Figure = ({
                 linkTo={linkTo}
               />
             </center>
-            <center style={{opacity: "60%", fontSize: "0.8em"}}>
+            <center style={{ opacity: '60%', fontSize: '0.8em' }}>
               {caption}
             </center>
           </div>
-          <div style={{height: paddingBottom || "20px"}} />
+          <div style={{ height: paddingBottom || '20px' }} />
         </div>
       }
     </BrowserOnly>
   )
+}
+
+ImageSwitcher.propTypes = {
+  LightImage: PropTypes.func || PropTypes.string,
+  DarkImage: PropTypes.func || PropTypes.string,
+  isSvg: PropTypes.bool,
+  linkTo: PropTypes.string
+}
+
+Figure.propTypes = {
+  LightImage: PropTypes.func || PropTypes.string,
+  DarkImage: PropTypes.func || PropTypes.string,
+  isSvg: PropTypes.bool,
+  caption: PropTypes.string,
+  linkTo: PropTypes.string,
+  width: PropTypes.string,
+  paddingTop: PropTypes.string,
+  paddingBottom: PropTypes.string,
+  suppressOnMobile: PropTypes.bool
 }
 
 export default Figure

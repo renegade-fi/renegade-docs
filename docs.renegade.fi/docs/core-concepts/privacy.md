@@ -2,13 +2,13 @@
 sidebar_position: 4
 ---
 
-# Anonymity Guarantees
+# Privacy Guarantees
 
 In the [[Introduction]](/), we mentioned three classes of problems that arise
 in current decentralized exchanges: Lack of pre-trade privacy, lack of
 post-trade privacy, and MEV. By using pairwise MPC matching and zero-knowledge
 settlement as discussed in [[The MPC-ZKP
-Architecture]](/basic-concepts/mpc-zkp), Renegade solves all three of these
+Architecture]](/core-concepts/mpc-zkp), Renegade solves all three of these
 problems:
 
 - **Pre-trade privacy**. Since wallets are maintained locally by relayers, the
@@ -25,7 +25,13 @@ problems:
   the block producer or sequencer has no ability whatsoever to sandwich or
   front-run trades.
 
-Put differently, **third-parties learn nothing about the state of the
-exchange** aside from global token in-flow and out-flows, and counterparties to
-your trades learn nothing except for what tokens were swapped in a particular
-trade.
+Put differently, Renegade claims the following privacy properties:
+- **Third-parties** to a trade (including the sequencer/proposer) learn nothing
+  about the state of the exchange, aside from global token in-flows and
+  out-flows and the total number of open orders.
+- **Counterparties** to your trade learn what tokens were swapped if there was
+  a match, but nothing else. If there was no match, then counterparties only
+  learn this fact.
+- **Relayer(s)** who manage a wallet learn the contents of the wallet
+  (balances, outstanding orders, etc.), but have no ability to mutate the
+  wallet.

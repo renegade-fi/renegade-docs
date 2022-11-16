@@ -20,11 +20,13 @@ import logoDark from '@site/static/img/logo_dark.svg'
 
 Renegade is a new type of decentralized exchange, an **on-chain dark pool**.
 
-Current DEXes are completely transparent: Anyone can see the trading history and
-balances of any user. In contrast, Renegade is designed to give you **universal
-trade privacy**. That means that your trading activity is completely obscured
-from all third-parties, both before and after a trade is filled. No one except
-you can learn the details of your balances or trades.
+Current DEXes are completely transparent: Anyone can see your balances and
+trade history. In contrast, Renegade gives you **universal trade privacy**.
+That means that your trading activity is completely obscured from all
+third-parties, both before and after a trade is filled. No one except you can
+learn the details of your balances or trades.
+
+## How is this Better?
 
 Renegade solves many problems in current DeFi spot markets, ultimately giving
 you better prices:
@@ -45,23 +47,6 @@ However, Renegade optionally implements [[Indications of
 Interest]](/advanced-concepts/ioi) to allow for full price discovery and better
 liquidity provision.
 
-For a high-level background on the role of dark pools in traditional finance
-and how we can translate them into a crypto context, check out [[What is a Dark
-Pool]](/basic-concepts/dark-pool-explainer) and to better understand the idea
-of multi-party computation and how it allows for order matching without leaking
-information, see [[What is MPC]](/basic-concepts/mpc-explainer).
-
-To understand how we integrate MPC matching with zero-knowledge settlement, see
-[[The MPC-ZKP Architecture]](/basic-concepts/mpc-zkp) and check out [[Anonymity
-Guarantees]](/basic-concepts/guarantees) to see how we this MPC-ZKP
-architecture guarantees maximal privacy while trading, solving all three types
-of problems above.
-
-For more advanced concepts, including the ideas of Indications of Interest
-and Super Relayers, see the [[Advanced Concepts]](/advanced-concepts/ioi).
-And finally, for the most precise description of the protocol, see the detailed
-[[Whitepaper]](/getting-started/whitepaper).
-
 ## Who uses Renegade?
 
 Given the wide range of information leakage problems that exist in current DeFi
@@ -79,7 +64,26 @@ Renegade:
   incur significant price slippage and cross-exchange arbitrage; by using the
   dark pool, trades are always guaranteed to execute at midpoint prices.
 
-## Contact Info
+## Overview of the Docs
+
+For a high-level background on the role of dark pools in traditional finance
+and how we can translate them into a crypto context, check out [[What is a Dark
+Pool]](/core-concepts/dark-pool-explainer) and to better understand the idea of
+multi-party computation and how it allows for order matching without leaking
+information, see [[What is MPC]](/core-concepts/mpc-explainer).
+
+To understand how we integrate MPC matching with zero-knowledge settlement, see
+[[The MPC-ZKP Architecture]](/core-concepts/mpc-zkp) and check out [[Lifecycle
+and Privacy]](/core-concepts/privacy) to see how we this MPC-ZKP architecture
+guarantees maximal privacy while trading, solving all three types of problems
+above.
+
+For more advanced concepts, including the ideas of Indications of Interest
+and Super Relayers, see the [[Advanced Concepts]](/advanced-concepts/ioi).
+And finally, for the most precise description of the protocol, see the detailed
+[[Whitepaper]](/getting-started/whitepaper).
+
+## Contact Information
 - [@renegade_fi](https://twitter.com/renegade_fi) on Twitter.
 - [chris@renegade.fi](mailto:chris@renegade.fi) via email.
 - [Discord](https://discord.gg/renegade-fi) for quick questions.

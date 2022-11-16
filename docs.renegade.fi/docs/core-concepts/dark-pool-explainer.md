@@ -28,7 +28,6 @@ pool can never see the outstanding orders of others.
   DarkImage={orderbookDark}
   isSvg={false}
   caption="A lit order book. A dark pool's order book is not publicly visible."
-  width="80%"
 />
 
 Why would any trader prefer executing their orders in the dark? Since dark
@@ -57,7 +56,6 @@ looking at the mempool.
   DarkImage={StateDark}
   isSvg={true}
   caption="With a blockchain, state is necessarily public."
-  width="70%"
 />
 
 Since exchange state is always public, it exposes traders to even worse forms
@@ -95,6 +93,6 @@ on-chain.
 
 To understand how we use the idea of *local private state* combined with the
 building blocks of MPC and ZKPs to guarantee complete privacy, see [[What is
-MPC]](/basic-concepts/mpc-explainer) and [[The MPC-ZKP
-Architecture]](/basic-concepts/mpc-zkp), and to see precisely is meant by
-"end-to-end privacy", see [[Anonymity Guarantees]](/basic-concepts/guarantees).
+MPC]](/core-concepts/mpc-explainer) and [[The MPC-ZKP
+Architecture]](/core-concepts/mpc-zkp), and to see precisely is meant by
+"end-to-end privacy", see [[Lifecycle and Privacy]](/core-concepts/privacy).

@@ -25,8 +25,7 @@ the view keypair (least authoritative).
   LightImage={SuperRelayerLight}
   DarkImage={SuperRelayerDark}
   isSvg={true}
-  caption=""
-  width="60%"
+  caption="The key hierarchy and key delegation."
 />
 
 Each keypair is derivable by knowing the secret key of any keypair further up
