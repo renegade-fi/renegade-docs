@@ -30,7 +30,7 @@
   --ifm-menu-color-active: #ffffff;
   --ifm-menu-color-background-hover: none;
   --ifm-menu-color-background-active: none;
-  background: radial-gradient(circle 800px, #202020, #111111);
+  background: radial-gradient(farthest-side circle, #202020, #111111);
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
@@ -62,8 +62,12 @@
   color: var(--imf-menu-color);
 }
 
-.menu__link--active {
-  background-color: green;
+.theme-doc-toc-mobile {
+  display: none;
+}
+
+.navbar-sidebar__back {
+  display: none;
 }
 
 @media only screen and (max-width: 800px) {

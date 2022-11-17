@@ -7,8 +7,6 @@ import LogoDark from '@site/static/img/logo_dark.svg'
 
 function Footer () {
   const { colorMode } = useColorMode()
-  console.log('Rendering footer: colorMode = ', colorMode)
-  console.log('Rendering footer: eq = ', colorMode === 'dark')
   return (
     <div className={styles.footer}>
       <div className={styles.footerTextWrapper}>
