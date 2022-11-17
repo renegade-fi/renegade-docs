@@ -3,10 +3,12 @@ sidebar_position: 1
 ---
 
 import Figure from '../../src/figure.js'
-import orderbookLight from '@site/static/img/orderbook_light.png'
-import orderbookDark from '@site/static/img/orderbook_dark.png'
+import OrderbookLight from '@site/static/img/orderbook_light.png'
+import OrderbookDark from '@site/static/img/orderbook_dark.png'
 import StateLight from '@site/static/img/state_light.svg'
 import StateDark from '@site/static/img/state_dark.svg'
+import StateMobileLight from '@site/static/img/state_mobile_light.svg'
+import StateMobileDark from '@site/static/img/state_mobile_dark.svg'
 
 # What is a Dark Pool?
 
@@ -24,8 +26,8 @@ pool, the order book is not publicly visible**, meaning that individual traders
 pool can never see the outstanding orders of others.
 
 <Figure
-  LightImage={orderbookLight}
-  DarkImage={orderbookDark}
+  LightImage={OrderbookLight}
+  DarkImage={OrderbookDark}
   isSvg={false}
   caption="A lit order book. A dark pool's order book is not publicly visible."
 />
@@ -54,6 +56,8 @@ looking at the mempool.
 <Figure
   LightImage={StateLight}
   DarkImage={StateDark}
+  LightImageMobile={StateMobileLight}
+  DarkImageMobile={StateMobileDark}
   isSvg={true}
   caption="With a blockchain, state is necessarily public."
 />

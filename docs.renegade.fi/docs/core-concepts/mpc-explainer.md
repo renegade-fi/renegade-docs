@@ -7,8 +7,12 @@ import MpcIdealLight from '@site/static/img/mpc_ideal_light.svg'
 import MpcIdealDark from '@site/static/img/mpc_ideal_dark.svg'
 import MpcRealizedLight from '@site/static/img/mpc_realized_light.png'
 import MpcRealizedDark from '@site/static/img/mpc_realized_dark.png'
+import MpcRealizedMobileLight from '@site/static/img/mpc_realized_mobile_light.png'
+import MpcRealizedMobileDark from '@site/static/img/mpc_realized_mobile_dark.png'
 import MatchingEngineLight from '@site/static/img/matching_engine_light.png'
 import MatchingEngineDark from '@site/static/img/matching_engine_dark.png'
+import MatchingEngineMobileLight from '@site/static/img/matching_engine_mobile_light.png'
+import MatchingEngineMobileDark from '@site/static/img/matching_engine_mobile_dark.png'
 
 # What is MPC?
 
@@ -27,6 +31,7 @@ parties.
   isSvg={true}
   caption="The idealized version of MPC with a trusted evaluator."
   width="50%"
+  widthMobile="90%"
 />
 
 Note that the important property here is that the trusted evaluator *only*
@@ -47,6 +52,8 @@ secret input data.
 <Figure
   LightImage={MpcRealizedLight}
   DarkImage={MpcRealizedDark}
+  LightImageMobile={MpcRealizedMobileLight}
+  DarkImageMobile={MpcRealizedMobileDark}
   isSvg={false}
   caption="The realized version of MPC, where mutually-distrusting parties
   compute a function without a centralized intermediary."
@@ -73,6 +80,8 @@ engine on the pairs of order books.
 <Figure
   LightImage={MatchingEngineLight}
   DarkImage={MatchingEngineDark}
+  LightImageMobile={MatchingEngineMobileLight}
+  DarkImageMobile={MatchingEngineMobileDark}
   isSvg={false}
   caption="Renegade runs matching engine execution within a MPC."
   width="100%"

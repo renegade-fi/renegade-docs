@@ -39,6 +39,7 @@
   max-width: 700px;
   margin: auto;
   margin-bottom: 75px;
+  padding-top: 30px;
 }
 
 .navbar--fixed-top {
@@ -65,69 +66,8 @@
   background-color: green;
 }
 
-h1 {
-  padding-top: 30px;
+@media only screen and (max-width: 800px) {
+  .markdown {
+    padding-top: 10px;
+  }
 }
-
-/**
-h1 {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 50px;
-  line-height: 65px;
-  letter-spacing: -0.01em;
-  color: #f2f2f2;
-}
-
-h2 {
-  font-style: normal;
-  font-weight: 600;
-  font-size: 35px;
-  line-height: 50px;
-  color: #f2f2f2;
-}
-
-h3 {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 25px;
-  line-height: 35px;
-  color: #f2f2f2;
-}
-
-h4 {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 30px;
-  letter-spacing: -0.5px;
-  color: #f2f2f2;
-}
-
-h5 {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 18px;
-  line-height: 30px;
-  color: #b3b3b3;
-}
-
-h6,
-th {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 20px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #f2f2f2;
-}
-
-p {
-  font-style: normal;
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 25px;
-  color: #f2f2f2;
-}
-**/

@@ -6,16 +6,15 @@ slug: /
 ---
 
 import Figure from '../../src/figure.js'
-import logoLight from '@site/static/img/logo_light.svg'
-import logoDark from '@site/static/img/logo_dark.svg'
+import LogoLight from '@site/static/img/logo_light.svg'
+import LogoDark from '@site/static/img/logo_dark.svg'
 
 <Figure
-  LightImage={logoLight}
-  DarkImage={logoDark}
+  LightImage={LogoLight}
+  DarkImage={LogoDark}
   isSvg={true}
-  suppressOnMobile={true}
-  paddingTop="35px"
   width="40%"
+  widthMobile="70%"
 />
 
 Renegade is a new type of decentralized exchange, an **on-chain dark pool**.

@@ -25,48 +25,58 @@ const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
 }
 
 const Figure = ({
-  LightImage, DarkImage, isSvg, caption, linkTo, width,
+  LightImage, DarkImage, LightImageMobile, DarkImageMobile,
+  isSvg, caption, linkTo, width, widthMobile,
   paddingTop, paddingBottom, suppressOnMobile
 }) => {
   return (
     <BrowserOnly>
-      {() => (suppressOnMobile && window.matchMedia('(max-width: 768px)').matches) ||
-        <div>
-          <div style={{ height: paddingTop || '0px' }} />
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <center style={{ width: width || '90%', minWidth: '300px' }}>
-              <ImageSwitcher
-                LightImage={LightImage}
-                DarkImage={DarkImage}
-                isSvg={isSvg}
-                linkTo={linkTo}
-              />
-            </center>
-            <center style={{ opacity: '60%', fontSize: '0.8em' }}>
-              {caption}
-            </center>
+      {() => {
+        const isMobile = window.matchMedia('(max-width: 800px)').matches
+        if (isMobile && suppressOnMobile) {
+          return null
+        }
+        return (
+          <div>
+            <div style={{ height: paddingTop || '0px' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <center style={{ width: (isMobile && widthMobile ? widthMobile : width) || '90%' }}>
+                <ImageSwitcher
+                  LightImage={LightImageMobile && isMobile ? LightImageMobile : LightImage}
+                  DarkImage={DarkImageMobile && isMobile ? DarkImageMobile : DarkImage}
+                  isSvg={isSvg}
+                  linkTo={linkTo}
+                />
+              </center>
+              <center style={{ opacity: '60%', fontSize: '0.8em' }}>
+                {caption}
+              </center>
+            </div>
+            <div style={{ height: paddingBottom || '20px' }} />
           </div>
-          <div style={{ height: paddingBottom || '20px' }} />
-        </div>
-      }
+        )
+      }}
     </BrowserOnly>
   )
 }
 
 ImageSwitcher.propTypes = {
-  LightImage: PropTypes.func || PropTypes.string,
-  DarkImage: PropTypes.func || PropTypes.string,
+  LightImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  DarkImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   isSvg: PropTypes.bool,
   linkTo: PropTypes.string
 }
 
 Figure.propTypes = {
-  LightImage: PropTypes.func || PropTypes.string,
-  DarkImage: PropTypes.func || PropTypes.string,
+  LightImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  DarkImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  LightImageMobile: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  DarkImageMobile: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   isSvg: PropTypes.bool,
   caption: PropTypes.string,
   linkTo: PropTypes.string,
   width: PropTypes.string,
+  widthMobile: PropTypes.string,
   paddingTop: PropTypes.string,
   paddingBottom: PropTypes.string,
   suppressOnMobile: PropTypes.bool

@@ -5,6 +5,8 @@ sidebar_position: 3
 import Figure from '../../src/figure.js'
 import TreeLight from '@site/static/img/tree_light.svg'
 import TreeDark from '@site/static/img/tree_dark.svg'
+import TreeMobileLight from '@site/static/img/tree_mobile_light.svg'
+import TreeMobileDark from '@site/static/img/tree_mobile_dark.svg'
 import NetworkArchitectureLight from '@site/static/img/network_architecture_light.png'
 import NetworkArchitectureDark from '@site/static/img/network_architecture_dark.png'
 import ValidMatchMpcLight from '@site/static/img/valid_match_mpc_light.png'
@@ -54,6 +56,8 @@ plus a set of nullifiers that have been used to reveal previous wallets.
 <Figure
   LightImage={TreeLight}
   DarkImage={TreeDark}
+  LightImageMobile={TreeMobileLight}
+  DarkImageMobile={TreeMobileDark}
   isSvg={true}
   caption="Renegade keeps track of valid wallets with a commit-reveal scheme."
 />
@@ -75,6 +79,7 @@ given view access to the wallet in order to compute pairwise MPCs.
   isSvg={false}
   caption="The network architecture."
   width="75%"
+  widthMobile="100%"
 />
 
 In the above diagram, there are three independent relay clusters: The Public
@@ -127,6 +132,7 @@ commitment to a matches tuple, both traders do indeed know valid input orders.
   isSvg={false}
   caption="Renegade relayers produce collaborative proofs of the NP statement
   VALID MATCH MPC."
+  mobileWidth="100%"
 />
 
 Once this collaborative proof of VALID MATCH MPC has been computed, either

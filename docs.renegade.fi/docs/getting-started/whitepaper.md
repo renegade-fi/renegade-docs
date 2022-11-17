@@ -4,8 +4,10 @@ title: Full Whitepaper
 ---
 
 import Figure from '../../src/figure.js'
-import whitepaperTeaserLight from '@site/static/img/whitepaper_teaser_light.svg'
-import whitepaperTeaserDark from '@site/static/img/whitepaper_teaser_dark.svg'
+import WhitepaperTeaserLight from '@site/static/img/whitepaper_teaser_light.svg'
+import WhitepaperTeaserDark from '@site/static/img/whitepaper_teaser_dark.svg'
+import WhitepaperTeaserMobileLight from '@site/static/img/whitepaper_teaser_mobile_light.svg'
+import WhitepaperTeaserMobileDark from '@site/static/img/whitepaper_teaser_mobile_dark.svg'
 
 # Whitepaper
 
@@ -17,8 +19,10 @@ statements** that are proven within the protocol. Available at
 [whitepaper.renegade.fi](https://whitepaper.renegade.fi).
 
 <Figure
-  LightImage={whitepaperTeaserLight}
-  DarkImage={whitepaperTeaserDark}
+  LightImage={WhitepaperTeaserLight}
+  DarkImage={WhitepaperTeaserDark}
+  LightImageMobile={WhitepaperTeaserMobileLight}
+  DarkImageMobile={WhitepaperTeaserMobileDark}
   isSvg={true}
   linkTo="https://whitepaper.renegade.fi"
   paddingTop="15px"
