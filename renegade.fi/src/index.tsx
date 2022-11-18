@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import mixpanel from 'mixpanel-browser'
 
-import logo from './icons/logo.png'
-import logoDark from './icons/logo_dark.png'
+import logoLight from './icons/logo_light.svg'
+import logoDark from './icons/logo_dark.svg'
 
 import {
   BrowserRouter,
@@ -57,13 +57,30 @@ class ExternalNavigate extends React.Component<ExternalNavigateProps> {
 
 function App () {
   const { colorMode } = useColorMode()
+  const logo = colorMode === 'light' ? logoLight : logoDark
   return (
-    <Box w="100vw" maxW="100%" h="100vh" bg={colorMode === 'light' ? 'white' : 'black'}>
+    <Box
+      w="100vw"
+      maxW="100%"
+      h="100vh"
+      bg={
+        colorMode === 'light'
+          ? 'white'
+          : 'radial-gradient(farthest-side circle, #202020, #111111)'
+      }
+      backgroundAttachment="fixed"
+    >
       <Center>
         <Image
-          src={colorMode === 'light' ? logo : logoDark}
-          mt={['10vh', '37vh']}
-          w={['70%', '40%']}
+          src={logo}
+          position="absolute"
+          margin="auto"
+          top="0"
+          bottom="0"
+          right="0"
+          left="0"
+          transform="translateY(-60%)"
+          w={['70%', '35%']}
         />
       </Center>
     </Box>
