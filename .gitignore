@@ -17,3 +17,6 @@
 # Docusaurus
 /docs.renegade.fi/.docusaurus
 
+# Fonts
+/renegade.fi/src/fonts
+
