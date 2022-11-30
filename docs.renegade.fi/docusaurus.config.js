@@ -32,7 +32,10 @@ const config = {
           sidebarCollapsible: true
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css')
+          customCss: [
+            require.resolve('./src/css/custom.css'),
+            require.resolve('./src/css/fonts.css')
+          ]
         }
       }
     ]
@@ -47,8 +50,8 @@ const config = {
     navbar: {
       logo: {
         alt: 'Renegade Logo',
-        src: 'img/logo_glyph_light.svg',
-        srcDark: 'img/logo_glyph_dark.svg'
+        src: 'img/logo_short_light.svg',
+        srcDark: 'img/logo_short_dark.svg'
       },
       items: [
         {

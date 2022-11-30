@@ -17,6 +17,7 @@
   --ifm-menu-color-background-hover: none;
   --ifm-menu-color-background-active: none;
   background-color: #ffffff;
+  font-family: 'Favorit';
 }
 [data-theme='dark'] {
   --ifm-color-primary: #ffffff;
@@ -33,6 +34,7 @@
   background: radial-gradient(farthest-side circle, #202020, #111111);
   background-repeat: no-repeat;
   background-attachment: fixed;
+  font-family: 'Favorit';
 }
 
 .markdown {
