@@ -3,6 +3,7 @@
   font-family: 'Favorit';
   font-style: 'normal';
   font-weight: 300;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavorit-Light-Named.ttf) format('truetype');
 }
 
@@ -10,6 +11,7 @@
   font-family: 'Favorit';
   font-style: 'normal';
   font-weight: 350;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavorit-Book-Named.ttf) format('truetype');
 }
 
@@ -17,6 +19,7 @@
   font-family: 'Favorit';
   font-style: 'normal';
   font-weight: 400;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavorit-Regular-Named.ttf) format('truetype');
 }
 
@@ -24,6 +27,7 @@
   font-family: 'Favorit';
   font-style: 'normal';
   font-weight: 500;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavorit-Medium-Named.ttf) format('truetype');
 }
 
@@ -31,6 +35,7 @@
   font-family: 'Favorit';
   font-style: 'normal';
   font-weight: 700;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavorit-Bold-Named.ttf) format('truetype');
 }
 
@@ -70,6 +75,7 @@
   font-family: 'Favorit Extended';
   font-style: 'normal';
   font-weight: 300;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExtended-Light-Named.ttf) format('truetype');
 }
 
@@ -77,6 +83,7 @@
   font-family: 'Favorit Extended';
   font-style: 'normal';
   font-weight: 350;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExtended-Book-Named.ttf) format('truetype');
 }
 
@@ -84,6 +91,7 @@
   font-family: 'Favorit Extended';
   font-style: 'normal';
   font-weight: 400;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExtended-Regular-Named.ttf) format('truetype');
 }
 
@@ -91,6 +99,7 @@
   font-family: 'Favorit Extended';
   font-style: 'normal';
   font-weight: 500;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExtended-Medium-Named.ttf) format('truetype');
 }
 
@@ -98,6 +107,7 @@
   font-family: 'Favorit Extended';
   font-style: 'normal';
   font-weight: 700;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExtended-Bold-Named.ttf) format('truetype');
 }
 
@@ -106,6 +116,7 @@
   font-family: 'Favorit Expanded';
   font-style: 'normal';
   font-weight: 300;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExpanded-Light-Named.ttf) format('truetype');
 }
 
@@ -113,6 +124,7 @@
   font-family: 'Favorit Expanded';
   font-style: 'normal';
   font-weight: 350;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExpanded-Book-Named.ttf) format('truetype');
 }
 
@@ -120,6 +132,7 @@
   font-family: 'Favorit Expanded';
   font-style: 'normal';
   font-weight: 400;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExpanded-Regular-Named.ttf) format('truetype');
 }
 
@@ -127,6 +140,7 @@
   font-family: 'Favorit Expanded';
   font-style: 'normal';
   font-weight: 500;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExpanded-Medium-Named.ttf) format('truetype');
 }
 
@@ -134,6 +148,7 @@
   font-family: 'Favorit Expanded';
   font-style: 'normal';
   font-weight: 700;
+  font-display: block;
   src: url(./fonts/favorit/ABCFavoritExpanded-Bold-Named.ttf) format('truetype');
 }
 
@@ -142,6 +157,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 100;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-Thin.ttf) format('truetype');
 }
 
@@ -149,6 +165,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 300;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-Light.ttf) format('truetype');
 }
 
@@ -156,6 +173,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 400;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-Regular.ttf) format('truetype');
 }
 
@@ -163,6 +181,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 600;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-SemiBold.ttf) format('truetype');
 }
 
@@ -170,6 +189,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 700;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-Bold.ttf) format('truetype');
 }
 
@@ -177,6 +197,7 @@
   font-family: 'Aime';
   font-style: 'normal';
   font-weight: 800;
+  font-display: block;
   src: url(./fonts/aime/FAMAime-ExtraBold.ttf) format('truetype');
 }
 

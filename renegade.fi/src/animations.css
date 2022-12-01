@@ -1,34 +1,38 @@
 :root {
-  --animation-duration: 1s;
+  --animation-duration: 0.75s;
   --slide-in-distance: 15px;
-  --compress-letter-spacing-start: 22px;
-  --compress-letter-spacing-end: 20px;
+  --compress-letter-spacing-start: calc(0.23 * (2vw + 70px)); /* 1.4vw */
+  --compress-letter-spacing-end: calc(0.2 * (2vw + 70px)); /* 1.2vw */
 }
 
 .fade-in-right {
-  animation: fadeIn ease var(--animation-duration), slideInRight ease var(--animation-duration);
+  animation: fadeIn ease var(--animation-duration) both,
+    slideInRight ease var(--animation-duration) both;
 }
 
-.fade-in-left-first {
-  animation: fadeIn ease var(--animation-duration),
-    slideInLeft ease var(--animation-duration);
-}
-
-.fade-in-left-second {
-  animation: fadeIn ease var(--animation-duration) 0.2s both,
-    slideInLeft ease var(--animation-duration) 0.2s both;
-}
-
-.fade-in-left-third {
-  animation: fadeIn ease var(--animation-duration) 0.4s both,
-    slideInLeft ease var(--animation-duration) 0.4s both;
+.fade-in-left {
+  animation: fadeIn ease var(--animation-duration) both,
+    slideInLeft ease var(--animation-duration) both;
 }
 
 .fade-in-compress {
-  animation: fadeIn ease var(--animation-duration), compress ease var(--animation-duration);
+  animation: fadeIn ease var(--animation-duration),
+    compress ease var(--animation-duration);
 }
 
-/* Fade In */
+.fade-out {
+  animation: fadeOut ease-in-out 0.5s both;
+
+}
+
+.translate-up {
+  animation: translateUp ease 1s both;
+}
+
+.bounce {
+  animation: bounce ease-out 0.75s infinite alternate both;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -38,7 +42,15 @@
   }
 }
 
-/* Slide In Right */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes slideInRight {
   0% {
     transform: translateX(calc(-1 * var(--slide-in-distance)));
@@ -48,7 +60,6 @@
   }
 }
 
-/* Slide In Left */
 @keyframes slideInLeft {
   0% {
     transform: translateX(var(--slide-in-distance));
@@ -58,7 +69,6 @@
   }
 }
 
-/* Compress */
 @keyframes compress {
   0% {
     letter-spacing: var(--compress-letter-spacing-start);
@@ -68,3 +78,20 @@
   }
 }
 
+@keyframes translateUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-30%);
+  }
+}

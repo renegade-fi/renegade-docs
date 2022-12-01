@@ -6,8 +6,9 @@ import './animations.css'
 import './fonts.css'
 
 import logoDark from './icons/logo_dark.svg'
-import logoDarkRotated from './icons/logo_dark_rotated.svg'
+import logoDarkVertical from './icons/logo_dark_vertical.svg'
 import backgroundPattern from './icons/background_pattern.svg'
+import backgroundPatternVertical from './icons/background_pattern_vertical.svg'
 
 import {
   BrowserRouter,
@@ -17,9 +18,9 @@ import {
 } from 'react-router-dom'
 
 import {
+  extendTheme,
   ChakraProvider,
   ColorModeScript,
-  extendTheme,
   Box,
   Flex,
   Image,
@@ -27,6 +28,8 @@ import {
   Text,
   type ThemeConfig
 } from '@chakra-ui/react'
+
+import { ArrowDownIcon } from '@chakra-ui/icons'
 
 mixpanel.init('91787e297d629eae158b8fcf156c845f')
 mixpanel.track('Initialization')
@@ -40,7 +43,8 @@ const styles = {
     body: {
       fontFamily: 'Favorit Extended',
       fontWeight: '400',
-      fontSize: '1.4rem',
+      fontSize: 'calc(0.2 * (2vw + 70px))', /* 1.4vw */
+      color: 'white',
       bg: 'black'
     }
   }
@@ -61,11 +65,27 @@ function LandingPageDesktop () {
       bg="black"
       padding="60px"
     >
-      <Box h="100%" paddingRight="50px">
+      <Box
+        h="100%"
+        marginRight="50px"
+        position="relative"
+      >
         <Image
-          src={logoDarkRotated}
+          src={logoDarkVertical}
           alt="Renegade Logo"
+          w="auto"
           h="100%"
+          htmlWidth="385"
+          htmlHeight="2467"
+        />
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          w="100%"
+          h="96.9%"
+          bg="black"
+          className="translate-up"
         />
       </Box>
       <Box flexGrow="1">
@@ -79,6 +99,13 @@ function LandingPageDesktop () {
           backgroundPosition="center"
           backgroundRepeat="no-repeat"
         >
+          <Box
+            position="absolute"
+            width="100%"
+            height="100%"
+            bg="black"
+            className="fade-out"
+          />
           <Box margin="auto">
             <Flex
               flexDirection="row"
@@ -88,15 +115,34 @@ function LandingPageDesktop () {
                 fontFamily="Aime"
                 fontWeight="700"
                 fontStyle="normal"
-                fontSize="6rem"
+                fontSize="calc(2vw + 70px)" /* 6vw */
                 letterSpacing="-1px"
                 lineHeight="90%"
                 className="fade-in-right"
               >
-                <Text>On.</Text>
-                <Text>Chain.</Text>
-                <Text>Dark.</Text>
-                <Text>Pool.</Text>
+                <Text
+                  className="fade-in-right"
+                >
+                  On.
+                </Text>
+                <Text
+                  className="fade-in-right"
+                  sx={{ animationDelay: '0.1s' }}
+                >
+                  Chain.
+                </Text>
+                <Text
+                  className="fade-in-right"
+                  sx={{ animationDelay: '0.2s' }}
+                >
+                  Dark.
+                </Text>
+                <Text
+                  className="fade-in-right"
+                  sx={{ animationDelay: '0.3s' }}
+                >
+                  Pool.
+                </Text>
               </Box>
               <Flex
                 flexDirection="column"
@@ -109,12 +155,12 @@ function LandingPageDesktop () {
                   flexDirection="column"
                   alignItems="end"
                   fontWeight="300"
-                  className="fade-in-left-first"
+                  className="fade-in-left"
                 >
                   <Link
                     isExternal
                     fontWeight="700"
-                    href="TODO"
+                    href="https://renegadefi.typeform.com/access"
                   >
                     Get Network Access
                   </Link>
@@ -133,8 +179,11 @@ function LandingPageDesktop () {
                     Read the Docs
                   </Link>
                 </Flex>
-                <Box
-                  className="fade-in-left-second"
+                <Flex
+                  flexDirection="column"
+                  alignItems="end"
+                  className="fade-in-left"
+                  sx={{ animationDelay: '0.15s' }}
                 >
                   <Text fontWeight="700">
                     Our Investors
@@ -143,7 +192,7 @@ function LandingPageDesktop () {
                     flexDirection="column"
                     alignItems="end"
                     fontWeight="300"
-                    fontSize="1rem"
+                    fontSize="calc(0.16 * (2vw + 70px))" /* 1vw */
                     opacity="80%"
                     lineHeight="125%"
                   >
@@ -183,20 +232,21 @@ function LandingPageDesktop () {
                       Symbolic Partners
                     </Link>
                   </Flex>
-                </Box>
+                </Flex>
                 <Flex
                   flexDirection="column"
                   alignItems="end"
                   fontWeight="300"
                   paddingBottom="8px"
-                  className="fade-in-left-third"
+                  className="fade-in-left"
+                  sx={{ animationDelay: '0.3s' }}
                 >
                   <Link
                     isExternal
                     fontWeight="700"
                     href="https://twitter.com/renegade_fi"
                   >
-                    Follow on Twitter
+                    Follow us on Twitter
                   </Link>
                   <Link
                     isExternal
@@ -204,6 +254,13 @@ function LandingPageDesktop () {
                     href="https://renegadefi.substack.com"
                   >
                     Read our Substack
+                  </Link>
+                  <Link
+                    isExternal
+                    sx={linksThinUnderline}
+                    href="https://discord.gg/renegade-fi"
+                  >
+                    Join the Discord
                   </Link>
                   <Link
                     isExternal
@@ -217,9 +274,9 @@ function LandingPageDesktop () {
             </Flex>
             <Box
               fontWeight="300"
-              fontSize="0.8rem"
-              letterSpacing="20px"
-              marginRight="-20px"
+              fontSize="calc(0.13 * (2vw + 70px))" /* 0.8vw */
+              letterSpacing="calc(0.2 * (2vw + 70px))" /* 1.2vw */
+              marginRight="calc(-0.2 * (2vw + 70px))" /* -1.2vw */
               paddingTop="15px"
               className="fade-in-compress"
             >
@@ -232,8 +289,191 @@ function LandingPageDesktop () {
   )
 }
 
+function LandingPageMobile () {
+  return (
+    <Flex
+      w="100vw"
+      maxW="100%"
+      minH="100vh"
+      overflowX="hidden"
+      overflowY="scroll"
+      bg="black"
+      backgroundImage={backgroundPatternVertical}
+      backgroundSize="cover"
+      backgroundPosition="top"
+      backgroundRepeat="no-repeat"
+      flexDirection="column"
+      alignItems="center"
+      paddingBottom="200px"
+      fontSize="5vw"
+    >
+      <Flex
+        height="150vw"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+      >
+          <Image
+            src={logoDark}
+            alt="Renegade Logo"
+            padding="0 50px 0 50px"
+            w="100%"
+            maxW="400px"
+            h="auto"
+            htmlWidth="2467"
+            htmlHeight="385"
+            className="fade-in-right"
+          />
+          <Box
+            paddingTop="10px"
+            fontFamily="Aime"
+            fontSize="6vw"
+            fontWeight="600"
+            className="fade-in-left"
+          >
+            On-Chain Dark Pool
+          </Box>
+      </Flex>
+      <Box className="bounce">
+        <ArrowDownIcon boxSize="2em" />
+      </Box>
+      <Flex
+        paddingTop="80px"
+        flexDirection="column"
+        alignItems="center"
+        fontWeight="300"
+        className="fade-in-right"
+      >
+        <Link
+          isExternal
+          fontWeight="700"
+          href="https://renegadefi.typeform.com/access"
+        >
+          Get Network Access
+        </Link>
+        <Link
+          isExternal
+          sx={linksThinUnderline}
+          href="https://whitepaper.renegade.fi"
+        >
+          See the Whitepaper
+        </Link>
+        <Link
+          isExternal
+          sx={linksThinUnderline}
+          href="https://docs.renegade.fi"
+        >
+          Read the Docs
+        </Link>
+      </Flex>
+      <Flex
+        paddingTop="50px"
+        flexDirection="column"
+        alignItems="center"
+        fontWeight="300"
+        className="fade-in-left"
+        sx={{ animationDelay: '0.15s' }}
+      >
+        <Text fontWeight="700">
+          Our Investors
+        </Text>
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+          fontSize="4vw"
+          lineHeight="140%"
+          opacity="80%"
+        >
+          <Link
+            isExternal
+            sx={linksThinUnderline}
+            href="https://twitter.com/dragonfly_xyz"
+          >
+            Dragonfly Capital
+          </Link>
+          <Link
+            isExternal
+            sx={linksThinUnderline}
+            href="https://twitter.com/naval"
+          >
+            Naval Ravikant
+          </Link>
+          <Link
+            isExternal
+            sx={linksThinUnderline}
+            href="https://twitter.com/balajis"
+          >
+            Balaji Srinivasan
+          </Link>
+          <Link
+            isExternal
+            sx={linksThinUnderline}
+            href="https://twitter.com/robotventures"
+          >
+            Robot Ventures
+          </Link>
+          <Link
+            isExternal
+            sx={linksThinUnderline}
+            href="https://symbolic.partners"
+          >
+            Symbolic Partners
+          </Link>
+        </Flex>
+      </Flex>
+      <Flex
+        paddingTop="50px"
+        flexDirection="column"
+        alignItems="center"
+        fontWeight="300"
+        className="fade-in-right"
+        sx={{ animationDelay: '0.3s' }}
+      >
+        <Link
+          isExternal
+          fontWeight="700"
+          href="https://twitter.com/renegade_fi"
+        >
+          Follow us on Twitter
+        </Link>
+        <Link
+          isExternal
+          sx={linksThinUnderline}
+          href="https://renegadefi.substack.com"
+        >
+          Read our Substack
+        </Link>
+        <Link
+          isExternal
+          sx={linksThinUnderline}
+          href="https://discord.gg/renegade-fi"
+        >
+          Join the Discord
+        </Link>
+        <Link
+          isExternal
+          sx={linksThinUnderline}
+          href="https://jobs.renegade.fi"
+        >
+          Work with Us
+        </Link>
+      </Flex>
+    </Flex>
+  )
+}
+
 function LandingPage () {
-  return <LandingPageDesktop />
+  const [width, setWidth] = React.useState<number>(window.innerWidth)
+  function handleWindowSizeChange () {
+    setWidth(window.innerWidth)
+  }
+  React.useEffect(() => {
+    window.addEventListener('resize', handleWindowSizeChange)
+    return () => {
+      window.removeEventListener('resize', handleWindowSizeChange)
+    }
+  }, [])
+  return width <= 768 ? <LandingPageMobile /> : <LandingPageDesktop />
 }
 
 interface ExternalNavigateProps {
