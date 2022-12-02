@@ -5,6 +5,10 @@
   --compress-letter-spacing-end: calc(0.2 * (2vw + 70px)); /* 1.2vw */
 }
 
+.pre-animation {
+  visibility: hidden;
+}
+
 .fade-in-right {
   animation: fadeIn ease var(--animation-duration) both,
     slideInRight ease var(--animation-duration) both;
@@ -22,7 +26,6 @@
 
 .fade-out {
   animation: fadeOut ease-in-out 0.5s both;
-
 }
 
 .translate-up {

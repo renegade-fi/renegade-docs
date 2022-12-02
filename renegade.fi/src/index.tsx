@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import mixpanel from 'mixpanel-browser'
+import { useInView } from 'react-intersection-observer'
 
 import './animations.css'
 import './fonts.css'
@@ -290,6 +291,15 @@ function LandingPageDesktop () {
 }
 
 function LandingPageMobile () {
+  const useInViewOptions = {
+    threshold: 0.5,
+    triggerOnce: true
+  }
+  const [refIcon, inViewIcon] = useInView({ initialInView: true })
+  const [refLinksFirst, inViewLinksFirst] = useInView(useInViewOptions)
+  const [refLinksSecond, inViewLinksSecond] = useInView(useInViewOptions)
+  const [refLinksThird, inViewLinksThird] = useInView(useInViewOptions)
+
   return (
     <Flex
       w="100vw"
@@ -307,6 +317,12 @@ function LandingPageMobile () {
       paddingBottom="200px"
       fontSize="5vw"
     >
+      <Box
+        w="100%"
+        h="0px"
+        ref={refIcon}
+        display={inViewIcon ? '' : 'none'}
+       />
       <Flex
         height="150vw"
         flexDirection="column"
@@ -334,15 +350,18 @@ function LandingPageMobile () {
             On-Chain Dark Pool
           </Box>
       </Flex>
-      <Box className="bounce">
-        <ArrowDownIcon boxSize="2em" />
+      <Box className={inViewIcon ? '' : 'fade-out'}>
+        <Box className="bounce">
+          <ArrowDownIcon boxSize="2em" />
+        </Box>
       </Box>
       <Flex
         paddingTop="80px"
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className="fade-in-right"
+        className={inViewLinksFirst ? 'fade-in-right' : 'pre-animation'}
+        ref={refLinksFirst}
       >
         <Link
           isExternal
@@ -371,7 +390,8 @@ function LandingPageMobile () {
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className="fade-in-left"
+        className={inViewLinksSecond ? 'fade-in-left' : 'pre-animation'}
+        ref={refLinksSecond}
         sx={{ animationDelay: '0.15s' }}
       >
         <Text fontWeight="700">
@@ -426,7 +446,8 @@ function LandingPageMobile () {
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className="fade-in-right"
+        className={inViewLinksThird ? 'fade-in-right' : 'pre-animation'}
+        ref={refLinksThird}
         sx={{ animationDelay: '0.3s' }}
       >
         <Link
