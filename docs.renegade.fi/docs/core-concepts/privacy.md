@@ -1,5 +1,6 @@
 ---
 sidebar_position: 4
+description: Privacy guarantees when trading on Renegade.
 ---
 
 # Privacy Guarantees

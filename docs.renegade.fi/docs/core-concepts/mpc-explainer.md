@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+description: What is multi-party computation?
 ---
 
 import Figure from '../../src/figure.js'

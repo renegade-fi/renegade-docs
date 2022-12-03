@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: Introduction
 hide_title: true
+description: Renegade is the on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.
 slug: /
 ---
 

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+description: Zero-knowldge indications of interest.
 ---
 
 import Figure from '../../src/figure.js'

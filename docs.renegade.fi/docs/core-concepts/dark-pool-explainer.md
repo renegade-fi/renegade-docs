@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+description: What is a dark pool?
 ---
 
 import Figure from '../../src/figure.js'

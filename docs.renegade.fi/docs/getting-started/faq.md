@@ -1,6 +1,7 @@
 ---
 sidebar_position: 3
 title: Frequently Asked Questions
+description: Frequently Asked Questions about Renegade.
 ---
 
 # FAQs

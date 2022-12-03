@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+description: The Renegade crypto stack.
 ---
 
 # Our Cryptographic Stack

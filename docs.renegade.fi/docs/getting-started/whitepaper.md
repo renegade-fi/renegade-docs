@@ -1,6 +1,7 @@
 ---
 sidebar_position: 2
 title: Full Whitepaper
+description: Full whitepaper for the Renegade protocol.
 ---
 
 import Figure from '../../src/figure.js'

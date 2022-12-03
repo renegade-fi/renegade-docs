@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+description: Collaborative SNARKs, the hybrid MPC-ZKP protocol.
 ---
 
 import Figure from '../../src/figure.js'

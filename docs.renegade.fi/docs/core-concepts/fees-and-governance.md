@@ -1,5 +1,6 @@
 ---
 sidebar_position: 5
+description: Exchange fees and governance ability for Renegade.
 ---
 
 # Fees and Governance

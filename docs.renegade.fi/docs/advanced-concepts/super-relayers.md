@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+description: How super-relay mode can deliver cheaper fees and lower latencies for professional traders.
 ---
 
 import Figure from '../../src/figure.js'
