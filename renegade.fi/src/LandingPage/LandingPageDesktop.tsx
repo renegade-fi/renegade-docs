@@ -51,6 +51,7 @@ export default function LandingPageDesktop () {
           h="100%"
           position="relative"
           border="7px solid white"
+          overflow="clip"
           backgroundImage={backgroundPattern}
           backgroundSize="cover"
           backgroundPosition="center"
@@ -152,38 +153,37 @@ export default function LandingPageDesktop () {
                     fontSize="calc(0.16 * (2vw + 70px))" /* 1vw */
                     opacity="80%"
                     lineHeight="125%"
+                    sx={linksThinUnderline}
                   >
+                    <Box>
+                      <Link
+                        isExternal
+                        href="https://twitter.com/dragonfly_xyz"
+                      >
+                        Dragonfly
+                      </Link>
+                      {' & '}
+                      <Link
+                        isExternal
+                        href="https://twitter.com/naval"
+                      >
+                        Naval
+                      </Link>
+                    </Box>
                     <Link
                       isExternal
-                      sx={linksThinUnderline}
-                      href="https://twitter.com/dragonfly_xyz"
-                    >
-                      Dragonfly Capital
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://twitter.com/naval"
-                    >
-                      Naval Ravikant
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://twitter.com/balajis"
-                    >
-                      Balaji Srinivasan
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
                       href="https://twitter.com/robotventures"
                     >
                       Robot Ventures
                     </Link>
                     <Link
                       isExternal
-                      sx={linksThinUnderline}
+                      href="https://twitter.com/balajis"
+                    >
+                      Balaji Srinivasan
+                    </Link>
+                    <Link
+                      isExternal
                       href="https://symbolic.partners"
                     >
                       Symbolic Partners

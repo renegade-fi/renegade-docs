@@ -129,38 +129,34 @@ export default function LandingPageMobile () {
           fontSize="4vw"
           lineHeight="140%"
           opacity="80%"
+          sx={linksThinUnderline}
         >
           <Link
             isExternal
-            sx={linksThinUnderline}
             href="https://twitter.com/dragonfly_xyz"
           >
-            Dragonfly Capital
+            Dragonfly
           </Link>
           <Link
             isExternal
-            sx={linksThinUnderline}
             href="https://twitter.com/naval"
           >
             Naval Ravikant
           </Link>
           <Link
             isExternal
-            sx={linksThinUnderline}
-            href="https://twitter.com/balajis"
-          >
-            Balaji Srinivasan
-          </Link>
-          <Link
-            isExternal
-            sx={linksThinUnderline}
             href="https://twitter.com/robotventures"
           >
             Robot Ventures
           </Link>
           <Link
             isExternal
-            sx={linksThinUnderline}
+            href="https://twitter.com/balajis"
+          >
+            Balaji Srinivasan
+          </Link>
+          <Link
+            isExternal
             href="https://symbolic.partners"
           >
             Symbolic Partners
