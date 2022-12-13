@@ -11,7 +11,7 @@
   />
 </div>
 
-### Renegade Frontend
+---
 
 This repository contains all React source for the landing page
 [renegade.fi](https://renegade.fi), technical documentation
@@ -23,7 +23,7 @@ This repository contains all React source for the landing page
     <img src="https://img.shields.io/twitter/follow/renegade_fi?style=social" />
   </a>
   <a href="https://discord.gg/renegade-fi" target="_blank">
-    <img src="https://img.shields.io/discord/1032770899675463771?label=Join%20Discord&logo=discord&style=social"
+    <img src="https://img.shields.io/discord/1032770899675463771?label=Join%20Discord&logo=discord&style=social" />
   </a>
 </div>
 
