@@ -1,0 +1,61 @@
+{
+  "name": "testnet.renegade.fi",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/react": "^2.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.4.1",
+    "react-router-dom": "^6.4.4",
+    "react-scripts": "5.0.1",
+    "react-ts-tradingview-widgets": "^1.0.14",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "npx parcel serve src/index.html --no-cache --open",
+    "build": "rm -r dist/; npx parcel build src/index.html --no-cache",
+    "prettier": "npx prettier --write src/ --config ./.prettierrc",
+    "eslint": "npx eslint src/ --ext .tsx --fix --config ./.eslintrc.js",
+    "lint": "npm run prettier && npm run eslint",
+    "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
+    "deploy:prod": "npm run build && bash ./scripts/deploy.sh --prod",
+    "deploy:all": "npm run build && bash ./scripts/deploy.sh --dev && bash ./scripts/deploy.sh --prod"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@parcel/config-default": "^2.8.0",
+    "@parcel/optimizer-cssnano": "^2.8.2",
+    "@parcel/packager-raw-url": "^2.8.0",
+    "@parcel/transformer-webmanifest": "^2.8.0",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
+    "buffer": "^5.7.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-react": "^7.28.0",
+    "parcel": "^2.8.2",
+    "parcel-transformer-bypass": "^1.0.0",
+    "path-browserify": "^1.0.1",
+    "prettier": "^2.8.1",
+    "process": "^0.11.10"
+  }
+}

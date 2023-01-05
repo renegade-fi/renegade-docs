@@ -6,13 +6,17 @@
 /renegade.fi/package-lock.json
 /docs.renegade.fi/node_modules
 /docs.renegade.fi/package-lock.json
+/testnet.renegade.fi/node_modules
+/testnet.renegade.fi/package-lock.json
 
 # Parcel
 /renegade.fi/.parcel-cache
+/testnet.renegade.fi/.parcel-cache
 
 # Build
 /renegade.fi/dist
 /docs.renegade.fi/build
+/testnet.renegade.fi/dist
 
 # Docusaurus
 /docs.renegade.fi/.docusaurus
@@ -20,4 +24,5 @@
 # Fonts
 /renegade.fi/src/fonts
 /docs.renegade.fi/src/fonts
+/testnet.renegade.fi/src/fonts
 
