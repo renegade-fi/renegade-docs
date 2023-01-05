@@ -4,9 +4,11 @@ import {
   TICKER_TO_ADDR,
   TICKER_TO_NAME,
   TICKER_TO_DEFAULT_DECIMALS,
+  TICKER_TO_LOGO_URL,
 } from "../../tokens";
 
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 
 // URL information for the local relayer
 const RELAYER_URL = "127.0.0.1";
@@ -87,6 +89,26 @@ function MidpointPriceStream(props: MidpointPriceStreamProps) {
     props.currentPriceReport.localTimestamp,
   ].join("_");
 
+  // Create the icon to display next to the price
+  let triangleIcon: null | React.ReactElement;
+  if (priceStrClass === "") {
+    triangleIcon = null;
+  } else if (priceStrClass === "fade-green-to-white") {
+    triangleIcon = (
+      <TriangleUpIcon
+        className="fade-green-to-transparent"
+        key={key + "_icon"}
+      />
+    );
+  } else {
+    triangleIcon = (
+      <TriangleDownIcon
+        className="fade-red-to-transparent"
+        key={key + "_icon"}
+      />
+    );
+  }
+
   return (
     <Box minWidth="200px" maxWidth="600px" margin="5px">
       <Flex
@@ -97,27 +119,52 @@ function MidpointPriceStream(props: MidpointPriceStreamProps) {
         bg="#363031"
         borderRadius="5px"
       >
-        <Text fontWeight="400" fontSize="1.1em" lineHeight="105%">
-          {`${props.baseTokenTicker}-${props.quoteTokenTicker}`}
-        </Text>
-        <Text fontWeight="200" fontSize="0.8em" opacity="40%">
-          {`${TICKER_TO_NAME[props.baseTokenTicker]} / ${
-            TICKER_TO_NAME[props.quoteTokenTicker]
-          }`}
-        </Text>
-        <Text
-          paddingTop="2px"
-          fontWeight="400"
-          fontSize="1.3em"
-          fontFamily="Favorit Mono"
-          opacity={
-            props.currentPriceReport == DEFAULT_PRICE_REPORT ? "20%" : "100%"
-          }
-          className={priceStrClass}
-          key={key}
-        >
-          {priceStr}
-        </Text>
+        <Flex width="100%" flexDirection="row" alignItems="center">
+          <Box height="28px" width="28px" position="relative">
+            <Image
+              width="20px"
+              height="20px"
+              position="absolute"
+              src={TICKER_TO_LOGO_URL[props.baseTokenTicker]}
+              zIndex="1"
+            />
+            <Image
+              width="20px"
+              height="20px"
+              position="absolute"
+              top="8px"
+              left="8px"
+              src={TICKER_TO_LOGO_URL[props.quoteTokenTicker]}
+              zIndex="0"
+            />
+          </Box>
+          <Box paddingLeft="10px">
+            <Text fontWeight="400" fontSize="1.1em" lineHeight="105%">
+              {`${props.baseTokenTicker}-${props.quoteTokenTicker}`}
+            </Text>
+            <Text fontWeight="200" fontSize="0.8em" opacity="40%">
+              {`${TICKER_TO_NAME[props.baseTokenTicker]} / ${
+                TICKER_TO_NAME[props.quoteTokenTicker]
+              }`}
+            </Text>
+          </Box>
+        </Flex>
+        <Flex paddingTop="2px" alignItems="center">
+          <Text
+            paddingRight="5px"
+            fontWeight="400"
+            fontSize="1.3em"
+            fontFamily="Favorit Mono"
+            opacity={
+              props.currentPriceReport == DEFAULT_PRICE_REPORT ? "20%" : "100%"
+            }
+            className={priceStrClass}
+            key={key + "_price"}
+          >
+            {priceStr}
+          </Text>
+          {triangleIcon}
+        </Flex>
       </Flex>
     </Box>
   );

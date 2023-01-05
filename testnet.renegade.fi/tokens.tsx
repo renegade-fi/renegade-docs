@@ -1,3 +1,5 @@
+const TOKENLIST_URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
+
 export const ADDR_TO_TICKER = {
   "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": "WBTC",
   "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": "WETH",
@@ -119,4 +121,15 @@ for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
   TICKER_TO_NAME[ticker] = TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][0];
   TICKER_TO_DEFAULT_DECIMALS[ticker] = TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][1];
 }
+
+export const TICKER_TO_LOGO_URL = {};
+fetch(TOKENLIST_URL).then(resp => resp.json()).then(data => {
+  for (const token of data.tokens) {
+    let ticker = ADDR_TO_TICKER[token.address.toLowerCase()];
+    if (ticker !== undefined) {
+      TICKER_TO_LOGO_URL[ticker] = token.logoURI;
+    }
+  }
+})
+
 

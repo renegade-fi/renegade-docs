@@ -15,6 +15,16 @@
     var(--price-report-fade-duration) both;
 }
 
+.fade-red-to-transparent {
+  animation: fadeRedToTransparent var(--price-report-fade-timing-function)
+    var(--price-report-fade-duration) both;
+}
+
+.fade-green-to-transparent {
+  animation: fadeGreenToTransparent var(--price-report-fade-timing-function)
+    var(--price-report-fade-duration) both;
+}
+
 @keyframes fadeRedToWhite {
   0% {
     color: var(--price-report-fade-red);
@@ -30,5 +40,25 @@
   }
   100% {
     color: white;
+  }
+}
+
+@keyframes fadeRedToTransparent {
+  0% {
+    color: var(--price-report-fade-red);
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
+  }
+}
+
+@keyframes fadeGreenToTransparent {
+  0% {
+    color: var(--price-report-fade-green);
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
   }
 }
