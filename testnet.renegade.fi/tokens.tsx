@@ -1,3 +1,77 @@
+import wbtcLogo from "./src/icons/tokens/wbtc.png"
+import wethLogo from "./src/icons/tokens/weth.png"
+import bnbLogo from "./src/icons/tokens/bnb.png"
+import maticLogo from "./src/icons/tokens/matic.png"
+import ftmLogo from "./src/icons/tokens/ftm.png"
+import gnoLogo from "./src/icons/tokens/gno.png"
+import cbethLogo from "./src/icons/tokens/cbeth.png"
+import ldoLogo from "./src/icons/tokens/ldo.png"
+import usdtLogo from "./src/icons/tokens/usdt.png"
+import bandLogo from "./src/icons/tokens/band.png"
+import linkLogo from "./src/icons/tokens/link.png"
+import crvLogo from "./src/icons/tokens/crv.png"
+import dydxLogo from "./src/icons/tokens/dydx.png"
+import sushiLogo from "./src/icons/tokens/sushi.png"
+import inchLogo from "./src/icons/tokens/1inch.png"
+import balLogo from "./src/icons/tokens/bal.png"
+import hftLogo from "./src/icons/tokens/hft.png"
+import truLogo from "./src/icons/tokens/tru.png"
+import mplLogo from "./src/icons/tokens/mpl.png"
+import snxLogo from "./src/icons/tokens/snx.png"
+import tornLogo from "./src/icons/tokens/torn.png"
+import renLogo from "./src/icons/tokens/ren.png"
+import stgLogo from "./src/icons/tokens/stg.png"
+import qntLogo from "./src/icons/tokens/qnt.png"
+import lrcLogo from "./src/icons/tokens/lrc.png"
+import bobaLogo from "./src/icons/tokens/boba.png"
+import axsLogo from "./src/icons/tokens/axs.png"
+import rareLogo from "./src/icons/tokens/rare.png"
+import shibLogo from "./src/icons/tokens/shib.png"
+import peopleLogo from "./src/icons/tokens/people.png"
+import omgLogo from "./src/icons/tokens/omg.png"
+import ensLogo from "./src/icons/tokens/ens.png"
+import galaLogo from "./src/icons/tokens/gala.png"
+import audioLogo from "./src/icons/tokens/audio.png"
+import radLogo from "./src/icons/tokens/rad.png"
+
+const LOGO_URL_OVERRIDES = {
+  WBTC: wbtcLogo,
+  WETH: wethLogo,
+  BNB: bnbLogo,
+  MATIC: maticLogo,
+  FTM: ftmLogo,
+  GNO: gnoLogo,
+  CBETH: cbethLogo,
+  LDO: ldoLogo,
+  USDT: usdtLogo,
+  BAND: bandLogo,
+  LINK: linkLogo,
+  CRV: crvLogo,
+  DYDX: dydxLogo,
+  SUSHI: sushiLogo,
+  "1INCH": inchLogo,
+  BAL: balLogo,
+  HFT: hftLogo,
+  TRU: truLogo,
+  MPL: mplLogo,
+  SNX: snxLogo,
+  TORN: tornLogo,
+  REN: renLogo,
+  STG: stgLogo,
+  QNT: qntLogo,
+  LRC: lrcLogo,
+  BOBA: bobaLogo,
+  AXS: axsLogo,
+  RARE: rareLogo,
+  SHIB: shibLogo,
+  PEOPLE: peopleLogo,
+  OMG: omgLogo,
+  ENS: ensLogo,
+  GALA: galaLogo,
+  AUDIO: audioLogo,
+  RAD: radLogo,
+}
+
 const TOKENLIST_URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
 
 export const ADDR_TO_TICKER = {
@@ -122,14 +196,24 @@ for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
   TICKER_TO_DEFAULT_DECIMALS[ticker] = TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][1];
 }
 
-export const TICKER_TO_LOGO_URL = {};
-fetch(TOKENLIST_URL).then(resp => resp.json()).then(data => {
+export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL).then(resp => resp.json()).then(data => {
+  let TICKER_TO_LOGO_URL = {}
+  // Process all logos from TrustWallet
   for (const token of data.tokens) {
     let ticker = ADDR_TO_TICKER[token.address.toLowerCase()];
     if (ticker !== undefined) {
       TICKER_TO_LOGO_URL[ticker] = token.logoURI;
     }
   }
+  // Put in some manual overrides, for unaesthetic or missing logos
+  for (const ticker in LOGO_URL_OVERRIDES) {
+    TICKER_TO_LOGO_URL[ticker] = LOGO_URL_OVERRIDES[ticker]
+  }
+  // Warn about missing logos
+  for (const ticker in TICKER_TO_ADDR) {
+    if (TICKER_TO_LOGO_URL[ticker] === undefined) {
+      console.warn("Missing logo:", ticker)
+    }
+  }
+  return TICKER_TO_LOGO_URL
 })
-
-

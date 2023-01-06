@@ -4,7 +4,7 @@ import {
   TICKER_TO_ADDR,
   TICKER_TO_NAME,
   TICKER_TO_DEFAULT_DECIMALS,
-  TICKER_TO_LOGO_URL,
+  TICKER_TO_LOGO_URL_HANDLE,
 } from "../../tokens";
 
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
@@ -19,7 +19,7 @@ const RELAYER_WS_PORT = 4000;
 const RELAYER_HTTP_URL = `http://${RELAYER_URL}:${RELAYER_HTTP_PORT}`;
 const RELAYER_WS_URL = `ws://${RELAYER_URL}:${RELAYER_WS_PORT}`;
 
-const UPDATE_THRESHOLD_MS = 100;
+const UPDATE_THRESHOLD_MS = 50;
 const relayerConnection = new WebSocket(RELAYER_WS_URL);
 
 interface PriceReport {
@@ -45,8 +45,11 @@ const DEFAULT_PRICE_REPORT = {
 interface MidpointPriceStreamProps {
   baseTokenTicker: string;
   quoteTokenTicker: string;
+  baseTokenLogoUrl?: string;
+  quoteTokenLogoUrl?: string;
   previousPriceReport: PriceReport;
   currentPriceReport: PriceReport;
+  tickerToLogoUrl: { [ticker: string]: string };
 }
 function MidpointPriceStream(props: MidpointPriceStreamProps) {
   let price: number;
@@ -110,7 +113,7 @@ function MidpointPriceStream(props: MidpointPriceStreamProps) {
   }
 
   return (
-    <Box minWidth="200px" maxWidth="600px" margin="5px">
+    <Box margin="5px">
       <Flex
         width="100%"
         flexDirection="column"
@@ -125,7 +128,7 @@ function MidpointPriceStream(props: MidpointPriceStreamProps) {
               width="20px"
               height="20px"
               position="absolute"
-              src={TICKER_TO_LOGO_URL[props.baseTokenTicker]}
+              src={props.baseTokenLogoUrl}
               zIndex="1"
             />
             <Image
@@ -134,7 +137,7 @@ function MidpointPriceStream(props: MidpointPriceStreamProps) {
               position="absolute"
               top="8px"
               left="8px"
-              src={TICKER_TO_LOGO_URL[props.quoteTokenTicker]}
+              src={props.quoteTokenLogoUrl}
               zIndex="0"
             />
           </Box>
@@ -177,6 +180,7 @@ interface MidpointPriceStreamsState {
   priceReports: {
     [priceReportsKey: string]: { [previousOrCurrent: string]: PriceReport };
   };
+  tickerToLogoUrl: { [ticker: string]: string };
 }
 export default class MidpointPriceStreams extends React.Component<
   MidpointPriceStreamsProps,
@@ -194,12 +198,13 @@ export default class MidpointPriceStreams extends React.Component<
     }
     this.state = {
       priceReports,
+      tickerToLogoUrl: {},
     };
     this.handlePriceReport = this.handlePriceReport.bind(this);
   }
 
-  componentDidMount() {
-    relayerConnection.onopen = () => {
+  async componentDidMount() {
+    relayerConnection.addEventListener("open", () => {
       // Send subscribe messages for all the displayedPairs
       for (const pair of this.props.displayedPairsTickers) {
         const topic = `price-report-${TICKER_TO_ADDR[pair[0]]}-${
@@ -211,15 +216,17 @@ export default class MidpointPriceStreams extends React.Component<
             topic,
           })
         );
+        console.log("Sent subscription request for:", topic);
       }
-    };
+    });
+    // Receive all messages from the relayer
     const lastUpdate = {};
     for (const pair of this.props.displayedPairsTickers) {
       const priceReportsKey = TICKER_TO_ADDR[pair[0]] + TICKER_TO_ADDR[pair[1]];
       lastUpdate[priceReportsKey] = 0;
     }
-    relayerConnection.onmessage = (message) => {
-      const parsedMessage = JSON.parse(message.data);
+    relayerConnection.addEventListener("message", (event) => {
+      const parsedMessage = JSON.parse(event.data);
       if (parsedMessage.type !== "pricereportmedian") {
         console.log("Received a message:", parsedMessage);
         return;
@@ -240,7 +247,11 @@ export default class MidpointPriceStreams extends React.Component<
       }
       lastUpdate[priceReportsKey] = now;
       this.handlePriceReport(parsedMessage);
-    };
+    });
+    // Await the token URLs
+    this.setState({
+      tickerToLogoUrl: await TICKER_TO_LOGO_URL_HANDLE,
+    });
   }
 
   handlePriceReport(newPriceReport: PriceReport) {
@@ -257,7 +268,7 @@ export default class MidpointPriceStreams extends React.Component<
 
   render() {
     return (
-      <Flex flexDirection="row" padding="20px">
+      <Flex flexDirection="row" flexWrap="wrap" padding="20px">
         {this.props.displayedPairsTickers.map((pairTickers) => {
           const priceReportsKey =
             TICKER_TO_ADDR[pairTickers[0]] + TICKER_TO_ADDR[pairTickers[1]];
@@ -266,6 +277,8 @@ export default class MidpointPriceStreams extends React.Component<
               key={priceReportsKey}
               baseTokenTicker={pairTickers[0]}
               quoteTokenTicker={pairTickers[1]}
+              baseTokenLogoUrl={this.state.tickerToLogoUrl[pairTickers[0]]}
+              quoteTokenLogoUrl={this.state.tickerToLogoUrl[pairTickers[1]]}
               previousPriceReport={
                 this.state.priceReports[priceReportsKey].previous
               }
