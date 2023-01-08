@@ -34,6 +34,8 @@ import galaLogo from "./src/icons/tokens/gala.png"
 import audioLogo from "./src/icons/tokens/audio.png"
 import radLogo from "./src/icons/tokens/rad.png"
 
+const TOKENLIST_URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
+
 const LOGO_URL_OVERRIDES = {
   WBTC: wbtcLogo,
   WETH: wethLogo,
@@ -71,8 +73,6 @@ const LOGO_URL_OVERRIDES = {
   AUDIO: audioLogo,
   RAD: radLogo,
 }
-
-const TOKENLIST_URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
 
 export const ADDR_TO_TICKER = {
   "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": "WBTC",

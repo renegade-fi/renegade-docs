@@ -25,6 +25,14 @@
     var(--price-report-fade-duration) both;
 }
 
+.token-banner {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.token-banner::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes fadeRedToWhite {
   0% {
     color: var(--price-report-fade-red);
@@ -60,5 +68,14 @@
   }
   100% {
     opacity: 0%;
+  }
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
   }
 }

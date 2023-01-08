@@ -1,94 +1,42 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import MidpointPriceStreams from "./RelayerStreams/MidpointPriceStreams";
+import TradingInterface from "./components/TradingInterface";
 
 import "./fonts.css";
 import "./animations.css";
 
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-
 import {
+  Box,
   ChakraProvider,
   ColorModeScript,
   type ThemeConfig,
   extendTheme,
 } from "@chakra-ui/react";
 
+// Chakra theme
 const config: ThemeConfig = {
-    initialColorMode: "system",
-    useSystemColorMode: true,
-  },
-  styles = {
-    global: {
-      body: {
-        fontFamily: "Favorit",
-        fontWeight: "400",
-        color: "white",
-        bg: "#231F20",
-      },
+  initialColorMode: "system",
+  useSystemColorMode: true,
+};
+const styles = {
+  global: {
+    body: {
+      fontFamily: "Favorit",
+      fontWeight: "400",
+      color: "white",
+      bg: "#231F20",
     },
   },
-  theme = extendTheme({ config, styles });
+};
+const theme = extendTheme({ config, styles });
 
 function Testnet() {
   return (
-    <MidpointPriceStreams
-      displayedPairsTickers={[
-        ["WBTC", "USDC"],
-        ["WETH", "USDC"],
-        ["BNB", "USDC"],
-        ["MATIC", "USDC"],
-        ["FTM", "USDC"],
-        ["GNO", "USDC"],
-        ["CBETH", "USDC"],
-        ["LDO", "USDC"],
-        ["USDC", "USDC"],
-        ["USDT", "USDC"],
-        ["BUSD", "USDC"],
-        ["BAND", "USDC"],
-        ["LINK", "USDC"],
-        ["UNI", "USDC"],
-        ["CRV", "USDC"],
-        ["DYDX", "USDC"],
-        ["SUSHI", "USDC"],
-        ["1INCH", "USDC"],
-        ["BAL", "USDC"],
-        ["HFT", "USDC"],
-        ["PERP", "USDC"],
-        ["WOO", "USDC"],
-        ["ZRX", "USDC"],
-        ["AAVE", "USDC"],
-        ["COMP", "USDC"],
-        ["MKR", "USDC"],
-        ["YFI", "USDC"],
-        ["SPELL", "USDC"],
-        ["TRU", "USDC"],
-        ["MPL", "USDC"],
-        ["SNX", "USDC"],
-        ["REP", "USDC"],
-        ["TORN", "USDC"],
-        ["REN", "USDC"],
-        ["STG", "USDC"],
-        ["QNT", "USDC"],
-        ["LRC", "USDC"],
-        ["BOBA", "USDC"],
-        ["APE", "USDC"],
-        ["AXS", "USDC"],
-        ["ENJ", "USDC"],
-        ["RARE", "USDC"],
-        ["SHIB", "USDC"],
-        ["PEOPLE", "USDC"],
-        ["OMG", "USDC"],
-        ["GRT", "USDC"],
-        ["ENS", "USDC"],
-        ["MANA", "USDC"],
-        ["GALA", "USDC"],
-        ["RAD", "USDC"],
-        ["AUDIO", "USDC"],
-        ["BAT", "USDC"],
-      ]}
-    />
+    <Box minHeight="100vh" width="100vw" bg="#363031" borderRadius="10px">
+      <TradingInterface />
+    </Box>
   );
 }
 
