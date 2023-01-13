@@ -1,17 +1,17 @@
-import React from "react";
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import React from "react";
 
-import RenegadeConnection, {
-  PriceReport,
-  DEFAULT_PRICE_REPORT,
-} from "../connections/RenegadeConnection";
 import {
   TICKER_TO_ADDR,
   TICKER_TO_NAME,
   TICKER_TO_DEFAULT_DECIMALS,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "../../tokens";
+import RenegadeConnection, {
+  PriceReport,
+  DEFAULT_PRICE_REPORT,
+} from "../connections/RenegadeConnection";
 
 const UPDATE_THRESHOLD_MS = 10;
 

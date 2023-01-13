@@ -1,17 +1,69 @@
-import React from "react";
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import { HStack, Image, Text } from "@chakra-ui/react";
+import React from "react";
 
-import RenegadeConnection, {
-  PriceReport,
-  DEFAULT_PRICE_REPORT,
-} from "../connections/RenegadeConnection";
+const DISPLAYED_TICKERS: [string, string][] = [
+  ["WBTC", "USDC"],
+  ["WETH", "USDC"],
+  ["BNB", "USDC"],
+  ["MATIC", "USDC"],
+  ["FTM", "USDC"],
+  ["GNO", "USDC"],
+  ["CBETH", "USDC"],
+  ["LDO", "USDC"],
+  ["BAND", "USDC"],
+  ["LINK", "USDC"],
+  ["UNI", "USDC"],
+  ["CRV", "USDC"],
+  ["DYDX", "USDC"],
+  ["SUSHI", "USDC"],
+  ["1INCH", "USDC"],
+  ["BAL", "USDC"],
+  ["HFT", "USDC"],
+  ["PERP", "USDC"],
+  // ["WOO", "USDC"],
+  ["ZRX", "USDC"],
+  ["AAVE", "USDC"],
+  ["COMP", "USDC"],
+  ["MKR", "USDC"],
+  ["YFI", "USDC"],
+  ["SPELL", "USDC"],
+  ["TRU", "USDC"],
+  ["MPL", "USDC"],
+  ["SNX", "USDC"],
+  ["REP", "USDC"],
+  ["TORN", "USDC"],
+  // ["REN", "USDC"],
+  // ["STG", "USDC"],
+  // ["QNT", "USDC"],
+  // ["LRC", "USDC"],
+  // ["BOBA", "USDC"],
+  // ["APE", "USDC"],
+  // ["AXS", "USDC"],
+  // ["ENJ", "USDC"],
+  // ["RARE", "USDC"],
+  // ["SHIB", "USDC"],
+  // ["PEOPLE", "USDC"],
+  // ["OMG", "USDC"],
+  // ["GRT", "USDC"],
+  // ["ENS", "USDC"],
+  // ["MANA", "USDC"],
+  // ["GALA", "USDC"],
+  // ["RAD", "USDC"],
+  // ["AUDIO", "USDC"],
+  // ["BAT", "USDC"],
+];
+
 import {
   TICKER_TO_ADDR,
   TICKER_TO_NAME,
   TICKER_TO_DEFAULT_DECIMALS,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "../../tokens";
+import RenegadeConnection, {
+  PriceReport,
+  DEFAULT_PRICE_REPORT,
+} from "../connections/RenegadeConnection";
 
 const UPDATE_THRESHOLD_MS = 100;
 
@@ -219,7 +271,6 @@ class ConnectionStatus extends React.Component<
 
 interface TokenBannerProps {
   renegadeConnection: RenegadeConnection;
-  displayedTickers: [string, string][];
 }
 interface TokenBannerState {
   isHovered: boolean;
@@ -247,7 +298,7 @@ export default class TokenBanner extends React.Component<
   }
 
   getAllTokenBannerSingle(key: number) {
-    const allTokenBannerSingle = this.props.displayedTickers.map((tickers) => {
+    const allTokenBannerSingle = DISPLAYED_TICKERS.map((tickers) => {
       return (
         <TokenBannerSingle
           key={tickers.toString() + "_" + key.toString()}
@@ -278,7 +329,7 @@ export default class TokenBanner extends React.Component<
     this.setState({
       hasMounted: true,
     });
-    this.performScroll();
+    // this.performScroll();
   }
 
   onMouseEnter(event) {
@@ -318,11 +369,14 @@ export default class TokenBanner extends React.Component<
       .concat(this.getAllTokenBannerSingle(3));
     return (
       <HStack
+        width="100%"
+        height="var(--banner-height)"
+        cursor="pointer"
         overflowX="visible"
         overflowY="hidden"
-        height="100px"
-        cursor="pointer"
-        bg="black"
+        borderTop="var(--border)"
+        borderBottom="var(--border)"
+        borderColor="border"
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         onMouseDown={this.onMouseDown}
