@@ -18,7 +18,30 @@ const renegadeConnection = new RenegadeConnection({
   relayerWsPort: 4000,
 });
 
-export default class TradingInterface extends React.Component {
+interface TradingInterfaceState {
+  activeBaseTicker: string;
+  activeQuoteTicker: string;
+}
+export default class TradingInterface extends React.Component<
+  {},
+  TradingInterfaceState
+> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      activeBaseTicker: "WETH",
+      activeQuoteTicker: "USDC",
+    };
+    this.setActiveTickers = this.setActiveTickers.bind(this);
+  }
+
+  setActiveTickers(baseTicker: string, quoteTicker: string) {
+    this.setState({
+      activeBaseTicker: baseTicker,
+      activeQuoteTicker: quoteTicker,
+    });
+  }
+
   render() {
     return (
       <Flex
@@ -27,16 +50,28 @@ export default class TradingInterface extends React.Component {
         backgroundImage={backgroundPattern}
         backgroundSize="cover"
       >
-        <ExchangeConnectionsBanner />
+        <ExchangeConnectionsBanner
+          activeBaseTicker={this.state.activeBaseTicker}
+          activeQuoteTicker={this.state.activeQuoteTicker}
+        />
         <Flex flexGrow="1">
           <WalletsPanel />
           <Flex flexDirection="column" flexGrow="1">
-            <RelayerStatusBanner />
-            <TradingBody />
+            <RelayerStatusBanner
+              activeBaseTicker={this.state.activeBaseTicker}
+              activeQuoteTicker={this.state.activeQuoteTicker}
+            />
+            <TradingBody
+              activeBaseTicker={this.state.activeBaseTicker}
+              activeQuoteTicker={this.state.activeQuoteTicker}
+            />
           </Flex>
           <OrdersAndCounterpartiesPanel />
         </Flex>
-        <AllTokensBanner renegadeConnection={renegadeConnection} />
+        <AllTokensBanner
+          renegadeConnection={renegadeConnection}
+          setActiveTickers={this.setActiveTickers}
+        />
       </Flex>
     );
   }

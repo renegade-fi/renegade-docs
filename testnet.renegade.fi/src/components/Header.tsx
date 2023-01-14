@@ -12,11 +12,11 @@ export default function Header() {
       borderBottom="var(--border)"
       borderColor="border"
     >
-      <Box width="20%">
-        <Image height="var(--banner-height)" paddingLeft="5%" src={glyphDark} />
+      <Box width="20%" userSelect="none">
+        <Image height="var(--banner-height)" marginLeft="5%" src={glyphDark} />
       </Box>
       <Spacer />
-      <HStack spacing="20px" fontWeight="300" color="white.90">
+      <HStack spacing="20px" fontWeight="300" fontSize="1.1em" color="white.90">
         <Link
           href="https://twitter.com/renegade_fi"
           isExternal
@@ -40,6 +40,7 @@ export default function Header() {
           textAlign="right"
           paddingRight="10%"
           fontWeight="800"
+          fontSize="1.1em"
           color="white.90"
         >
           Connect Wallet

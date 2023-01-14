@@ -1,6 +1,8 @@
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
-import { HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import React from "react";
+
+import { BannerSeparator, PulsingConnection } from "./BannerCommon";
 
 const DISPLAYED_TICKERS: [string, string][] = [
   ["WBTC", "USDC"],
@@ -54,28 +56,23 @@ const DISPLAYED_TICKERS: [string, string][] = [
   // ["BAT", "USDC"],
 ];
 
-import {
-  TICKER_TO_ADDR,
-  TICKER_TO_NAME,
-  TICKER_TO_DEFAULT_DECIMALS,
-  TICKER_TO_LOGO_URL_HANDLE,
-} from "../../tokens";
 import RenegadeConnection, {
   PriceReport,
   DEFAULT_PRICE_REPORT,
 } from "../connections/RenegadeConnection";
+import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
 
 const UPDATE_THRESHOLD_MS = 100;
 
 interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
+  setActiveTickers: (baseTicker: string, quoteTicker: string) => void;
   baseTokenTicker: string;
   quoteTokenTicker: string;
 }
 interface TokenBannerSingleState {
   previousPriceReport: PriceReport;
   currentPriceReport: PriceReport;
-  baseTokenLogoUrl: string;
 }
 class TokenBannerSingle extends React.Component<
   TokenBannerSingleProps,
@@ -88,19 +85,13 @@ class TokenBannerSingle extends React.Component<
     this.state = {
       previousPriceReport: DEFAULT_PRICE_REPORT,
       currentPriceReport: DEFAULT_PRICE_REPORT,
-      baseTokenLogoUrl: "DEFAULT.png", // TODO
     };
     this.handlePriceReport = this.handlePriceReport.bind(this);
+    this.onClick = this.onClick.bind(this);
     this.ref = React.createRef();
   }
 
   async componentDidMount() {
-    // Await the token URLs
-    const TICKER_TO_LOGO_URL = await TICKER_TO_LOGO_URL_HANDLE;
-    this.setState({
-      baseTokenLogoUrl: TICKER_TO_LOGO_URL[this.props.baseTokenTicker],
-    });
-
     // Await for websocket connection opened
     await this.props.renegadeConnection.awaitConnection();
 
@@ -139,13 +130,11 @@ class TokenBannerSingle extends React.Component<
     });
   }
 
-  shouldComponentUpdate(): boolean {
-    // if (this.ref) {
-    //   const boundingRect = this.ref.current.getBoundingClientRect();
-    //   // console.log("Bounding rect:", this.props.baseTokenTicker, boundingRect);
-    //   return boundingRect.left > 0 && boundingRect.right < window.innerWidth;
-    // }
-    return true;
+  onClick() {
+    this.props.setActiveTickers(
+      this.props.baseTokenTicker,
+      this.props.quoteTokenTicker
+    );
   }
 
   render() {
@@ -194,9 +183,9 @@ class TokenBannerSingle extends React.Component<
     ].join("_");
 
     // Create the icon to display next to the price
-    let triangleIcon: React.ReactElement;
+    let priceIcon: React.ReactElement;
     if (priceStrClass === "") {
-      triangleIcon = (
+      priceIcon = (
         <TriangleUpIcon
           width="12px"
           height="12px"
@@ -205,7 +194,7 @@ class TokenBannerSingle extends React.Component<
         />
       );
     } else if (priceStrClass === "fade-green-to-white") {
-      triangleIcon = (
+      priceIcon = (
         <TriangleUpIcon
           width="12px"
           height="12px"
@@ -214,7 +203,7 @@ class TokenBannerSingle extends React.Component<
         />
       );
     } else {
-      triangleIcon = (
+      priceIcon = (
         <TriangleDownIcon
           width="12px"
           height="12px"
@@ -225,68 +214,56 @@ class TokenBannerSingle extends React.Component<
     }
 
     return (
-      <HStack ref={this.ref} userSelect="none" pointerEvents="none">
-        <Image width="20px" height="20px" src={this.state.baseTokenLogoUrl} />
-        <Text whiteSpace="nowrap" fontWeight="200" fontSize="1em">
-          {TICKER_TO_NAME[this.props.baseTokenTicker]}
+      <HStack onClick={this.onClick}>
+        <Text fontFamily="Favorit Expanded" color="white.80">
+          {this.props.baseTokenTicker}
         </Text>
-        <HStack width="150px">
-          <Text
-            fontWeight="200"
-            fontSize="1em"
-            fontFamily="Favorit Mono"
-            opacity={
-              this.state.currentPriceReport == DEFAULT_PRICE_REPORT
-                ? "20%"
-                : "100%"
-            }
-            className={priceStrClass}
-            key={key + "_price"}
-          >
-            {priceStr}
-          </Text>
-          {triangleIcon}
-        </HStack>
+        <Text
+          fontFamily="Favorit Mono"
+          color="white.80"
+          opacity={
+            this.state.currentPriceReport == DEFAULT_PRICE_REPORT
+              ? "20%"
+              : "100%"
+          }
+          className={priceStrClass}
+          key={key + "_price"}
+        >
+          ${priceStr}
+        </Text>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          width="12px"
+          position="relative"
+        >
+          <Box position="absolute">
+            <BannerSeparator size="medium" />
+          </Box>
+          {priceIcon}
+        </Flex>
       </HStack>
     );
   }
 }
 
-interface ConnectionStatusProps {
+interface AllTokensBannerProps {
   renegadeConnection: RenegadeConnection;
+  setActiveTickers: (baseTicker: string, quoteTicker: string) => void;
 }
-interface ConnectionStatusState {}
-class ConnectionStatus extends React.Component<
-  ConnectionStatusProps,
-  ConnectionStatusState
-> {
-  constructor(props: ConnectionStatusProps) {
-    super(props);
-  }
-
-  render() {
-    return null;
-  }
-}
-
-interface TokenBannerProps {
-  renegadeConnection: RenegadeConnection;
-}
-interface TokenBannerState {
+interface AllTokensBannerState {
   isHovered: boolean;
   isClicked: boolean;
-  hasMounted: boolean;
 }
-export default class TokenBanner extends React.Component<
-  TokenBannerProps,
-  TokenBannerState
+export default class AllTokensBanner extends React.Component<
+  AllTokensBannerProps,
+  AllTokensBannerState
 > {
-  constructor(props: TokenBannerProps) {
+  constructor(props: AllTokensBannerProps) {
     super(props);
     this.state = {
       isHovered: false,
       isClicked: false,
-      hasMounted: false,
     };
     this.getAllTokenBannerSingle = this.getAllTokenBannerSingle.bind(this);
     this.performScroll = this.performScroll.bind(this);
@@ -301,10 +278,11 @@ export default class TokenBanner extends React.Component<
     const allTokenBannerSingle = DISPLAYED_TICKERS.map((tickers) => {
       return (
         <TokenBannerSingle
-          key={tickers.toString() + "_" + key.toString()}
           renegadeConnection={this.props.renegadeConnection}
+          setActiveTickers={this.props.setActiveTickers}
           baseTokenTicker={tickers[0]}
           quoteTokenTicker={tickers[1]}
+          key={tickers.toString() + "_" + key.toString()}
         />
       );
     });
@@ -312,24 +290,18 @@ export default class TokenBanner extends React.Component<
   }
 
   performScroll() {
-    const tokenBanner = document.getElementsByClassName("token-banner")[0];
+    const tokenBanner = document.getElementsByClassName("all-tokens-banner")[0];
     if (!this.state.isHovered && !this.state.isClicked) {
       let scrollDest = tokenBanner.scrollLeft % (tokenBanner.scrollWidth / 3);
       scrollDest += tokenBanner.scrollWidth / 3;
-      scrollDest += 2;
+      scrollDest += 1;
       tokenBanner.scrollTo(scrollDest, 0);
     }
-    setTimeout(this.performScroll, 20);
+    setTimeout(this.performScroll, 30);
   }
 
   async componentDidMount() {
-    if (this.state.hasMounted) {
-      return;
-    }
-    this.setState({
-      hasMounted: true,
-    });
-    // this.performScroll();
+    this.performScroll();
   }
 
   onMouseEnter(event) {
@@ -358,7 +330,8 @@ export default class TokenBanner extends React.Component<
 
   onMouseMove(event) {
     if (this.state.isClicked) {
-      const tokenBanner = document.getElementsByClassName("token-banner")[0];
+      const tokenBanner =
+        document.getElementsByClassName("all-tokens-banner")[0];
       tokenBanner.scrollBy(-event.movementX / window.devicePixelRatio, 0);
     }
   }
@@ -372,7 +345,8 @@ export default class TokenBanner extends React.Component<
         width="100%"
         height="var(--banner-height)"
         cursor="pointer"
-        overflowX="visible"
+        userSelect="none"
+        overflowX="hidden"
         overflowY="hidden"
         borderTop="var(--border)"
         borderBottom="var(--border)"
@@ -382,7 +356,7 @@ export default class TokenBanner extends React.Component<
         onMouseDown={this.onMouseDown}
         onMouseUp={this.onMouseUp}
         onMouseMove={this.onMouseMove}
-        className="token-banner"
+        className="all-tokens-banner"
       >
         {allTokenBannerSingle}
       </HStack>

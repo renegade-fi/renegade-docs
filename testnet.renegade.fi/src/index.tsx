@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { menuAnatomy } from "@chakra-ui/anatomy";
 import ReactDOM from "react-dom/client";
 import React from "react";
 
@@ -8,6 +9,7 @@ import {
   ColorModeScript,
   type ThemeConfig,
   extendTheme,
+  createMultiStyleConfigHelpers,
 } from "@chakra-ui/react";
 
 import TradingInterface from "./components/TradingInterface";
@@ -18,23 +20,31 @@ import "./animations.css";
 import "./index.css";
 import "./fonts.css";
 
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(menuAnatomy.keys);
+
 // Chakra theme
 const config: ThemeConfig = {
   initialColorMode: "system",
   useSystemColorMode: true,
 };
+
 const styles = {
   global: {
     body: {
       fontFamily: "Favorit Extended",
       fontWeight: "400",
+      fontSize: "0.9em",
       color: "white",
       bg: "black",
     },
   },
 };
+
 const colors = {
   border: "#808080",
+  green: "#43e043",
+  red: "#e04943",
   "white.100": "#ffffff",
   "white.90": "#e6e6e6",
   "white.80": "#cccccc",
@@ -46,7 +56,46 @@ const colors = {
   "white.20": "#333333",
   "white.10": "#1a1a1a",
 };
-const theme = extendTheme({ config, styles, colors });
+
+const menuStyle = definePartsStyle({
+  list: {
+    minWidth: "auto",
+    padding: "0",
+    background: "transparent",
+  },
+  item: {
+    minWidth: "auto",
+    padding: "0",
+    background: "transparent",
+    fontSize: "1.3em",
+    color: "white.100",
+    _hover: {
+      background: "rgba(255, 255, 255, 0.05)",
+    },
+    _focus: {
+      background: "rgba(255, 255, 255, 0.05)",
+    },
+  },
+});
+
+const components = {
+  Text: {
+    variants: {
+      "status-green": {
+        fontSize: "0.85em",
+        fontWeight: "700",
+        color: "green",
+        textShadow: "0 0 5px green",
+      },
+      "trading-body-button": {
+        fontSize: "1.3em",
+        color: "white.100",
+      },
+    },
+  },
+  Menu: defineMultiStyleConfig({ baseStyle: menuStyle }),
+};
+const theme = extendTheme({ config, styles, colors, components });
 
 function Testnet() {
   return (
