@@ -55,6 +55,7 @@ const colors = {
   "white.30": "#4d4d4d",
   "white.20": "#333333",
   "white.10": "#1a1a1a",
+  "white.5": "#0d0d0d",
 };
 
 const menuStyle = definePartsStyle({
@@ -88,7 +89,9 @@ const components = {
         textShadow: "0 0 5px green",
       },
       "trading-body-button": {
+        fontFamily: "Aime",
         fontSize: "1.3em",
+        fontWeight: "700",
         color: "white.100",
       },
     },

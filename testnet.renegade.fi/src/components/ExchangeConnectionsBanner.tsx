@@ -69,6 +69,8 @@ export default function ExchangeConnectionsBanner(
     >
       <Text>NBBO Feed</Text>
       <BannerSeparator size="medium" />
+      <PriceReporterTriple />
+      <BannerSeparator size="medium" />
       <ExchangeConnectionTriple exchange="binance" />
       <BannerSeparator size="medium" />
       <ExchangeConnectionTriple exchange="coinbase" />
@@ -78,8 +80,6 @@ export default function ExchangeConnectionsBanner(
       <ExchangeConnectionTriple exchange="okx" />
       <BannerSeparator size="medium" />
       <ExchangeConnectionTriple exchange="uniswap" />
-      <BannerSeparator size="medium" />
-      <PriceReporterTriple />
     </Flex>
   );
 }

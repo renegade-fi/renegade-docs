@@ -32,14 +32,26 @@ export default class TradingInterface extends React.Component<
       activeBaseTicker: "WETH",
       activeQuoteTicker: "USDC",
     };
+    this.setBaseTicker = this.setBaseTicker.bind(this);
+    this.setQuoteTicker = this.setQuoteTicker.bind(this);
     this.setActiveTickers = this.setActiveTickers.bind(this);
   }
 
-  setActiveTickers(baseTicker: string, quoteTicker: string) {
+  setBaseTicker(baseTicker: string) {
     this.setState({
       activeBaseTicker: baseTicker,
+    });
+  }
+
+  setQuoteTicker(quoteTicker: string) {
+    this.setState({
       activeQuoteTicker: quoteTicker,
     });
+  }
+
+  setActiveTickers(baseTicker: string, quoteTicker: string) {
+    this.setBaseTicker(baseTicker);
+    this.setQuoteTicker(quoteTicker);
   }
 
   render() {
@@ -64,6 +76,8 @@ export default class TradingInterface extends React.Component<
             <TradingBody
               activeBaseTicker={this.state.activeBaseTicker}
               activeQuoteTicker={this.state.activeQuoteTicker}
+              setBaseTicker={this.setBaseTicker}
+              setQuoteTicker={this.setQuoteTicker}
             />
           </Flex>
           <OrdersAndCounterpartiesPanel />
