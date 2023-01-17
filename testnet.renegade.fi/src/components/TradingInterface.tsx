@@ -70,6 +70,7 @@ export default class TradingInterface extends React.Component<
           <WalletsPanel />
           <Flex flexDirection="column" flexGrow="1">
             <RelayerStatusBanner
+              renegadeConnection={renegadeConnection}
               activeBaseTicker={this.state.activeBaseTicker}
               activeQuoteTicker={this.state.activeQuoteTicker}
             />

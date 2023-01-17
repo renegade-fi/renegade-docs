@@ -12,7 +12,7 @@ class ExchangeConnectionTriple extends React.Component<ExchangeConnectionTripleP
 
   render() {
     return (
-      <HStack>
+      <>
         <Text>
           {this.props.exchange[0].toUpperCase() + this.props.exchange.slice(1)}
         </Text>
@@ -23,7 +23,7 @@ class ExchangeConnectionTriple extends React.Component<ExchangeConnectionTripleP
           <Text variant="status-green">LIVE</Text>
           <PulsingConnection state="live" />
         </HStack>
-      </HStack>
+      </>
     );
   }
 }
@@ -36,7 +36,7 @@ class PriceReporterTriple extends React.Component<PriceReporterTripleProps> {
 
   render() {
     return (
-      <HStack>
+      <>
         <Text>Average</Text>
         <BannerSeparator size="small" />
         <Text fontFamily="Favorit Mono">$1250.00</Text>
@@ -45,7 +45,7 @@ class PriceReporterTriple extends React.Component<PriceReporterTripleProps> {
           <Text variant="status-green">LIVE</Text>
           <PulsingConnection state="live" />
         </HStack>
-      </HStack>
+      </>
     );
   }
 }
@@ -63,6 +63,7 @@ export default function ExchangeConnectionsBanner(
       justifyContent="space-evenly"
       width="100%"
       height="var(--banner-height)"
+      padding="0 2% 0 2%"
       borderBottom="var(--border)"
       borderColor="border"
       color="white.80"

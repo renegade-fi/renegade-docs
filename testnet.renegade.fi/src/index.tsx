@@ -88,6 +88,17 @@ const components = {
         color: "green",
         textShadow: "0 0 5px green",
       },
+      "status-red": {
+        fontSize: "0.85em",
+        fontWeight: "700",
+        color: "red",
+        textShadow: "0 0 5px red",
+      },
+      "status-gray": {
+        fontSize: "0.85em",
+        fontWeight: "700",
+        color: "white.30",
+      },
       "trading-body-button": {
         fontFamily: "Aime",
         fontSize: "1.3em",

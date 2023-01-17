@@ -120,4 +120,16 @@ export default class RenegadeConnection {
       callback,
     });
   }
+
+  async ping(): Promise<boolean> {
+    try {
+      const response = await fetch(`${this.state.relayerHttpUrl}/ping`, {
+        method: "POST",
+        body: "null",
+      });
+      return response.ok;
+    } catch (e) {
+      return false;
+    }
+  }
 }
