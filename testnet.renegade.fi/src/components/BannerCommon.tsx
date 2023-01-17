@@ -1,4 +1,4 @@
-import { Box, Center, Flex, keyframes } from "@chakra-ui/react";
+import { Box, Center, Flex, Link, keyframes } from "@chakra-ui/react";
 import React from "react";
 
 function pulseAnimation(scale: number) {
@@ -19,33 +19,40 @@ function pulseAnimation(scale: number) {
 
 interface BannerSeparatorProps {
   size: "small" | "medium";
+  link?: string;
 }
 export function BannerSeparator(props: BannerSeparatorProps) {
+  let flexGrow: number;
   if (props.size === "small") {
-    return (
-      <Center flexGrow="1">
-        <Box
-          width="4px"
-          height="4px"
-          borderRadius="2px"
-          background="white.80"
-        />
-      </Center>
-    );
+    flexGrow = 1;
   } else if (props.size === "medium") {
-    return (
-      <Center flexGrow="4">
-        <Box
-          width="4px"
-          height="4px"
-          borderRadius="2px"
-          background="white.80"
-        />
-      </Center>
-    );
+    flexGrow = 4;
   } else {
     throw new Error("Invalid BannerSeparator size: " + props.size);
   }
+
+  console.log("banner sep:", props.link);
+  const Wrapper = (wrapperProps: { children: React.ReactNode }) => {
+    if (props.link) {
+      return (
+        <Link height="70%" flexGrow={flexGrow} href={props.link} isExternal>
+          <Center height="100%">{wrapperProps.children}</Center>
+        </Link>
+      );
+    } else {
+      return (
+        <Center height="70%" flexGrow={flexGrow}>
+          {wrapperProps.children}
+        </Center>
+      );
+    }
+  };
+
+  return (
+    <Wrapper>
+      <Box width="4px" height="4px" borderRadius="2px" background="white.80" />
+    </Wrapper>
+  );
 }
 
 interface PulsingConnectionProps {
