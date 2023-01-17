@@ -63,6 +63,7 @@ export default class TradingInterface extends React.Component<
         backgroundSize="cover"
       >
         <ExchangeConnectionsBanner
+          renegadeConnection={renegadeConnection}
           activeBaseTicker={this.state.activeBaseTicker}
           activeQuoteTicker={this.state.activeQuoteTicker}
         />

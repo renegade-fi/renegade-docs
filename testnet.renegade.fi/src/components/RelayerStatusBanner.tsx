@@ -66,9 +66,9 @@ export default class RelayerStatusBanner extends React.Component<
       >
         <Text>Liquidity</Text>
         <BannerSeparator size="small" />
-        <Text>420.69 {this.props.activeBaseTicker}</Text>
+        <Text>420.00 {this.props.activeBaseTicker}</Text>
         <BannerSeparator size="small" />
-        <Text>69,000.34 {this.props.activeQuoteTicker}</Text>
+        <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
         <BannerSeparator size="medium" />
         <Text>Relayer Status</Text>
         <BannerSeparator size="small" />
@@ -81,11 +81,13 @@ export default class RelayerStatusBanner extends React.Component<
         <BannerSeparator size="medium" />
         <Text>Relayer Fee</Text>
         <BannerSeparator size="small" />
-        <Text>0.09%</Text>
-        <BannerSeparator size="medium" />
+        <Text>0.08%</Text>
+        <BannerSeparator size="small" />
         <Text>Protocol Fee</Text>
         <BannerSeparator size="small" />
-        <Text>0.01%</Text>
+        <Text>0.02%</Text>
+        <BannerSeparator size="medium" />
+        <Text>Debug Info</Text>
       </Flex>
     );
   }

@@ -31,7 +31,6 @@ export function BannerSeparator(props: BannerSeparatorProps) {
     throw new Error("Invalid BannerSeparator size: " + props.size);
   }
 
-  console.log("banner sep:", props.link);
   const Wrapper = (wrapperProps: { children: React.ReactNode }) => {
     if (props.link) {
       return (
@@ -81,7 +80,7 @@ export function PulsingConnection(props: PulsingConnectionProps) {
         border="1px solid"
         borderColor={backgroundColor}
         animation={
-          props.state !== "dead"
+          props.state === "live"
             ? `${pulseAnimation(2.25)} 2s ease-out infinite ${randomDelay}s`
             : ""
         }

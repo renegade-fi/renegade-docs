@@ -43,7 +43,7 @@ export default function Header() {
           fontSize="1.1em"
           color="white.90"
         >
-          Connect Wallet
+          Sign In
         </Text>
       </Box>
     </Flex>

@@ -78,8 +78,6 @@ class TokenBannerSingle extends React.Component<
   TokenBannerSingleProps,
   TokenBannerSingleState
 > {
-  ref: React.RefObject<Element | undefined>;
-
   constructor(props: TokenBannerSingleProps) {
     super(props);
     this.state = {
@@ -88,7 +86,6 @@ class TokenBannerSingle extends React.Component<
     };
     this.handlePriceReport = this.handlePriceReport.bind(this);
     this.onClick = this.onClick.bind(this);
-    this.ref = React.createRef();
   }
 
   async componentDidMount() {
@@ -98,7 +95,7 @@ class TokenBannerSingle extends React.Component<
     // Send a subscription request to the relayer
     const baseTokenAddr = TICKER_TO_ADDR[this.props.baseTokenTicker];
     const quoteTokenAddr = TICKER_TO_ADDR[this.props.quoteTokenTicker];
-    const topic = `price-report-${baseTokenAddr}-${quoteTokenAddr}`;
+    const topic = `median-price-report-${baseTokenAddr}-${quoteTokenAddr}`;
     this.props.renegadeConnection.subscribeToTopic(topic);
 
     // Keep track of the last update timestamp

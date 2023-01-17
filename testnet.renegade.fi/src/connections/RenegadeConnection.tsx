@@ -3,6 +3,7 @@
  * RenegadeConnection connects via HTTP and WS to the relayer, subscribes and
  * unsubscribes from topics, etc.
  */
+import uuid from "react-uuid";
 
 export interface PriceReport {
   type: string;
@@ -62,8 +63,8 @@ export default class RenegadeConnection {
       if (parsedMessage.subscriptions !== undefined) {
         return;
       }
-      // If the topic message is not a price-report-*, ignore it
-      if (!parsedMessage.topic.startsWith("price-report-")) {
+      // If the topic message is not a *-price-report-*, ignore it
+      if (parsedMessage.topic.split("-price-report-").length == 1) {
         return;
       }
       const priceReport = {
@@ -76,7 +77,8 @@ export default class RenegadeConnection {
         localTimestamp: parsedMessage.event.localTimestamp,
         reportedTimestamp: parsedMessage.event.reportedTimestamp,
       };
-      for (const listener of this.state.relayerTopicListeners) {
+      for (const listenerId in this.state.relayerTopicListeners) {
+        const listener = this.state.relayerTopicListeners[listenerId];
         if (listener.topic === parsedMessage.topic) {
           listener.callback(priceReport);
         }
@@ -88,8 +90,10 @@ export default class RenegadeConnection {
       relayerWsUrl,
       relayerConnection,
       relayerPromise,
-      relayerTopicListeners: [],
+      relayerTopicListeners: {},
     };
+    this.checkExchangeHealthStates = this.checkExchangeHealthStates.bind(this);
+    this.ping = this.ping.bind(this);
   }
 
   async awaitConnection() {
@@ -114,11 +118,17 @@ export default class RenegadeConnection {
     );
   }
 
-  listenToTopic(topic: string, callback: (message: any) => void) {
-    this.state.relayerTopicListeners.push({
+  listenToTopic(topic: string, callback: (message: any) => void): string {
+    const listenerId = uuid();
+    this.state.relayerTopicListeners[listenerId] = {
       topic,
       callback,
-    });
+    };
+    return listenerId;
+  }
+
+  unlistenToTopic(listenerId: string) {
+    delete this.state.relayerTopicListeners[listenerId];
   }
 
   async ping(): Promise<boolean> {
@@ -131,5 +141,19 @@ export default class RenegadeConnection {
     } catch (e) {
       return false;
     }
+  }
+
+  async checkExchangeHealthStates(
+    baseAddr: string,
+    quoteAddr: string
+  ): Promise<any> {
+    const response = await fetch(
+      `${this.state.relayerHttpUrl}/exchangeHealthStates`,
+      {
+        method: "POST",
+        body: `{"base_token": {"addr": "${baseAddr}"}, "quote_token": {"addr": "${quoteAddr}"}}`,
+      }
+    );
+    return response.json();
   }
 }
