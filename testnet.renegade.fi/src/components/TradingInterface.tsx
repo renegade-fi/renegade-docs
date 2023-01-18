@@ -1,5 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
+import Cookies from "universal-cookie";
 
 import OrdersAndCounterpartiesPanel from "./OrdersAndCounterpartiesPanel";
 import ExchangeConnectionsBanner from "./ExchangeConnectionsBanner";
@@ -19,6 +20,7 @@ const renegadeConnection = new RenegadeConnection({
 });
 
 interface TradingInterfaceState {
+  activeBuyOrSell: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
 }
@@ -28,30 +30,38 @@ export default class TradingInterface extends React.Component<
 > {
   constructor(props: {}) {
     super(props);
+    const cookies = new Cookies();
     this.state = {
-      activeBaseTicker: "WETH",
-      activeQuoteTicker: "USDC",
+      // We randomly set initial buy/sell bit in order to discourage order
+      // asymmetry for users who are trying the product for the first time
+      activeBuyOrSell:
+        cookies.get("renegade-direction") || Math.random() < 0.5
+          ? "buy"
+          : "sell",
+      activeBaseTicker: cookies.get("renegade-base-ticker") || "WETH",
+      activeQuoteTicker: cookies.get("renegade-quote-ticker") || "USDC",
     };
-    this.setBaseTicker = this.setBaseTicker.bind(this);
-    this.setQuoteTicker = this.setQuoteTicker.bind(this);
-    this.setActiveTickers = this.setActiveTickers.bind(this);
+    this.setDirectionAndTickers = this.setDirectionAndTickers.bind(this);
   }
 
-  setBaseTicker(baseTicker: string) {
-    this.setState({
-      activeBaseTicker: baseTicker,
-    });
-  }
-
-  setQuoteTicker(quoteTicker: string) {
-    this.setState({
-      activeQuoteTicker: quoteTicker,
-    });
-  }
-
-  setActiveTickers(baseTicker: string, quoteTicker: string) {
-    this.setBaseTicker(baseTicker);
-    this.setQuoteTicker(quoteTicker);
+  setDirectionAndTickers(
+    buyOrSell?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string
+  ) {
+    const cookies = new Cookies();
+    if (buyOrSell) {
+      cookies.set("renegade-direction", buyOrSell);
+      this.setState({ activeBuyOrSell: buyOrSell });
+    }
+    if (baseTicker) {
+      cookies.set("renegade-base-ticker", baseTicker);
+      this.setState({ activeBaseTicker: baseTicker });
+    }
+    if (quoteTicker) {
+      cookies.set("renegade-quote-ticker", quoteTicker);
+      this.setState({ activeQuoteTicker: quoteTicker });
+    }
   }
 
   render() {
@@ -76,17 +86,17 @@ export default class TradingInterface extends React.Component<
               activeQuoteTicker={this.state.activeQuoteTicker}
             />
             <TradingBody
+              activeBuyOrSell={this.state.activeBuyOrSell}
               activeBaseTicker={this.state.activeBaseTicker}
               activeQuoteTicker={this.state.activeQuoteTicker}
-              setBaseTicker={this.setBaseTicker}
-              setQuoteTicker={this.setQuoteTicker}
+              setDirectionAndTickers={this.setDirectionAndTickers}
             />
           </Flex>
           <OrdersAndCounterpartiesPanel />
         </Flex>
         <AllTokensBanner
           renegadeConnection={renegadeConnection}
-          setActiveTickers={this.setActiveTickers}
+          setDirectionAndTickers={this.setDirectionAndTickers}
         />
       </Flex>
     );

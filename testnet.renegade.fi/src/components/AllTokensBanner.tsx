@@ -66,7 +66,11 @@ const UPDATE_THRESHOLD_MS = 100;
 
 interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
-  setActiveTickers: (baseTicker: string, quoteTicker: string) => void;
+  setDirectionAndTickers: (
+    buyOrSell?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string
+  ) => void;
   baseTokenTicker: string;
   quoteTokenTicker: string;
 }
@@ -128,7 +132,8 @@ class TokenBannerSingle extends React.Component<
   }
 
   onClick() {
-    this.props.setActiveTickers(
+    this.props.setDirectionAndTickers(
+      undefined,
       this.props.baseTokenTicker,
       this.props.quoteTokenTicker
     );
@@ -246,7 +251,11 @@ class TokenBannerSingle extends React.Component<
 
 interface AllTokensBannerProps {
   renegadeConnection: RenegadeConnection;
-  setActiveTickers: (baseTicker: string, quoteTicker: string) => void;
+  setDirectionAndTickers: (
+    buyOrSell?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string
+  ) => void;
 }
 interface AllTokensBannerState {
   isHovered: boolean;
@@ -276,7 +285,7 @@ export default class AllTokensBanner extends React.Component<
       return (
         <TokenBannerSingle
           renegadeConnection={this.props.renegadeConnection}
-          setActiveTickers={this.props.setActiveTickers}
+          setDirectionAndTickers={this.props.setDirectionAndTickers}
           baseTokenTicker={tickers[0]}
           quoteTokenTicker={tickers[1]}
           key={tickers.toString() + "_" + key.toString()}

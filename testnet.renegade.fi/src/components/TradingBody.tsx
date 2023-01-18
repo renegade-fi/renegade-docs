@@ -55,9 +55,11 @@ interface BlurredOverlayProps {
   buySellSelectableCoords: [number, number];
   baseTokenSelectableCoords: [number, number];
   quoteTokenSelectableCoords: [number, number];
-  setBuyOrSell: (buyOrSell: "buy" | "sell") => void;
-  setBaseTicker: (baseTicker: string) => void;
-  setQuoteTicker: (quoteTicker: string) => void;
+  setDirectionAndTickers: (
+    buyOrSell?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string
+  ) => void;
 }
 function BlurredOverlay(props: BlurredOverlayProps) {
   function OrText() {
@@ -91,7 +93,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setBuyOrSell("buy");
+            props.setDirectionAndTickers("buy");
           }}
         >
           BUY
@@ -103,7 +105,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(-70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setBuyOrSell("sell");
+            props.setDirectionAndTickers("sell");
           }}
         >
           SELL
@@ -285,14 +287,17 @@ const Selectable = React.forwardRef(
 );
 
 interface TradingBodyProps {
+  activeBuyOrSell: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
-  setBaseTicker: (baseTicker: string) => void;
-  setQuoteTicker: (baseTicker: string) => void;
+  setDirectionAndTickers: (
+    buyOrSell?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string
+  ) => void;
 }
 interface TradingBodyState {
   activeModal: null | "buy-sell" | "base-token" | "quote-token";
-  buyOrSell: "buy" | "sell";
   baseTokenAmount: number;
   buySellSelectableRef: React.RefObject<HTMLDivElement>;
   baseTokenSelectableRef: React.RefObject<HTMLDivElement>;
@@ -309,9 +314,6 @@ export default class TradingBody extends React.Component<
     super(props);
     this.state = {
       activeModal: null,
-      // We randomly set initial buy/sell bit in order to discourage order
-      // asymmetry for users who are trying the product for the first time
-      buyOrSell: Math.random() < 0.5 ? "buy" : "sell",
       baseTokenAmount: 0,
       buySellSelectableRef: React.createRef(),
       baseTokenSelectableRef: React.createRef(),
@@ -321,7 +323,6 @@ export default class TradingBody extends React.Component<
       quoteTokenSelectableCoords: [0, 0],
     };
     this.setActiveModal = this.setActiveModal.bind(this);
-    this.setBuyOrSell = this.setBuyOrSell.bind(this);
     this.setBaseTokenAmount = this.setBaseTokenAmount.bind(this);
   }
 
@@ -332,7 +333,6 @@ export default class TradingBody extends React.Component<
     if (
       nextProps !== this.props ||
       nextState.activeModal !== this.state.activeModal ||
-      nextState.buyOrSell !== this.state.buyOrSell ||
       nextState.baseTokenAmount !== this.state.baseTokenAmount
     ) {
       return true;
@@ -393,12 +393,6 @@ export default class TradingBody extends React.Component<
     });
   }
 
-  setBuyOrSell(buyOrSell: "buy" | "sell") {
-    this.setState({
-      buyOrSell: buyOrSell,
-    });
-  }
-
   setBaseTokenAmount(baseTokenAmount: number) {
     this.setState({
       baseTokenAmount: baseTokenAmount ? baseTokenAmount : 0,
@@ -424,7 +418,7 @@ export default class TradingBody extends React.Component<
         >
           <Text>I'd like to</Text>
           <Selectable
-            text={this.state.buyOrSell.toUpperCase()}
+            text={this.props.activeBuyOrSell.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}
             ref={this.state.buySellSelectableRef}
           />
@@ -444,7 +438,7 @@ export default class TradingBody extends React.Component<
             onClick={() => this.setActiveModal("base-token")}
             ref={this.state.baseTokenSelectableRef}
           />
-          <Text>{this.state.buyOrSell === "buy" ? "with" : "for"}</Text>
+          <Text>{this.props.activeBuyOrSell === "buy" ? "with" : "for"}</Text>
           <Selectable
             text={this.props.activeQuoteTicker}
             onClick={() => this.setActiveModal("quote-token")}
@@ -474,9 +468,7 @@ export default class TradingBody extends React.Component<
           buySellSelectableCoords={this.state.buySellSelectableCoords}
           baseTokenSelectableCoords={this.state.baseTokenSelectableCoords}
           quoteTokenSelectableCoords={this.state.quoteTokenSelectableCoords}
-          setBuyOrSell={this.setBuyOrSell}
-          setBaseTicker={this.props.setBaseTicker}
-          setQuoteTicker={this.props.setQuoteTicker}
+          setDirectionAndTickers={this.props.setDirectionAndTickers}
         />
       </Flex>
     );
