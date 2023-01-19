@@ -31,6 +31,7 @@ interface RenegadeConnectionProps {
   relayerUrl: string;
   relayerHttpPort: number;
   relayerWsPort: number;
+  useTls: boolean;
 }
 interface RenegadeConnectionState {
   relayerHttpUrl: string;
@@ -47,8 +48,12 @@ export default class RenegadeConnection {
     this.props = props;
 
     // Create the WebSocket connection and a promise that resolves when opened
-    const relayerHttpUrl = `http://${props.relayerUrl}:${props.relayerHttpPort}`;
-    const relayerWsUrl = `ws://${props.relayerUrl}:${props.relayerWsPort}`;
+    const relayerHttpUrl = `${props.useTls ? "https" : "http"}://${
+      props.relayerUrl
+    }:${props.relayerHttpPort}`;
+    const relayerWsUrl = `${props.useTls ? "wss" : "ws"}://${
+      props.relayerUrl
+    }:${props.relayerWsPort}`;
     const relayerConnection = new WebSocket(relayerWsUrl);
     const relayerPromise = new Promise<void>((resolve) => {
       relayerConnection.addEventListener("open", () => {
@@ -133,10 +138,7 @@ export default class RenegadeConnection {
 
   async ping(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.state.relayerHttpUrl}/ping`, {
-        method: "POST",
-        body: "null",
-      });
+      const response = await fetch(`${this.state.relayerHttpUrl}/ping`);
       return response.ok;
     } catch (e) {
       return false;

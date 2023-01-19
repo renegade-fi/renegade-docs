@@ -46,6 +46,7 @@ interface ExchangeConnectionTripleProps {
   activeQuoteTicker: string;
   exchange: Exchange;
   healthState: HealthState;
+  fallbackPriceReport: PriceReport;
 }
 interface ExchangeConnectionTripleState {
   previousPriceReport: PriceReport;
@@ -165,7 +166,11 @@ class ExchangeConnectionTriple extends React.Component<
     let price: number;
     let priceStrClass = "";
     if (this.state.currentPriceReport === DEFAULT_PRICE_REPORT) {
-      price = 0;
+      if (this.props.fallbackPriceReport === DEFAULT_PRICE_REPORT) {
+        price = 0;
+      } else {
+        price = this.props.fallbackPriceReport.midpointPrice;
+      }
     } else if (this.state.previousPriceReport === DEFAULT_PRICE_REPORT) {
       price = this.state.currentPriceReport.midpointPrice;
     } else {
@@ -297,11 +302,7 @@ class ExchangeConnectionTriple extends React.Component<
               <Text
                 fontFamily="Favorit Mono"
                 color="white.80"
-                opacity={
-                  this.state.currentPriceReport == DEFAULT_PRICE_REPORT
-                    ? "20%"
-                    : "100%"
-                }
+                opacity={textVariant === "status-gray" ? "20%" : "100%"}
                 className={priceStrClass}
                 key={key + "_price"}
               >
@@ -341,6 +342,9 @@ interface ExchangeConnectionsBannerState {
   priceReporterHealthStates: {
     [exchange: string]: HealthState;
   };
+  priceReporterFallbacks: {
+    [exchange: string]: PriceReport;
+  };
 }
 export default class ExchangeConnectionsBanner extends React.Component<
   ExchangeConnectionsBannerProps,
@@ -348,22 +352,11 @@ export default class ExchangeConnectionsBanner extends React.Component<
 > {
   constructor(props: ExchangeConnectionsBannerProps) {
     super(props);
-    this.state = {
-      priceReporterHealthStates: {
-        median: "connecting",
-        binance: "connecting",
-        coinbase: "connecting",
-        kraken: "connecting",
-        okx: "connecting",
-        uniswapv3: "connecting",
-      },
-    };
+    this.state = this.defaultState();
     this.checkExchangeHealthStates = this.checkExchangeHealthStates.bind(this);
   }
 
   async componentDidMount() {
-    // Await for websocket connection opened
-    await this.props.renegadeConnection.awaitConnection();
     // Periodically check for health, setting live/dead appropriately
     setTimeout(this.checkExchangeHealthStates);
   }
@@ -375,7 +368,11 @@ export default class ExchangeConnectionsBanner extends React.Component<
     ) {
       return;
     }
-    this.setState({
+    this.setState(this.defaultState());
+  }
+
+  defaultState(): ExchangeConnectionsBannerState {
+    return {
       priceReporterHealthStates: {
         median: "connecting",
         binance: "connecting",
@@ -384,7 +381,15 @@ export default class ExchangeConnectionsBanner extends React.Component<
         okx: "connecting",
         uniswapv3: "connecting",
       },
-    });
+      priceReporterFallbacks: {
+        median: DEFAULT_PRICE_REPORT,
+        binance: DEFAULT_PRICE_REPORT,
+        coinbase: DEFAULT_PRICE_REPORT,
+        kraken: DEFAULT_PRICE_REPORT,
+        okx: DEFAULT_PRICE_REPORT,
+        uniswapv3: DEFAULT_PRICE_REPORT,
+      },
+    };
   }
 
   async checkExchangeHealthStates() {
@@ -393,7 +398,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
         TICKER_TO_ADDR[this.props.activeBaseTicker],
         TICKER_TO_ADDR[this.props.activeQuoteTicker]
       );
-    console.log("hs:", healthStates);
     function getHealthState(priceReport: any): HealthState {
       if (priceReport === "Unsupported") {
         return "unsupported";
@@ -423,8 +427,26 @@ export default class ExchangeConnectionsBanner extends React.Component<
       okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
       uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
     };
+    const newPriceReporterFallbacks = {
+      median: healthStates["median"]["Nominal"] || DEFAULT_PRICE_REPORT,
+      binance:
+        healthStates["all_exchanges"]["Binance"]["Nominal"] ||
+        DEFAULT_PRICE_REPORT,
+      coinbase:
+        healthStates["all_exchanges"]["Coinbase"]["Nominal"] ||
+        DEFAULT_PRICE_REPORT,
+      kraken:
+        healthStates["all_exchanges"]["Kraken"]["Nominal"] ||
+        DEFAULT_PRICE_REPORT,
+      okx:
+        healthStates["all_exchanges"]["Okx"]["Nominal"] || DEFAULT_PRICE_REPORT,
+      uniswapv3:
+        healthStates["all_exchanges"]["UniswapV3"]["Nominal"] ||
+        DEFAULT_PRICE_REPORT,
+    };
     this.setState({
       priceReporterHealthStates: newPriceReporterHealthStates,
+      priceReporterFallbacks: newPriceReporterFallbacks,
     });
     setTimeout(this.checkExchangeHealthStates, 1000);
   }
@@ -449,6 +471,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="median"
           healthState={this.state.priceReporterHealthStates["median"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["median"]}
         />
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -457,6 +480,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="binance"
           healthState={this.state.priceReporterHealthStates["binance"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["binance"]}
         />
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -465,6 +489,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="coinbase"
           healthState={this.state.priceReporterHealthStates["coinbase"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["coinbase"]}
         />
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -473,6 +498,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="kraken"
           healthState={this.state.priceReporterHealthStates["kraken"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["kraken"]}
         />
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -481,6 +507,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="okx"
           healthState={this.state.priceReporterHealthStates["okx"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["okx"]}
         />
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -489,6 +516,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeQuoteTicker={this.props.activeQuoteTicker}
           exchange="uniswapv3"
           healthState={this.state.priceReporterHealthStates["uniswapv3"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["uniswapv3"]}
         />
         <Spacer flexGrow="3" />
       </Flex>

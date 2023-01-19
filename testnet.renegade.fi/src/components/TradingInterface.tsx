@@ -14,9 +14,11 @@ import backgroundPattern from "../icons/background_pattern.png";
 
 // Create a connection to a relayer
 const renegadeConnection = new RenegadeConnection({
+  // relayerUrl: "stage.relayer.renegade.fi",
   relayerUrl: "127.0.0.1",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
+  useTls: false,
 });
 
 interface TradingInterfaceState {
