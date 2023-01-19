@@ -149,7 +149,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           color="border"
           onClick={() => {
             props.setActiveModal(null);
-            props.setBaseTicker(this.props.ticker);
+            props.setDirectionAndTickers(undefined, this.props.ticker);
           }}
         >
           <Image src={this.state.imageUrl} width="20px" height="20px" />

@@ -1,4 +1,4 @@
-import { Box, Link, Text, Flex, HStack } from "@chakra-ui/react";
+import { Box, Link, Text, Flex, Spacer, HStack } from "@chakra-ui/react";
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
 import React from "react";
 
@@ -11,6 +11,22 @@ import RenegadeConnection, {
 import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
 
 const UPDATE_THRESHOLD_MS = 50;
+
+type Exchange =
+  | "median"
+  | "binance"
+  | "coinbase"
+  | "kraken"
+  | "okx"
+  | "uniswapv3";
+type HealthState =
+  | "connecting"
+  | "unsupported"
+  | "live"
+  | "no-data"
+  | "too-stale"
+  | "not-enough-data"
+  | "too-much-deviation";
 
 function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
   if (props.link) {
@@ -28,8 +44,8 @@ interface ExchangeConnectionTripleProps {
   renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
-  exchange: "median" | "binance" | "coinbase" | "kraken" | "okx" | "uniswapv3";
-  healthState: "live" | "dead" | "loading";
+  exchange: Exchange;
+  healthState: HealthState;
 }
 interface ExchangeConnectionTripleState {
   previousPriceReport: PriceReport;
@@ -221,20 +237,50 @@ class ExchangeConnectionTriple extends React.Component<
 
     // Modify the health state if we have not yet received a price report
     let healthState = this.props.healthState;
-    if (price == 0) {
-      healthState = "loading";
+    if (price == 0 && healthState === "live") {
+      healthState = "no-data";
     }
 
-    let connectionText: React.ReactElement;
-    if (healthState === "loading") {
-      connectionText = <Text variant="status-gray">DEAD</Text>;
+    let showPrice: boolean;
+    let connectionText: string;
+    let textVariant: string;
+    if (healthState === "connecting") {
+      showPrice = false;
+      connectionText = "CONNECTING";
+      textVariant = "status-gray";
+    } else if (healthState === "unsupported") {
+      showPrice = false;
+      connectionText = "UNSUPPORTED";
+      textVariant = "status-gray";
     } else if (healthState === "live") {
-      connectionText = <Text variant="status-green">LIVE</Text>;
-    } else if (healthState === "dead") {
-      connectionText = <Text variant="status-red">DEAD</Text>;
+      showPrice = true;
+      connectionText = "LIVE";
+      textVariant = "status-green";
+    } else if (healthState === "no-data") {
+      showPrice = false;
+      connectionText = "NO DATA";
+      textVariant = "status-gray";
+    } else if (healthState === "too-stale") {
+      showPrice = true;
+      connectionText = "TOO STALE";
+      textVariant = "status-red";
+    } else if (healthState === "not-enough-data") {
+      showPrice = false;
+      connectionText = "NOT ENOUGH DATA";
+      textVariant = "status-gray";
+    } else if (healthState === "too-much-deviation") {
+      showPrice = false;
+      connectionText = "TOO MUCH DEVIATION";
+      textVariant = "status-red";
     } else {
       throw new Error("Invalid health state: " + this.props.healthState);
     }
+
+    const pulseState = {
+      "status-green": "live",
+      "status-gray": "loading",
+      "status-red": "dead",
+    }[textVariant] as "live" | "loading" | "dead";
 
     return (
       <>
@@ -245,38 +291,40 @@ class ExchangeConnectionTriple extends React.Component<
           </Text>
         </LinkWrapper>
         <BannerSeparator size="small" link={link} />
-        <LinkWrapper link={link}>
-          <HStack paddingRight="8px">
-            <Text
-              fontFamily="Favorit Mono"
-              color="white.80"
-              opacity={
-                this.state.currentPriceReport == DEFAULT_PRICE_REPORT
-                  ? "20%"
-                  : "100%"
-              }
-              className={priceStrClass}
-              key={key + "_price"}
-            >
-              ${priceStr}
-            </Text>
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              width="12px"
-              position="relative"
-            >
-              <Box position="absolute">
-                <BannerSeparator size="small" />
-              </Box>
-              {priceIcon}
-            </Flex>
-          </HStack>
-        </LinkWrapper>
+        {showPrice && (
+          <LinkWrapper link={link}>
+            <HStack paddingRight="8px">
+              <Text
+                fontFamily="Favorit Mono"
+                color="white.80"
+                opacity={
+                  this.state.currentPriceReport == DEFAULT_PRICE_REPORT
+                    ? "20%"
+                    : "100%"
+                }
+                className={priceStrClass}
+                key={key + "_price"}
+              >
+                ${priceStr}
+              </Text>
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                width="12px"
+                position="relative"
+              >
+                <Box position="absolute">
+                  <BannerSeparator size="small" />
+                </Box>
+                {priceIcon}
+              </Flex>
+            </HStack>
+          </LinkWrapper>
+        )}
         <LinkWrapper link={link}>
           <HStack>
-            {connectionText}
-            <PulsingConnection state={healthState} />
+            <Text variant={textVariant}>{connectionText}</Text>
+            <PulsingConnection state={pulseState} />
           </HStack>
         </LinkWrapper>
       </>
@@ -291,7 +339,7 @@ interface ExchangeConnectionsBannerProps {
 }
 interface ExchangeConnectionsBannerState {
   priceReporterHealthStates: {
-    [exchange: string]: "live" | "dead" | "loading";
+    [exchange: string]: HealthState;
   };
 }
 export default class ExchangeConnectionsBanner extends React.Component<
@@ -302,12 +350,12 @@ export default class ExchangeConnectionsBanner extends React.Component<
     super(props);
     this.state = {
       priceReporterHealthStates: {
-        median: "loading",
-        binance: "loading",
-        coinbase: "loading",
-        kraken: "loading",
-        okx: "loading",
-        uniswapv3: "loading",
+        median: "connecting",
+        binance: "connecting",
+        coinbase: "connecting",
+        kraken: "connecting",
+        okx: "connecting",
+        uniswapv3: "connecting",
       },
     };
     this.checkExchangeHealthStates = this.checkExchangeHealthStates.bind(this);
@@ -329,12 +377,12 @@ export default class ExchangeConnectionsBanner extends React.Component<
     }
     this.setState({
       priceReporterHealthStates: {
-        median: "loading",
-        binance: "loading",
-        coinbase: "loading",
-        kraken: "loading",
-        okx: "loading",
-        uniswapv3: "loading",
+        median: "connecting",
+        binance: "connecting",
+        coinbase: "connecting",
+        kraken: "connecting",
+        okx: "connecting",
+        uniswapv3: "connecting",
       },
     });
   }
@@ -345,21 +393,35 @@ export default class ExchangeConnectionsBanner extends React.Component<
         TICKER_TO_ADDR[this.props.activeBaseTicker],
         TICKER_TO_ADDR[this.props.activeQuoteTicker]
       );
+    console.log("hs:", healthStates);
+    function getHealthState(priceReport: any): HealthState {
+      if (priceReport === "Unsupported") {
+        return "unsupported";
+      }
+      if (priceReport["Nominal"]) {
+        return "live";
+      }
+      if (priceReport === "NoDataReported") {
+        return "no-data";
+      }
+      if (priceReport["DataTooStale"]) {
+        return "too-stale";
+      }
+      if (priceReport["NotEnoughDataReported"]) {
+        return "not-enough-data";
+      }
+      if (priceReport["TooMuchDeviation"]) {
+        return "too-much-deviation";
+      }
+      throw new Error("Invalid priceReport: " + priceReport);
+    }
     const newPriceReporterHealthStates = {
-      median: healthStates["median"]["Nominal"] ? "live" : "dead",
-      binance: healthStates["all_exchanges"]["Binance"]["Nominal"]
-        ? "live"
-        : "dead",
-      coinbase: healthStates["all_exchanges"]["Coinbase"]["Nominal"]
-        ? "live"
-        : "dead",
-      kraken: healthStates["all_exchanges"]["Kraken"]["Nominal"]
-        ? "live"
-        : "dead",
-      okx: healthStates["all_exchanges"]["Okx"]["Nominal"] ? "live" : "dead",
-      uniswapv3: healthStates["all_exchanges"]["UniswapV3"]["Nominal"]
-        ? "live"
-        : "dead",
+      median: getHealthState(healthStates["median"]),
+      binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
+      coinbase: getHealthState(healthStates["all_exchanges"]["Coinbase"]),
+      kraken: getHealthState(healthStates["all_exchanges"]["Kraken"]),
+      okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
+      uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
     };
     this.setState({
       priceReporterHealthStates: newPriceReporterHealthStates,
@@ -374,11 +436,11 @@ export default class ExchangeConnectionsBanner extends React.Component<
         justifyContent="space-evenly"
         width="100%"
         height="var(--banner-height)"
-        padding="0 2% 0 2%"
         borderBottom="var(--border)"
         borderColor="border"
         color="white.80"
       >
+        <Spacer flexGrow="3" />
         <Text>NBBO Feed</Text>
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
@@ -428,6 +490,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="uniswapv3"
           healthState={this.state.priceReporterHealthStates["uniswapv3"]}
         />
+        <Spacer flexGrow="3" />
       </Flex>
     );
   }
