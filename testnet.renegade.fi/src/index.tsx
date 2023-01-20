@@ -103,6 +103,12 @@ const components = {
         fontWeight: "700",
         color: "white.100",
       },
+      "trading-body-button-blurred": {
+        fontFamily: "Aime",
+        fontSize: "1.3em",
+        fontWeight: "700",
+        color: "white.50",
+      },
     },
   },
   Menu: defineMultiStyleConfig({ baseStyle: menuStyle }),

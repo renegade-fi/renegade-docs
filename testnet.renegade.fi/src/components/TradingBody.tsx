@@ -250,11 +250,12 @@ function BlurredOverlay(props: BlurredOverlayProps) {
       top="0"
       bottom="0"
       backdropFilter={props.activeModal ? "blur(8px)" : ""}
+      transition="0.1s"
       userSelect="none"
       onClick={() => {
         props.setActiveModal(null);
       }}
-      hidden={props.activeModal ? false : true}
+      pointerEvents={props.activeModal ? "auto" : "none"}
     >
       <BuySellMenu />
       <BaseTokenMenu />
@@ -266,6 +267,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
 interface SelectableProps {
   text: string;
   onClick: () => void;
+  activeModal: null | "buy-sell" | "base-token" | "quote-token";
 }
 const Selectable = React.forwardRef(
   (props: SelectableProps, ref: React.Ref<HTMLDivElement>) => {
@@ -277,7 +279,14 @@ const Selectable = React.forwardRef(
         cursor="pointer"
         userSelect="none"
       >
-        <Text variant="trading-body-button" marginRight="-10px">
+        <Text
+          marginRight="-10px"
+          variant={
+            props.activeModal
+              ? "trading-body-button-blurred"
+              : "trading-body-button"
+          }
+        >
           {props.text}
         </Text>
         <ChevronDownIcon color="white.100" boxSize="40px" />
@@ -421,6 +430,7 @@ export default class TradingBody extends React.Component<
           <Selectable
             text={this.props.activeBuyOrSell.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}
+            activeModal={this.state.activeModal}
             ref={this.state.buySellSelectableRef}
           />
           <Input
@@ -437,12 +447,14 @@ export default class TradingBody extends React.Component<
           <Selectable
             text={this.props.activeBaseTicker}
             onClick={() => this.setActiveModal("base-token")}
+            activeModal={this.state.activeModal}
             ref={this.state.baseTokenSelectableRef}
           />
           <Text>{this.props.activeBuyOrSell === "buy" ? "with" : "for"}</Text>
           <Selectable
             text={this.props.activeQuoteTicker}
             onClick={() => this.setActiveModal("quote-token")}
+            activeModal={this.state.activeModal}
             ref={this.state.quoteTokenSelectableRef}
           />
           <Text>at the real-time midpoint.</Text>
