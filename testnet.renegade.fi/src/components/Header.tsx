@@ -1,4 +1,4 @@
-import { Link, HStack, Text, Box, Flex, Image, Spacer } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
 import glyphDark from "../icons/glyph_dark.svg";

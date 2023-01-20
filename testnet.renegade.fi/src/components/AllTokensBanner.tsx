@@ -1,7 +1,12 @@
-import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
+import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
+import RenegadeConnection, {
+  DEFAULT_PRICE_REPORT,
+  PriceReport,
+} from "../connections/RenegadeConnection";
 import { BannerSeparator } from "./BannerCommon";
 
 const DISPLAYED_TICKERS: [string, string][] = [
@@ -56,12 +61,6 @@ const DISPLAYED_TICKERS: [string, string][] = [
   // ["BAT", "USDC"],
 ];
 
-import RenegadeConnection, {
-  PriceReport,
-  DEFAULT_PRICE_REPORT,
-} from "../connections/RenegadeConnection";
-import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
-
 const UPDATE_THRESHOLD_MS = 100;
 
 interface TokenBannerSingleProps {
@@ -69,7 +68,7 @@ interface TokenBannerSingleProps {
   setDirectionAndTickers: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
-    quoteTicker?: string
+    quoteTicker?: string,
   ) => void;
   baseTokenTicker: string;
   quoteTokenTicker: string;
@@ -135,7 +134,7 @@ class TokenBannerSingle extends React.Component<
     this.props.setDirectionAndTickers(
       undefined,
       this.props.baseTokenTicker,
-      this.props.quoteTokenTicker
+      this.props.quoteTokenTicker,
     );
   }
 
@@ -254,7 +253,7 @@ interface AllTokensBannerProps {
   setDirectionAndTickers: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
-    quoteTicker?: string
+    quoteTicker?: string,
   ) => void;
 }
 interface AllTokensBannerState {

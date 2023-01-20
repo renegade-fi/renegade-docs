@@ -1,13 +1,13 @@
+import { ArrowForwardIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
-  Text,
-  HStack,
-  Flex,
   Button,
-  Input,
+  Flex,
+  HStack,
   Image,
+  Input,
+  Text,
   keyframes,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import React from "react";
 
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../tokens";
@@ -49,7 +49,7 @@ function popAnimation(maxScale: number) {
 interface BlurredOverlayProps {
   activeModal: null | "buy-sell" | "base-token" | "quote-token";
   setActiveModal: (
-    modal: null | "buy-sell" | "base-token" | "quote-token"
+    modal: null | "buy-sell" | "base-token" | "quote-token",
   ) => void;
   buySellSelectableCoords: [number, number];
   baseTokenSelectableCoords: [number, number];
@@ -57,7 +57,7 @@ interface BlurredOverlayProps {
   setDirectionAndTickers: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
-    quoteTicker?: string
+    quoteTicker?: string,
   ) => void;
 }
 function BlurredOverlay(props: BlurredOverlayProps) {
@@ -282,7 +282,7 @@ const Selectable = React.forwardRef(
         <ChevronDownIcon color="white.100" boxSize="40px" />
       </HStack>
     );
-  }
+  },
 );
 Selectable.displayName = "selectable";
 
@@ -293,7 +293,7 @@ interface TradingBodyProps {
   setDirectionAndTickers: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
-    quoteTicker?: string
+    quoteTicker?: string,
   ) => void;
 }
 interface TradingBodyState {
@@ -328,7 +328,7 @@ export default class TradingBody extends React.Component<
 
   shouldComponentUpdate(
     nextProps: TradingBodyProps,
-    nextState: TradingBodyState
+    nextState: TradingBodyState,
   ): boolean {
     if (
       nextProps !== this.props ||
@@ -360,13 +360,13 @@ export default class TradingBody extends React.Component<
 
   setAllRefCoords() {
     const buySellSelectableCoords = this.getRefCoords(
-      this.state.buySellSelectableRef
+      this.state.buySellSelectableRef,
     );
     const baseTokenSelectableCoords = this.getRefCoords(
-      this.state.baseTokenSelectableRef
+      this.state.baseTokenSelectableRef,
     );
     const quoteTokenSelectableCoords = this.getRefCoords(
-      this.state.quoteTokenSelectableRef
+      this.state.quoteTokenSelectableRef,
     );
     this.setState({
       buySellSelectableCoords,
@@ -386,7 +386,7 @@ export default class TradingBody extends React.Component<
   }
 
   setActiveModal(
-    activeModal: null | "buy-sell" | "base-token" | "quote-token"
+    activeModal: null | "buy-sell" | "base-token" | "quote-token",
   ) {
     this.setState({
       activeModal: activeModal,

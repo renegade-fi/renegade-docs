@@ -1,4 +1,4 @@
-import { Text, Box, Flex, Image, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Image, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
 import logoDark from "../icons/logo_dark.svg";

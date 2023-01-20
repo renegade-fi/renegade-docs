@@ -110,7 +110,7 @@ export default class RenegadeConnection {
       JSON.stringify({
         type: "subscribe",
         topic,
-      })
+      }),
     );
   }
 
@@ -119,13 +119,13 @@ export default class RenegadeConnection {
       JSON.stringify({
         type: "unsubscribe",
         topic,
-      })
+      }),
     );
   }
 
   listenToTopic(
     topic: string,
-    callback: (priceReport: PriceReport) => void
+    callback: (priceReport: PriceReport) => void,
   ): string {
     const listenerId = uuid();
     this.state.relayerTopicListeners[listenerId] = {
@@ -150,14 +150,14 @@ export default class RenegadeConnection {
 
   async checkExchangeHealthStates(
     baseAddr: string,
-    quoteAddr: string
+    quoteAddr: string,
   ): Promise<any> {
     const response = await fetch(
       `${this.state.relayerHttpUrl}/exchangeHealthStates`,
       {
         method: "POST",
         body: `{"base_token": {"addr": "${baseAddr}"}, "quote_token": {"addr": "${quoteAddr}"}}`,
-      }
+      },
     );
     return response.json();
   }

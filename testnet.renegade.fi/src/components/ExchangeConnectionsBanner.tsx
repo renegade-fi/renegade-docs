@@ -1,14 +1,13 @@
-import { Box, Link, Text, Flex, Spacer, HStack } from "@chakra-ui/react";
-import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Box, Flex, HStack, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
-import { BannerSeparator, PulsingConnection } from "./BannerCommon";
-
-import RenegadeConnection, {
-  PriceReport,
-  DEFAULT_PRICE_REPORT,
-} from "../connections/RenegadeConnection";
 import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
+import RenegadeConnection, {
+  DEFAULT_PRICE_REPORT,
+  PriceReport,
+} from "../connections/RenegadeConnection";
+import { BannerSeparator, PulsingConnection } from "./BannerCommon";
 
 const UPDATE_THRESHOLD_MS = 50;
 
@@ -119,7 +118,7 @@ class ExchangeConnectionTriple extends React.Component<
         }
         lastUpdate = now;
         this.handlePriceReport(priceReport);
-      }
+      },
     );
     this.setState({ listenerId });
   }
@@ -398,10 +397,10 @@ export default class ExchangeConnectionsBanner extends React.Component<
     const healthStates =
       await this.props.renegadeConnection.checkExchangeHealthStates(
         TICKER_TO_ADDR[this.props.activeBaseTicker],
-        TICKER_TO_ADDR[this.props.activeQuoteTicker]
+        TICKER_TO_ADDR[this.props.activeQuoteTicker],
       );
     function getHealthState(
-      priceReport: string | Record<string, PriceReport>
+      priceReport: string | Record<string, PriceReport>,
     ): HealthState {
       if (priceReport === "Unsupported") {
         return "unsupported";

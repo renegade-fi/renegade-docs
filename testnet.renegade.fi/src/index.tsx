@@ -1,24 +1,22 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { menuAnatomy } from "@chakra-ui/anatomy";
-import ReactDOM from "react-dom/client";
-import React from "react";
-
 import {
-  Flex,
   ChakraProvider,
   ColorModeScript,
+  Flex,
   type ThemeConfig,
-  extendTheme,
   createMultiStyleConfigHelpers,
+  extendTheme,
 } from "@chakra-ui/react";
-
-import TradingInterface from "./components/TradingInterface";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import "./animations.css";
-import "./index.css";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import TradingInterface from "./components/TradingInterface";
 import "./fonts.css";
+import "./index.css";
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys);
@@ -131,5 +129,5 @@ root.render(
         <Route path="/*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
-  </ChakraProvider>
+  </ChakraProvider>,
 );

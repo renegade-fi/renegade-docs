@@ -1,8 +1,8 @@
-import { Text, Flex, HStack } from "@chakra-ui/react";
+import { Flex, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import { BannerSeparator, PulsingConnection } from "./BannerCommon";
 import RenegadeConnection from "../connections/RenegadeConnection";
+import { BannerSeparator, PulsingConnection } from "./BannerCommon";
 
 interface RelayerStatusBannerProps {
   renegadeConnection: RenegadeConnection;
@@ -49,7 +49,7 @@ export default class RelayerStatusBanner extends React.Component<
       connectionText = <Text variant="status-red">DISCONNECTED</Text>;
     } else {
       throw new Error(
-        "Invalid connection state: " + this.state.connectionState
+        "Invalid connection state: " + this.state.connectionState,
       );
     }
     return (

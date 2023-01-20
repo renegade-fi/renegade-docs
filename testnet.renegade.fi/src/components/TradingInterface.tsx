@@ -2,15 +2,14 @@ import { Flex } from "@chakra-ui/react";
 import React from "react";
 import Cookies from "universal-cookie";
 
-import OrdersAndCounterpartiesPanel from "./OrdersAndCounterpartiesPanel";
-import ExchangeConnectionsBanner from "./ExchangeConnectionsBanner";
 import RenegadeConnection from "../connections/RenegadeConnection";
-import RelayerStatusBanner from "./RelayerStatusBanner";
-import AllTokensBanner from "./AllTokensBanner";
-import WalletsPanel from "./WalletsPanel";
-import TradingBody from "./TradingBody";
-
 import backgroundPattern from "../icons/background_pattern.png";
+import AllTokensBanner from "./AllTokensBanner";
+import ExchangeConnectionsBanner from "./ExchangeConnectionsBanner";
+import OrdersAndCounterpartiesPanel from "./OrdersAndCounterpartiesPanel";
+import RelayerStatusBanner from "./RelayerStatusBanner";
+import TradingBody from "./TradingBody";
+import WalletsPanel from "./WalletsPanel";
 
 // Create a connection to a relayer
 const renegadeConnection = new RenegadeConnection({
@@ -50,7 +49,7 @@ export default class TradingInterface extends React.Component<
   setDirectionAndTickers(
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
-    quoteTicker?: string
+    quoteTicker?: string,
   ) {
     const cookies = new Cookies();
     if (buyOrSell) {

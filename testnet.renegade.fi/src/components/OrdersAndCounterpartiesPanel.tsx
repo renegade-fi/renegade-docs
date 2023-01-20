@@ -1,4 +1,4 @@
-import { Text, Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
 interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
@@ -6,7 +6,7 @@ interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
   isFirst: boolean;
 }
 function SingleOrdersAndCounterpartiesPanelCollapsed(
-  props: SingleOrdersAndCounterpartiesPanelCollapsedProps
+  props: SingleOrdersAndCounterpartiesPanelCollapsedProps,
 ) {
   return (
     <Flex
@@ -28,7 +28,7 @@ interface OrdersAndCounterpartiesPanelCollapsedProps {
   toggleIsCollapsed: () => void;
 }
 function OrdersAndCounterpartiesPanelCollapsed(
-  props: OrdersAndCounterpartiesPanelCollapsedProps
+  props: OrdersAndCounterpartiesPanelCollapsedProps,
 ) {
   return (
     <Flex
