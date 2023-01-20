@@ -1,13 +1,8 @@
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import { Box, Flex, HStack, Text } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
-import RenegadeConnection, {
-  DEFAULT_PRICE_REPORT,
-  PriceReport,
-} from "../connections/RenegadeConnection";
-import { BannerSeparator } from "./BannerCommon";
+import RenegadeConnection from "../connections/RenegadeConnection";
+import { LivePrices } from "./BannerCommon";
 
 const DISPLAYED_TICKERS: [string, string][] = [
   ["WBTC", "USDC"],
@@ -61,8 +56,6 @@ const DISPLAYED_TICKERS: [string, string][] = [
   // ["BAT", "USDC"],
 ];
 
-const UPDATE_THRESHOLD_MS = 100;
-
 interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
   setDirectionAndTickers: (
@@ -73,179 +66,28 @@ interface TokenBannerSingleProps {
   baseTokenTicker: string;
   quoteTokenTicker: string;
 }
-interface TokenBannerSingleState {
-  previousPriceReport: PriceReport;
-  currentPriceReport: PriceReport;
-}
-class TokenBannerSingle extends React.Component<
-  TokenBannerSingleProps,
-  TokenBannerSingleState
-> {
-  constructor(props: TokenBannerSingleProps) {
-    super(props);
-    this.state = {
-      previousPriceReport: DEFAULT_PRICE_REPORT,
-      currentPriceReport: DEFAULT_PRICE_REPORT,
-    };
-    this.handlePriceReport = this.handlePriceReport.bind(this);
-    this.onClick = this.onClick.bind(this);
-  }
-
-  async componentDidMount() {
-    // Await for websocket connection opened
-    await this.props.renegadeConnection.awaitConnection();
-
-    // Send a subscription request to the relayer
-    const baseTokenAddr = TICKER_TO_ADDR[this.props.baseTokenTicker];
-    const quoteTokenAddr = TICKER_TO_ADDR[this.props.quoteTokenTicker];
-    const topic = `median-price-report-${baseTokenAddr}-${quoteTokenAddr}`;
-    this.props.renegadeConnection.subscribeToTopic(topic);
-
-    // Keep track of the last update timestamp
-    let lastUpdate = 0;
-
-    // Listen for topic messages
-    this.props.renegadeConnection.listenToTopic(topic, (priceReport) => {
-      // If the priceReport does not change the median price, ignore it
-      if (
-        this.state.currentPriceReport.midpointPrice ===
-        priceReport.midpointPrice
-      ) {
-        return;
-      }
-      // If this price report was received too quickly after the previous, ignore it
-      const now = Date.now();
-      if (now - lastUpdate <= UPDATE_THRESHOLD_MS) {
-        return;
-      }
-      lastUpdate = now;
-      this.handlePriceReport(priceReport);
-    });
-  }
-
-  handlePriceReport(newPriceReport: PriceReport) {
-    this.setState({
-      currentPriceReport: newPriceReport,
-      previousPriceReport: this.state.currentPriceReport,
-    });
-  }
-
-  onClick() {
-    this.props.setDirectionAndTickers(
-      undefined,
-      this.props.baseTokenTicker,
-      this.props.quoteTokenTicker,
-    );
-  }
-
-  render() {
-    // Given the previous and current price reports, determine the displayed
-    // price and red/green fade class
-    let price: number;
-    let priceStrClass = "";
-    if (this.state.currentPriceReport === DEFAULT_PRICE_REPORT) {
-      price = 0;
-    } else if (this.state.previousPriceReport === DEFAULT_PRICE_REPORT) {
-      price = this.state.currentPriceReport.midpointPrice;
-    } else {
-      price = this.state.currentPriceReport.midpointPrice;
-      priceStrClass =
-        this.state.currentPriceReport.midpointPrice >
-        this.state.previousPriceReport.midpointPrice
-          ? "fade-green-to-white"
-          : "fade-red-to-white";
-    }
-
-    // Format the price as a string
-    let trailingDecimals: number;
-    const baseDefaultDecimals =
-      TICKER_TO_DEFAULT_DECIMALS[this.props.baseTokenTicker];
-    if (this.props.quoteTokenTicker !== "USDC") {
-      trailingDecimals = 2;
-    } else if (baseDefaultDecimals >= 3) {
-      trailingDecimals = 2;
-    } else {
-      trailingDecimals = Math.abs(baseDefaultDecimals) + 2;
-    }
-    let priceStr = price.toFixed(trailingDecimals);
-    if (
-      this.state.currentPriceReport == DEFAULT_PRICE_REPORT &&
-      baseDefaultDecimals > 0
-    ) {
-      const leadingDecimals = priceStr.split(".")[0].length;
-      priceStr =
-        "0".repeat(Math.max(0, baseDefaultDecimals - leadingDecimals)) +
-        priceStr;
-    }
-    const key = [
-      this.props.baseTokenTicker,
-      this.props.quoteTokenTicker,
-      this.state.currentPriceReport.localTimestamp,
-    ].join("_");
-
-    // Create the icon to display next to the price
-    let priceIcon: React.ReactElement;
-    if (priceStrClass === "") {
-      priceIcon = (
-        <TriangleUpIcon
-          width="12px"
-          height="12px"
-          opacity="0%"
-          key={key + "_icon"}
-        />
-      );
-    } else if (priceStrClass === "fade-green-to-white") {
-      priceIcon = (
-        <TriangleUpIcon
-          width="12px"
-          height="12px"
-          className="fade-green-to-transparent"
-          key={key + "_icon"}
-        />
-      );
-    } else {
-      priceIcon = (
-        <TriangleDownIcon
-          width="12px"
-          height="12px"
-          className="fade-red-to-transparent"
-          key={key + "_icon"}
-        />
-      );
-    }
-
-    return (
-      <HStack onClick={this.onClick}>
-        <Text fontFamily="Favorit Expanded" color="white.80">
-          {this.props.baseTokenTicker}
-        </Text>
-        <Text
-          fontFamily="Favorit Mono"
-          color="white.80"
-          opacity={
-            this.state.currentPriceReport == DEFAULT_PRICE_REPORT
-              ? "20%"
-              : "100%"
-          }
-          className={priceStrClass}
-          key={key + "_price"}
-        >
-          ${priceStr}
-        </Text>
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          width="12px"
-          position="relative"
-        >
-          <Box position="absolute">
-            <BannerSeparator size="medium" />
-          </Box>
-          {priceIcon}
-        </Flex>
-      </HStack>
-    );
-  }
+function TokenBannerSingle(props: TokenBannerSingleProps) {
+  return (
+    <HStack
+      onClick={() => {
+        props.setDirectionAndTickers(
+          undefined,
+          props.baseTokenTicker,
+          props.quoteTokenTicker,
+        );
+      }}
+    >
+      <Text fontFamily="Favorit Expanded" color="white.80">
+        {props.baseTokenTicker}
+      </Text>
+      <LivePrices
+        renegadeConnection={props.renegadeConnection}
+        baseTicker={props.baseTokenTicker}
+        quoteTicker={props.quoteTokenTicker}
+        exchange="median"
+      />
+    </HStack>
+  );
 }
 
 interface AllTokensBannerProps {
