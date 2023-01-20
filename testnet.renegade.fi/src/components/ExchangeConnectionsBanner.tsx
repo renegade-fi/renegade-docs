@@ -161,7 +161,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     // Await the connection to the relayer
     await this.props.renegadeConnection.awaitConnection();
     // Periodically check for health, setting live/dead appropriately
-    setTimeout(this.checkExchangeHealthStates, 2000);
+    this.checkExchangeHealthStates();
   }
 
   componentDidUpdate(prevProps: ExchangeConnectionsBannerProps) {
@@ -242,6 +242,8 @@ export default class ExchangeConnectionsBanner extends React.Component<
         color="white.80"
       >
         <Spacer flexGrow="3" />
+        <Text>NBBO Feed</Text>
+        <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -265,9 +267,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="kraken"
           healthState={this.state.priceReporterHealthStates["kraken"]}
         />
-        <BannerSeparator size="large" />
-        <Text>NBBO Feed</Text>
-        <BannerSeparator size="large" />
+        <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}

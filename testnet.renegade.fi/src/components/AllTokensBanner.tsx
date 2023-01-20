@@ -148,6 +148,8 @@ export default class AllTokensBanner extends React.Component<
   }
 
   async componentDidMount() {
+    window.addEventListener("mouseup", this.onMouseUp);
+    window.addEventListener("mousemove", this.onMouseMove);
     this.performScroll();
   }
 

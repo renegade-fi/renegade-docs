@@ -43,12 +43,14 @@ function pulseAnimation(scale: number) {
 }
 
 interface BannerSeparatorProps {
-  size: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large";
   link?: string;
 }
 export function BannerSeparator(props: BannerSeparatorProps) {
-  let flexGrow: number;
-  if (props.size === "small") {
+  let flexGrow: undefined | number;
+  if (props.size === undefined) {
+    flexGrow = undefined;
+  } else if (props.size === "small") {
     flexGrow = 1;
   } else if (props.size === "medium") {
     flexGrow = 4;
@@ -338,7 +340,7 @@ export class LivePrices extends React.Component<
           position="relative"
         >
           <Box position="absolute">
-            <BannerSeparator size="small" />
+            <BannerSeparator />
           </Box>
           {priceIcon}
         </Flex>
