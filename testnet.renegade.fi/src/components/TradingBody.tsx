@@ -32,12 +32,11 @@ function snapAnimation(translateY: number) {
 function popAnimation(maxScale: number) {
   return keyframes`
     0% {
-      transform: scale(0.8);
+      transform: scale(0.95);
       opacity: 0;
     }
-    80% {
-      transform: scale(${maxScale}5);
-      opacity: 0.4;
+    75% {
+      transform: scale(${maxScale});
     }
     100% {
       transform: scale(1);
@@ -174,7 +173,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
         border="var(--border)"
         borderColor="white.30"
         borderRadius="15px"
-        animation={`${popAnimation(1.02)} 0.15s ease both`}
+        animation={`${popAnimation(1.015)} 0.1s ease both`}
         onClick={(e) => {
           e.stopPropagation();
         }}
@@ -212,31 +211,31 @@ function BlurredOverlay(props: BlurredOverlayProps) {
         transform="translate(-50%, -50%) translateX(-20px)"
         fontSize="1.9em"
       >
-        {[
-          ["USDT", 70],
-          ["USDC", 0],
-          ["BUSD", -70],
-        ].map((tickerOffset, i) => {
-          const ticker = tickerOffset[0] as string;
-          const offset = tickerOffset[1] as number;
-          return (
-            <React.Fragment key={ticker}>
-              <Text
-                variant="trading-body-button"
-                cursor="pointer"
-                margin="-5px 0 -5px 0"
-                animation={`${snapAnimation(offset)} 0.15s ease both`}
-                onClick={() => {
-                  props.setActiveModal(null);
-                  props.setDirectionAndTickers(undefined, undefined, ticker);
-                }}
-              >
-                {ticker}
-              </Text>
-              {i < 2 ? <OrText /> : null}
-            </React.Fragment>
-          );
-        })}
+        <Text
+          variant="trading-body-button"
+          cursor="pointer"
+          margin="-5px 0 -5px 0"
+          animation={`${snapAnimation(70)} 0.15s ease both`}
+          onClick={() => {
+            props.setActiveModal(null);
+            props.setDirectionAndTickers(undefined, undefined, "USDC");
+          }}
+        >
+          USDC
+        </Text>
+        <OrText />
+        <Text
+          variant="trading-body-button"
+          cursor="pointer"
+          margin="-5px 0 -5px 0"
+          animation={`${snapAnimation(-70)} 0.15s ease both`}
+          onClick={() => {
+            props.setActiveModal(null);
+            props.setDirectionAndTickers(undefined, undefined, "USDT");
+          }}
+        >
+          USDT
+        </Text>
       </Flex>
     );
   }
@@ -250,9 +249,11 @@ function BlurredOverlay(props: BlurredOverlayProps) {
       right="0"
       top="0"
       bottom="0"
-      backdropFilter="blur(8px)"
+      backdropFilter={props.activeModal ? "blur(8px)" : ""}
       userSelect="none"
-      onClick={() => props.setActiveModal(null)}
+      onClick={() => {
+        props.setActiveModal(null);
+      }}
       hidden={props.activeModal ? false : true}
     >
       <BuySellMenu />
@@ -414,9 +415,9 @@ export default class TradingBody extends React.Component<
           fontSize="1.8em"
           fontWeight="100"
           spacing="10px"
-          color="white.80"
+          color="white.70"
         >
-          <Text>I&apos;d like to</Text>
+          <Text>I&apos;d like to anonymously</Text>
           <Selectable
             text={this.props.activeBuyOrSell.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}
@@ -426,7 +427,7 @@ export default class TradingBody extends React.Component<
             fontFamily="Favorit"
             fontSize="0.8em"
             placeholder="0.00"
-            width="15%"
+            width="200px"
             borderRadius="100px"
             type="number"
             onChange={(e) =>

@@ -18,7 +18,7 @@ function pulseAnimation(scale: number) {
 }
 
 interface BannerSeparatorProps {
-  size: "small" | "medium";
+  size: "small" | "medium" | "large";
   link?: string;
 }
 export function BannerSeparator(props: BannerSeparatorProps) {
@@ -27,6 +27,8 @@ export function BannerSeparator(props: BannerSeparatorProps) {
     flexGrow = 1;
   } else if (props.size === "medium") {
     flexGrow = 4;
+  } else if (props.size === "large") {
+    flexGrow = 10;
   } else {
     throw new Error("Invalid BannerSeparator size: " + props.size);
   }

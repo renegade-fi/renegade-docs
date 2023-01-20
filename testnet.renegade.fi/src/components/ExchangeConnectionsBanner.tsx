@@ -405,19 +405,19 @@ export default class ExchangeConnectionsBanner extends React.Component<
       if (priceReport === "Unsupported") {
         return "unsupported";
       }
-      if (priceReport["Nominal"]) {
+      if (priceReport["Nominal"] !== undefined) {
         return "live";
       }
       if (priceReport === "NoDataReported") {
         return "no-data";
       }
-      if (priceReport["DataTooStale"]) {
+      if (priceReport["DataTooStale"] !== undefined) {
         return "too-stale";
       }
-      if (priceReport["NotEnoughDataReported"]) {
+      if (priceReport["NotEnoughDataReported"] !== undefined) {
         return "not-enough-data";
       }
-      if (priceReport["TooMuchDeviation"]) {
+      if (priceReport["TooMuchDeviation"] !== undefined) {
         return "too-much-deviation";
       }
       throw new Error("Invalid priceReport: " + priceReport);
@@ -466,17 +466,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
         color="white.80"
       >
         <Spacer flexGrow="3" />
-        <Text>NBBO Feed</Text>
-        <BannerSeparator size="medium" />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="median"
-          healthState={this.state.priceReporterHealthStates["median"]}
-          fallbackPriceReport={this.state.priceReporterFallbacks["median"]}
-        />
-        <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -503,7 +492,9 @@ export default class ExchangeConnectionsBanner extends React.Component<
           healthState={this.state.priceReporterHealthStates["kraken"]}
           fallbackPriceReport={this.state.priceReporterFallbacks["kraken"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator size="large" />
+        <Text>NBBO Feed</Text>
+        <BannerSeparator size="large" />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -520,6 +511,15 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="uniswapv3"
           healthState={this.state.priceReporterHealthStates["uniswapv3"]}
           fallbackPriceReport={this.state.priceReporterFallbacks["uniswapv3"]}
+        />
+        <BannerSeparator size="medium" />
+        <ExchangeConnectionTriple
+          renegadeConnection={this.props.renegadeConnection}
+          activeBaseTicker={this.props.activeBaseTicker}
+          activeQuoteTicker={this.props.activeQuoteTicker}
+          exchange="median"
+          healthState={this.state.priceReporterHealthStates["median"]}
+          fallbackPriceReport={this.state.priceReporterFallbacks["median"]}
         />
         <Spacer flexGrow="3" />
       </Flex>

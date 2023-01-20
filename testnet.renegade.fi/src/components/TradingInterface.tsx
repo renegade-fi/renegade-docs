@@ -40,7 +40,7 @@ export default class TradingInterface extends React.Component<
         cookies.get("renegade-direction") || Math.random() < 0.5
           ? "buy"
           : "sell",
-      activeBaseTicker: cookies.get("renegade-base-ticker") || "WETH",
+      activeBaseTicker: cookies.get("renegade-base-ticker") || "WBTC",
       activeQuoteTicker: cookies.get("renegade-quote-ticker") || "USDC",
     };
     this.setDirectionAndTickers = this.setDirectionAndTickers.bind(this);
