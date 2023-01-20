@@ -57,7 +57,7 @@ export function BannerSeparator(props: BannerSeparatorProps) {
 interface PulsingConnectionProps {
   state: "live" | "dead" | "loading";
 }
-export function PulsingConnection(props: PulsingConnectionProps) {
+const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
   let backgroundColor: string;
   if (props.state === "live") {
     backgroundColor = "green";
@@ -94,4 +94,5 @@ export function PulsingConnection(props: PulsingConnectionProps) {
       />
     </Flex>
   );
-}
+};
+export const PulsingConnection = React.memo(PulsingConnectionUnmemoized);

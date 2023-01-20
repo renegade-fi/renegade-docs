@@ -266,7 +266,7 @@ class ExchangeConnectionTriple extends React.Component<
       connectionText = "NO DATA";
       textVariant = "status-gray";
     } else if (healthState === "too-stale") {
-      showPrice = true;
+      showPrice = false;
       connectionText = "TOO STALE";
       textVariant = "status-red";
     } else if (healthState === "not-enough-data") {
@@ -357,8 +357,10 @@ export default class ExchangeConnectionsBanner extends React.Component<
   }
 
   async componentDidMount() {
+    // Await the connection to the relayer
+    await this.props.renegadeConnection.awaitConnection();
     // Periodically check for health, setting live/dead appropriately
-    setTimeout(this.checkExchangeHealthStates);
+    setTimeout(this.checkExchangeHealthStates, 2000);
   }
 
   componentDidUpdate(prevProps: ExchangeConnectionsBannerProps) {
