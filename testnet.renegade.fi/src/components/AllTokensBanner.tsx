@@ -1,8 +1,8 @@
 import { TriangleUpIcon, TriangleDownIcon } from "@chakra-ui/icons";
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import { BannerSeparator, PulsingConnection } from "./BannerCommon";
+import { BannerSeparator } from "./BannerCommon";
 
 const DISPLAYED_TICKERS: [string, string][] = [
   ["WBTC", "USDC"],
@@ -310,31 +310,31 @@ export default class AllTokensBanner extends React.Component<
     this.performScroll();
   }
 
-  onMouseEnter(event) {
+  onMouseEnter() {
     this.setState({
       isHovered: true,
     });
   }
 
-  onMouseLeave(event) {
+  onMouseLeave() {
     this.setState({
       isHovered: false,
     });
   }
 
-  onMouseDown(event) {
+  onMouseDown() {
     this.setState({
       isClicked: true,
     });
   }
 
-  onMouseUp(event) {
+  onMouseUp() {
     this.setState({
       isClicked: false,
     });
   }
 
-  onMouseMove(event) {
+  onMouseMove(event: any) {
     if (this.state.isClicked) {
       const tokenBanner =
         document.getElementsByClassName("all-tokens-banner")[0];

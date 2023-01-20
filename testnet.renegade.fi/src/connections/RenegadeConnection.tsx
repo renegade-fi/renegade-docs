@@ -36,9 +36,9 @@ interface RenegadeConnectionProps {
 interface RenegadeConnectionState {
   relayerHttpUrl: string;
   relayerWsUrl: string;
-  relayerConnection: any;
-  relayerPromise: any;
-  relayerTopicListeners: any;
+  relayerConnection: WebSocket;
+  relayerPromise: Promise<void>;
+  relayerTopicListeners: Record<string, any>;
 }
 export default class RenegadeConnection {
   props: RenegadeConnectionProps;
@@ -123,7 +123,10 @@ export default class RenegadeConnection {
     );
   }
 
-  listenToTopic(topic: string, callback: (message: any) => void): string {
+  listenToTopic(
+    topic: string,
+    callback: (priceReport: PriceReport) => void
+  ): string {
     const listenerId = uuid();
     this.state.relayerTopicListeners[listenerId] = {
       topic,

@@ -1,4 +1,4 @@
-import { Box, Text, Flex, HStack } from "@chakra-ui/react";
+import { Text, Flex, HStack } from "@chakra-ui/react";
 import React from "react";
 
 import { BannerSeparator, PulsingConnection } from "./BannerCommon";

@@ -1,4 +1,4 @@
-import { Box, Text, Flex } from "@chakra-ui/react";
+import { Text, Flex } from "@chakra-ui/react";
 import React from "react";
 
 interface SingleWalletsPanelCollapsedProps {
@@ -76,10 +76,10 @@ interface WalletsPanelState {
   isCollapsed: boolean;
 }
 export default class WalletsPanel extends React.Component<
-  {},
+  Record<string, never>,
   WalletsPanelState
 > {
-  constructor(props: {}) {
+  constructor(props: Record<string, never>) {
     super(props);
     this.state = {
       isCollapsed: true,

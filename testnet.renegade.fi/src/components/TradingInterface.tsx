@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import React from "react";
 import Cookies from "universal-cookie";
 
@@ -28,10 +28,10 @@ interface TradingInterfaceState {
   activeQuoteTicker: string;
 }
 export default class TradingInterface extends React.Component<
-  {},
+  Record<string, never>,
   TradingInterfaceState
 > {
-  constructor(props: {}) {
+  constructor(props: Record<string, never>) {
     super(props);
     const cookies = new Cookies();
     this.state = {

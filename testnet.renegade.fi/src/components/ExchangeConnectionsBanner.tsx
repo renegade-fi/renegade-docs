@@ -400,7 +400,9 @@ export default class ExchangeConnectionsBanner extends React.Component<
         TICKER_TO_ADDR[this.props.activeBaseTicker],
         TICKER_TO_ADDR[this.props.activeQuoteTicker]
       );
-    function getHealthState(priceReport: any): HealthState {
+    function getHealthState(
+      priceReport: string | Record<string, PriceReport>
+    ): HealthState {
       if (priceReport === "Unsupported") {
         return "unsupported";
       }

@@ -1,9 +1,8 @@
 import {
-  Box,
-  Button,
   Text,
   HStack,
   Flex,
+  Button,
   Input,
   Image,
   keyframes,
@@ -229,7 +228,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
                 animation={`${snapAnimation(offset)} 0.15s ease both`}
                 onClick={() => {
                   props.setActiveModal(null);
-                  props.setQuoteTicker(ticker);
+                  props.setDirectionAndTickers(undefined, undefined, ticker);
                 }}
               >
                 {ticker}
@@ -285,6 +284,7 @@ const Selectable = React.forwardRef(
     );
   }
 );
+Selectable.displayName = "selectable";
 
 interface TradingBodyProps {
   activeBuyOrSell: "buy" | "sell";
@@ -416,7 +416,7 @@ export default class TradingBody extends React.Component<
           spacing="10px"
           color="white.80"
         >
-          <Text>I'd like to</Text>
+          <Text>I&apos;d like to</Text>
           <Selectable
             text={this.props.activeBuyOrSell.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}

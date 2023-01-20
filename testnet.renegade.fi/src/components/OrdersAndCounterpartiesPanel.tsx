@@ -1,4 +1,4 @@
-import { Box, Text, Flex } from "@chakra-ui/react";
+import { Text, Flex } from "@chakra-ui/react";
 import React from "react";
 
 interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
@@ -80,10 +80,10 @@ interface OrdersAndCounterpartiesPanelState {
   isCollapsed: boolean;
 }
 export default class OrdersAndCounterpartiesPanel extends React.Component<
-  {},
+  Record<string, never>,
   OrdersAndCounterpartiesPanelState
 > {
-  constructor(props: {}) {
+  constructor(props: Record<string, never>) {
     super(props);
     this.state = {
       isCollapsed: true,
