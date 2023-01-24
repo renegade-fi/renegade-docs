@@ -1,9 +1,64 @@
-import { Box, Flex, HStack, Image, Link, Spacer, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Spacer,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+import { ConnectKitButton } from "connectkit";
 import React from "react";
+import { useAccount as useAccountWagmi } from "wagmi";
 
 import glyphDark from "../icons/glyph_dark.svg";
 
-export default function Header() {
+function ManageWalletButton(props: { onOpenGlobalModal: () => void }) {
+  const { address } = useAccountWagmi();
+  if (!address) {
+    return null;
+  }
+  return (
+    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
+      <HStack spacing="0px">
+        <Text>Manage Wallet 0x</Text>
+        <Text>{address.slice(2, 6)}</Text>
+      </HStack>
+    </Button>
+  );
+}
+
+function ConnectWalletButton() {
+  return (
+    <ConnectKitButton.Custom>
+      {({ isConnecting, isConnected, show }) => {
+        if (isConnected) {
+          return null;
+        }
+        let buttonBody: React.ReactElement;
+        if (isConnecting) {
+          buttonBody = (
+            <HStack spacing="10px">
+              <Text>Connecting to L1</Text>
+              <Spinner size="sm" color="white.80" />
+            </HStack>
+          );
+        } else {
+          buttonBody = <Text>Connect Wallet</Text>;
+        }
+        return (
+          <Button variant="wallet-connect" onClick={show}>
+            {buttonBody}
+          </Button>
+        );
+      }}
+    </ConnectKitButton.Custom>
+  );
+}
+
+export default function Header(props: { onOpenGlobalModal: () => void }) {
   return (
     <Flex
       alignItems="center"
@@ -12,8 +67,8 @@ export default function Header() {
       borderBottom="var(--border)"
       borderColor="border"
     >
-      <Box width="20%" userSelect="none">
-        <Image height="var(--banner-height)" marginLeft="5%" src={glyphDark} />
+      <Box width="30%" userSelect="none">
+        <Image height="var(--banner-height)" marginLeft="4%" src={glyphDark} />
       </Box>
       <Spacer />
       <HStack spacing="20px" fontWeight="300" fontSize="1.1em" color="white.90">
@@ -35,17 +90,10 @@ export default function Header() {
         </Link>
       </HStack>
       <Spacer />
-      <Box width="20%">
-        <Text
-          textAlign="right"
-          paddingRight="10%"
-          fontWeight="800"
-          fontSize="1.1em"
-          color="white.90"
-        >
-          Sign In
-        </Text>
-      </Box>
+      <Flex width="30%" justifyContent="right" paddingRight="1.5%">
+        <ConnectWalletButton />
+        <ManageWalletButton onOpenGlobalModal={props.onOpenGlobalModal} />
+      </Flex>
     </Flex>
   );
 }

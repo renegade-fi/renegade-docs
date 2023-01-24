@@ -6,13 +6,18 @@ import {
   type ThemeConfig,
   createMultiStyleConfigHelpers,
   extendTheme,
+  useDisclosure,
 } from "@chakra-ui/react";
+import { mainnet } from "@wagmi/chains";
+import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { WagmiConfig, createClient } from "wagmi";
 
 import "./animations.css";
 import Footer from "./components/Footer";
+import GlobalModal from "./components/GlobalModal";
 import Header from "./components/Header";
 import TradingInterface from "./components/TradingInterface";
 import "./fonts.css";
@@ -43,6 +48,8 @@ const colors = {
   border: "#808080",
   green: "#43e043",
   red: "#e04943",
+  brown: "#231f20",
+  "brown.light": "#372f2f",
   "white.100": "#ffffff",
   "white.90": "#e6e6e6",
   "white.80": "#cccccc",
@@ -111,16 +118,56 @@ const components = {
       },
     },
   },
+  Button: {
+    variants: {
+      "wallet-connect": {
+        fontWeight: "500",
+        fontSize: "1.1em",
+        background: "white.80",
+        color: "black",
+        _hover: {
+          background: "white",
+        },
+      },
+    },
+  },
   Menu: defineMultiStyleConfig({ baseStyle: menuStyle }),
 };
 const theme = extendTheme({ config, styles, colors, components });
 
+// Create a ConnectKit client
+const infuraId = process.env.ETHEREUM_MAINNET_INFURA_ID;
+const chains = [mainnet];
+const client = createClient(
+  getDefaultClient({
+    appName: "Renegade",
+    infuraId,
+    chains,
+  }),
+);
+
 function Testnet() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex flexDirection="column" width="100vw" minHeight="100vh" bg="black">
-      <Header />
-      <TradingInterface />
-      <Footer />
+      <WagmiConfig client={client}>
+        <ConnectKitProvider
+          customTheme={{
+            "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+            "--ck-overlay-backdrop-filter": "blur(8px)",
+            "--ck-font-family": "Favorit",
+            "--ck-border-radius": "10px",
+            "--ck-body-background": "#231f20",
+            "--ck-body-background-secondary": "#372f2f",
+            "--ck-focus-color": "#ffffff",
+          }}
+        >
+          <Header onOpenGlobalModal={onOpen} />
+          <TradingInterface />
+          <Footer />
+          <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+        </ConnectKitProvider>
+      </WagmiConfig>
     </Flex>
   );
 }

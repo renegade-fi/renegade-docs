@@ -26,3 +26,6 @@
 /docs.renegade.fi/src/fonts
 /testnet.renegade.fi/src/fonts
 
+# Secrets
+/testnet.renegade.fi/.env
+
