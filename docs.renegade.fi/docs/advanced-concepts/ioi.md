@@ -9,10 +9,9 @@ import IoiDark from '@site/static/img/ioi_dark.svg'
 
 # Indications of Interest
 
-As discussed in [[Lifecycle and Privacy]](/core-concepts/privacy), the
-base-layer protocol has very strong privacy properties: No information
-whatsoever is leaked to third-parties, both before and after a trade is matched
-and settled.
+As discussed in [Lifecycle and Privacy](/core-concepts/privacy), the base-layer
+protocol has very strong privacy properties: No information whatsoever is
+leaked to third-parties, both before and after a trade is matched and settled.
 
 This is optimal from an execution quality point-of-view, but comes with a
 tradeoff: No one can see the pending order, so traders must wait for natural

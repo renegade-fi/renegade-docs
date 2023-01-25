@@ -1,49 +1,81 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
-
+/* Global Infima themes */
 :root {
-  --ifm-color-primary: #000000;
-  --imf-color-secondary: #444444;
-  --ifm-code-font-size: 95%;
-  --ifm-link-color: #2aa3ef;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-  --ifm-navbar-background-color: #ffffff;
-  --ifm-footer-background-color: #ffffff;
-  --ifm-menu-color: rgba(0, 0, 0, 0.4);
-  --ifm-menu-color-active: #000000;
+  --ifm-color-primary: #000;
+  --imf-color-secondary: #444;
+  --imf-color-tertiary: #fff;
+  --ifm-link-color: #108ad5;
+  --ifm-navbar-background-color: #fff;
+  --ifm-footer-background-color: #fff;
+  --ifm-menu-color: #999;
+  background-color: #fff;
+  font-family: 'Favorit';
   --ifm-menu-color-background-hover: none;
   --ifm-menu-color-background-active: none;
-  background-color: #ffffff;
-  font-family: 'Favorit';
+  --ifm-menu-color-active: var(--ifm-color-primary);
 }
 [data-theme='dark'] {
-  --ifm-color-primary: #ffffff;
-  --imf-color-secondary: #bbbbbb;
-  --ifm-code-font-size: 95%;
+  --ifm-color-primary: #fff;
+  --imf-color-secondary: #bbb;
+  --imf-color-tertiary: #111;
   --ifm-link-color: #78c2f0;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
-  --ifm-navbar-background-color: #111111;
-  --ifm-footer-background-color: #111111;
-  --ifm-menu-color: rgba(255, 255, 255, 0.4);
-  --ifm-menu-color-active: #ffffff;
-  --ifm-menu-color-background-hover: none;
-  --ifm-menu-color-background-active: none;
-  background: radial-gradient(farthest-side circle, #202020, #111111);
+  --ifm-navbar-background-color: #111;
+  --ifm-footer-background-color: #111;
+  --ifm-menu-color: #666;
+  background: radial-gradient(farthest-side circle, #222, #111);
   background-repeat: no-repeat;
   background-attachment: fixed;
-  font-family: 'Favorit';
 }
 
-.markdown {
-  max-width: 700px;
-  margin: auto;
-  margin-bottom: 75px;
-  padding-top: 30px;
+/* DocSearch-specific theming */
+[data-theme='light'] .DocSearch {
+  padding: 20px 15px 20px 20px;
+  --docsearch-muted-color: #888;
+  --docsearch-container-background: rgba(94, 100, 112, 0.7);
+  --docsearch-modal-background: var(--ifm-color-secondary-lighter);
+  --docsearch-searchbox-background: var(--ifm-color-secondary);
+  --docsearch-searchbox-focus-background: var(--ifm-navbar-background-color);
+  --docsearch-searchbox-shadow: inset 0 0 0 1px #888;
+  --docsearch-hit-background: var(--ifm-color-white);
+  --docsearch-hit-active-color: var(--ifm-color-primary);
+  --docsearch-footer-background: var(--ifm-color-white);
+}
+[data-theme='dark'] .DocSearch {
+  padding: 20px 15px 20px 20px;
+  --docsearch-muted-color: #888;
+  --docsearch-container-background: rgba(47, 55, 69, 0.7);
+  --docsearch-modal-background: var(--ifm-background-color);
+  --docsearch-searchbox-background: var(--ifm-background-color);
+  --docsearch-searchbox-focus-background: var(--ifm-navbar-background-color);
+  --docsearch-searchbox-shadow: inset 0 0 0 1px #888;
+  --docsearch-hit-background: var(--ifm-background-color);
+  --docsearch-hit-active-color: var(--ifm-color-primary);
+  --docsearch-footer-background: var(--ifm-background-surface-color);
+  --docsearch-text-color: #ccc;
+  --docsearch-key-shadow: inset 0 -2px 0 0 #363849,
+    inset 0 0 1px 1px #575b75,
+    0 2px 2px 0 rgba(3,4,9,0.3);
+  --docsearch-key-gradient: linear-gradient(
+    -26.5deg,
+    var(--ifm-color-emphasis-200) 0%,
+    var(--ifm-color-emphasis-100) 100%
+  );
+}
+.DocSearch-Hit a {
+  background-color: var(--imf-color-seconary) !important;
 }
 
+[aria-selected='true'].DocSearch-Hit a {
+  background-color: var(--imf-color-tertiary) !important;
+}
+
+/* Header layout */
+.search {
+  margin-left: calc(42vw - 310px);
+}
+.DocSearch-Search-Icon {
+  color: var(--docserach-muted-color) !important;
+  margin-right: 2px;
+}
 .navbar--fixed-top {
   height: 70px;
   box-shadow: inset 0px -1px 0px #d1d2d6;
@@ -51,29 +83,48 @@
 [data-theme='dark'] .navbar--fixed-top {
   box-shadow: inset 0px -1px 0px #40444a;
 }
-
 .navbar__logo {
   padding-left: 5px;
 }
+.navbar__item {
+  font-weight: 350;
+  font-family: "Favorit Extended";
+}
+.navbar__link {
+  padding: 0 10px 0 10px;
+}
+[class^="iconExternalLink"] {
+  display: none;
+}
 
+/* Sidebar menu layout */
 .menu__link--sublist {
   margin-top: 10px;
 }
-
 .menu__link:hover {
   color: var(--imf-menu-color);
 }
 
-.theme-doc-toc-mobile {
-  display: none;
+/* Main markdown layout */
+.markdown {
+  max-width: 700px;
+  margin: auto;
+  margin-bottom: 75px;
+  padding-top: 30px;
 }
-
-.navbar-sidebar__back {
-  display: none;
-}
-
 @media only screen and (max-width: 800px) {
   .markdown {
     padding-top: 10px;
   }
 }
+
+/* Don't show "On this page" table of contents for mobile */
+.theme-doc-toc-mobile {
+  display: none;
+}
+
+/* Don't show "Back to main menu" in the drawer for mobile */
+.navbar-sidebar__back {
+  display: none;
+}
+

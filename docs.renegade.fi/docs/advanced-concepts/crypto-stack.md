@@ -26,7 +26,9 @@ than two parties in the future.
 ## Hash Functions
 
 For hashes, we use arithmetic-friendly
-[Poseidon](https://eprint.iacr.org/2019/458) everywhere.
+[Poseidon](https://eprint.iacr.org/2019/458) everywhere. For cross-proof
+witness consistency checks, we use Pedersen commitments, as we can save work by
+re-using the Bulletproof commitments.
 
 ## Asymmetric Cryptography
 

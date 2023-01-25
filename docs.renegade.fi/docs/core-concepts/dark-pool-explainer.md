@@ -97,7 +97,7 @@ end-to-end privacy, both before an order is filled and after it is settled
 on-chain.
 
 To understand how we use the idea of *local private state* combined with the
-building blocks of MPC and ZKPs to guarantee complete privacy, see [[What is
-MPC]](/core-concepts/mpc-explainer) and [[The MPC-ZKP
-Architecture]](/core-concepts/mpc-zkp), and to see precisely is meant by
-"end-to-end privacy", see [[Lifecycle and Privacy]](/core-concepts/privacy).
+building blocks of MPC and ZKPs to guarantee complete privacy, see [What is
+MPC](/core-concepts/mpc-explainer) and [The MPC-ZKP
+Architecture](/core-concepts/mpc-zkp), and to see precisely is meant by
+"end-to-end privacy", see [Lifecycle and Privacy](/core-concepts/privacy).

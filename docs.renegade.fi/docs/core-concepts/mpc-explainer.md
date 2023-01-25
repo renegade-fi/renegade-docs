@@ -97,7 +97,7 @@ functionality, with no trusted dark pool operator!
 Note, however, that MPC algorithms on their own don't have any guarantees about
 the validity of the inputs of each party. This would be a huge problem for the
 dark pool, as we must have guarantees that each trader actually has appropriate
-balances for each of their orders. In the next section [[The MPC-ZKP
-Architecture]](/core-concepts/mpc-zkp), we will see how we combine the idea of
+balances for each of their orders. In the next section [The MPC-ZKP
+Architecture](/core-concepts/mpc-zkp), we will see how we combine the idea of
 MPC with zero-knowledge proofs in order to prove consistency of balances and
 orders with respect to on-chain state.

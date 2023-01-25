@@ -44,6 +44,13 @@ const config = {
   ],
 
   themeConfig: {
+    algolia: {
+      appId: 'EWPU8CEAG4',
+      apiKey: '25436a5337fea3c88c932367891e7ec3',
+      indexName: 'renegade',
+      contextualSearch: true,
+      externalUrlRegex: 'renegade.fi'
+    },
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: false,
@@ -52,23 +59,23 @@ const config = {
     navbar: {
       logo: {
         alt: 'Renegade Logo',
-        src: 'img/logo_short_light.svg',
-        srcDark: 'img/logo_short_dark.svg'
+        src: 'img/glyph_light.svg',
+        srcDark: 'img/glyph_dark.svg'
       },
       items: [
         {
-          href: 'https://twitter.com/renegade_fi',
           label: 'Twitter',
+          href: 'https://twitter.com/renegade_fi',
           position: 'right'
         },
         {
-          href: 'https://discord.gg/renegade-fi',
           label: 'Discord',
+          href: 'https://discord.gg/renegade-fi',
           position: 'right'
         },
         {
-          href: 'https://renegadefi.substack.com',
           label: 'Substack',
+          href: 'https://renegadefi.substack.com',
           position: 'right'
         },
         {
@@ -77,9 +84,14 @@ const config = {
           position: 'right'
         },
         {
-          label: 'GitHub',
+          label: 'Code',
           href: 'https://github.com/renegade-fi',
           position: 'right'
+        },
+        {
+          type: 'search',
+          position: 'right',
+          className: 'search'
         }
       ]
     },

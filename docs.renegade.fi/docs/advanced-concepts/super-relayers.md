@@ -45,7 +45,7 @@ More specifically, each keypair has the following authority:
   operations to it.
 
 For full details on how the various keys are derived and what precise authority
-each key has, see the [[Whitepaper]](/getting-started/whitepaper).
+each key has, see the [Whitepaper](/getting-started/whitepaper).
 
 ## Keypair Delegation
 

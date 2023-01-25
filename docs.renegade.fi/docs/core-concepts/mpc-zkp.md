@@ -105,7 +105,7 @@ information is leaked.
 
 ## Collaborative SNARKs
 
-As mentioned in [[What is MPC]](/core-concepts/mpc-explainer), multi-party
+As mentioned in [What is MPC](/core-concepts/mpc-explainer), multi-party
 computation protocols themselves have no guarantees about the validity of input
 data. To solve this, we re-compute the commitments to order data inside of the
 MPC. If the re-computed commitments disagree with the publicly-known
@@ -150,4 +150,4 @@ post-trade.
 
 For more details on the precise contents of the handshake tuple, and for more
 details about the various NP statements that are proven by each node, see the
-full [[Whitepaper]](/getting-started/whitepaper).
+full [Whitepaper](/getting-started/whitepaper).

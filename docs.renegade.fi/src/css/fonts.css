@@ -74,6 +74,50 @@
 }
 */
 
+/* Favorit Extended Normal */
+@font-face {
+  font-family: "Favorit Extended";
+  font-style: "normal";
+  font-weight: 300;
+  font-display: block;
+  src: url(../fonts/favorit/ABCFavoritExtended-Light-Named.ttf)
+    format("truetype");
+}
+
+@font-face {
+  font-family: "Favorit Extended";
+  font-style: "normal";
+  font-weight: 350;
+  font-display: block;
+  src: url(../fonts/favorit/ABCFavoritExtended-Book-Named.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Favorit Extended";
+  font-style: "normal";
+  font-weight: 400;
+  font-display: block;
+  src: url(../fonts/favorit/ABCFavoritExtended-Regular-Named.ttf)
+    format("truetype");
+}
+
+@font-face {
+  font-family: "Favorit Extended";
+  font-style: "normal";
+  font-weight: 500;
+  font-display: block;
+  src: url(../fonts/favorit/ABCFavoritExtended-Medium-Named.ttf)
+    format("truetype");
+}
+
+@font-face {
+  font-family: "Favorit Extended";
+  font-style: "normal";
+  font-weight: 700;
+  font-display: block;
+  src: url(../fonts/favorit/ABCFavoritExtended-Bold-Named.ttf) format("truetype");
+}
+
 /* Aime Normal */
 /*
 @font-face {
