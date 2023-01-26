@@ -20,6 +20,8 @@ import Footer from "./components/Footer";
 import GlobalModal from "./components/GlobalModal";
 import Header from "./components/Header";
 import TradingInterface from "./components/TradingInterface";
+import KeyStore from "./connections/KeyStore";
+import KeyStoreContext from "./contexts/KeyStoreContext";
 import "./fonts.css";
 import "./index.css";
 
@@ -146,29 +148,38 @@ const client = createClient(
   }),
 );
 
+const keyStore = new KeyStore({});
+
 function Testnet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
-    <Flex flexDirection="column" width="100vw" minHeight="100vh" bg="black">
-      <WagmiConfig client={client}>
-        <ConnectKitProvider
-          customTheme={{
-            "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
-            "--ck-overlay-backdrop-filter": "blur(8px)",
-            "--ck-font-family": "Favorit",
-            "--ck-border-radius": "10px",
-            "--ck-body-background": "#231f20",
-            "--ck-body-background-secondary": "#372f2f",
-            "--ck-focus-color": "#ffffff",
-          }}
-        >
-          <Header onOpenGlobalModal={onOpen} />
-          <TradingInterface />
-          <Footer />
-          <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
-        </ConnectKitProvider>
-      </WagmiConfig>
-    </Flex>
+    <WagmiConfig client={client}>
+      <ConnectKitProvider
+        customTheme={{
+          "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+          "--ck-overlay-backdrop-filter": "blur(8px)",
+          "--ck-font-family": "Favorit",
+          "--ck-border-radius": "10px",
+          "--ck-body-background": "#231f20",
+          "--ck-body-background-secondary": "#372f2f",
+          "--ck-focus-color": "#ffffff",
+        }}
+      >
+        <KeyStoreContext.Provider value={keyStore}>
+          <Flex
+            flexDirection="column"
+            width="100vw"
+            minHeight="100vh"
+            bg="black"
+          >
+            <Header onOpenGlobalModal={onOpen} />
+            <TradingInterface />
+            <Footer />
+            <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+          </Flex>
+        </KeyStoreContext.Provider>
+      </ConnectKitProvider>
+    </WagmiConfig>
   );
 }
 

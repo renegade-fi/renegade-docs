@@ -20,13 +20,16 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi";
 
+import KeyStore from "../connections/KeyStore";
+import KeyStoreContext from "../contexts/KeyStoreContext";
+
 function SignInButton() {
+  const keyStore = React.useContext(KeyStoreContext);
   const { signMessage } = useSignMessageWagmi({
-    message: "Unlock your Renegade wallet.\nv1.0.0",
+    message: KeyStore.SIGN_IN_MESSAGE,
     onSuccess(data, variables) {
-      console.log(data, variables);
-      const address = verifyMessage(variables.message, data);
-      console.log(address);
+      const address = verifyMessage(variables.message, data); // TODO: Validate this addr?
+      keyStore.populateFromSignature(data);
     },
   });
   return (
