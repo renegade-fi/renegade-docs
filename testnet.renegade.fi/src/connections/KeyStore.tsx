@@ -1,3 +1,4 @@
+import * as ed from "@noble/ed25519";
 import BN from "bn.js";
 
 class RenegadeKeypair {
@@ -32,8 +33,14 @@ class RenegadeKeypair {
     }
   }
 
-  signMessage(message: Uint8Array): Uint8Array {
-    return message; // TODO
+  async signMessage(message: string): Promise<Uint8Array> {
+    if (this._secretKey === null) {
+      throw new Error("The default keypair cannot sign messages.");
+    }
+    const secretKeyArray = Buffer.from(this._secretKey.toArray("be", 32));
+    const messageArray = Buffer.from(message, "ascii");
+    const signature = await ed.sign(messageArray, secretKeyArray); // 64 bytes
+    return signature;
   }
 
   /**
@@ -82,7 +89,10 @@ export default class KeyStore {
   props: KeyStoreProps;
   state: KeyStoreState;
 
-  static SIGN_IN_MESSAGE = "Unlock your Renegade wallet.\nv1.0.0";
+  static CREATE_SK_ROOT_MESSAGE = "Unlock your Renegade wallet.\nv1";
+  static CREATE_SK_MATCH_MESSAGE = "Unlock your Renegade match key.\nv1";
+  static CREATE_SK_SETTLE_MESSAGE = "Unlock your Renegade settle key.\nv1";
+  static CREATE_SK_VIEW_MESSAGE = "Unlock your Renegade view key.\nv1";
 
   constructor(props: KeyStoreProps) {
     this.props = props;
@@ -98,32 +108,60 @@ export default class KeyStore {
   }
 
   /**
+   * Given an array of bytes, hash the array with SHA-256, and return the
+   * resulting hash modulo Curve25519 field order.
+   */
+  static async _hashBytesMod25519(bytes: Uint8Array): Promise<BN> {
+    const hash = await window.crypto.subtle.digest("SHA-256", bytes);
+    const hashBN = new BN(new Uint8Array(hash), undefined, "be");
+    const hashMod25519 = hashBN.mod(RenegadeKeypair.CURVE_25519_FIELD_ORDER);
+    return hashMod25519;
+  }
+
+  /**
    * Given a 65-byte ECDSA signature, computes the entire Renegade key hierarchy.
    */
   async _generateRenegadeKeypairs(signatureBytes: Uint8Array): Promise<{
     [key: string]: RenegadeKeypair;
   }> {
-    const signatureHash = await window.crypto.subtle.digest(
-      "SHA-256",
-      signatureBytes,
-    );
-    const signatureHashBN = new BN(new Uint8Array(signatureHash));
-    const rootSecretKey = signatureHashBN.mod(
-      RenegadeKeypair.CURVE_25519_FIELD_ORDER,
-    );
+    // Deive the root key.
+    const rootSecretKey = await KeyStore._hashBytesMod25519(signatureBytes);
     const root = new RenegadeKeypair(rootSecretKey);
-    return {
-      root,
-      match: RenegadeKeypair.default(),
-      settle: RenegadeKeypair.default(),
-      view: RenegadeKeypair.default(),
-    };
+
+    // Derive the match key.
+    const rootSignatureBytes = await root.signMessage(
+      KeyStore.CREATE_SK_MATCH_MESSAGE,
+    );
+    const matchSecretKey = await KeyStore._hashBytesMod25519(
+      rootSignatureBytes,
+    );
+    const match = new RenegadeKeypair(matchSecretKey);
+
+    // Derive the settle key.
+    const matchSignatureBytes = await match.signMessage(
+      KeyStore.CREATE_SK_SETTLE_MESSAGE,
+    );
+    const settleSecretKey = await KeyStore._hashBytesMod25519(
+      matchSignatureBytes,
+    );
+    const settle = new RenegadeKeypair(settleSecretKey);
+
+    // Derive the view key.
+    const settleSignatureBytes = await settle.signMessage(
+      KeyStore.CREATE_SK_VIEW_MESSAGE,
+    );
+    const viewSecretKey = await KeyStore._hashBytesMod25519(
+      settleSignatureBytes,
+    );
+    const view = new RenegadeKeypair(viewSecretKey);
+
+    return { root, match, settle, view };
   }
 
   /**
    * Given a 65-byte ECDSA signature, computes the StarkNet keypair.
    */
-  _generateStarkNetKeypair(signatureBytes: Uint8Array): StarkNetKeypair {
+  _generateStarkNetKeypair(_signatureBytes: Uint8Array): StarkNetKeypair {
     return StarkNetKeypair.default(); // TODO
   }
 

@@ -5,6 +5,7 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "^2.3.4",
+    "@noble/ed25519": "^1.7.1",
     "@wagmi/chains": "^0.1.11",
     "bn.js": "^5.2.1",
     "connectkit": "1.0.0",

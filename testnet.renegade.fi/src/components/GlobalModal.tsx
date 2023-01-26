@@ -26,7 +26,7 @@ import KeyStoreContext from "../contexts/KeyStoreContext";
 function SignInButton() {
   const keyStore = React.useContext(KeyStoreContext);
   const { signMessage } = useSignMessageWagmi({
-    message: KeyStore.SIGN_IN_MESSAGE,
+    message: KeyStore.CREATE_SK_ROOT_MESSAGE,
     onSuccess(data, variables) {
       const address = verifyMessage(variables.message, data); // TODO: Validate this addr?
       keyStore.populateFromSignature(data);
