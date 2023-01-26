@@ -11,25 +11,19 @@ import {
 } from "@chakra-ui/react";
 import { ConnectKitButton } from "connectkit";
 import React from "react";
-import { useAccount as useAccountWagmi } from "wagmi";
+import {
+  useAccount as useAccountWagmi,
+  useDisconnect as useDisconnectWagmi,
+} from "wagmi";
 
+import KeyStore from "../connections/KeyStore";
+import KeyStoreContext from "../contexts/KeyStoreContext";
 import glyphDark from "../icons/glyph_dark.svg";
 
-function ManageWalletButton(props: { onOpenGlobalModal: () => void }) {
-  const { address } = useAccountWagmi();
-  if (!address) {
-    return null;
-  }
-  return (
-    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
-      <HStack spacing="0px">
-        <Text>Manage Wallet 0x</Text>
-        <Text>{address.slice(2, 6)}</Text>
-      </HStack>
-    </Button>
-  );
-}
-
+/**
+ * The initial "Connect Wallet" button. Only visible if the user has not
+ * connected their wallet.
+ */
 function ConnectWalletButton() {
   return (
     <ConnectKitButton.Custom>
@@ -55,6 +49,61 @@ function ConnectWalletButton() {
         );
       }}
     </ConnectKitButton.Custom>
+  );
+}
+
+/**
+ * The "Sign In with 0x..." button. Only visible if the user has connected
+ * their wallet, but we have not re-derived the key hierarchy.
+ */
+function SignInButton(props: { onOpenGlobalModal: () => void }) {
+  const { address } = useAccountWagmi();
+  const keyStore = React.useContext(KeyStoreContext);
+  if (!address) {
+    return null;
+  }
+  if (!keyStore.isUnpopulated()) {
+    return null;
+  }
+
+  return (
+    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
+      <HStack spacing="0px">
+        <Text>Sign in with 0x</Text>
+        <Text>{address.slice(2, 6)}</Text>
+      </HStack>
+    </Button>
+  );
+}
+
+/**
+ * The "Disconnect L1 address 0x..." button. Only visible if the user has
+ * connected their wallet and we have populated the key hierarchy.
+ */
+function DisconnectWalletButton() {
+  const { disconnect } = useDisconnectWagmi();
+  const { address } = useAccountWagmi();
+  const keyStore = React.useContext(KeyStoreContext);
+  if (!address) {
+    return null;
+  }
+  if (keyStore.isUnpopulated()) {
+    return null;
+  }
+
+  return (
+    <Button
+      variant="wallet-connect"
+      onClick={() => {
+        keyStore.clear();
+        disconnect();
+      }}
+    >
+      <HStack spacing="0px" fontStyle="Favorit">
+        <Text>Disconnect 0x</Text>
+        <Text>{address ? address.slice(2, 6) : "????"}</Text>
+      </HStack>
+    </Button>
   );
 }
 
@@ -92,7 +141,8 @@ export default function Header(props: { onOpenGlobalModal: () => void }) {
       <Spacer />
       <Flex width="30%" justifyContent="right" paddingRight="1.5%">
         <ConnectWalletButton />
-        <ManageWalletButton onOpenGlobalModal={props.onOpenGlobalModal} />
+        <SignInButton onOpenGlobalModal={props.onOpenGlobalModal} />
+        <DisconnectWalletButton />
       </Flex>
     </Flex>
   );

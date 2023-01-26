@@ -43,6 +43,14 @@ class RenegadeKeypair {
     return signature;
   }
 
+  get publicKey() {
+    return this._publicKey;
+  }
+
+  isDefault(): boolean {
+    return this._secretKey === null;
+  }
+
   /**
    * Recover the public key for a given secret key.
    *
@@ -68,10 +76,6 @@ class RenegadeKeypair {
     }
     return publicKey;
   }
-
-  get publicKey() {
-    return this._publicKey;
-  }
 }
 
 class StarkNetKeypair {
@@ -96,6 +100,10 @@ export default class KeyStore {
 
   constructor(props: KeyStoreProps) {
     this.props = props;
+    this._resetState();
+  }
+
+  _resetState() {
     this.state = {
       renegadeKeypairs: {
         root: RenegadeKeypair.default(),
@@ -182,5 +190,19 @@ export default class KeyStore {
       signatureBytes,
     );
     this.state.starkNetKeypair = this._generateStarkNetKeypair(signatureBytes);
+  }
+
+  /**
+   * Returns true if the user has not yet populated the key hierarchy.
+   */
+  isUnpopulated(): boolean {
+    return this.state.renegadeKeypairs.root.isDefault();
+  }
+
+  /**
+   * Resets the key store to default state.
+   */
+  clear() {
+    this._resetState();
   }
 }

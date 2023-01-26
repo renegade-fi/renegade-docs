@@ -23,13 +23,14 @@ import {
 import KeyStore from "../connections/KeyStore";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 
-function SignInButton() {
+function SignInButton(props: { onClose: () => void }) {
   const keyStore = React.useContext(KeyStoreContext);
   const { signMessage } = useSignMessageWagmi({
     message: KeyStore.CREATE_SK_ROOT_MESSAGE,
-    onSuccess(data, variables) {
+    async onSuccess(data, variables) {
       const address = verifyMessage(variables.message, data); // TODO: Validate this addr?
-      keyStore.populateFromSignature(data);
+      await keyStore.populateFromSignature(data);
+      props.onClose();
     },
   });
   return (
@@ -98,7 +99,7 @@ export default function GlobalModal(props: GlobalModalProps) {
               To trade on Renegade, we require a one-time signature to unlock
               and create your wallet.
             </Text>
-            <SignInButton />
+            <SignInButton onClose={props.onClose} />
             <DisconnectWalletButton onClose={props.onClose} />
           </Flex>
         </ModalBody>

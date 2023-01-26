@@ -138,7 +138,7 @@ export default class AllTokensBanner extends React.Component<
 
   performScroll() {
     const tokenBanner = document.getElementsByClassName("all-tokens-banner")[0];
-    if (!this.state.isHovered && !this.state.isClicked) {
+    if (tokenBanner && !this.state.isHovered && !this.state.isClicked) {
       let scrollDest = tokenBanner.scrollLeft % (tokenBanner.scrollWidth / 3);
       scrollDest += tokenBanner.scrollWidth / 3;
       scrollDest += 1;

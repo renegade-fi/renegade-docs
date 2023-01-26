@@ -125,10 +125,12 @@ const components = {
       "wallet-connect": {
         fontWeight: "500",
         fontSize: "1.1em",
-        background: "white.80",
-        color: "black",
+        background: "brown",
+        color: "white.90",
+        border: "1px solid",
+        borderColor: "border",
         _hover: {
-          background: "white",
+          background: "brown.light",
         },
       },
     },
@@ -166,12 +168,7 @@ function Testnet() {
         }}
       >
         <KeyStoreContext.Provider value={keyStore}>
-          <Flex
-            flexDirection="column"
-            width="100vw"
-            minHeight="100vh"
-            bg="black"
-          >
+          <Flex flexDirection="column" width="100vw" minHeight="100vh">
             <Header onOpenGlobalModal={onOpen} />
             <TradingInterface />
             <Footer />
