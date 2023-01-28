@@ -156,9 +156,32 @@ export class LivePrices extends React.Component<
   }
 
   async componentDidMount() {
-    // Await for websocket connection opened
     await this.props.renegadeConnection.awaitConnection();
-    // Query for the fallbackPriceReport
+    await this.queryFallbackPriceReport();
+    this.streamPriceReports();
+  }
+
+  async componentDidUpdate(prevProps: LivePricesProps) {
+    if (
+      prevProps.baseTicker === this.props.baseTicker &&
+      prevProps.quoteTicker === this.props.quoteTicker
+    ) {
+      return;
+    }
+    if (!this.state.listenerId) {
+      return;
+    }
+    this.props.renegadeConnection.unlistenToTopic(this.state.listenerId);
+    this.setState({
+      fallbackPriceReport: DEFAULT_PRICE_REPORT,
+      previousPriceReport: DEFAULT_PRICE_REPORT,
+      currentPriceReport: DEFAULT_PRICE_REPORT,
+    });
+    await this.queryFallbackPriceReport();
+    this.streamPriceReports();
+  }
+
+  async queryFallbackPriceReport() {
     const healthStates =
       await this.props.renegadeConnection.checkExchangeHealthStates(
         TICKER_TO_ADDR[this.props.baseTicker],
@@ -182,26 +205,6 @@ export class LivePrices extends React.Component<
         uniswapv3: healthStates["all_exchanges"]["UniswapV3"]["Nominal"],
       }[this.props.exchange] || DEFAULT_PRICE_REPORT;
     this.setState({ fallbackPriceReport });
-    // Start streaming price reports
-    this.streamPriceReports();
-  }
-
-  componentDidUpdate(prevProps: LivePricesProps) {
-    if (
-      prevProps.baseTicker === this.props.baseTicker &&
-      prevProps.quoteTicker === this.props.quoteTicker
-    ) {
-      return;
-    }
-    if (!this.state.listenerId) {
-      return;
-    }
-    this.props.renegadeConnection.unlistenToTopic(this.state.listenerId);
-    this.setState({
-      previousPriceReport: DEFAULT_PRICE_REPORT,
-      currentPriceReport: DEFAULT_PRICE_REPORT,
-    });
-    this.streamPriceReports();
   }
 
   streamPriceReports() {
@@ -297,6 +300,11 @@ export class LivePrices extends React.Component<
         "0".repeat(Math.max(0, baseDefaultDecimals - leadingDecimals)) +
         priceStr;
     }
+
+    if (this.props.onlyShowPrice) {
+      return <Text opacity={price == 0 ? "40%" : "inherit"}>${priceStr}</Text>;
+    }
+
     const key = [
       this.props.baseTicker,
       this.props.quoteTicker,
@@ -332,10 +340,6 @@ export class LivePrices extends React.Component<
           key={key + "_icon"}
         />
       );
-    }
-
-    if (this.props.onlyShowPrice) {
-      return <Text>${priceStr}</Text>;
     }
 
     return (
