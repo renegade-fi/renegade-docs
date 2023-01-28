@@ -1,12 +1,5 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Center,
-  Flex,
-  Link,
-  Text,
-  keyframes,
-} from "@chakra-ui/react";
+import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
@@ -42,23 +35,10 @@ function pulseAnimation(scale: number) {
 }
 
 interface BannerSeparatorProps {
-  size?: "small" | "medium" | "large";
+  flexGrow?: number;
   link?: string;
 }
 export function BannerSeparator(props: BannerSeparatorProps) {
-  let flexGrow: undefined | number;
-  if (props.size === undefined) {
-    flexGrow = undefined;
-  } else if (props.size === "small") {
-    flexGrow = 1;
-  } else if (props.size === "medium") {
-    flexGrow = 4;
-  } else if (props.size === "large") {
-    flexGrow = 10;
-  } else {
-    throw new Error("Invalid BannerSeparator size: " + props.size);
-  }
-
   const Wrapper = (wrapperProps: { children: React.ReactNode }) => {
     if (props.link) {
       return (
@@ -67,7 +47,7 @@ export function BannerSeparator(props: BannerSeparatorProps) {
           alignItems="center"
           justifyContent="center"
           height="100%"
-          flexGrow={flexGrow}
+          flexGrow={props.flexGrow}
           href={props.link}
           isExternal
         >
@@ -76,7 +56,7 @@ export function BannerSeparator(props: BannerSeparatorProps) {
       );
     } else {
       return (
-        <Center height="70%" flexGrow={flexGrow}>
+        <Center height="70%" flexGrow={props.flexGrow}>
           {wrapperProps.children}
         </Center>
       );

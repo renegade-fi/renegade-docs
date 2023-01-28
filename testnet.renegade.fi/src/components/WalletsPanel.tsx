@@ -99,7 +99,7 @@ function TokenBalance(props: TokenBalanceProps) {
   return (
     <Flex
       alignItems="center"
-      width="100%"
+      width="85%"
       color="white.80"
       gap="5px"
       borderBottom="var(--border)"
@@ -108,8 +108,9 @@ function TokenBalance(props: TokenBalanceProps) {
       <Image src={logoUrl} width="25px" height="25px" />
       <Flex
         flexDirection="column"
-        alignItems="flex-end"
+        alignItems="flex-start"
         padding="10px 0 10px 0"
+        marginLeft="5px"
         flexGrow="1"
       >
         <Text fontSize="1.1em" lineHeight="1">
@@ -211,8 +212,8 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
       </Flex>
       <Flex
         flexDirection="column"
+        alignItems="center"
         width="100%"
-        padding="0 9% 0 9%"
         flexGrow="1"
       >
         {panelBody}
@@ -355,7 +356,7 @@ interface WalletsPanelProps {
   onOpenGlobalModal: () => void;
 }
 interface WalletsPanelState {
-  isCollapsed: boolean;
+  isHovering: boolean;
   isLocked: boolean;
 }
 export default class WalletsPanel extends React.Component<
@@ -365,7 +366,7 @@ export default class WalletsPanel extends React.Component<
   constructor(props: WalletsPanelProps) {
     super(props);
     this.state = {
-      isCollapsed: true,
+      isHovering: false,
       isLocked: false,
     };
     this.onMouseEnter = this.onMouseEnter.bind(this);
@@ -375,13 +376,13 @@ export default class WalletsPanel extends React.Component<
 
   onMouseEnter() {
     this.setState({
-      isCollapsed: false,
+      isHovering: true,
     });
   }
 
   onMouseLeave() {
     this.setState({
-      isCollapsed: true,
+      isHovering: false,
     });
   }
 
@@ -392,22 +393,20 @@ export default class WalletsPanel extends React.Component<
   }
 
   render() {
-    let content: React.ReactElement;
-    if (!this.state.isLocked && this.state.isCollapsed) {
-      content = <WalletsPanelCollapsed />;
-    } else {
-      content = (
-        <WalletsPanelExpanded
-          renegadeConnection={this.props.renegadeConnection}
-          onOpenGlobalModal={this.props.onOpenGlobalModal}
-          isLocked={this.state.isLocked}
-          toggleIsLocked={this.toggleIsLocked}
-        />
-      );
-    }
+    const isExpanded = this.state.isHovering || this.state.isLocked;
     return (
       <Flex onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-        {content}
+        <Flex display={isExpanded ? "none" : "inherit"}>
+          <WalletsPanelCollapsed />
+        </Flex>
+        <Flex display={isExpanded ? "inherit" : "none"}>
+          <WalletsPanelExpanded
+            renegadeConnection={this.props.renegadeConnection}
+            onOpenGlobalModal={this.props.onOpenGlobalModal}
+            isLocked={this.state.isLocked}
+            toggleIsLocked={this.toggleIsLocked}
+          />
+        </Flex>
       </Flex>
     );
   }

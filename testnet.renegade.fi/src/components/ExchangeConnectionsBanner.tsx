@@ -22,24 +22,20 @@ type HealthState =
   | "too-much-deviation";
 
 function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
-  if (props.link) {
-    return (
-      <Flex
-        as={Link}
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-        href={props.link}
-        isExternal
-        flexGrow="1"
-        _hover={{ textDecoration: "none" }}
-      >
-        {props.children}
-      </Flex>
-    );
-  } else {
-    return <>{props.children}</>;
-  }
+  return (
+    <Flex
+      as={props.link ? Link : undefined}
+      height="100%"
+      alignItems="center"
+      justifyContent="center"
+      href={props.link}
+      isExternal
+      flexGrow="1"
+      _hover={{ textDecoration: "none" }}
+    >
+      {props.children}
+    </Flex>
+  );
 }
 
 interface ExchangeConnectionTripleProps {
@@ -125,7 +121,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       <LinkWrapper link={link}>
         <Text>{props.exchange[0].toUpperCase() + props.exchange.slice(1)}</Text>
       </LinkWrapper>
-      <BannerSeparator size="small" link={link} />
+      <BannerSeparator flexGrow={1} link={link} />
       {showPrice && (
         <LivePrices
           renegadeConnection={props.renegadeConnection}
@@ -251,7 +247,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
       >
         <Spacer flexGrow="3" />
         <Text color="white">NBBO Feed</Text>
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -259,7 +255,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="binance"
           healthState={this.state.priceReporterHealthStates["binance"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -267,7 +263,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="coinbase"
           healthState={this.state.priceReporterHealthStates["coinbase"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -275,7 +271,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="kraken"
           healthState={this.state.priceReporterHealthStates["kraken"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -283,7 +279,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="okx"
           healthState={this.state.priceReporterHealthStates["okx"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
@@ -291,7 +287,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
           exchange="uniswapv3"
           healthState={this.state.priceReporterHealthStates["uniswapv3"]}
         />
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}

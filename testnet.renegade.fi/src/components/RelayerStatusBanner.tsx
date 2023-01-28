@@ -1,4 +1,4 @@
-import { Flex, HStack, Text } from "@chakra-ui/react";
+import { Flex, HStack, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
 import RenegadeConnection from "../connections/RenegadeConnection";
@@ -55,7 +55,7 @@ export default class RelayerStatusBanner extends React.Component<
     return (
       <Flex
         alignItems="center"
-        justifyContent="space-evenly"
+        justifyContent="center"
         width="100%"
         height="var(--banner-height)"
         padding="0 4% 0 4%"
@@ -64,28 +64,30 @@ export default class RelayerStatusBanner extends React.Component<
         color="white.80"
         userSelect="text"
       >
+        <Spacer flexGrow="0" />
         <Text color="white">Liquidity</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <Text>420.00 {this.props.activeBaseTicker}</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={3} />
         <Text color="white">Relayer</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <Text>renegade-relayer.eth</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <HStack>
           {connectionText}
           <PulsingConnection state={this.state.connectionState} />
         </HStack>
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={3} />
         <Text color="white">Fees</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <Text>Relayer 0.08%</Text>
-        <BannerSeparator size="small" />
+        <BannerSeparator flexGrow={1} />
         <Text>Protocol 0.02%</Text>
-        <BannerSeparator size="medium" />
+        <BannerSeparator flexGrow={3} />
         <Text color="white">Debug</Text>
+        <Spacer flexGrow="0" />
       </Flex>
     );
   }

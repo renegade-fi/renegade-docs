@@ -101,7 +101,9 @@ export default class TradingInterface extends React.Component<
               setDirectionAndTickers={this.setDirectionAndTickers}
             />
           </Flex>
-          <OrdersAndCounterpartiesPanel />
+          <OrdersAndCounterpartiesPanel
+            renegadeConnection={renegadeConnection}
+          />
         </Flex>
         <AllTokensBanner
           renegadeConnection={renegadeConnection}
