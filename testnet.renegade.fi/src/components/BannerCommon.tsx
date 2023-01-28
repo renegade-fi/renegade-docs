@@ -131,6 +131,8 @@ interface LivePricesProps {
   baseTicker: string;
   quoteTicker: string;
   exchange: Exchange;
+  onlyShowPrice?: boolean;
+  scaleBy?: number;
 }
 interface LivePricesState {
   fallbackPriceReport: PriceReport;
@@ -248,10 +250,15 @@ export class LivePrices extends React.Component<
     let price: number;
     let priceStrClass = "";
     if (this.state.currentPriceReport === DEFAULT_PRICE_REPORT) {
-      if (this.state.fallbackPriceReport === DEFAULT_PRICE_REPORT) {
-        price = 0;
-      } else {
+      if (this.state.fallbackPriceReport !== DEFAULT_PRICE_REPORT) {
         price = this.state.fallbackPriceReport.midpointPrice;
+      } else if (
+        this.props.baseTicker === "USDC" ||
+        this.props.baseTicker === "USDT"
+      ) {
+        price = 1;
+      } else {
+        price = 0;
       }
     } else if (this.state.previousPriceReport === DEFAULT_PRICE_REPORT) {
       price = this.state.currentPriceReport.midpointPrice;
@@ -262,6 +269,11 @@ export class LivePrices extends React.Component<
         this.state.previousPriceReport.midpointPrice
           ? "fade-green-to-white"
           : "fade-red-to-white";
+    }
+
+    // If the caller supplied a scaleBy prop, scale the price appropriately
+    if (this.props.scaleBy) {
+      price *= this.props.scaleBy;
     }
 
     // Format the price as a string
@@ -320,6 +332,10 @@ export class LivePrices extends React.Component<
           key={key + "_icon"}
         />
       );
+    }
+
+    if (this.props.onlyShowPrice) {
+      return <Text>${priceStr}</Text>;
     }
 
     return (

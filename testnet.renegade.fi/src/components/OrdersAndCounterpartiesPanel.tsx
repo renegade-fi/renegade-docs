@@ -1,4 +1,5 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
 interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
@@ -41,7 +42,20 @@ function OrdersAndCounterpartiesPanelCollapsed(
       onClick={props.toggleIsCollapsed}
       cursor="pointer"
       userSelect="none"
+      position="relative"
     >
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        position="absolute"
+        top="9px"
+        width="calc(0.6 * var(--banner-height))"
+        height="calc(0.6 * var(--banner-height))"
+        borderRadius="100px"
+        cursor="pointer"
+      >
+        <ArrowLeftIcon boxSize="11px" color="white.80" />
+      </Flex>
       <SingleOrdersAndCounterpartiesPanelCollapsed
         isFirst={true}
         displayText="Order History"
@@ -54,26 +68,64 @@ function OrdersAndCounterpartiesPanelCollapsed(
   );
 }
 
+interface OrdersPanelProps {
+  toggleIsCollapsed: () => void;
+}
+function OrdersPanel(props: OrdersPanelProps) {
+  return (
+    <>
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        height="var(--banner-height)"
+        borderBottom="var(--border)"
+        borderColor="border"
+        position="relative"
+      >
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          position="absolute"
+          left="10px"
+          width="calc(0.6 * var(--banner-height))"
+          height="calc(0.6 * var(--banner-height))"
+          borderRadius="100px"
+          onClick={props.toggleIsCollapsed}
+          cursor="pointer"
+          _hover={{
+            background: "white.10",
+          }}
+        >
+          <ArrowRightIcon boxSize="11px" color="white.80" />
+        </Flex>
+        <Text>Order History</Text>
+      </Flex>
+      <Flex flexDirection="column" flexGrow="1">
+        <Box height="10px" />
+      </Flex>
+    </>
+  );
+}
+
 interface OrdersAndCounterpartiesPanelExpandedProps {
   toggleIsCollapsed: () => void;
 }
-class OrdersAndCounterpartiesPanelExpanded extends React.Component<OrdersAndCounterpartiesPanelExpandedProps> {
-  render() {
-    return (
-      <Flex
-        width="calc(6 * var(--banner-height))"
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        borderLeft="var(--border)"
-        borderColor="border"
-        onClick={this.props.toggleIsCollapsed}
-        cursor="pointer"
-      >
-        Expanded
-      </Flex>
-    );
-  }
+function OrdersAndCounterpartiesPanelExpanded(
+  props: OrdersAndCounterpartiesPanelExpandedProps,
+) {
+  return (
+    <Flex
+      width="calc(7 * var(--banner-height))"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      borderLeft="var(--border)"
+      borderColor="border"
+    >
+      <OrdersPanel toggleIsCollapsed={props.toggleIsCollapsed} />
+    </Flex>
+  );
 }
 
 interface OrdersAndCounterpartiesPanelState {

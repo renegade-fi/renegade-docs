@@ -80,7 +80,7 @@ export default class TradingInterface extends React.Component<
           activeQuoteTicker={this.state.activeQuoteTicker}
         />
         <Flex flexGrow="1">
-          <WalletsPanel />
+          <WalletsPanel renegadeConnection={renegadeConnection} />
           <Flex flexDirection="column" flexGrow="1">
             <RelayerStatusBanner
               renegadeConnection={renegadeConnection}
@@ -88,6 +88,7 @@ export default class TradingInterface extends React.Component<
               activeQuoteTicker={this.state.activeQuoteTicker}
             />
             <TradingBody
+              renegadeConnection={renegadeConnection}
               activeBuyOrSell={this.state.activeBuyOrSell}
               activeBaseTicker={this.state.activeBaseTicker}
               activeQuoteTicker={this.state.activeQuoteTicker}

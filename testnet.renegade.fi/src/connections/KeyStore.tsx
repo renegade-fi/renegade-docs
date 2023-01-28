@@ -64,7 +64,7 @@ class RenegadeKeypair {
     for (let i = 0; i < 255; i++) {
       // If the binary representation of the secret key has a 1 at this index,
       // multiply the public key by the current iterative square.
-      if (secretKey.mod(new BN(2).pow(new BN(i))).eq(new BN(0))) {
+      if (secretKey.and(new BN(2).pow(new BN(i))).gt(new BN(0))) {
         publicKey = publicKey.mul(iterativeSquareModP);
         publicKey = publicKey.mod(RenegadeKeypair.CURVE_25519_FIELD_ORDER);
       }
@@ -93,7 +93,7 @@ export default class KeyStore {
   props: KeyStoreProps;
   state: KeyStoreState;
 
-  static CREATE_SK_ROOT_MESSAGE = "Unlock your Renegade wallet.\nv1";
+  static CREATE_SK_ROOT_MESSAGE = "Unlock your Renegade wallet.\nTestnet v1";
   static CREATE_SK_MATCH_MESSAGE = "Unlock your Renegade match key.\nv1";
   static CREATE_SK_SETTLE_MESSAGE = "Unlock your Renegade settle key.\nv1";
   static CREATE_SK_VIEW_MESSAGE = "Unlock your Renegade view key.\nv1";
@@ -186,10 +186,10 @@ export default class KeyStore {
     if (signatureBytes.length !== 65) {
       throw new Error("Signature expected to be 65 bytes.");
     }
-    this.state.renegadeKeypairs = await this._generateRenegadeKeypairs(
-      signatureBytes,
-    );
-    this.state.starkNetKeypair = this._generateStarkNetKeypair(signatureBytes);
+    this.state = {
+      renegadeKeypairs: await this._generateRenegadeKeypairs(signatureBytes),
+      starkNetKeypair: this._generateStarkNetKeypair(signatureBytes),
+    };
   }
 
   /**
@@ -204,5 +204,13 @@ export default class KeyStore {
    */
   clear() {
     this._resetState();
+  }
+
+  get renegadeKeypairs(): { [key: string]: RenegadeKeypair } {
+    return this.state.renegadeKeypairs;
+  }
+
+  get starkNetKeypair(): StarkNetKeypair {
+    return this.state.starkNetKeypair;
   }
 }

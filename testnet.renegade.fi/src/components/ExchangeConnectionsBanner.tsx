@@ -242,7 +242,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
         color="white.80"
       >
         <Spacer flexGrow="3" />
-        <Text>NBBO Feed</Text>
+        <Text color="white">NBBO Feed</Text>
         <BannerSeparator size="medium" />
         <ExchangeConnectionTriple
           renegadeConnection={this.props.renegadeConnection}

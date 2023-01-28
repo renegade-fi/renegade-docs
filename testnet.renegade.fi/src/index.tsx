@@ -123,14 +123,11 @@ const components = {
   Button: {
     variants: {
       "wallet-connect": {
-        fontWeight: "500",
+        fontWeight: "400",
         fontSize: "1.1em",
-        background: "brown",
-        color: "white.90",
-        border: "1px solid",
-        borderColor: "border",
+        color: "white",
         _hover: {
-          background: "brown.light",
+          background: "brown",
         },
       },
     },

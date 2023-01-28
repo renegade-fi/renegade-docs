@@ -64,13 +64,13 @@ export default class RelayerStatusBanner extends React.Component<
         color="white.80"
         userSelect="text"
       >
-        <Text>Liquidity</Text>
+        <Text color="white">Liquidity</Text>
         <BannerSeparator size="small" />
         <Text>420.00 {this.props.activeBaseTicker}</Text>
         <BannerSeparator size="small" />
         <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
         <BannerSeparator size="medium" />
-        <Text>Relayer Status</Text>
+        <Text color="white">Relayer</Text>
         <BannerSeparator size="small" />
         <Text>renegade-relayer.eth</Text>
         <BannerSeparator size="small" />
@@ -79,15 +79,13 @@ export default class RelayerStatusBanner extends React.Component<
           <PulsingConnection state={this.state.connectionState} />
         </HStack>
         <BannerSeparator size="medium" />
-        <Text>Relayer Fee</Text>
+        <Text color="white">Fees</Text>
         <BannerSeparator size="small" />
-        <Text>0.08%</Text>
+        <Text>Relayer 0.08%</Text>
         <BannerSeparator size="small" />
-        <Text>Protocol Fee</Text>
-        <BannerSeparator size="small" />
-        <Text>0.02%</Text>
+        <Text>Protocol 0.02%</Text>
         <BannerSeparator size="medium" />
-        <Text>Debug Info</Text>
+        <Text color="white">Debug</Text>
       </Flex>
     );
   }

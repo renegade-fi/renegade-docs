@@ -14,9 +14,9 @@ import React from "react";
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
+  useEnsName as useEnsNameWagmi,
 } from "wagmi";
 
-import KeyStore from "../connections/KeyStore";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 import glyphDark from "../icons/glyph_dark.svg";
 
@@ -53,11 +53,12 @@ function ConnectWalletButton() {
 }
 
 /**
- * The "Sign In with 0x..." button. Only visible if the user has connected
- * their wallet, but we have not re-derived the key hierarchy.
+ * The "Sign In with..." button. Only visible if the user has connected their
+ * wallet, but we have not re-derived the key hierarchy.
  */
 function SignInButton(props: { onOpenGlobalModal: () => void }) {
   const { address } = useAccountWagmi();
+  const { data } = useEnsNameWagmi({ address });
   const keyStore = React.useContext(KeyStoreContext);
   if (!address) {
     return null;
@@ -66,29 +67,62 @@ function SignInButton(props: { onOpenGlobalModal: () => void }) {
     return null;
   }
 
-  return (
-    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
+  let buttonContent: React.ReactElement;
+  if (data) {
+    buttonContent = (
+      <HStack spacing="4px">
+        <Text>Sign in with</Text>
+        <Text>{data}</Text>
+      </HStack>
+    );
+  } else {
+    buttonContent = (
       <HStack spacing="0px">
         <Text>Sign in with 0x</Text>
         <Text>{address.slice(2, 6)}</Text>
+        <Text>{data}</Text>
       </HStack>
+    );
+  }
+
+  return (
+    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
+      {buttonContent}
     </Button>
   );
 }
 
 /**
- * The "Disconnect L1 address 0x..." button. Only visible if the user has
+ * The "Disconnect..." button. Only visible if the user has
  * connected their wallet and we have populated the key hierarchy.
  */
 function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi();
   const { address } = useAccountWagmi();
+  const { data } = useEnsNameWagmi({ address });
   const keyStore = React.useContext(KeyStoreContext);
   if (!address) {
     return null;
   }
   if (keyStore.isUnpopulated()) {
     return null;
+  }
+
+  let buttonContent: React.ReactElement;
+  if (data) {
+    buttonContent = (
+      <HStack spacing="4px">
+        <Text>Disconnect</Text>
+        <Text>{data}</Text>
+      </HStack>
+    );
+  } else {
+    buttonContent = (
+      <HStack spacing="0px">
+        <Text>Disconnect 0x</Text>
+        <Text>{address ? address.slice(2, 6) : "????"}</Text>
+      </HStack>
+    );
   }
 
   return (
@@ -99,10 +133,7 @@ function DisconnectWalletButton() {
         disconnect();
       }}
     >
-      <HStack spacing="0px" fontStyle="Favorit">
-        <Text>Disconnect 0x</Text>
-        <Text>{address ? address.slice(2, 6) : "????"}</Text>
-      </HStack>
+      {buttonContent}
     </Button>
   );
 }
@@ -120,8 +151,9 @@ export default function Header(props: { onOpenGlobalModal: () => void }) {
         <Image height="var(--banner-height)" marginLeft="4%" src={glyphDark} />
       </Box>
       <Spacer />
-      <HStack spacing="20px" fontWeight="300" fontSize="1.1em" color="white.90">
+      <HStack spacing="20px" fontSize="1.1em" color="white.80" fontWeight="300">
         <Link
+          fontWeight="400"
           href="https://twitter.com/renegade_fi"
           isExternal
           color="white.100"

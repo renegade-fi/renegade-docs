@@ -1,5 +1,6 @@
 import { ArrowForwardIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Flex,
   HStack,
@@ -11,6 +12,8 @@ import {
 import React from "react";
 
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../tokens";
+import RenegadeConnection from "../connections/RenegadeConnection";
+import { LivePrices } from "./BannerCommon";
 
 function snapAnimation(translateY: number) {
   return keyframes`
@@ -275,12 +278,10 @@ const Selectable = React.forwardRef(
       <HStack
         ref={ref}
         onClick={props.onClick}
-        marginRight="-10px"
         cursor="pointer"
         userSelect="none"
       >
         <Text
-          marginRight="-10px"
           variant={
             props.activeModal
               ? "trading-body-button-blurred"
@@ -289,7 +290,7 @@ const Selectable = React.forwardRef(
         >
           {props.text}
         </Text>
-        <ChevronDownIcon color="white.100" boxSize="40px" />
+        <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" color="white.100" />
       </HStack>
     );
   },
@@ -297,6 +298,7 @@ const Selectable = React.forwardRef(
 Selectable.displayName = "selectable";
 
 interface TradingBodyProps {
+  renegadeConnection: RenegadeConnection;
   activeBuyOrSell: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
@@ -416,17 +418,9 @@ export default class TradingBody extends React.Component<
         justifyContent="center"
         flexDirection="column"
         position="relative"
-        gap="25px"
         flexGrow="1"
       >
-        <HStack
-          fontFamily="Aime"
-          fontSize="1.8em"
-          fontWeight="100"
-          spacing="10px"
-          color="white.70"
-        >
-          <Text>I&apos;d like to anonymously</Text>
+        <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
           <Selectable
             text={this.props.activeBuyOrSell.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}
@@ -450,23 +444,55 @@ export default class TradingBody extends React.Component<
             activeModal={this.state.activeModal}
             ref={this.state.baseTokenSelectableRef}
           />
-          <Text>{this.props.activeBuyOrSell === "buy" ? "with" : "for"}</Text>
+          <Text
+            fontFamily="Favorit"
+            fontWeight="200"
+            fontSize="0.9em"
+            color="white.50"
+          >
+            {this.props.activeBuyOrSell === "buy" ? "with" : "for"}
+          </Text>
           <Selectable
             text={this.props.activeQuoteTicker}
             onClick={() => this.setActiveModal("quote-token")}
             activeModal={this.state.activeModal}
             ref={this.state.quoteTokenSelectableRef}
           />
-          <Text>at the real-time midpoint.</Text>
+        </HStack>
+        <HStack
+          display={this.state.baseTokenAmount ? "none" : "inherit"}
+          marginTop="5px"
+          color="white.50"
+          fontFamily="Favorit Extended"
+          fontWeight="100"
+          spacing="0"
+        >
+          <Text marginRight="4px">
+            Trades are end-to-end encrypted and always clear at the real-time
+            midpoint of
+          </Text>
+          <Box fontFamily="Favorit Mono">
+            <LivePrices
+              renegadeConnection={this.props.renegadeConnection}
+              baseTicker={this.props.activeBaseTicker}
+              quoteTicker={this.props.activeQuoteTicker}
+              exchange="median"
+              onlyShowPrice
+            />
+          </Box>
+          <Text>.</Text>
         </HStack>
         <Button
+          display={this.state.baseTokenAmount ? "inherit" : "none"}
+          marginTop="10px"
+          width="38vw"
           padding="20px"
           backgroundColor="transparent"
           fontSize="1.3em"
           fontWeight="200"
           color="white.80"
           border="var(--border)"
-          borderRadius="100px"
+          borderRadius="15px"
           borderColor="border"
           opacity={this.state.baseTokenAmount ? "1" : "0.3"}
         >
