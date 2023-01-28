@@ -147,10 +147,9 @@ const client = createClient(
   }),
 );
 
-const keyStore = new KeyStore({});
-
 function Testnet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [keyStoreState, setKeyStoreState] = React.useState(KeyStore.default());
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider
@@ -164,7 +163,7 @@ function Testnet() {
           "--ck-focus-color": "#ffffff",
         }}
       >
-        <KeyStoreContext.Provider value={keyStore}>
+        <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
           <Flex flexDirection="column" width="100vw" minHeight="100vh">
             <Header onOpenGlobalModal={onOpen} />
             <TradingInterface />

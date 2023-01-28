@@ -17,6 +17,7 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi";
 
+import KeyStore from "../connections/KeyStore";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 import glyphDark from "../icons/glyph_dark.svg";
 
@@ -59,11 +60,11 @@ function ConnectWalletButton() {
 function SignInButton(props: { onOpenGlobalModal: () => void }) {
   const { address } = useAccountWagmi();
   const { data } = useEnsNameWagmi({ address });
-  const keyStore = React.useContext(KeyStoreContext);
+  const [keyStoreState] = React.useContext(KeyStoreContext);
   if (!address) {
     return null;
   }
-  if (!keyStore.isUnpopulated()) {
+  if (!KeyStore.isUnpopulated(keyStoreState)) {
     return null;
   }
 
@@ -100,11 +101,11 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi();
   const { address } = useAccountWagmi();
   const { data } = useEnsNameWagmi({ address });
-  const keyStore = React.useContext(KeyStoreContext);
+  const [keyStoreState, setKeyStoreState] = React.useContext(KeyStoreContext);
   if (!address) {
     return null;
   }
-  if (keyStore.isUnpopulated()) {
+  if (KeyStore.isUnpopulated(keyStoreState)) {
     return null;
   }
 
@@ -129,7 +130,7 @@ function DisconnectWalletButton() {
     <Button
       variant="wallet-connect"
       onClick={() => {
-        keyStore.clear();
+        setKeyStoreState(KeyStore.default());
         disconnect();
       }}
     >

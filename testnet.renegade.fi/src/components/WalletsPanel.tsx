@@ -224,11 +224,11 @@ interface RenegadeWalletPanelProps {
   toggleIsCollapsed: () => void;
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
-  const keyStore = React.useContext(KeyStoreContext);
-  const root = keyStore.renegadeKeypairs.root.publicKey;
-  const match = keyStore.renegadeKeypairs.match.publicKey;
-  const settle = keyStore.renegadeKeypairs.settle.publicKey;
-  const view = keyStore.renegadeKeypairs.view.publicKey;
+  const [keyStoreState] = React.useContext(KeyStoreContext);
+  const root = keyStoreState.renegadeKeypairs.root.publicKey;
+  const match = keyStoreState.renegadeKeypairs.match.publicKey;
+  const settle = keyStoreState.renegadeKeypairs.settle.publicKey;
+  const view = keyStoreState.renegadeKeypairs.view.publicKey;
   return (
     <>
       <Flex

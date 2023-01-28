@@ -1,6 +1,13 @@
 import React from "react";
 
-import KeyStore from "../connections/KeyStore";
+import KeyStore, { KeyStoreState } from "../connections/KeyStore";
 
-const KeyStoreContext = React.createContext(new KeyStore({}));
+type KeyStoreContextType = [
+  KeyStoreState,
+  React.Dispatch<React.SetStateAction<KeyStoreState>>,
+];
+const KeyStoreContext = React.createContext<KeyStoreContextType>([
+  KeyStore.default(),
+  () => null,
+]);
 export default KeyStoreContext;

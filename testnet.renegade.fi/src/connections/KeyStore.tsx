@@ -84,27 +84,25 @@ class StarkNetKeypair {
   }
 }
 
-interface KeyStoreProps {}
-interface KeyStoreState {
+/**
+ * The KeyStore manages all keypairs, both Renegade-native and StarkWare keys.
+ * Since the KeyStore needs to be accessible in a React context, we do not
+ * mutate a global KeyStore directly. Rather, the KeyStore class provides
+ * static functions for operating over a KeyStoreState, which is stored in the
+ * React context.
+ */
+export interface KeyStoreState {
   renegadeKeypairs: { [key: string]: RenegadeKeypair };
   starkNetKeypair: StarkNetKeypair;
 }
 export default class KeyStore {
-  props: KeyStoreProps;
-  state: KeyStoreState;
-
   static CREATE_SK_ROOT_MESSAGE = "Unlock your Renegade wallet.\nTestnet v1";
   static CREATE_SK_MATCH_MESSAGE = "Unlock your Renegade match key.\nv1";
   static CREATE_SK_SETTLE_MESSAGE = "Unlock your Renegade settle key.\nv1";
   static CREATE_SK_VIEW_MESSAGE = "Unlock your Renegade view key.\nv1";
 
-  constructor(props: KeyStoreProps) {
-    this.props = props;
-    this._resetState();
-  }
-
-  _resetState() {
-    this.state = {
+  static default(): KeyStoreState {
+    return {
       renegadeKeypairs: {
         root: RenegadeKeypair.default(),
         match: RenegadeKeypair.default(),
@@ -113,6 +111,32 @@ export default class KeyStore {
       },
       starkNetKeypair: StarkNetKeypair.default(),
     };
+  }
+
+  /**
+   * Given a signature of the message "Unlock you Renegade wallet.\nv1.0.0",
+   * populates a KeyStoreState with all internal Renegade key hierarchies and
+   * the StarkNet key.
+   */
+  static async fromSignature(signature: string): Promise<KeyStoreState> {
+    if (!signature.startsWith("0x")) {
+      throw new Error("Signature expected to start with 0x.");
+    }
+    const signatureBytes = Buffer.from(signature.slice(2), "hex");
+    if (signatureBytes.length !== 65) {
+      throw new Error("Signature expected to be 65 bytes.");
+    }
+    return {
+      renegadeKeypairs: await this._generateRenegadeKeypairs(signatureBytes),
+      starkNetKeypair: this._generateStarkNetKeypair(signatureBytes),
+    };
+  }
+
+  /**
+   * Returns true if the user has not yet populated the key hierarchy.
+   */
+  static isUnpopulated(keyStoreState: KeyStoreState): boolean {
+    return keyStoreState.renegadeKeypairs.root.isDefault();
   }
 
   /**
@@ -129,7 +153,7 @@ export default class KeyStore {
   /**
    * Given a 65-byte ECDSA signature, computes the entire Renegade key hierarchy.
    */
-  async _generateRenegadeKeypairs(signatureBytes: Uint8Array): Promise<{
+  static async _generateRenegadeKeypairs(signatureBytes: Uint8Array): Promise<{
     [key: string]: RenegadeKeypair;
   }> {
     // Deive the root key.
@@ -169,48 +193,9 @@ export default class KeyStore {
   /**
    * Given a 65-byte ECDSA signature, computes the StarkNet keypair.
    */
-  _generateStarkNetKeypair(_signatureBytes: Uint8Array): StarkNetKeypair {
+  static _generateStarkNetKeypair(
+    _signatureBytes: Uint8Array,
+  ): StarkNetKeypair {
     return StarkNetKeypair.default(); // TODO
-  }
-
-  /**
-   * Given a signature of the message "Unlock you Renegade wallet.\nv1.0.0",
-   * populates this KeyStore with all internal Renegade key hierarchies and the
-   * StarkNet key.
-   */
-  async populateFromSignature(signature: string) {
-    if (!signature.startsWith("0x")) {
-      throw new Error("Signature expected to start with 0x.");
-    }
-    const signatureBytes = Buffer.from(signature.slice(2), "hex");
-    if (signatureBytes.length !== 65) {
-      throw new Error("Signature expected to be 65 bytes.");
-    }
-    this.state = {
-      renegadeKeypairs: await this._generateRenegadeKeypairs(signatureBytes),
-      starkNetKeypair: this._generateStarkNetKeypair(signatureBytes),
-    };
-  }
-
-  /**
-   * Returns true if the user has not yet populated the key hierarchy.
-   */
-  isUnpopulated(): boolean {
-    return this.state.renegadeKeypairs.root.isDefault();
-  }
-
-  /**
-   * Resets the key store to default state.
-   */
-  clear() {
-    this._resetState();
-  }
-
-  get renegadeKeypairs(): { [key: string]: RenegadeKeypair } {
-    return this.state.renegadeKeypairs;
-  }
-
-  get starkNetKeypair(): StarkNetKeypair {
-    return this.state.starkNetKeypair;
   }
 }
