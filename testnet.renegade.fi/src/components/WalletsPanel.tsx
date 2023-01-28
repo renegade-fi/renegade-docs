@@ -1,8 +1,9 @@
 import {
   ArrowDownIcon,
-  ArrowLeftIcon,
   ArrowRightIcon,
   ArrowUpIcon,
+  LockIcon,
+  UnlockIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
@@ -39,9 +40,7 @@ function SingleWalletsPanelCollapsed(props: SingleWalletsPanelCollapsedProps) {
   );
 }
 
-interface WalletsPanelCollapsedProps {
-  toggleIsCollapsed: () => void;
-}
+interface WalletsPanelCollapsedProps {}
 function WalletsPanelCollapsed(props: WalletsPanelCollapsedProps) {
   return (
     <Flex
@@ -51,8 +50,6 @@ function WalletsPanelCollapsed(props: WalletsPanelCollapsedProps) {
       flexDirection="column"
       borderRight="var(--border)"
       borderColor="border"
-      onClick={props.toggleIsCollapsed}
-      cursor="pointer"
       userSelect="none"
       position="relative"
     >
@@ -137,7 +134,8 @@ function TokenBalance(props: TokenBalanceProps) {
 
 interface EthereumWalletPanelProps {
   renegadeConnection: RenegadeConnection;
-  toggleIsCollapsed: () => void;
+  isLocked: boolean;
+  toggleIsLocked: () => void;
 }
 function EthereumWalletPanel(props: EthereumWalletPanelProps) {
   const { address } = useAccountWagmi();
@@ -194,17 +192,21 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
           alignItems="center"
           justifyContent="center"
           position="absolute"
-          right="10px"
+          left="10px"
           width="calc(0.6 * var(--banner-height))"
           height="calc(0.6 * var(--banner-height))"
           borderRadius="100px"
-          onClick={props.toggleIsCollapsed}
+          onClick={props.toggleIsLocked}
           cursor="pointer"
           _hover={{
             background: "white.10",
           }}
         >
-          <ArrowLeftIcon boxSize="11px" color="white.80" />
+          {props.isLocked ? (
+            <LockIcon boxSize="11px" color="white.80" />
+          ) : (
+            <UnlockIcon boxSize="11px" color="white.80" />
+          )}
         </Flex>
       </Flex>
       <Flex
@@ -251,7 +253,6 @@ function DepositWithdrawButtons(props: DepositWithdrawButtonsProps) {
 
 interface RenegadeWalletPanelProps {
   onOpenGlobalModal: () => void;
-  toggleIsCollapsed: () => void;
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const [keyStoreState] = React.useContext(KeyStoreContext);
@@ -307,8 +308,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         fontWeight="500"
         borderBottom="var(--border)"
         borderColor="border"
-        onClick={props.toggleIsCollapsed}
-        cursor="pointer"
       >
         Renegade Wallet
       </Flex>
@@ -327,7 +326,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 interface WalletsPanelExpandedProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
-  toggleIsCollapsed: () => void;
+  isLocked: boolean;
+  toggleIsLocked: () => void;
 }
 function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
   return (
@@ -341,13 +341,11 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
     >
       <EthereumWalletPanel
         renegadeConnection={props.renegadeConnection}
-        toggleIsCollapsed={props.toggleIsCollapsed}
+        isLocked={props.isLocked}
+        toggleIsLocked={props.toggleIsLocked}
       />
       <DepositWithdrawButtons />
-      <RenegadeWalletPanel
-        onOpenGlobalModal={props.onOpenGlobalModal}
-        toggleIsCollapsed={props.toggleIsCollapsed}
-      />
+      <RenegadeWalletPanel onOpenGlobalModal={props.onOpenGlobalModal} />
     </Flex>
   );
 }
@@ -358,6 +356,7 @@ interface WalletsPanelProps {
 }
 interface WalletsPanelState {
   isCollapsed: boolean;
+  isLocked: boolean;
 }
 export default class WalletsPanel extends React.Component<
   WalletsPanelProps,
@@ -367,25 +366,49 @@ export default class WalletsPanel extends React.Component<
     super(props);
     this.state = {
       isCollapsed: true,
+      isLocked: false,
     };
-    this.toggleIsCollapsed = this.toggleIsCollapsed.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.toggleIsLocked = this.toggleIsLocked.bind(this);
   }
 
-  toggleIsCollapsed() {
+  onMouseEnter() {
     this.setState({
-      isCollapsed: !this.state.isCollapsed,
+      isCollapsed: false,
+    });
+  }
+
+  onMouseLeave() {
+    this.setState({
+      isCollapsed: true,
+    });
+  }
+
+  toggleIsLocked() {
+    this.setState({
+      isLocked: !this.state.isLocked,
     });
   }
 
   render() {
-    return this.state.isCollapsed ? (
-      <WalletsPanelCollapsed toggleIsCollapsed={this.toggleIsCollapsed} />
-    ) : (
-      <WalletsPanelExpanded
-        renegadeConnection={this.props.renegadeConnection}
-        onOpenGlobalModal={this.props.onOpenGlobalModal}
-        toggleIsCollapsed={this.toggleIsCollapsed}
-      />
+    let content: React.ReactElement;
+    if (!this.state.isLocked && this.state.isCollapsed) {
+      content = <WalletsPanelCollapsed />;
+    } else {
+      content = (
+        <WalletsPanelExpanded
+          renegadeConnection={this.props.renegadeConnection}
+          onOpenGlobalModal={this.props.onOpenGlobalModal}
+          isLocked={this.state.isLocked}
+          toggleIsLocked={this.toggleIsLocked}
+        />
+      );
+    }
+    return (
+      <Flex onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+        {content}
+      </Flex>
     );
   }
 }

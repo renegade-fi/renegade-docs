@@ -1,6 +1,8 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { ArrowLeftIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
+
+import RenegadeConnection from "../connections/RenegadeConnection";
 
 interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
   displayText: string;
@@ -25,9 +27,7 @@ function SingleOrdersAndCounterpartiesPanelCollapsed(
   );
 }
 
-interface OrdersAndCounterpartiesPanelCollapsedProps {
-  toggleIsCollapsed: () => void;
-}
+interface OrdersAndCounterpartiesPanelCollapsedProps {}
 function OrdersAndCounterpartiesPanelCollapsed(
   props: OrdersAndCounterpartiesPanelCollapsedProps,
 ) {
@@ -39,8 +39,6 @@ function OrdersAndCounterpartiesPanelCollapsed(
       flexDirection="column"
       borderLeft="var(--border)"
       borderColor="border"
-      onClick={props.toggleIsCollapsed}
-      cursor="pointer"
       userSelect="none"
       position="relative"
     >
@@ -52,7 +50,6 @@ function OrdersAndCounterpartiesPanelCollapsed(
         width="calc(0.6 * var(--banner-height))"
         height="calc(0.6 * var(--banner-height))"
         borderRadius="100px"
-        cursor="pointer"
       >
         <ArrowLeftIcon boxSize="11px" color="white.80" />
       </Flex>
@@ -69,7 +66,8 @@ function OrdersAndCounterpartiesPanelCollapsed(
 }
 
 interface OrdersPanelProps {
-  toggleIsCollapsed: () => void;
+  isLocked: boolean;
+  toggleIsLocked: () => void;
 }
 function OrdersPanel(props: OrdersPanelProps) {
   return (
@@ -91,13 +89,17 @@ function OrdersPanel(props: OrdersPanelProps) {
           width="calc(0.6 * var(--banner-height))"
           height="calc(0.6 * var(--banner-height))"
           borderRadius="100px"
-          onClick={props.toggleIsCollapsed}
+          onClick={props.toggleIsLocked}
           cursor="pointer"
           _hover={{
             background: "white.10",
           }}
         >
-          <ArrowRightIcon boxSize="11px" color="white.80" />
+          {props.isLocked ? (
+            <LockIcon boxSize="11px" color="white.80" />
+          ) : (
+            <UnlockIcon boxSize="11px" color="white.80" />
+          )}
         </Flex>
         <Text>Order History</Text>
       </Flex>
@@ -109,7 +111,8 @@ function OrdersPanel(props: OrdersPanelProps) {
 }
 
 interface OrdersAndCounterpartiesPanelExpandedProps {
-  toggleIsCollapsed: () => void;
+  isLocked: boolean;
+  toggleIsLocked: () => void;
 }
 function OrdersAndCounterpartiesPanelExpanded(
   props: OrdersAndCounterpartiesPanelExpandedProps,
@@ -123,41 +126,70 @@ function OrdersAndCounterpartiesPanelExpanded(
       borderLeft="var(--border)"
       borderColor="border"
     >
-      <OrdersPanel toggleIsCollapsed={props.toggleIsCollapsed} />
+      <OrdersPanel
+        isLocked={props.isLocked}
+        toggleIsLocked={props.toggleIsLocked}
+      />
     </Flex>
   );
 }
 
+interface OrdersAndCounterpartiesPanelProps {
+  renegadeConnection: RenegadeConnection;
+}
 interface OrdersAndCounterpartiesPanelState {
   isCollapsed: boolean;
+  isLocked: boolean;
 }
 export default class OrdersAndCounterpartiesPanel extends React.Component<
-  Record<string, never>,
+  OrdersAndCounterpartiesPanelProps,
   OrdersAndCounterpartiesPanelState
 > {
-  constructor(props: Record<string, never>) {
+  constructor(props: OrdersAndCounterpartiesPanelProps) {
     super(props);
     this.state = {
       isCollapsed: true,
+      isLocked: false,
     };
-    this.toggleIsCollapsed = this.toggleIsCollapsed.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.toggleIsLocked = this.toggleIsLocked.bind(this);
   }
 
-  toggleIsCollapsed() {
+  onMouseEnter() {
     this.setState({
-      isCollapsed: !this.state.isCollapsed,
+      isCollapsed: false,
+    });
+  }
+
+  onMouseLeave() {
+    this.setState({
+      isCollapsed: true,
+    });
+  }
+
+  toggleIsLocked() {
+    this.setState({
+      isLocked: !this.state.isLocked,
     });
   }
 
   render() {
-    return this.state.isCollapsed ? (
-      <OrdersAndCounterpartiesPanelCollapsed
-        toggleIsCollapsed={this.toggleIsCollapsed}
-      />
-    ) : (
-      <OrdersAndCounterpartiesPanelExpanded
-        toggleIsCollapsed={this.toggleIsCollapsed}
-      />
+    let content: React.ReactElement;
+    if (!this.state.isLocked && this.state.isCollapsed) {
+      content = <OrdersAndCounterpartiesPanelCollapsed />;
+    } else {
+      content = (
+        <OrdersAndCounterpartiesPanelExpanded
+          isLocked={this.state.isLocked}
+          toggleIsLocked={this.toggleIsLocked}
+        />
+      );
+    }
+    return (
+      <Flex onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+        {content}
+      </Flex>
     );
   }
 }
