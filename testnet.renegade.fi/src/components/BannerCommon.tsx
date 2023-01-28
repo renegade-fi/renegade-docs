@@ -3,7 +3,6 @@ import {
   Box,
   Center,
   Flex,
-  HStack,
   Link,
   Text,
   keyframes,
@@ -63,9 +62,17 @@ export function BannerSeparator(props: BannerSeparatorProps) {
   const Wrapper = (wrapperProps: { children: React.ReactNode }) => {
     if (props.link) {
       return (
-        <Link height="70%" flexGrow={flexGrow} href={props.link} isExternal>
+        <Flex
+          as={Link}
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          flexGrow={flexGrow}
+          href={props.link}
+          isExternal
+        >
           <Center height="100%">{wrapperProps.children}</Center>
-        </Link>
+        </Flex>
       );
     } else {
       return (
@@ -99,7 +106,7 @@ const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
   }
   const randomDelay = Math.random() * 2;
   return (
-    <Flex position="relative" alignItems="center">
+    <Flex position="relative" alignItems="center" width="8px">
       <Box
         position="absolute"
         width="8px"
@@ -131,6 +138,7 @@ interface LivePricesProps {
   baseTicker: string;
   quoteTicker: string;
   exchange: Exchange;
+  link?: string;
   onlyShowPrice?: boolean;
   scaleBy?: number;
 }
@@ -343,28 +351,39 @@ export class LivePrices extends React.Component<
     }
 
     return (
-      <HStack paddingRight="8px">
-        <Text
+      <>
+        <Flex
+          as={Link}
+          href={this.props.link}
+          alignItems="center"
+          justifyContent="center"
+          flexGrow="1"
+          height="100%"
           fontFamily="Favorit Mono"
           color="white.80"
           opacity={price == 0 ? "20%" : "100%"}
           className={priceStrClass}
+          _hover={{ textDecoration: "none" }}
           key={key + "_price"}
         >
           ${priceStr}
-        </Text>
+        </Flex>
         <Flex
+          as={Link}
+          href={this.props.link}
           alignItems="center"
           justifyContent="center"
-          width="12px"
+          flexGrow="1"
+          height="100%"
           position="relative"
+          _hover={{ textDecoration: "none" }}
         >
           <Box position="absolute">
             <BannerSeparator />
           </Box>
           {priceIcon}
         </Flex>
-      </HStack>
+      </>
     );
   }
 }

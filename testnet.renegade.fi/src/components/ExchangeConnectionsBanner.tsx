@@ -24,9 +24,18 @@ type HealthState =
 function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
   if (props.link) {
     return (
-      <Link href={props.link} isExternal _hover={{ textDecoration: "none" }}>
+      <Flex
+        as={Link}
+        height="100%"
+        alignItems="center"
+        justifyContent="center"
+        href={props.link}
+        isExternal
+        flexGrow="1"
+        _hover={{ textDecoration: "none" }}
+      >
         {props.children}
-      </Link>
+      </Flex>
     );
   } else {
     return <>{props.children}</>;
@@ -118,14 +127,13 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       </LinkWrapper>
       <BannerSeparator size="small" link={link} />
       {showPrice && (
-        <LinkWrapper link={link}>
-          <LivePrices
-            renegadeConnection={props.renegadeConnection}
-            baseTicker={props.activeBaseTicker}
-            quoteTicker={props.activeQuoteTicker}
-            exchange={props.exchange}
-          />
-        </LinkWrapper>
+        <LivePrices
+          renegadeConnection={props.renegadeConnection}
+          baseTicker={props.activeBaseTicker}
+          quoteTicker={props.activeQuoteTicker}
+          exchange={props.exchange}
+          link={link}
+        />
       )}
       <LinkWrapper link={link}>
         <HStack>
@@ -234,7 +242,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     return (
       <Flex
         alignItems="center"
-        justifyContent="space-evenly"
+        justifyContent="center"
         width="100%"
         height="var(--banner-height)"
         borderBottom="var(--border)"
