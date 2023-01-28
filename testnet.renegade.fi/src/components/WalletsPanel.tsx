@@ -4,7 +4,7 @@ import {
   ArrowRightIcon,
   ArrowUpIcon,
 } from "@chakra-ui/icons";
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
 import {
   useAccount as useAccountWagmi,
@@ -12,9 +12,11 @@ import {
 } from "wagmi";
 
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../tokens";
+import KeyStore from "../connections/KeyStore";
 import RenegadeConnection from "../connections/RenegadeConnection";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 import { LivePrices } from "./BannerCommon";
+import { ConnectWalletButton } from "./Header";
 
 interface SingleWalletsPanelCollapsedProps {
   displayText: string;
@@ -139,6 +141,43 @@ interface EthereumWalletPanelProps {
 }
 function EthereumWalletPanel(props: EthereumWalletPanelProps) {
   const { address } = useAccountWagmi();
+  let panelBody: React.ReactElement;
+  if (address) {
+    panelBody = (
+      <>
+        <Box height="10px" />
+        {Object.keys(ADDR_TO_TICKER).map((tokenAddr) => (
+          <TokenBalance
+            renegadeConnection={props.renegadeConnection}
+            userAddr={address}
+            tokenAddr={tokenAddr}
+            key={tokenAddr}
+          />
+        ))}
+        <Box height="10px" />
+      </>
+    );
+  } else {
+    panelBody = (
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+      >
+        <ConnectWalletButton />
+        <Text
+          marginTop="10px"
+          fontSize="0.8em"
+          fontWeight="100"
+          color="white.50"
+          textAlign="center"
+        >
+          Connect your wallet to view your Ethereum token balances.
+        </Text>
+      </Flex>
+    );
+  }
   return (
     <>
       <Flex
@@ -174,17 +213,7 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
         padding="0 9% 0 9%"
         flexGrow="1"
       >
-        <Box height="10px" />
-        {address &&
-          Object.keys(ADDR_TO_TICKER).map((tokenAddr) => (
-            <TokenBalance
-              renegadeConnection={props.renegadeConnection}
-              userAddr={address}
-              tokenAddr={tokenAddr}
-              key={tokenAddr}
-            />
-          ))}
-        <Box height="10px" />
+        {panelBody}
       </Flex>
     </>
   );
@@ -221,14 +250,53 @@ function DepositWithdrawButtons(props: DepositWithdrawButtonsProps) {
 }
 
 interface RenegadeWalletPanelProps {
+  onOpenGlobalModal: () => void;
   toggleIsCollapsed: () => void;
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const [keyStoreState] = React.useContext(KeyStoreContext);
-  const root = keyStoreState.renegadeKeypairs.root.publicKey;
-  const match = keyStoreState.renegadeKeypairs.match.publicKey;
-  const settle = keyStoreState.renegadeKeypairs.settle.publicKey;
-  const view = keyStoreState.renegadeKeypairs.view.publicKey;
+  let panelBody: React.ReactElement;
+  if (KeyStore.isUnpopulated(keyStoreState)) {
+    panelBody = (
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+      >
+        <Button
+          variant="wallet-connect"
+          padding="0 15% 0 15%"
+          onClick={props.onOpenGlobalModal}
+        >
+          Sign In
+        </Button>
+        <Text
+          marginTop="10px"
+          fontSize="0.8em"
+          fontWeight="100"
+          color="white.50"
+          textAlign="center"
+        >
+          Sign in to create a Renegade account and view your balances.
+        </Text>
+      </Flex>
+    );
+  } else {
+    const root = keyStoreState.renegadeKeypairs.root.publicKey;
+    const match = keyStoreState.renegadeKeypairs.match.publicKey;
+    const settle = keyStoreState.renegadeKeypairs.settle.publicKey;
+    const view = keyStoreState.renegadeKeypairs.view.publicKey;
+    panelBody = (
+      <Box fontSize="0.9em" color="white.60">
+        <Box height="10px" />
+        <Text>rng-root-{root && root.toString("hex").slice(0, 12)}</Text>
+        <Text>rng-match-{match && match.toString("hex").slice(0, 12)}</Text>
+        <Text>rng-settle-{settle && settle.toString("hex").slice(0, 12)}</Text>
+        <Text>rng-view-{view && view.toString("hex").slice(0, 12)}</Text>
+      </Box>
+    );
+  }
   return (
     <>
       <Flex
@@ -244,20 +312,13 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       >
         Renegade Wallet
       </Flex>
-      <Flex flexDirection="column" flexGrow="1" color="white.60">
-        <Box height="10px" />
-        <Text display={root ? "inherit" : "none"}>
-          rng-root-{root && root.toString("hex").slice(0, 12)}
-        </Text>
-        <Text display={match ? "inherit" : "none"}>
-          rng-match-{match && match.toString("hex").slice(0, 12)}
-        </Text>
-        <Text display={settle ? "inherit" : "none"}>
-          rng-settle-{settle && settle.toString("hex").slice(0, 12)}
-        </Text>
-        <Text display={view ? "inherit" : "none"}>
-          rng-view-{view && view.toString("hex").slice(0, 12)}
-        </Text>
+      <Flex
+        flexDirection="column"
+        width="100%"
+        padding="0 9% 0 9%"
+        flexGrow="1"
+      >
+        {panelBody}
       </Flex>
     </>
   );
@@ -265,6 +326,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 
 interface WalletsPanelExpandedProps {
   renegadeConnection: RenegadeConnection;
+  onOpenGlobalModal: () => void;
   toggleIsCollapsed: () => void;
 }
 function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
@@ -282,13 +344,17 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
         toggleIsCollapsed={props.toggleIsCollapsed}
       />
       <DepositWithdrawButtons />
-      <RenegadeWalletPanel toggleIsCollapsed={props.toggleIsCollapsed} />
+      <RenegadeWalletPanel
+        onOpenGlobalModal={props.onOpenGlobalModal}
+        toggleIsCollapsed={props.toggleIsCollapsed}
+      />
     </Flex>
   );
 }
 
 interface WalletsPanelProps {
   renegadeConnection: RenegadeConnection;
+  onOpenGlobalModal: () => void;
 }
 interface WalletsPanelState {
   isCollapsed: boolean;
@@ -317,6 +383,7 @@ export default class WalletsPanel extends React.Component<
     ) : (
       <WalletsPanelExpanded
         renegadeConnection={this.props.renegadeConnection}
+        onOpenGlobalModal={this.props.onOpenGlobalModal}
         toggleIsCollapsed={this.toggleIsCollapsed}
       />
     );

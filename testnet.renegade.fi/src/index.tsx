@@ -6,6 +6,7 @@ import {
   type ThemeConfig,
   createMultiStyleConfigHelpers,
   extendTheme,
+  keyframes,
   useDisclosure,
 } from "@chakra-ui/react";
 import { mainnet } from "@wagmi/chains";
@@ -33,6 +34,18 @@ const config: ThemeConfig = {
   initialColorMode: "system",
   useSystemColorMode: true,
 };
+
+const gradientShiftAimation = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+     background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
 
 const styles = {
   global: {
@@ -126,8 +139,15 @@ const components = {
         fontWeight: "400",
         fontSize: "1.1em",
         color: "white",
+        background:
+          "linear-gradient(135deg, #000000 0%,#3d3d3d 14%,#3d3d3d 14%,#111111 21%,#3d3d3d 39%,#010101 50%,#3d3d3d 61%,#161616 67%,#3d3d3d 80%,#212121 85%,#1b1b1b 100%)",
+        backgroundSize: "400% 400%",
+        animation: `${gradientShiftAimation} 45s ease infinite`,
+        border: "var(--border)",
+        borderColor: "white.20",
         _hover: {
-          background: "brown",
+          animationPlayState: "paused",
+          borderColor: "white.60",
         },
       },
     },
@@ -166,7 +186,7 @@ function Testnet() {
         <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
           <Flex flexDirection="column" width="100vw" minHeight="100vh">
             <Header onOpenGlobalModal={onOpen} />
-            <TradingInterface />
+            <TradingInterface onOpenGlobalModal={onOpen} />
             <Footer />
             <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
           </Flex>

@@ -25,7 +25,7 @@ import glyphDark from "../icons/glyph_dark.svg";
  * The initial "Connect Wallet" button. Only visible if the user has not
  * connected their wallet.
  */
-function ConnectWalletButton() {
+export function ConnectWalletButton() {
   return (
     <ConnectKitButton.Custom>
       {({ isConnecting, isConnected, show }) => {
@@ -129,6 +129,7 @@ function DisconnectWalletButton() {
   return (
     <Button
       variant="wallet-connect"
+      background="white.10"
       onClick={() => {
         setKeyStoreState(KeyStore.default());
         disconnect();

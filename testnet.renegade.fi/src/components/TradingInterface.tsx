@@ -21,16 +21,19 @@ const renegadeConnection = new RenegadeConnection({
   // useTls: false,
 });
 
+interface TradingInterfaceProps {
+  onOpenGlobalModal: () => void;
+}
 interface TradingInterfaceState {
   activeBuyOrSell: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
 }
 export default class TradingInterface extends React.Component<
-  Record<string, never>,
+  TradingInterfaceProps,
   TradingInterfaceState
 > {
-  constructor(props: Record<string, never>) {
+  constructor(props: TradingInterfaceProps) {
     super(props);
     const cookies = new Cookies();
     this.state = {
@@ -80,7 +83,10 @@ export default class TradingInterface extends React.Component<
           activeQuoteTicker={this.state.activeQuoteTicker}
         />
         <Flex flexGrow="1">
-          <WalletsPanel renegadeConnection={renegadeConnection} />
+          <WalletsPanel
+            renegadeConnection={renegadeConnection}
+            onOpenGlobalModal={this.props.onOpenGlobalModal}
+          />
           <Flex flexDirection="column" flexGrow="1">
             <RelayerStatusBanner
               renegadeConnection={renegadeConnection}
