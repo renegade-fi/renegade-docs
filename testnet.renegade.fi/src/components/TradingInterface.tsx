@@ -23,6 +23,7 @@ const renegadeConnection = new RenegadeConnection({
 
 interface TradingInterfaceProps {
   onOpenGlobalModal: () => void;
+  isOpenGlobalModal: boolean;
 }
 interface TradingInterfaceState {
   activeBuyOrSell: "buy" | "sell";
@@ -86,6 +87,7 @@ export default class TradingInterface extends React.Component<
           <WalletsPanel
             renegadeConnection={renegadeConnection}
             onOpenGlobalModal={this.props.onOpenGlobalModal}
+            isOpenGlobalModal={this.props.isOpenGlobalModal}
           />
           <Flex flexDirection="column" flexGrow="1">
             <RelayerStatusBanner
@@ -103,6 +105,7 @@ export default class TradingInterface extends React.Component<
           </Flex>
           <OrdersAndCounterpartiesPanel
             renegadeConnection={renegadeConnection}
+            isOpenGlobalModal={this.props.isOpenGlobalModal}
           />
         </Flex>
         <AllTokensBanner

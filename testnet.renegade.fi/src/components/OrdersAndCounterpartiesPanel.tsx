@@ -1,69 +1,10 @@
-import { ArrowLeftIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons";
+import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 
 import RenegadeConnection from "../connections/RenegadeConnection";
-
-interface SingleOrdersAndCounterpartiesPanelCollapsedProps {
-  displayText: string;
-  isFirst: boolean;
-}
-function SingleOrdersAndCounterpartiesPanelCollapsed(
-  props: SingleOrdersAndCounterpartiesPanelCollapsedProps,
-) {
-  return (
-    <Flex
-      width="100%"
-      alignItems="center"
-      justifyContent="center"
-      flexGrow="1"
-      borderBottom={props.isFirst ? "var(--border)" : "none"}
-      borderColor="border"
-    >
-      <Text transform="rotate(90deg)" textAlign="center" minWidth="200px">
-        {props.displayText}
-      </Text>
-    </Flex>
-  );
-}
-
-interface OrdersAndCounterpartiesPanelCollapsedProps {}
-function OrdersAndCounterpartiesPanelCollapsed(
-  props: OrdersAndCounterpartiesPanelCollapsedProps,
-) {
-  return (
-    <Flex
-      width="calc(1.5 * var(--banner-height))"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      borderLeft="var(--border)"
-      borderColor="border"
-      userSelect="none"
-      position="relative"
-    >
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        position="absolute"
-        top="9px"
-        width="calc(0.6 * var(--banner-height))"
-        height="calc(0.6 * var(--banner-height))"
-        borderRadius="100px"
-      >
-        <ArrowLeftIcon boxSize="11px" color="white.80" />
-      </Flex>
-      <SingleOrdersAndCounterpartiesPanelCollapsed
-        isFirst={true}
-        displayText="Order History"
-      />
-      <SingleOrdersAndCounterpartiesPanelCollapsed
-        isFirst={false}
-        displayText="Counterparties"
-      />
-    </Flex>
-  );
-}
+import { Panel } from "./PanelCommon";
 
 interface OrdersPanelProps {
   isLocked: boolean;
@@ -136,60 +77,24 @@ function OrdersAndCounterpartiesPanelExpanded(
 
 interface OrdersAndCounterpartiesPanelProps {
   renegadeConnection: RenegadeConnection;
+  isOpenGlobalModal: boolean;
 }
-interface OrdersAndCounterpartiesPanelState {
-  isCollapsed: boolean;
-  isLocked: boolean;
-}
-export default class OrdersAndCounterpartiesPanel extends React.Component<
-  OrdersAndCounterpartiesPanelProps,
-  OrdersAndCounterpartiesPanelState
-> {
-  constructor(props: OrdersAndCounterpartiesPanelProps) {
-    super(props);
-    this.state = {
-      isCollapsed: true,
-      isLocked: false,
-    };
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.toggleIsLocked = this.toggleIsLocked.bind(this);
-  }
-
-  onMouseEnter() {
-    this.setState({
-      isCollapsed: false,
-    });
-  }
-
-  onMouseLeave() {
-    this.setState({
-      isCollapsed: true,
-    });
-  }
-
-  toggleIsLocked() {
-    this.setState({
-      isLocked: !this.state.isLocked,
-    });
-  }
-
-  render() {
-    let content: React.ReactElement;
-    if (!this.state.isLocked && this.state.isCollapsed) {
-      content = <OrdersAndCounterpartiesPanelCollapsed />;
-    } else {
-      content = (
+export default function OrdersAndCounterpartiesPanel(
+  props: OrdersAndCounterpartiesPanelProps,
+) {
+  const { open } = useModalConnectKit();
+  return (
+    <Panel
+      panelExpanded={(isLocked, toggleIsLocked) => (
         <OrdersAndCounterpartiesPanelExpanded
-          isLocked={this.state.isLocked}
-          toggleIsLocked={this.toggleIsLocked}
+          isLocked={isLocked}
+          toggleIsLocked={toggleIsLocked}
         />
-      );
-    }
-    return (
-      <Flex onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-        {content}
-      </Flex>
-    );
-  }
+      )}
+      panelCollapsedDisplayTexts={["Orders", "Counterparties"]}
+      isOpenGlobalModal={props.isOpenGlobalModal}
+      isOpenConnectKitModal={open}
+      flipDirection={true}
+    />
+  );
 }

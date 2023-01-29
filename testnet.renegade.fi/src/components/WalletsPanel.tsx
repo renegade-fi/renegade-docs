@@ -1,11 +1,11 @@
 import {
   ArrowDownIcon,
-  ArrowRightIcon,
   ArrowUpIcon,
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
+import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 import {
   useAccount as useAccountWagmi,
@@ -18,67 +18,7 @@ import RenegadeConnection from "../connections/RenegadeConnection";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 import { LivePrices } from "./BannerCommon";
 import { ConnectWalletButton } from "./Header";
-
-const expandedPanelWidth = "calc(7 * var(--banner-height))";
-const collapsedPanelWidth = "calc(1.5 * var(--banner-height))";
-
-interface SingleWalletsPanelCollapsedProps {
-  displayText: string;
-  isFirst: boolean;
-}
-function SingleWalletsPanelCollapsed(props: SingleWalletsPanelCollapsedProps) {
-  return (
-    <Flex
-      width="100%"
-      alignItems="center"
-      justifyContent="center"
-      flexGrow="1"
-      borderBottom={props.isFirst ? "var(--border)" : "none"}
-      borderColor="border"
-    >
-      <Text transform="rotate(-90deg)" textAlign="center" minWidth="200px">
-        {props.displayText}
-      </Text>
-    </Flex>
-  );
-}
-
-interface WalletsPanelCollapsedProps {}
-function WalletsPanelCollapsed(props: WalletsPanelCollapsedProps) {
-  return (
-    <Flex
-      width={collapsedPanelWidth}
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      borderRight="var(--border)"
-      borderColor="border"
-      userSelect="none"
-      position="relative"
-    >
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        position="absolute"
-        top="9px"
-        width="calc(0.6 * var(--banner-height))"
-        height="calc(0.6 * var(--banner-height))"
-        borderRadius="100px"
-        cursor="pointer"
-      >
-        <ArrowRightIcon boxSize="11px" color="white.80" />
-      </Flex>
-      <SingleWalletsPanelCollapsed
-        isFirst={true}
-        displayText="Ethereum Wallet"
-      />
-      <SingleWalletsPanelCollapsed
-        isFirst={false}
-        displayText="Renegade Wallet"
-      />
-    </Flex>
-  );
-}
+import { Panel, expandedPanelWidth } from "./PanelCommon";
 
 interface TokenBalanceProps {
   renegadeConnection: RenegadeConnection;
@@ -357,70 +297,24 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
 interface WalletsPanelProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
+  isOpenGlobalModal: boolean;
 }
-interface WalletsPanelState {
-  isHovering: boolean;
-  isLocked: boolean;
-}
-export default class WalletsPanel extends React.Component<
-  WalletsPanelProps,
-  WalletsPanelState
-> {
-  constructor(props: WalletsPanelProps) {
-    super(props);
-    this.state = {
-      isHovering: false,
-      isLocked: false,
-    };
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.toggleIsLocked = this.toggleIsLocked.bind(this);
-  }
-
-  onMouseEnter() {
-    this.setState({
-      isHovering: true,
-    });
-  }
-
-  onMouseLeave() {
-    this.setState({
-      isHovering: false,
-    });
-  }
-
-  toggleIsLocked() {
-    this.setState({
-      isLocked: !this.state.isLocked,
-    });
-  }
-
-  render() {
-    const isExpanded = this.state.isHovering || this.state.isLocked;
-    return (
-      <Flex
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        width={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
-        transition="width 0.15s ease"
-        position="relative"
-      >
-        <Flex height="100%" position="absolute" right="0">
-          <WalletsPanelExpanded
-            renegadeConnection={this.props.renegadeConnection}
-            onOpenGlobalModal={this.props.onOpenGlobalModal}
-            isLocked={this.state.isLocked}
-            toggleIsLocked={this.toggleIsLocked}
-          />
-        </Flex>
-        <Flex
-          transform={isExpanded ? "translateX(-100%)" : "translateX(0)"}
-          transition="transform 0.15s ease"
-          bg="black"
-        >
-          <WalletsPanelCollapsed />
-        </Flex>
-      </Flex>
-    );
-  }
+export default function WalletsPanel(props: WalletsPanelProps) {
+  const { open } = useModalConnectKit();
+  return (
+    <Panel
+      panelExpanded={(isLocked, toggleIsLocked) => (
+        <WalletsPanelExpanded
+          renegadeConnection={props.renegadeConnection}
+          onOpenGlobalModal={props.onOpenGlobalModal}
+          isLocked={isLocked}
+          toggleIsLocked={toggleIsLocked}
+        />
+      )}
+      panelCollapsedDisplayTexts={["Ethereum Wallet", "Renegade Wallet"]}
+      isOpenGlobalModal={props.isOpenGlobalModal}
+      isOpenConnectKitModal={open}
+      flipDirection={false}
+    />
+  );
 }

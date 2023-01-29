@@ -184,9 +184,17 @@ function Testnet() {
         }}
       >
         <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
-          <Flex flexDirection="column" width="100vw" minHeight="100vh">
+          <Flex
+            flexDirection="column"
+            width="100vw"
+            minHeight="100vh"
+            overflowX="hidden"
+          >
             <Header onOpenGlobalModal={onOpen} />
-            <TradingInterface onOpenGlobalModal={onOpen} />
+            <TradingInterface
+              onOpenGlobalModal={onOpen}
+              isOpenGlobalModal={isOpen}
+            />
             <Footer />
             <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
           </Flex>
