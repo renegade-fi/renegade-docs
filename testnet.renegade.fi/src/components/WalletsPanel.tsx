@@ -19,6 +19,9 @@ import KeyStoreContext from "../contexts/KeyStoreContext";
 import { LivePrices } from "./BannerCommon";
 import { ConnectWalletButton } from "./Header";
 
+const expandedPanelWidth = "calc(7 * var(--banner-height))";
+const collapsedPanelWidth = "calc(1.5 * var(--banner-height))";
+
 interface SingleWalletsPanelCollapsedProps {
   displayText: string;
   isFirst: boolean;
@@ -44,7 +47,7 @@ interface WalletsPanelCollapsedProps {}
 function WalletsPanelCollapsed(props: WalletsPanelCollapsedProps) {
   return (
     <Flex
-      width="calc(1.5 * var(--banner-height))"
+      width={collapsedPanelWidth}
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
@@ -333,7 +336,7 @@ interface WalletsPanelExpandedProps {
 function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
   return (
     <Flex
-      width="calc(7 * var(--banner-height))"
+      width={expandedPanelWidth}
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
@@ -395,17 +398,27 @@ export default class WalletsPanel extends React.Component<
   render() {
     const isExpanded = this.state.isHovering || this.state.isLocked;
     return (
-      <Flex onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-        <Flex display={isExpanded ? "none" : "inherit"}>
-          <WalletsPanelCollapsed />
-        </Flex>
-        <Flex display={isExpanded ? "inherit" : "none"}>
+      <Flex
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        width={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
+        transition="width 0.15s ease"
+        position="relative"
+      >
+        <Flex height="100%" position="absolute" right="0">
           <WalletsPanelExpanded
             renegadeConnection={this.props.renegadeConnection}
             onOpenGlobalModal={this.props.onOpenGlobalModal}
             isLocked={this.state.isLocked}
             toggleIsLocked={this.toggleIsLocked}
           />
+        </Flex>
+        <Flex
+          transform={isExpanded ? "translateX(-100%)" : "translateX(0)"}
+          transition="transform 0.15s ease"
+          bg="black"
+        >
+          <WalletsPanelCollapsed />
         </Flex>
       </Flex>
     );
