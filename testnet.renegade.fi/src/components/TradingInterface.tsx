@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import Cookies from "universal-cookie";
 
 import RenegadeConnection from "../connections/RenegadeConnection";
 import backgroundPattern from "../icons/background_pattern.png";
@@ -36,16 +35,16 @@ export default class TradingInterface extends React.Component<
 > {
   constructor(props: TradingInterfaceProps) {
     super(props);
-    const cookies = new Cookies();
     this.state = {
       // We randomly set initial buy/sell bit in order to discourage order
       // asymmetry for users who are trying the product for the first time
       activeBuyOrSell:
-        cookies.get("renegade-direction") || Math.random() < 0.5
+        localStorage.getItem("renegade-direction") || Math.random() < 0.5
           ? "buy"
           : "sell",
-      activeBaseTicker: cookies.get("renegade-base-ticker") || "WBTC",
-      activeQuoteTicker: cookies.get("renegade-quote-ticker") || "USDC",
+      activeBaseTicker: localStorage.getItem("renegade-base-ticker") || "WBTC",
+      activeQuoteTicker:
+        localStorage.getItem("renegade-quote-ticker") || "USDC",
     };
     this.setDirectionAndTickers = this.setDirectionAndTickers.bind(this);
   }
@@ -55,17 +54,16 @@ export default class TradingInterface extends React.Component<
     baseTicker?: string,
     quoteTicker?: string,
   ) {
-    const cookies = new Cookies();
     if (buyOrSell) {
-      cookies.set("renegade-direction", buyOrSell);
+      localStorage.setItem("renegade-direction", buyOrSell);
       this.setState({ activeBuyOrSell: buyOrSell });
     }
     if (baseTicker) {
-      cookies.set("renegade-base-ticker", baseTicker);
+      localStorage.setItem("renegade-base-ticker", baseTicker);
       this.setState({ activeBaseTicker: baseTicker });
     }
     if (quoteTicker) {
-      cookies.set("renegade-quote-ticker", quoteTicker);
+      localStorage.setItem("renegade-quote-ticker", quoteTicker);
       this.setState({ activeQuoteTicker: quoteTicker });
     }
   }

@@ -98,7 +98,8 @@ export class Panel extends React.Component<PanelProps, PanelState> {
     super(props);
     this.state = {
       isHovering: false,
-      isLocked: false,
+      isLocked:
+        localStorage.getItem(this.getLocalStorageKey()) == "true" || false,
       isOpenModalWhenLeft: false,
       isModalJustClosed: false,
     };
@@ -117,6 +118,10 @@ export class Panel extends React.Component<PanelProps, PanelState> {
     }
   }
 
+  getLocalStorageKey() {
+    return `renegade-is-locked-${this.props.flipDirection ? "right" : "left"}`;
+  }
+
   onMouseEnter() {
     this.setState({
       isHovering: true,
@@ -133,6 +138,10 @@ export class Panel extends React.Component<PanelProps, PanelState> {
   }
 
   toggleIsLocked() {
+    localStorage.setItem(
+      this.getLocalStorageKey(),
+      (!this.state.isLocked).toString(),
+    );
     this.setState({
       isLocked: !this.state.isLocked,
     });
