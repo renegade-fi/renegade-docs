@@ -51,7 +51,33 @@ function OrdersPanel(props: OrdersPanelProps) {
   );
 }
 
+interface CounterpartiesPanelProps {
+  renegadeConnection: RenegadeConnection;
+}
+function CounterpartiesPanel(props: CounterpartiesPanelProps) {
+  return (
+    <>
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        height="var(--banner-height)"
+        borderTop="var(--border)"
+        borderBottom="var(--border)"
+        borderColor="border"
+        position="relative"
+      >
+        <Text>Counterparties</Text>
+      </Flex>
+      <Flex flexDirection="column" flexGrow="1">
+        <Box height="10px" />
+      </Flex>
+    </>
+  );
+}
+
 interface OrdersAndCounterpartiesPanelExpandedProps {
+  renegadeConnection: RenegadeConnection;
   isLocked: boolean;
   toggleIsLocked: () => void;
 }
@@ -71,6 +97,7 @@ function OrdersAndCounterpartiesPanelExpanded(
         isLocked={props.isLocked}
         toggleIsLocked={props.toggleIsLocked}
       />
+      <CounterpartiesPanel renegadeConnection={props.renegadeConnection} />
     </Flex>
   );
 }
@@ -87,6 +114,7 @@ export default function OrdersAndCounterpartiesPanel(
     <Panel
       panelExpanded={(isLocked, toggleIsLocked) => (
         <OrdersAndCounterpartiesPanelExpanded
+          renegadeConnection={props.renegadeConnection}
           isLocked={isLocked}
           toggleIsLocked={toggleIsLocked}
         />

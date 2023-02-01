@@ -333,7 +333,7 @@ export class LivePrices extends React.Component<
     return (
       <>
         <Flex
-          as={Link}
+          as={this.props.link ? Link : undefined}
           href={this.props.link}
           alignItems="center"
           justifyContent="center"
@@ -349,7 +349,7 @@ export class LivePrices extends React.Component<
           ${priceStr}
         </Flex>
         <Flex
-          as={Link}
+          as={this.props.link ? Link : undefined}
           href={this.props.link}
           alignItems="center"
           justifyContent="center"

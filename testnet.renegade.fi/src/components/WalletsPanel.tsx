@@ -42,14 +42,23 @@ function TokenBalance(props: TokenBalanceProps) {
   return (
     <Flex
       alignItems="center"
-      width="85%"
+      width="100%"
+      padding="0 8% 0 8%"
       color="white.80"
       gap="5px"
       borderBottom="var(--border)"
       borderColor="white.20"
+      cursor="pointer"
+      filter="grayscale(1)"
+      transition="filter 0.1s"
+      _hover={{
+        filter: "inherit",
+        fontWeight: "500",
+      }}
     >
       <Image src={logoUrl} width="25px" height="25px" />
       <Flex
+        fontFamily="Favorit"
         flexDirection="column"
         alignItems="flex-start"
         padding="10px 0 10px 0"
@@ -70,10 +79,37 @@ function TokenBalance(props: TokenBalanceProps) {
           />
         </Box>
       </Flex>
-      <ArrowDownIcon />
-      <ArrowUpIcon />
+      <ArrowDownIcon
+        width="calc(0.5 * var(--banner-height))"
+        height="calc(0.5 * var(--banner-height))"
+        borderRadius="100px"
+        cursor="pointer"
+        _hover={{
+          background: "white.10",
+        }}
+      />
+      <ArrowUpIcon
+        width="calc(0.5 * var(--banner-height))"
+        height="calc(0.5 * var(--banner-height))"
+        borderRadius="100px"
+        cursor="pointer"
+        _hover={{
+          background: "white.10",
+        }}
+      />
     </Flex>
   );
+}
+
+// Set the scrollbar to hidden after a timeout.
+let scrollTimer: NodeJS.Timeout;
+function callAfterTimeout(func: () => void, timeout: number) {
+  return (...args: any[]) => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
 }
 
 interface EthereumWalletPanelProps {
@@ -157,7 +193,19 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
         flexDirection="column"
         alignItems="center"
         width="100%"
+        maxHeight="30vh"
         flexGrow="1"
+        overflow="overlay"
+        className="scroll hidden"
+        onWheel={() => {
+          const query = document.querySelector(".scroll");
+          if (query) {
+            query.classList.remove("hidden");
+            callAfterTimeout(() => {
+              query.classList.add("hidden");
+            }, 400)();
+          }
+        }}
       >
         {panelBody}
       </Flex>
@@ -175,6 +223,7 @@ function DepositWithdrawButtons(props: DepositWithdrawButtonsProps) {
       borderTop="var(--border)"
       borderBottom="var(--border)"
       borderColor="border"
+      cursor="pointer"
     >
       <Flex
         justifyContent="center"
@@ -249,7 +298,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         justifyContent="center"
         width="100%"
         height="var(--banner-height)"
-        fontWeight="500"
         borderBottom="var(--border)"
         borderColor="border"
       >
