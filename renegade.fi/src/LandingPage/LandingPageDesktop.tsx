@@ -1,34 +1,20 @@
-import React from 'react'
+import { Box, Button, Flex, Image, Link, Text } from "@chakra-ui/react";
+import React from "react";
 
-import { linksThinUnderline } from './LandingPageCommon.tsx'
-
-import {
-  Box,
-  Button,
-  Flex,
-  Image,
-  Link,
-  Text
-} from '@chakra-ui/react'
-
-import logoDarkVertical from '../icons/logo_dark_vertical.svg'
-import backgroundPattern from '../icons/background_pattern.svg'
+import backgroundPattern from "../icons/background_pattern.svg";
+import logoDarkVertical from "../icons/logo_dark_vertical.svg";
+import { linksThinUnderline } from "./LandingPageCommon";
 
 interface VerticalLogoProps {
   clickX: number;
   clickY: number;
-  showMenu: boolean
+  showMenu: boolean;
   setShowMenu: (showMenu: boolean) => void;
   logoRef: React.RefObject<HTMLDivElement>;
 }
 function VerticalLogo(props: VerticalLogoProps) {
   return (
-    <Box
-      h="100%"
-      marginRight="50px"
-      position="relative"
-      ref={props.logoRef}
-    >
+    <Box h="100%" marginRight="50px" position="relative" ref={props.logoRef}>
       <Image
         src={logoDarkVertical}
         alt="Renegade Logo"
@@ -65,7 +51,7 @@ function VerticalLogo(props: VerticalLogoProps) {
             return;
           }
           props.setShowMenu(false);
-          window.open("/logos.zip", "_blank")
+          window.open("/logos.zip", "_blank");
         }}
         _hover={{
           backgroundColor: "#333",
@@ -90,7 +76,7 @@ function Overlay(props: OverlayProps) {
       top="0"
       bottom="0"
       backdropFilter={props.showMenu ? "brightness(50%)" : ""}
-      transition="0.5s ease"
+      transition="0.3s ease"
       userSelect="none"
       onClick={() => {
         props.setShowMenu(false);
@@ -117,7 +103,7 @@ export default class LandingPageDesktop extends React.Component<
       clickY: 0,
       showMenu: false,
       logoRef: React.createRef(),
-    }
+    };
     this.handleContextMenu = this.handleContextMenu.bind(this);
     this.setShowMenu = this.setShowMenu.bind(this);
   }
@@ -194,10 +180,7 @@ export default class LandingPageDesktop extends React.Component<
               className="fade-out"
             />
             <Box margin="auto">
-              <Flex
-                flexDirection="row"
-                justifyContent="space-between"
-              >
+              <Flex flexDirection="row" justifyContent="space-between">
                 <Box
                   fontFamily="Aime"
                   fontWeight="700"
@@ -207,26 +190,22 @@ export default class LandingPageDesktop extends React.Component<
                   lineHeight="90%"
                   className="fade-in-right"
                 >
+                  <Text className="fade-in-right">On.</Text>
                   <Text
                     className="fade-in-right"
-                  >
-                    On.
-                  </Text>
-                  <Text
-                    className="fade-in-right"
-                    sx={{ animationDelay: '0.1s' }}
+                    sx={{ animationDelay: "0.1s" }}
                   >
                     Chain.
                   </Text>
                   <Text
                     className="fade-in-right"
-                    sx={{ animationDelay: '0.2s' }}
+                    sx={{ animationDelay: "0.2s" }}
                   >
                     Dark.
                   </Text>
                   <Text
                     className="fade-in-right"
-                    sx={{ animationDelay: '0.3s' }}
+                    sx={{ animationDelay: "0.3s" }}
                   >
                     Pool.
                   </Text>
@@ -270,11 +249,9 @@ export default class LandingPageDesktop extends React.Component<
                     flexDirection="column"
                     alignItems="end"
                     className="fade-in-left"
-                    sx={{ animationDelay: '0.15s' }}
+                    sx={{ animationDelay: "0.15s" }}
                   >
-                    <Text fontWeight="700">
-                      Our Investors
-                    </Text>
+                    <Text fontWeight="700">Our Investors</Text>
                     <Flex
                       flexDirection="column"
                       alignItems="end"
@@ -291,30 +268,18 @@ export default class LandingPageDesktop extends React.Component<
                         >
                           Dragonfly
                         </Link>
-                        {' & '}
-                        <Link
-                          isExternal
-                          href="https://twitter.com/naval"
-                        >
+                        {" & "}
+                        <Link isExternal href="https://twitter.com/naval">
                           Naval
                         </Link>
                       </Box>
-                      <Link
-                        isExternal
-                        href="https://twitter.com/robotventures"
-                      >
+                      <Link isExternal href="https://twitter.com/robotventures">
                         Robot Ventures
                       </Link>
-                      <Link
-                        isExternal
-                        href="https://twitter.com/balajis"
-                      >
+                      <Link isExternal href="https://twitter.com/balajis">
                         Balaji Srinivasan
                       </Link>
-                      <Link
-                        isExternal
-                        href="https://symbolic.partners"
-                      >
+                      <Link isExternal href="https://symbolic.partners">
                         Symbolic Partners
                       </Link>
                     </Flex>
@@ -325,7 +290,7 @@ export default class LandingPageDesktop extends React.Component<
                     fontWeight="300"
                     paddingBottom="8px"
                     className="fade-in-left"
-                    sx={{ animationDelay: '0.3s' }}
+                    sx={{ animationDelay: "0.3s" }}
                   >
                     <Link
                       isExternal
@@ -376,6 +341,6 @@ export default class LandingPageDesktop extends React.Component<
           setShowMenu={this.setShowMenu}
         />
       </Flex>
-    )
+    );
   }
 }

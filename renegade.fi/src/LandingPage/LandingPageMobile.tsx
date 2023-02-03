@@ -1,30 +1,21 @@
-import React from 'react'
+import { ArrowDownIcon } from "@chakra-ui/icons";
+import { Box, Flex, Image, Link, Text } from "@chakra-ui/react";
+import React from "react";
+import { useInView } from "react-intersection-observer";
 
-import { linksThinUnderline } from './LandingPageCommon.tsx'
+import backgroundPatternVertical from "../icons/background_pattern_vertical.svg";
+import logoDark from "../icons/logo_dark.svg";
+import { linksThinUnderline } from "./LandingPageCommon";
 
-import { useInView } from 'react-intersection-observer'
-import { ArrowDownIcon } from '@chakra-ui/icons'
-
-import logoDark from '../icons/logo_dark.svg'
-import backgroundPatternVertical from '../icons/background_pattern_vertical.svg'
-
-import {
-  Box,
-  Flex,
-  Image,
-  Link,
-  Text
-} from '@chakra-ui/react'
-
-export default function LandingPageMobile () {
+export default function LandingPageMobile() {
   const useInViewOptions = {
     threshold: 0.5,
-    triggerOnce: true
-  }
-  const [refIcon, inViewIcon] = useInView({ initialInView: true })
-  const [refLinksFirst, inViewLinksFirst] = useInView(useInViewOptions)
-  const [refLinksSecond, inViewLinksSecond] = useInView(useInViewOptions)
-  const [refLinksThird, inViewLinksThird] = useInView(useInViewOptions)
+    triggerOnce: true,
+  };
+  const [refIcon, inViewIcon] = useInView({ initialInView: true });
+  const [refLinksFirst, inViewLinksFirst] = useInView(useInViewOptions);
+  const [refLinksSecond, inViewLinksSecond] = useInView(useInViewOptions);
+  const [refLinksThird, inViewLinksThird] = useInView(useInViewOptions);
 
   return (
     <Flex
@@ -43,40 +34,35 @@ export default function LandingPageMobile () {
       paddingBottom="200px"
       fontSize="5vw"
     >
-      <Box
-        w="100%"
-        h="0px"
-        ref={refIcon}
-        display={inViewIcon ? '' : 'none'}
-       />
+      <Box w="100%" h="0px" ref={refIcon} display={inViewIcon ? "" : "none"} />
       <Flex
         height="150vw"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
       >
-          <Image
-            src={logoDark}
-            alt="Renegade Logo"
-            padding="0 50px 0 50px"
-            w="100%"
-            maxW="400px"
-            h="auto"
-            htmlWidth="2467"
-            htmlHeight="385"
-            className="fade-in-right"
-          />
-          <Box
-            paddingTop="10px"
-            fontFamily="Aime"
-            fontSize="6vw"
-            fontWeight="600"
-            className="fade-in-left"
-          >
-            On-Chain Dark Pool
-          </Box>
+        <Image
+          src={logoDark}
+          alt="Renegade Logo"
+          padding="0 50px 0 50px"
+          w="100%"
+          maxW="400px"
+          h="auto"
+          htmlWidth="2467"
+          htmlHeight="385"
+          className="fade-in-right"
+        />
+        <Box
+          paddingTop="10px"
+          fontFamily="Aime"
+          fontSize="6vw"
+          fontWeight="600"
+          className="fade-in-left"
+        >
+          On-Chain Dark Pool
+        </Box>
       </Flex>
-      <Box className={inViewIcon ? '' : 'fade-out'}>
+      <Box className={inViewIcon ? "" : "fade-out"}>
         <Box className="bounce">
           <ArrowDownIcon boxSize="2em" />
         </Box>
@@ -86,7 +72,7 @@ export default function LandingPageMobile () {
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className={inViewLinksFirst ? 'fade-in-right' : 'pre-animation'}
+        className={inViewLinksFirst ? "fade-in-right" : "pre-animation"}
         ref={refLinksFirst}
       >
         <Link
@@ -116,13 +102,11 @@ export default function LandingPageMobile () {
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className={inViewLinksSecond ? 'fade-in-left' : 'pre-animation'}
+        className={inViewLinksSecond ? "fade-in-left" : "pre-animation"}
         ref={refLinksSecond}
-        sx={{ animationDelay: '0.15s' }}
+        sx={{ animationDelay: "0.15s" }}
       >
-        <Text fontWeight="700">
-          Our Investors
-        </Text>
+        <Text fontWeight="700">Our Investors</Text>
         <Flex
           flexDirection="column"
           alignItems="center"
@@ -131,34 +115,19 @@ export default function LandingPageMobile () {
           opacity="80%"
           sx={linksThinUnderline}
         >
-          <Link
-            isExternal
-            href="https://twitter.com/dragonfly_xyz"
-          >
+          <Link isExternal href="https://twitter.com/dragonfly_xyz">
             Dragonfly
           </Link>
-          <Link
-            isExternal
-            href="https://twitter.com/naval"
-          >
+          <Link isExternal href="https://twitter.com/naval">
             Naval Ravikant
           </Link>
-          <Link
-            isExternal
-            href="https://twitter.com/robotventures"
-          >
+          <Link isExternal href="https://twitter.com/robotventures">
             Robot Ventures
           </Link>
-          <Link
-            isExternal
-            href="https://twitter.com/balajis"
-          >
+          <Link isExternal href="https://twitter.com/balajis">
             Balaji Srinivasan
           </Link>
-          <Link
-            isExternal
-            href="https://symbolic.partners"
-          >
+          <Link isExternal href="https://symbolic.partners">
             Symbolic Partners
           </Link>
         </Flex>
@@ -168,9 +137,9 @@ export default function LandingPageMobile () {
         flexDirection="column"
         alignItems="center"
         fontWeight="300"
-        className={inViewLinksThird ? 'fade-in-right' : 'pre-animation'}
+        className={inViewLinksThird ? "fade-in-right" : "pre-animation"}
         ref={refLinksThird}
-        sx={{ animationDelay: '0.3s' }}
+        sx={{ animationDelay: "0.3s" }}
       >
         <Link
           isExternal
@@ -202,5 +171,5 @@ export default function LandingPageMobile () {
         </Link>
       </Flex>
     </Flex>
-  )
+  );
 }
