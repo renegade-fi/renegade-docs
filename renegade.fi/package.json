@@ -44,6 +44,7 @@
     "@parcel/packager-raw-url": "^2.8.0",
     "@parcel/transformer-raw": "^2.8.0",
     "@parcel/transformer-webmanifest": "^2.8.0",
+    "@types/react": "^18.0.27",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^7.32.0",
