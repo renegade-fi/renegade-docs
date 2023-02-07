@@ -34,7 +34,8 @@ import galaLogo from "./src/icons/tokens/gala.png"
 import audioLogo from "./src/icons/tokens/audio.png"
 import radLogo from "./src/icons/tokens/rad.png"
 
-const TOKENLIST_URL = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
+const TOKENLIST_URL =
+  "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
 
 const LOGO_URL_OVERRIDES = {
   WBTC: wbtcLogo,
@@ -72,7 +73,7 @@ const LOGO_URL_OVERRIDES = {
   GALA: galaLogo,
   AUDIO: audioLogo,
   RAD: radLogo,
-}
+};
 
 export const ADDR_TO_TICKER = {
   "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599": "WBTC",
@@ -193,27 +194,30 @@ export const TICKER_TO_NAME = {};
 export const TICKER_TO_DEFAULT_DECIMALS = {};
 for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
   TICKER_TO_NAME[ticker] = TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][0];
-  TICKER_TO_DEFAULT_DECIMALS[ticker] = TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][1];
+  TICKER_TO_DEFAULT_DECIMALS[ticker] =
+    TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][1];
 }
 
-export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL).then(resp => resp.json()).then(data => {
-  let TICKER_TO_LOGO_URL = {}
-  // Process all logos from TrustWallet
-  for (const token of data.tokens) {
-    let ticker = ADDR_TO_TICKER[token.address.toLowerCase()];
-    if (ticker !== undefined) {
-      TICKER_TO_LOGO_URL[ticker] = token.logoURI;
+export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL)
+  .then(resp => resp.json())
+  .then(data => {
+    let TICKER_TO_LOGO_URL = {};
+    // Process all logos from TrustWallet
+    for (const token of data.tokens) {
+      let ticker = ADDR_TO_TICKER[token.address.toLowerCase()];
+      if (ticker !== undefined) {
+        TICKER_TO_LOGO_URL[ticker] = token.logoURI;
+      }
     }
-  }
-  // Put in some manual overrides, for unaesthetic or missing logos
-  for (const ticker in LOGO_URL_OVERRIDES) {
-    TICKER_TO_LOGO_URL[ticker] = LOGO_URL_OVERRIDES[ticker]
-  }
-  // Warn about missing logos
-  for (const ticker in TICKER_TO_ADDR) {
-    if (TICKER_TO_LOGO_URL[ticker] === undefined) {
-      console.warn("Missing logo:", ticker)
+    // Put in some manual overrides, for unaesthetic or missing logos
+    for (const ticker in LOGO_URL_OVERRIDES) {
+      TICKER_TO_LOGO_URL[ticker] = LOGO_URL_OVERRIDES[ticker];
     }
-  }
-  return TICKER_TO_LOGO_URL
-})
+    // Warn about missing logos
+    for (const ticker in TICKER_TO_ADDR) {
+      if (TICKER_TO_LOGO_URL[ticker] === undefined) {
+        console.warn("Missing logo:", ticker);
+      }
+    }
+    return TICKER_TO_LOGO_URL;
+  });

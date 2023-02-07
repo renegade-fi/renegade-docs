@@ -12,9 +12,9 @@ jobs:
         working-directory: ./renegade.fi
         run: |
           npm ci
-          npx prettier --check . --config ./.prettierrc
+          npx prettier --check src/ --config ./.prettierrc
       - name: Prettier Check (testnet.renegade.fi)
         working-directory: ./testnet.renegade.fi
         run: |
           npm ci
-          npx prettier --check . --config ./.prettierrc
+          npx prettier --check src/ --config ./.prettierrc

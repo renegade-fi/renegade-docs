@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
   },
   extends: [
     "eslint:recommended",
@@ -12,16 +12,12 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 12,
-    sourceType: "module"
+    sourceType: "module",
   },
-  plugins: [
-    "react",
-    "@typescript-eslint",
-    "prettier",
-  ],
+  plugins: ["react", "@typescript-eslint", "prettier"],
   rules: {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
@@ -31,7 +27,7 @@ module.exports = {
   },
   settings: {
     react: {
-      version: "detect"
-    }
-  }
-}
+      version: "detect",
+    },
+  },
+};
