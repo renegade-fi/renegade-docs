@@ -3,11 +3,8 @@
 
 # Node
 /renegade.fi/node_modules
-/renegade.fi/package-lock.json
 /docs.renegade.fi/node_modules
-/docs.renegade.fi/package-lock.json
 /testnet.renegade.fi/node_modules
-/testnet.renegade.fi/package-lock.json
 
 # Parcel
 /renegade.fi/.parcel-cache
