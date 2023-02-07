@@ -21,6 +21,38 @@ import KeyStore from "../connections/KeyStore";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 import glyphDark from "../icons/glyph_dark.svg";
 
+interface GlyphProps {
+  glyphRef: React.RefObject<HTMLDivElement>;
+  showDownloadPrompt: boolean;
+}
+function Glyph(props: GlyphProps) {
+  return (
+    <Flex
+      alignItems="center"
+      width="30%"
+      marginLeft="1.2%"
+      userSelect="none"
+      gap="20px"
+      ref={props.glyphRef}
+    >
+      <Image height="var(--banner-height)" src={glyphDark} />
+      <Link
+        opacity={props.showDownloadPrompt ? 1 : 0}
+        transform={
+          props.showDownloadPrompt ? "translateX(0px)" : "translateX(-10px)"
+        }
+        transition="0.2s"
+        fontWeight="300"
+        color="white.90"
+        href="https://renegade.fi/logos.zip"
+        isExternal
+      >
+        Download Logo Pack
+      </Link>
+    </Flex>
+  );
+}
+
 /**
  * The initial "Connect Wallet" button. Only visible if the user has not
  * connected their wallet.
@@ -140,44 +172,98 @@ function DisconnectWalletButton() {
   );
 }
 
-export default function Header(props: { onOpenGlobalModal: () => void }) {
-  return (
-    <Flex
-      alignItems="center"
-      width="100%"
-      height="calc(2 * var(--banner-height))"
-      borderBottom="var(--border)"
-      borderColor="border"
-    >
-      <Box width="30%" userSelect="none">
-        <Image height="var(--banner-height)" marginLeft="4%" src={glyphDark} />
-      </Box>
-      <Spacer />
-      <HStack spacing="20px" fontSize="1.1em" color="white.80" fontWeight="300">
-        <Link
-          fontWeight="400"
-          href="https://twitter.com/renegade_fi"
-          isExternal
-          color="white.100"
+interface HeaderProps {
+  onOpenGlobalModal: () => void;
+}
+interface HeaderState {
+  glyphRef: React.RefObject<HTMLDivElement>;
+  showDownloadPrompt: boolean;
+}
+export default class Header extends React.Component<HeaderProps, HeaderState> {
+  constructor(props: HeaderProps) {
+    super(props);
+    this.state = {
+      glyphRef: React.createRef(),
+      showDownloadPrompt: false,
+    };
+    this.handleContextMenu = this.handleContextMenu.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("contextmenu", this.handleContextMenu);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("contextmenu", this.handleContextMenu);
+  }
+
+  handleContextMenu(e: MouseEvent) {
+    e.preventDefault();
+    if (!this.state.glyphRef.current) {
+      return;
+    }
+    // If the context menu click does not intersect the glyph, ignore.
+    const boundingBox = this.state.glyphRef.current.getBoundingClientRect();
+    if (
+      boundingBox.left > e.pageX ||
+      boundingBox.right < e.pageX ||
+      boundingBox.top > e.pageY ||
+      boundingBox.bottom < e.pageY
+    ) {
+      return;
+    }
+    this.setState({ showDownloadPrompt: true });
+  }
+
+  render() {
+    return (
+      <Flex
+        alignItems="center"
+        width="100%"
+        height="calc(2 * var(--banner-height))"
+        borderBottom="var(--border)"
+        borderColor="border"
+        onClick={() => this.setState({ showDownloadPrompt: false })}
+      >
+        <Glyph
+          glyphRef={this.state.glyphRef}
+          showDownloadPrompt={this.state.showDownloadPrompt}
+        />
+        <Spacer />
+        <HStack
+          spacing="20px"
+          fontSize="1.1em"
+          color="white.80"
+          fontWeight="300"
+          onClick={(event) => event.stopPropagation()}
         >
-          Twitter
-        </Link>
-        <Link href="https://discord.gg/renegade-fi" isExternal>
-          Discord
-        </Link>
-        <Link href="https://docs.renegade.fi" isExternal>
-          Docs
-        </Link>
-        <Link href="https://whitepaper.renegade.fi" isExternal>
-          Whitepaper
-        </Link>
-      </HStack>
-      <Spacer />
-      <Flex width="30%" justifyContent="right" paddingRight="1.5%">
-        <ConnectWalletButton />
-        <SignInButton onOpenGlobalModal={props.onOpenGlobalModal} />
-        <DisconnectWalletButton />
+          <Link
+            fontWeight="400"
+            href="https://twitter.com/renegade_fi"
+            isExternal
+            color="white.100"
+          >
+            Twitter
+          </Link>
+          <Link href="https://discord.gg/renegade-fi" isExternal>
+            Discord
+          </Link>
+          <Link href="https://docs.renegade.fi" isExternal>
+            Docs
+          </Link>
+          <Link href="https://whitepaper.renegade.fi" isExternal>
+            Whitepaper
+          </Link>
+        </HStack>
+        <Spacer />
+        <Flex width="30%" justifyContent="right" paddingRight="1.5%">
+          <Box onClick={(event) => event.stopPropagation()}>
+            <ConnectWalletButton />
+            <SignInButton onOpenGlobalModal={this.props.onOpenGlobalModal} />
+            <DisconnectWalletButton />
+          </Box>
+        </Flex>
       </Flex>
-    </Flex>
-  );
+    );
+  }
 }

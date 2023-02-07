@@ -186,14 +186,25 @@ export class LivePrices extends React.Component<
     } else if (healthStates["median"]["TooMuchDeviation"]) {
       medianPriceReport = healthStates["median"]["TooMuchDeviation"][0];
     }
+    const healthStatesExchanges = healthStates["all_exchanges"];
     const fallbackPriceReport =
       {
         median: medianPriceReport,
-        binance: healthStates["all_exchanges"]["Binance"]["Nominal"],
-        coinbase: healthStates["all_exchanges"]["Coinbase"]["Nominal"],
-        kraken: healthStates["all_exchanges"]["Kraken"]["Nominal"],
-        okx: healthStates["all_exchanges"]["Okx"]["Nominal"],
-        uniswapv3: healthStates["all_exchanges"]["UniswapV3"]["Nominal"],
+        binance:
+          healthStatesExchanges["Binance"] &&
+          healthStatesExchanges["Binance"]["Nominal"],
+        coinbase:
+          healthStatesExchanges["Coinbase"] &&
+          healthStatesExchanges["Coinbase"]["Nominal"],
+        kraken:
+          healthStatesExchanges["Kraken"] &&
+          healthStatesExchanges["Kraken"]["Nominal"],
+        okx:
+          healthStatesExchanges["Okx"] &&
+          healthStatesExchanges["Okx"]["Nominal"],
+        uniswapv3:
+          healthStatesExchanges["UniswapV3"] &&
+          healthStatesExchanges["UniswapV3"]["Nominal"],
       }[this.props.exchange] || DEFAULT_PRICE_REPORT;
     this.setState({ fallbackPriceReport });
   }
