@@ -33,14 +33,16 @@ function Glyph(props: GlyphProps) {
       marginLeft="1.2%"
       userSelect="none"
       gap="20px"
-      ref={props.glyphRef}
     >
-      <Image height="var(--banner-height)" src={glyphDark} />
+      <Box ref={props.glyphRef}>
+        <Image height="var(--banner-height)" src={glyphDark} />
+      </Box>
       <Link
         opacity={props.showDownloadPrompt ? 1 : 0}
         transform={
           props.showDownloadPrompt ? "translateX(0px)" : "translateX(-10px)"
         }
+        pointerEvents={props.showDownloadPrompt ? undefined : "none"}
         transition="0.2s"
         fontWeight="300"
         color="white.90"
