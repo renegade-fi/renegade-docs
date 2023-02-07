@@ -170,6 +170,9 @@ export class LivePrices extends React.Component<
   }
 
   async queryFallbackPriceReport() {
+    if (this.props.baseTicker === this.props.quoteTicker) {
+      return;
+    }
     const healthStates =
       await this.props.renegadeConnection.checkExchangeHealthStates(
         TICKER_TO_ADDR[this.props.baseTicker],
@@ -196,6 +199,9 @@ export class LivePrices extends React.Component<
   }
 
   streamPriceReports() {
+    if (this.props.baseTicker === "USDC" || this.props.baseTicker === "USDT") {
+      return;
+    }
     // Send a subscription request to the relayer
     const baseTokenAddr = TICKER_TO_ADDR[this.props.baseTicker];
     const quoteTokenAddr = TICKER_TO_ADDR[this.props.quoteTicker];

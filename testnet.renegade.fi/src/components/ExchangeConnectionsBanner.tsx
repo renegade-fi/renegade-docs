@@ -192,6 +192,9 @@ export default class ExchangeConnectionsBanner extends React.Component<
   }
 
   async checkExchangeHealthStates() {
+    if (this.props.activeBaseTicker === this.props.activeQuoteTicker) {
+      return;
+    }
     const healthStates =
       await this.props.renegadeConnection.checkExchangeHealthStates(
         TICKER_TO_ADDR[this.props.activeBaseTicker],
