@@ -128,7 +128,7 @@ export default class KeyStore {
     }
     return {
       renegadeKeypairs: await this._generateRenegadeKeypairs(signatureBytes),
-      starkNetKeypair: this._generateStarkNetKeypair(signatureBytes),
+      starkNetKeypair: this._generateStarkNetKeypair(),
     };
   }
 
@@ -193,9 +193,7 @@ export default class KeyStore {
   /**
    * Given a 65-byte ECDSA signature, computes the StarkNet keypair.
    */
-  static _generateStarkNetKeypair(
-    _signatureBytes: Uint8Array,
-  ): StarkNetKeypair {
+  static _generateStarkNetKeypair(): StarkNetKeypair {
     return StarkNetKeypair.default(); // TODO
   }
 }

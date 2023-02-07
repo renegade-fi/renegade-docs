@@ -38,7 +38,10 @@ interface RenegadeConnectionState {
   relayerWsUrl: string;
   relayerConnection: WebSocket;
   relayerPromise: Promise<void>;
-  relayerTopicListeners: Record<string, any>;
+  relayerTopicListeners: Record<
+    string,
+    Record<string, string | ((priceReport: PriceReport) => void)>
+  >;
 }
 export default class RenegadeConnection {
   props: RenegadeConnectionProps;
@@ -85,7 +88,9 @@ export default class RenegadeConnection {
       for (const listenerId in this.state.relayerTopicListeners) {
         const listener = this.state.relayerTopicListeners[listenerId];
         if (listener.topic === parsedMessage.topic) {
-          listener.callback(priceReport);
+          (listener.callback as (priceReport: PriceReport) => void)(
+            priceReport,
+          );
         }
       }
     });
@@ -148,6 +153,7 @@ export default class RenegadeConnection {
     }
   }
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   async checkExchangeHealthStates(
     baseAddr: string,
     quoteAddr: string,
@@ -161,4 +167,5 @@ export default class RenegadeConnection {
     );
     return response.json();
   }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }

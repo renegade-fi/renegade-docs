@@ -104,6 +104,7 @@ function TokenBalance(props: TokenBalanceProps) {
 // Set the scrollbar to hidden after a timeout.
 let scrollTimer: NodeJS.Timeout;
 function callAfterTimeout(func: () => void, timeout: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (...args: any[]) => {
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(() => {
@@ -213,8 +214,7 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
   );
 }
 
-interface DepositWithdrawButtonsProps {}
-function DepositWithdrawButtons(props: DepositWithdrawButtonsProps) {
+function DepositWithdrawButtons() {
   return (
     <Flex
       width="100%"

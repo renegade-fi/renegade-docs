@@ -51,10 +51,7 @@ function OrdersPanel(props: OrdersPanelProps) {
   );
 }
 
-interface CounterpartiesPanelProps {
-  renegadeConnection: RenegadeConnection;
-}
-function CounterpartiesPanel(props: CounterpartiesPanelProps) {
+function CounterpartiesPanel() {
   return (
     <>
       <Flex

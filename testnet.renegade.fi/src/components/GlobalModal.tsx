@@ -28,7 +28,7 @@ function SignInButton(props: { onClose: () => void }) {
   const { signMessage } = useSignMessageWagmi({
     message: KeyStore.CREATE_SK_ROOT_MESSAGE,
     async onSuccess(data, variables) {
-      const address = verifyMessage(variables.message, data); // TODO: Validate this addr?
+      verifyMessage(variables.message, data); // TODO: Verify this output address.
       setKeyStoreState(await KeyStore.fromSignature(data));
       props.onClose();
     },

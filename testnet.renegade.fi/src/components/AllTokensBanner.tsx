@@ -177,7 +177,7 @@ export default class AllTokensBanner extends React.Component<
     });
   }
 
-  onMouseMove(event: any) {
+  onMouseMove(event: React.MouseEvent) {
     if (this.state.isClicked) {
       const tokenBanner =
         document.getElementsByClassName("all-tokens-banner")[0];

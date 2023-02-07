@@ -1,2 +1,20 @@
 name: Eslint
-
+on: [push]
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Eslint Check (renegade.fi)
+        working-directory: ./renegade.fi
+        run: |
+          npm ci
+          npx eslint src/ --ext .tsx --config ./.eslintrc.js
+      - name: Eslint Check (testnet.renegade.fi)
+        working-directory: ./testnet.renegade.fi
+        run: |
+          npm ci
+          npx eslint src/ --ext .tsx --config ./.eslintrc.js
