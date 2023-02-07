@@ -1,0 +1,20 @@
+name: Prettier
+on: [push]
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Prettier Check (renegade.fi)
+        working-directory: ./renegade.fi
+        run: |
+          npm ci
+          npx prettier --check . --config ./.prettierrc
+      - name: Prettier Check (testnet.renegade.fi)
+        working-directory: ./testnet.renegade.fi
+        run: |
+          npm ci
+          npx prettier --check . --config ./.prettierrc
