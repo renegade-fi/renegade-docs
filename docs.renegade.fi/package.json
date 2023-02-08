@@ -1,5 +1,5 @@
 {
-  "name": "darkpool-docs",
+  "name": "docs.renegade.fi",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,9 +12,10 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "lint:js": "npx eslint docusaurus.config.js sidebars.js src/**/*.js --fix --config ./.eslintrc.js --no-eslintrc",
-    "lint:md": "npx eslint docs/ --ext .md --fix --config ./.eslintrc.js --no-eslintrc",
-    "lint": "npm run lint:js && npm run lint:md",
+    "prettier": "npx prettier --write src/ --config ./.prettierrc",
+    "eslint:js": "npx eslint docusaurus.config.js sidebars.js src/**/*.js --fix --config ./.eslintrc.js",
+    "eslint:md": "npx eslint docs/ --ext .md --fix --config ./.eslintrc.js",
+    "lint": "npm run eslint:js && npm run eslint:md && npm run prettier",
     "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
     "deploy:prod": "npm run build && bash ./scripts/deploy.sh --prod",
     "deploy:all": "npm run build && bash ./scripts/deploy.sh --dev && bash ./scripts/deploy.sh --prod"
@@ -30,22 +31,20 @@
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^2.1.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-md": "^1.0.19",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-react": "^7.28.0",
+    "prettier": "^2.8.1",
     "prop-types": "^15.8.1"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

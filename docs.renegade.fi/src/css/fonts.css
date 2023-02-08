@@ -1,42 +1,42 @@
 /* Favorit Normal */
 @font-face {
-  font-family: 'Favorit';
-  font-style: 'normal';
+  font-family: "Favorit";
+  font-style: "normal";
   font-weight: 300;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavorit-Light-Named.ttf) format('truetype');
+  src: url(../fonts/favorit/ABCFavorit-Light-Named.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Favorit';
-  font-style: 'normal';
+  font-family: "Favorit";
+  font-style: "normal";
   font-weight: 350;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavorit-Book-Named.ttf) format('truetype');
+  src: url(../fonts/favorit/ABCFavorit-Book-Named.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Favorit';
-  font-style: 'normal';
+  font-family: "Favorit";
+  font-style: "normal";
   font-weight: 400;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavorit-Regular-Named.ttf) format('truetype');
+  src: url(../fonts/favorit/ABCFavorit-Regular-Named.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Favorit';
-  font-style: 'normal';
+  font-family: "Favorit";
+  font-style: "normal";
   font-weight: 500;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavorit-Medium-Named.ttf) format('truetype');
+  src: url(../fonts/favorit/ABCFavorit-Medium-Named.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'Favorit';
-  font-style: 'normal';
+  font-family: "Favorit";
+  font-style: "normal";
   font-weight: 700;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavorit-Bold-Named.ttf) format('truetype');
+  src: url(../fonts/favorit/ABCFavorit-Bold-Named.ttf) format("truetype");
 }
 
 /* Favorit Italic */
@@ -89,7 +89,8 @@
   font-style: "normal";
   font-weight: 350;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavoritExtended-Book-Named.ttf) format("truetype");
+  src: url(../fonts/favorit/ABCFavoritExtended-Book-Named.ttf)
+    format("truetype");
 }
 
 @font-face {
@@ -115,7 +116,8 @@
   font-style: "normal";
   font-weight: 700;
   font-display: block;
-  src: url(../fonts/favorit/ABCFavoritExtended-Bold-Named.ttf) format("truetype");
+  src: url(../fonts/favorit/ABCFavoritExtended-Bold-Named.ttf)
+    format("truetype");
 }
 
 /* Aime Normal */
