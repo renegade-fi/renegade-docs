@@ -44,7 +44,7 @@ function TokenBalance(props: TokenBalanceProps) {
       alignItems="center"
       width="100%"
       padding="0 8% 0 8%"
-      color="white.80"
+      color="white.60"
       gap="5px"
       borderBottom="var(--border)"
       borderColor="white.20"
@@ -53,7 +53,7 @@ function TokenBalance(props: TokenBalanceProps) {
       transition="filter 0.1s"
       _hover={{
         filter: "inherit",
-        fontWeight: "500",
+        color: "white.90",
       }}
     >
       <Image src={logoUrl} width="25px" height="25px" />
@@ -68,7 +68,7 @@ function TokenBalance(props: TokenBalanceProps) {
         <Text fontSize="1.1em" lineHeight="1">
           {data.formatted.slice(0, 6)} {ADDR_TO_TICKER[props.tokenAddr]}
         </Text>
-        <Box fontSize="0.8em" color="white.50" lineHeight="1">
+        <Box fontSize="0.8em" color="white.40" lineHeight="1">
           <LivePrices
             renegadeConnection={props.renegadeConnection}
             baseTicker={ADDR_TO_TICKER[props.tokenAddr]}
@@ -248,8 +248,10 @@ interface RenegadeWalletPanelProps {
   onOpenGlobalModal: () => void;
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
+  const { address } = useAccountWagmi();
   const [keyStoreState] = React.useContext(KeyStoreContext);
   let panelBody: React.ReactElement;
+
   if (KeyStore.isUnpopulated(keyStoreState)) {
     panelBody = (
       <Flex
@@ -261,7 +263,11 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         <Button
           variant="wallet-connect"
           padding="0 15% 0 15%"
-          onClick={props.onOpenGlobalModal}
+          opacity={address ? 1 : 0.4}
+          cursor={address ? "pointer" : "inherit"}
+          onClick={address ? props.onOpenGlobalModal : undefined}
+          transition="0.2s"
+          _hover={address ? undefined : {}}
         >
           Sign In
         </Button>
@@ -269,10 +275,12 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           marginTop="10px"
           fontSize="0.8em"
           fontWeight="100"
-          color="white.50"
+          color={address ? "white.50" : "white.40"}
           textAlign="center"
         >
-          Sign in to create a Renegade account and view your balances.
+          {address
+            ? "Sign in to create a Renegade account and view your balances."
+            : "Connect your Ethereum wallet before signing in."}
         </Text>
       </Flex>
     );
@@ -291,6 +299,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       </Box>
     );
   }
+
   return (
     <>
       <Flex

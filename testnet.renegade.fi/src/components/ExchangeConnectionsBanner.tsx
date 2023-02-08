@@ -24,7 +24,8 @@ type HealthState =
 function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
   return (
     <Flex
-      as={props.link ? Link : undefined}
+      as={Link}
+      cursor={props.link ? undefined : "inherit"}
       height="100%"
       alignItems="center"
       justifyContent="center"

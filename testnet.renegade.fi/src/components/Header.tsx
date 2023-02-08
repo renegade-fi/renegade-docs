@@ -6,7 +6,6 @@ import {
   Image,
   Link,
   Spacer,
-  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { ConnectKitButton } from "connectkit";
@@ -62,24 +61,13 @@ function Glyph(props: GlyphProps) {
 export function ConnectWalletButton() {
   return (
     <ConnectKitButton.Custom>
-      {({ isConnecting, isConnected, show }) => {
+      {({ isConnected, show }) => {
         if (isConnected) {
           return null;
         }
-        let buttonBody: React.ReactElement;
-        if (isConnecting) {
-          buttonBody = (
-            <HStack spacing="10px">
-              <Text>Connecting to L1</Text>
-              <Spinner size="sm" color="white.80" />
-            </HStack>
-          );
-        } else {
-          buttonBody = <Text>Connect Wallet</Text>;
-        }
         return (
           <Button variant="wallet-connect" onClick={show}>
-            {buttonBody}
+            Connect Wallet
           </Button>
         );
       }}
