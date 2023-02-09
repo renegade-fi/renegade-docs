@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import { verifyMessage } from "ethers/lib/utils";
@@ -23,27 +24,33 @@ import {
 import KeyStore from "../connections/KeyStore";
 import KeyStoreContext from "../contexts/KeyStoreContext";
 
-function SignInButton(props: { onClose: () => void }) {
-  const [, setKeyStoreState] = React.useContext(KeyStoreContext);
-  const { signMessage } = useSignMessageWagmi({
-    message: KeyStore.CREATE_SK_ROOT_MESSAGE,
-    async onSuccess(data, variables) {
-      verifyMessage(variables.message, data); // TODO: Verify this output address.
-      setKeyStoreState(await KeyStore.fromSignature(data));
-      props.onClose();
-    },
-  });
+interface SignInButtonProps {
+  isLoading: boolean;
+  signMessage: () => void;
+  onClose: () => void;
+}
+function SignInButton(props: SignInButtonProps) {
   return (
     <Button
       width="100%"
+      height={props.isLoading ? "50px" : "40px"}
+      transition="0.2s"
       marginTop="20px"
-      fontFamily="Favorit Expanded"
       fontWeight="800"
       backgroundColor="brown.light"
       color="white.90"
-      onClick={() => signMessage()}
+      onClick={() => props.signMessage()}
     >
-      Sign in to Renegade
+      <HStack spacing="10px">
+        <Spinner
+          width={props.isLoading ? "17px" : "0px"}
+          height={props.isLoading ? "17px" : "0px"}
+          opacity={props.isLoading ? 1 : 0}
+          transition="0.2s"
+          speed="0.8s"
+        />
+        <Text>Sign in to Renegade</Text>
+      </HStack>
     </Button>
   );
 }
@@ -54,7 +61,6 @@ function DisconnectWalletButton(props: { onClose: () => void }) {
   return (
     <Button
       variant="transparent"
-      marginTop="10px"
       padding="0"
       fontFamily="Favorit"
       fontWeight="400"
@@ -74,6 +80,43 @@ function DisconnectWalletButton(props: { onClose: () => void }) {
   );
 }
 
+interface SignInModalProps {
+  onClose: () => void;
+}
+function SignInModal(props: SignInModalProps) {
+  const [, setKeyStoreState] = React.useContext(KeyStoreContext);
+  const { isLoading, signMessage } = useSignMessageWagmi({
+    message: KeyStore.CREATE_SK_ROOT_MESSAGE,
+    async onSuccess(data, variables) {
+      verifyMessage(variables.message, data); // TODO: Verify this output address.
+      setKeyStoreState(await KeyStore.fromSignature(data));
+      props.onClose();
+    },
+  });
+  return (
+    <Flex flexDirection="column" justifyContent="center" alignItems="center">
+      <Text fontSize="0.9em" color="white.60">
+        To trade on Renegade, we require a one-time signature to unlock and
+        create your wallet.
+      </Text>
+      <SignInButton
+        isLoading={isLoading}
+        signMessage={signMessage}
+        onClose={props.onClose}
+      />
+      <Flex
+        marginTop="10px"
+        alignItems="center"
+        opacity={isLoading ? 0 : 1}
+        height={isLoading ? "0px" : "40px"}
+        transition="0.2s"
+      >
+        <DisconnectWalletButton onClose={props.onClose} />
+      </Flex>
+    </Flex>
+  );
+}
+
 interface GlobalModalProps {
   isOpen: boolean;
   onOpen: () => void;
@@ -90,18 +133,7 @@ export default function GlobalModal(props: GlobalModalProps) {
         <ModalHeader paddingBottom="0">Unlock your Wallet</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Flex
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Text fontSize="0.9em" color="white.60">
-              To trade on Renegade, we require a one-time signature to unlock
-              and create your wallet.
-            </Text>
-            <SignInButton onClose={props.onClose} />
-            <DisconnectWalletButton onClose={props.onClose} />
-          </Flex>
+          <SignInModal onClose={props.onClose} />
         </ModalBody>
       </ModalContent>
     </Modal>

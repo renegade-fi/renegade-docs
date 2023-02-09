@@ -99,7 +99,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
     this.state = {
       isHovering: false,
       isLocked:
-        localStorage.getItem(this.getLocalStorageKey()) == "true" || false,
+        localStorage.getItem(this.getLocalStorageKey()) === "true" || false,
       isOpenModalWhenLeft: false,
       isModalJustClosed: false,
     };
@@ -114,7 +114,14 @@ export class Panel extends React.Component<PanelProps, PanelState> {
       (!this.props.isOpenConnectKitModal && prevProps.isOpenConnectKitModal)
     ) {
       this.setState({ isModalJustClosed: true });
-      setTimeout(() => this.setState({ isModalJustClosed: false }), 750);
+      setTimeout(
+        () =>
+          this.setState({
+            isModalJustClosed: false,
+            isOpenModalWhenLeft: false,
+          }),
+        750,
+      );
     }
   }
 
