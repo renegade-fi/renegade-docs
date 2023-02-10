@@ -188,7 +188,6 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
   }
 
   handleContextMenu(e: MouseEvent) {
-    e.preventDefault();
     if (!this.state.glyphRef.current) {
       return;
     }
@@ -202,6 +201,7 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
     ) {
       return;
     }
+    e.preventDefault();
     this.setState({ showDownloadPrompt: true });
   }
 

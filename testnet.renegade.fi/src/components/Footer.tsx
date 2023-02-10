@@ -29,7 +29,6 @@ export default class Footer extends React.Component<
   }
 
   handleContextMenu(e: MouseEvent) {
-    e.preventDefault();
     if (!this.state.logoRef.current) {
       return;
     }
@@ -43,6 +42,7 @@ export default class Footer extends React.Component<
     ) {
       return;
     }
+    e.preventDefault();
     this.setState({ showDownloadPrompt: true });
   }
 

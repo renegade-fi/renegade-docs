@@ -94,7 +94,7 @@ function OrdersAndCounterpartiesPanelExpanded(
         isLocked={props.isLocked}
         toggleIsLocked={props.toggleIsLocked}
       />
-      <CounterpartiesPanel renegadeConnection={props.renegadeConnection} />
+      <CounterpartiesPanel />
     </Flex>
   );
 }

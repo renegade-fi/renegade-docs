@@ -87,7 +87,7 @@ export default class TradingInterface extends React.Component<
             onOpenGlobalModal={this.props.onOpenGlobalModal}
             isOpenGlobalModal={this.props.isOpenGlobalModal}
           />
-          <Flex flexDirection="column" flexGrow="1">
+          <Flex flexDirection="column" flexGrow="1" overflowX="hidden">
             <RelayerStatusBanner
               renegadeConnection={renegadeConnection}
               activeBaseTicker={this.state.activeBaseTicker}

@@ -169,12 +169,14 @@ export class Panel extends React.Component<PanelProps, PanelState> {
       : "translateX(0)";
     return (
       <Flex
+        justifyContent={this.props.flipDirection ? "right" : "left"}
+        flexGrow="0"
+        flexShrink="0"
+        flexBasis={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
+        transition="flex-basis 0.15s ease"
+        position="relative"
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
-        justifyContent={this.props.flipDirection ? "right" : "left"}
-        width={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
-        transition="width 0.15s ease"
-        position="relative"
       >
         <Flex
           height="100%"
