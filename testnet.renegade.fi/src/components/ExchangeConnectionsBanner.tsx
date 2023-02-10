@@ -339,7 +339,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     });
   }
 
-  onMouseDown(event: MouseEvent) {
+  onMouseDown(event: React.MouseEvent) {
     this.setState({
       isClicked: true,
       mouseDownX: event.clientX,
@@ -372,7 +372,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
         color="white.80"
         userSelect="none"
         spacing="0px"
-        zIndex="-1"
       >
         <MedianTriple
           renegadeConnection={this.props.renegadeConnection}
@@ -382,11 +381,12 @@ export default class ExchangeConnectionsBanner extends React.Component<
         />
         <Box width="76%" position="relative">
           <Box
-            visibility={this.state.isTooShort ? undefined : "hidden"}
-            height="90%"
             width="10px"
             position="absolute"
+            top="1px"
+            bottom="1px"
             left="0"
+            visibility={this.state.isTooShort ? undefined : "hidden"}
             bg="linear-gradient(90deg, rgba(0,0,0,1), rgba(0,0,0,0))"
             zIndex="1"
           ></Box>
