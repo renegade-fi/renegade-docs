@@ -44,19 +44,19 @@ export function BannerSeparator(props: BannerSeparatorProps) {
       return (
         <Flex
           as={Link}
+          href={props.link}
+          isExternal
           alignItems="center"
           justifyContent="center"
           height="100%"
           flexGrow={props.flexGrow}
-          href={props.link}
-          isExternal
         >
           <Center height="100%">{wrapperProps.children}</Center>
         </Flex>
       );
     } else {
       return (
-        <Center height="70%" flexGrow={props.flexGrow}>
+        <Center height="100%" flexGrow={props.flexGrow}>
           {wrapperProps.children}
         </Center>
       );
@@ -350,8 +350,9 @@ export class LivePrices extends React.Component<
     return (
       <>
         <Flex
-          as={this.props.link ? Link : undefined}
+          as={Link}
           href={this.props.link}
+          isExternal
           alignItems="center"
           justifyContent="center"
           flexGrow="1"
@@ -366,11 +367,11 @@ export class LivePrices extends React.Component<
           ${priceStr}
         </Flex>
         <Flex
-          as={this.props.link ? Link : undefined}
+          as={Link}
           href={this.props.link}
+          isExternal
           alignItems="center"
           justifyContent="center"
-          flexGrow="1"
           height="100%"
           position="relative"
           _hover={{ textDecoration: "none" }}

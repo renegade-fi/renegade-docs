@@ -1,4 +1,4 @@
-import { Flex, HStack, Link, Spacer, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR } from "../../tokens";
@@ -32,6 +32,7 @@ function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
       href={props.link}
       isExternal
       flexGrow="1"
+      userSelect="none"
       _hover={{ textDecoration: "none" }}
     >
       {props.children}
@@ -133,7 +134,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
         />
       )}
       <LinkWrapper link={link}>
-        <HStack>
+        <HStack spacing="5px">
           <Text variant={textVariant}>{connectionText}</Text>
           <PulsingConnection state={pulseState} />
         </HStack>
@@ -151,6 +152,11 @@ interface ExchangeConnectionsBannerState {
   priceReporterHealthStates: {
     [exchange: string]: HealthState;
   };
+  isScrolling: boolean;
+  scrollDirection: "left" | "right";
+  isHovered: boolean;
+  isClicked: boolean;
+  mouseDownX: number;
 }
 export default class ExchangeConnectionsBanner extends React.Component<
   ExchangeConnectionsBannerProps,
@@ -160,6 +166,12 @@ export default class ExchangeConnectionsBanner extends React.Component<
     super(props);
     this.state = this.defaultState();
     this.checkExchangeHealthStates = this.checkExchangeHealthStates.bind(this);
+    this.performScroll = this.performScroll.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
   }
 
   async componentDidMount() {
@@ -167,6 +179,11 @@ export default class ExchangeConnectionsBanner extends React.Component<
     await this.props.renegadeConnection.awaitConnection();
     // Periodically check for health, setting live/dead appropriately
     this.checkExchangeHealthStates();
+    // Add listeners for mouse events
+    window.addEventListener("mouseup", this.onMouseUp);
+    window.addEventListener("mousemove", this.onMouseMove);
+    // Animate scroll if banner is compressed
+    this.performScroll();
   }
 
   componentDidUpdate(prevProps: ExchangeConnectionsBannerProps) {
@@ -189,6 +206,11 @@ export default class ExchangeConnectionsBanner extends React.Component<
         okx: "connecting",
         uniswapv3: "connecting",
       },
+      isScrolling: true,
+      scrollDirection: "left",
+      isHovered: false,
+      isClicked: false,
+      mouseDownX: 0,
     };
   }
 
@@ -204,7 +226,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     function getHealthState(
       priceReport: string | Record<string, PriceReport>,
     ): HealthState {
-      if (priceReport === "Unsupported") {
+      if (!priceReport || priceReport === "Unsupported") {
         return "unsupported";
       }
       if (priceReport["Nominal"] !== undefined) {
@@ -238,69 +260,163 @@ export default class ExchangeConnectionsBanner extends React.Component<
     setTimeout(this.checkExchangeHealthStates, 1000);
   }
 
+  getExchangeConnectionsBanner() {
+    return document.getElementsByClassName("exchange-connections-banner")[0];
+  }
+
+  performScroll() {
+    const exchangeConnectionsBanner = this.getExchangeConnectionsBanner();
+    if (
+      exchangeConnectionsBanner &&
+      this.state.isScrolling &&
+      !this.state.isHovered &&
+      !this.state.isClicked
+    ) {
+      let scrollDest =
+        exchangeConnectionsBanner.scrollLeft +
+        (this.state.scrollDirection === "left" ? 1 : -1);
+      const maxScroll =
+        exchangeConnectionsBanner.scrollWidth -
+        exchangeConnectionsBanner.clientWidth;
+      if (maxScroll > 0) {
+        if (scrollDest <= 0) {
+          scrollDest = 0;
+          this.setState({
+            isScrolling: false,
+            scrollDirection: "left",
+          });
+          setTimeout(() => this.setState({ isScrolling: true }), 1000);
+        } else if (scrollDest >= maxScroll) {
+          scrollDest = maxScroll;
+          this.setState({
+            isScrolling: false,
+            scrollDirection: "right",
+          });
+          setTimeout(() => this.setState({ isScrolling: true }), 1000);
+        }
+        exchangeConnectionsBanner.scrollTo(scrollDest, 0);
+      }
+    }
+    setTimeout(this.performScroll, 50);
+  }
+
+  onMouseEnter() {
+    this.setState({
+      isHovered: true,
+    });
+  }
+
+  onMouseLeave() {
+    this.setState({
+      isHovered: false,
+    });
+  }
+
+  onMouseDown(event: MouseEvent) {
+    this.setState({
+      isClicked: true,
+      mouseDownX: event.clientX,
+    });
+  }
+
+  onMouseUp() {
+    this.setState({
+      isClicked: false,
+    });
+  }
+
+  onMouseMove(event: React.MouseEvent) {
+    if (this.state.isClicked) {
+      const exchangeConnectionsBanner = this.getExchangeConnectionsBanner();
+      exchangeConnectionsBanner.scrollBy(
+        -event.movementX / window.devicePixelRatio,
+        0,
+      );
+    }
+  }
+
   render() {
     return (
-      <Flex
-        alignItems="center"
-        justifyContent="center"
+      <Box
         width="100%"
         height="var(--banner-height)"
+        overflowX="hidden"
         borderBottom="var(--border)"
         borderColor="border"
         color="white.80"
+        userSelect="none"
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}
+        onMouseMove={this.onMouseMove}
+        onDragStart={(e) => e.preventDefault()}
+        onClick={(e) => {
+          if (Math.abs(e.clientX - this.state.mouseDownX) > 5) {
+            e.preventDefault();
+          }
+        }}
+        className="exchange-connections-banner"
       >
-        <Spacer flexGrow="3" />
-        <Text color="white">NBBO Feed</Text>
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="binance"
-          healthState={this.state.priceReporterHealthStates["binance"]}
-        />
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="coinbase"
-          healthState={this.state.priceReporterHealthStates["coinbase"]}
-        />
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="kraken"
-          healthState={this.state.priceReporterHealthStates["kraken"]}
-        />
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="okx"
-          healthState={this.state.priceReporterHealthStates["okx"]}
-        />
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="uniswapv3"
-          healthState={this.state.priceReporterHealthStates["uniswapv3"]}
-        />
-        <BannerSeparator flexGrow={4} />
-        <ExchangeConnectionTriple
-          renegadeConnection={this.props.renegadeConnection}
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          exchange="median"
-          healthState={this.state.priceReporterHealthStates["median"]}
-        />
-        <Spacer flexGrow="3" />
-      </Flex>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          minWidth="1600px"
+          height="var(--banner-height)"
+        >
+          <Spacer flexGrow="3" />
+          <Text>NBBO Feed</Text>
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="binance"
+            healthState={this.state.priceReporterHealthStates["binance"]}
+          />
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="coinbase"
+            healthState={this.state.priceReporterHealthStates["coinbase"]}
+          />
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="kraken"
+            healthState={this.state.priceReporterHealthStates["kraken"]}
+          />
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="okx"
+            healthState={this.state.priceReporterHealthStates["okx"]}
+          />
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="uniswapv3"
+            healthState={this.state.priceReporterHealthStates["uniswapv3"]}
+          />
+          <BannerSeparator flexGrow={4} />
+          <ExchangeConnectionTriple
+            renegadeConnection={this.props.renegadeConnection}
+            activeBaseTicker={this.props.activeBaseTicker}
+            activeQuoteTicker={this.props.activeQuoteTicker}
+            exchange="median"
+            healthState={this.state.priceReporterHealthStates["median"]}
+          />
+          <Spacer flexGrow="3" />
+        </Flex>
+      </Box>
     );
   }
 }

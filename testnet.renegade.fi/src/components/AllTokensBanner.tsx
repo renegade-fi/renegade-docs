@@ -196,7 +196,6 @@ export default class AllTokensBanner extends React.Component<
         cursor="pointer"
         userSelect="none"
         overflowX="hidden"
-        overflowY="hidden"
         borderTop="var(--border)"
         borderBottom="var(--border)"
         borderColor="border"
