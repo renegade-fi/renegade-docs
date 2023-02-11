@@ -159,7 +159,7 @@ export default class RenegadeConnection {
     quoteAddr: string,
   ): Promise<any> {
     const response = await fetch(
-      `${this.state.relayerHttpUrl}/exchangeHealthStates`,
+      `${this.state.relayerHttpUrl}/exchange/health_check`,
       {
         method: "POST",
         body: `{"base_token": {"addr": "${baseAddr}"}, "quote_token": {"addr": "${quoteAddr}"}}`,
