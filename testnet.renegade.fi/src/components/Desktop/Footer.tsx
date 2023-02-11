@@ -1,7 +1,7 @@
 import { Box, Flex, Image, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
-import logoDark from "../icons/logo_dark.svg";
+import logoDark from "../../icons/logo_dark.svg";
 
 interface FooterState {
   logoRef: React.RefObject<HTMLDivElement>;

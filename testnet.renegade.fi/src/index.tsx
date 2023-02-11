@@ -16,15 +16,15 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { WagmiConfig, createClient } from "wagmi";
 
-import "./animations.css";
-import Footer from "./components/Footer";
-import GlobalModal from "./components/GlobalModal";
-import Header from "./components/Header";
-import TradingInterface from "./components/TradingInterface";
+import Footer from "./components/Desktop/Footer";
+import GlobalModal from "./components/Desktop/GlobalModal";
+import Header from "./components/Desktop/Header";
+import TradingInterface from "./components/Desktop/TradingInterface";
 import KeyStore from "./connections/KeyStore";
 import KeyStoreContext from "./contexts/KeyStoreContext";
-import "./fonts.css";
-import "./index.css";
+import "./css/animations.css";
+import "./css/fonts.css";
+import "./css/index.css";
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys);

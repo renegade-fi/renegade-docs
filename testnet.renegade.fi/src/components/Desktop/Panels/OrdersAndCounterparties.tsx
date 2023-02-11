@@ -3,8 +3,8 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 
-import RenegadeConnection from "../connections/RenegadeConnection";
-import { Panel } from "./PanelCommon";
+import RenegadeConnection from "../../../connections/RenegadeConnection";
+import { Panel } from "../../Common/Panel";
 
 interface OrdersPanelProps {
   isLocked: boolean;

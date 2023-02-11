@@ -1,8 +1,8 @@
 import { HStack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../connections/RenegadeConnection";
-import { LivePrices } from "./BannerCommon";
+import RenegadeConnection from "../../connections/RenegadeConnection";
+import { LivePrices } from "../Banner";
 
 const DISPLAYED_TICKERS: [string, string][] = [
   ["WBTC", "USDC"],

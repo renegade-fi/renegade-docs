@@ -1,16 +1,16 @@
 import { Box, Flex, HStack, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
-import { TICKER_TO_ADDR } from "../../tokens";
+import { TICKER_TO_ADDR } from "../../../../tokens";
 import RenegadeConnection, {
   PriceReport,
-} from "../connections/RenegadeConnection";
+} from "../../../connections/RenegadeConnection";
 import {
   BannerSeparator,
   Exchange,
   LivePrices,
   PulsingConnection,
-} from "./BannerCommon";
+} from "../Banner";
 
 type HealthState =
   | "connecting"

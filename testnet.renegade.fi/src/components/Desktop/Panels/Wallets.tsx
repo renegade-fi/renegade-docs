@@ -12,13 +12,13 @@ import {
   useBalance as useBalanceWagmi,
 } from "wagmi";
 
-import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../tokens";
-import KeyStore from "../connections/KeyStore";
-import RenegadeConnection from "../connections/RenegadeConnection";
-import KeyStoreContext from "../contexts/KeyStoreContext";
-import { LivePrices } from "./BannerCommon";
-import { ConnectWalletButton } from "./Header";
-import { Panel, expandedPanelWidth } from "./PanelCommon";
+import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
+import KeyStore from "../../../connections/KeyStore";
+import RenegadeConnection from "../../../connections/RenegadeConnection";
+import KeyStoreContext from "../../../contexts/KeyStoreContext";
+import { LivePrices } from "../../Common/Banner";
+import { Panel, expandedPanelWidth } from "../../Common/Panel";
+import { ConnectWalletButton } from "../Header";
 
 interface TokenBalanceProps {
   renegadeConnection: RenegadeConnection;

@@ -2,11 +2,11 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react";
 import React from "react";
 
-import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../tokens";
+import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../../tokens";
 import RenegadeConnection, {
   DEFAULT_PRICE_REPORT,
   PriceReport,
-} from "../connections/RenegadeConnection";
+} from "../../connections/RenegadeConnection";
 
 export type Exchange =
   | "median"

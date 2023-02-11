@@ -21,8 +21,8 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi";
 
-import KeyStore from "../connections/KeyStore";
-import KeyStoreContext from "../contexts/KeyStoreContext";
+import KeyStore from "../../connections/KeyStore";
+import KeyStoreContext from "../../contexts/KeyStoreContext";
 
 interface SignInButtonProps {
   isLoading: boolean;

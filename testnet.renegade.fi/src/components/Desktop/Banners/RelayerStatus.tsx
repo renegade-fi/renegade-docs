@@ -1,8 +1,8 @@
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../connections/RenegadeConnection";
-import { BannerSeparator, PulsingConnection } from "./BannerCommon";
+import RenegadeConnection from "../../../connections/RenegadeConnection";
+import { BannerSeparator, PulsingConnection } from "../../Common/Banner";
 
 interface RelayerStatusBannerProps {
   renegadeConnection: RenegadeConnection;

@@ -16,9 +16,9 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi";
 
-import KeyStore from "../connections/KeyStore";
-import KeyStoreContext from "../contexts/KeyStoreContext";
-import glyphDark from "../icons/glyph_dark.svg";
+import KeyStore from "../../connections/KeyStore";
+import KeyStoreContext from "../../contexts/KeyStoreContext";
+import glyphDark from "../../icons/glyph_dark.svg";
 
 interface GlyphProps {
   glyphRef: React.RefObject<HTMLDivElement>;

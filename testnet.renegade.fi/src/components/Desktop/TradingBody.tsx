@@ -11,9 +11,9 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import { TICKER_TO_LOGO_URL_HANDLE } from "../../tokens";
-import RenegadeConnection from "../connections/RenegadeConnection";
-import { LivePrices } from "./BannerCommon";
+import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
+import RenegadeConnection from "../../connections/RenegadeConnection";
+import { LivePrices } from "../Common/Banner";
 
 function snapAnimation(translateY: number) {
   return keyframes`

@@ -1,14 +1,14 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../connections/RenegadeConnection";
-import backgroundPattern from "../icons/background_pattern.png";
-import AllTokensBanner from "./AllTokensBanner";
-import ExchangeConnectionsBanner from "./ExchangeConnectionsBanner";
-import OrdersAndCounterpartiesPanel from "./OrdersAndCounterpartiesPanel";
-import RelayerStatusBanner from "./RelayerStatusBanner";
+import RenegadeConnection from "../../connections/RenegadeConnection";
+import backgroundPattern from "../../icons/background_pattern.png";
+import AllTokensBanner from "../Common/Banners/AllTokens";
+import ExchangeConnectionsBanner from "../Common/Banners/ExchangeConnections";
+import RelayerStatusBanner from "./Banners/RelayerStatus";
+import OrdersAndCounterpartiesPanel from "./Panels/OrdersAndCounterparties";
+import WalletsPanel from "./Panels/Wallets";
 import TradingBody from "./TradingBody";
-import WalletsPanel from "./WalletsPanel";
 
 // Create a connection to a relayer
 const renegadeConnection = new RenegadeConnection({
