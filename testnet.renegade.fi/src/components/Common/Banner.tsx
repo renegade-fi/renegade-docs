@@ -86,7 +86,13 @@ const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
   }
   const randomDelay = Math.random() * 2;
   return (
-    <Flex position="relative" alignItems="center" width="8px">
+    <Flex
+      position="relative"
+      alignItems="center"
+      justifyContent="center"
+      height="8px"
+      width="8px"
+    >
       <Box
         position="absolute"
         width="8px"
@@ -121,6 +127,8 @@ interface LivePricesProps {
   link?: string;
   onlyShowPrice?: boolean;
   scaleBy?: number;
+  isMobile?: boolean;
+  shouldRotate?: boolean;
 }
 interface LivePricesState {
   fallbackPriceReport: PriceReport;
@@ -356,12 +364,26 @@ export class LivePrices extends React.Component<
           alignItems="center"
           justifyContent="center"
           flexGrow="1"
-          height="100%"
+          width={this.props.isMobile ? "100%" : undefined}
           fontFamily="Favorit Mono"
           color="white.80"
           opacity={price == 0 ? "20%" : "100%"}
-          className={priceStrClass}
+          transform={
+            this.props.isMobile && this.props.shouldRotate
+              ? "rotate(180deg)"
+              : undefined
+          }
           _hover={{ textDecoration: "none" }}
+          lineHeight="1"
+          sx={
+            this.props.isMobile
+              ? {
+                  writingMode: "vertical-rl",
+                  textOrientation: "sideways",
+                }
+              : undefined
+          }
+          className={priceStrClass}
           key={key + "_price"}
         >
           ${priceStr}
@@ -370,9 +392,10 @@ export class LivePrices extends React.Component<
           as={Link}
           href={this.props.link}
           isExternal
+          height="100%"
+          width={this.props.isMobile ? "100%" : undefined}
           alignItems="center"
           justifyContent="center"
-          height="100%"
           position="relative"
           _hover={{ textDecoration: "none" }}
         >

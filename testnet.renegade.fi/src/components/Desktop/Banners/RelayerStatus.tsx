@@ -10,6 +10,7 @@ interface RelayerStatusBannerProps {
   activeQuoteTicker: string;
 }
 interface RelayerStatusBannerState {
+  relayerStatusBannerRef: React.RefObject<HTMLDivElement>;
   connectionState: "live" | "dead" | "loading";
   isScrolling: boolean;
   scrollDirection: "left" | "right";
@@ -23,6 +24,7 @@ export default class RelayerStatusBanner extends React.Component<
   constructor(props: RelayerStatusBannerProps) {
     super(props);
     this.state = {
+      relayerStatusBannerRef: React.createRef(),
       connectionState: "loading",
       isScrolling: true,
       scrollDirection: "left",
@@ -58,12 +60,8 @@ export default class RelayerStatusBanner extends React.Component<
     setTimeout(this.pingRelayer, 5000);
   }
 
-  getRelayerStatusBanner() {
-    return document.getElementsByClassName("relayer-status-banner")[0];
-  }
-
   performScroll() {
-    const relayerStatusBanner = this.getRelayerStatusBanner();
+    const relayerStatusBanner = this.state.relayerStatusBannerRef.current;
     if (
       relayerStatusBanner &&
       this.state.isScrolling &&
@@ -122,8 +120,8 @@ export default class RelayerStatusBanner extends React.Component<
   }
 
   onMouseMove(event: React.MouseEvent) {
-    if (this.state.isClicked) {
-      const relayerStatusBanner = this.getRelayerStatusBanner();
+    const relayerStatusBanner = this.state.relayerStatusBannerRef.current;
+    if (relayerStatusBanner && this.state.isClicked) {
       relayerStatusBanner.scrollBy(
         -event.movementX / window.devicePixelRatio,
         0,
@@ -157,7 +155,7 @@ export default class RelayerStatusBanner extends React.Component<
         onMouseDown={this.onMouseDown}
         onMouseUp={this.onMouseUp}
         onMouseMove={this.onMouseMove}
-        className="relayer-status-banner"
+        ref={this.state.relayerStatusBannerRef}
       >
         <Flex
           alignItems="center"

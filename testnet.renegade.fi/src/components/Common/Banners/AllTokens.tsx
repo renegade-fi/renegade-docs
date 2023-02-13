@@ -1,7 +1,7 @@
-import { HStack, Text } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../../connections/RenegadeConnection";
+import RenegadeConnection from "../../../connections/RenegadeConnection";
 import { LivePrices } from "../Banner";
 
 const DISPLAYED_TICKERS: [string, string][] = [
@@ -58,18 +58,24 @@ const DISPLAYED_TICKERS: [string, string][] = [
 
 interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
-  setDirectionAndTickers: (
+  baseTokenTicker: string;
+  quoteTokenTicker: string;
+  setDirectionAndTickers?: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
   ) => void;
-  baseTokenTicker: string;
-  quoteTokenTicker: string;
+  isMobile?: boolean;
 }
 function TokenBannerSingle(props: TokenBannerSingleProps) {
   return (
-    <HStack
+    <Stack
+      direction={props.isMobile ? "column-reverse" : "row"}
+      alignItems="center"
       onClick={() => {
+        if (!props.setDirectionAndTickers) {
+          return;
+        }
         props.setDirectionAndTickers(
           undefined,
           props.baseTokenTicker,
@@ -77,7 +83,11 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
         );
       }}
     >
-      <Text fontFamily="Favorit Expanded" color="white.80">
+      <Text
+        fontFamily="Favorit Expanded"
+        color="white.80"
+        variant={props.isMobile ? "rotate-left" : undefined}
+      >
         {props.baseTokenTicker}
       </Text>
       <LivePrices
@@ -85,20 +95,24 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
         baseTicker={props.baseTokenTicker}
         quoteTicker={props.quoteTokenTicker}
         exchange="median"
+        isMobile={props.isMobile}
+        shouldRotate={props.isMobile}
       />
-    </HStack>
+    </Stack>
   );
 }
 
 interface AllTokensBannerProps {
   renegadeConnection: RenegadeConnection;
-  setDirectionAndTickers: (
+  setDirectionAndTickers?: (
     buyOrSell?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
   ) => void;
+  isMobile?: boolean;
 }
 interface AllTokensBannerState {
+  allTokensBannerRef: React.RefObject<HTMLDivElement>;
   isHovered: boolean;
   isClicked: boolean;
 }
@@ -109,6 +123,7 @@ export default class AllTokensBanner extends React.Component<
   constructor(props: AllTokensBannerProps) {
     super(props);
     this.state = {
+      allTokensBannerRef: React.createRef(),
       isHovered: false,
       isClicked: false,
     };
@@ -122,13 +137,22 @@ export default class AllTokensBanner extends React.Component<
   }
 
   getAllTokenBannerSingle(key: number) {
-    const allTokenBannerSingle = DISPLAYED_TICKERS.map((tickers) => {
+    const selectedDisplayedTickers = this.props.isMobile
+      ? [
+          ["WBTC", "USDC"],
+          ["WETH", "USDC"],
+          ["UNI", "USDC"],
+          ["AAVE", "USDC"],
+        ]
+      : DISPLAYED_TICKERS;
+    const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
       return (
         <TokenBannerSingle
           renegadeConnection={this.props.renegadeConnection}
-          setDirectionAndTickers={this.props.setDirectionAndTickers}
           baseTokenTicker={tickers[0]}
           quoteTokenTicker={tickers[1]}
+          setDirectionAndTickers={this.props.setDirectionAndTickers}
+          isMobile={this.props.isMobile}
           key={tickers.toString() + "_" + key.toString()}
         />
       );
@@ -137,12 +161,23 @@ export default class AllTokensBanner extends React.Component<
   }
 
   performScroll() {
-    const tokenBanner = document.getElementsByClassName("all-tokens-banner")[0];
-    if (tokenBanner && !this.state.isHovered && !this.state.isClicked) {
-      let scrollDest = tokenBanner.scrollLeft % (tokenBanner.scrollWidth / 3);
-      scrollDest += tokenBanner.scrollWidth / 3;
+    const allTokensBanner = this.state.allTokensBannerRef.current;
+    if (allTokensBanner && !this.state.isHovered && !this.state.isClicked) {
+      let scrollDest: number;
+      if (this.props.isMobile) {
+        scrollDest =
+          allTokensBanner.scrollTop % (allTokensBanner.scrollHeight / 3);
+        scrollDest += allTokensBanner.scrollHeight / 3;
+      } else {
+        scrollDest =
+          allTokensBanner.scrollLeft % (allTokensBanner.scrollWidth / 3);
+        scrollDest += allTokensBanner.scrollWidth / 3;
+      }
       scrollDest += 1;
-      tokenBanner.scrollTo(scrollDest, 0);
+      allTokensBanner.scrollTo(
+        this.props.isMobile ? 0 : scrollDest,
+        this.props.isMobile ? scrollDest : 0,
+      );
     }
     setTimeout(this.performScroll, 30);
   }
@@ -150,7 +185,9 @@ export default class AllTokensBanner extends React.Component<
   async componentDidMount() {
     window.addEventListener("mouseup", this.onMouseUp);
     window.addEventListener("mousemove", this.onMouseMove);
-    this.performScroll();
+    if (!this.props.isMobile) {
+      this.performScroll();
+    }
   }
 
   onMouseEnter() {
@@ -178,10 +215,9 @@ export default class AllTokensBanner extends React.Component<
   }
 
   onMouseMove(event: React.MouseEvent) {
-    if (this.state.isClicked) {
-      const tokenBanner =
-        document.getElementsByClassName("all-tokens-banner")[0];
-      tokenBanner.scrollBy(-event.movementX / window.devicePixelRatio, 0);
+    const allTokensBanner = this.state.allTokensBannerRef.current;
+    if (allTokensBanner && this.state.isClicked) {
+      allTokensBanner.scrollBy(-event.movementX / window.devicePixelRatio, 0);
     }
   }
 
@@ -190,24 +226,31 @@ export default class AllTokensBanner extends React.Component<
       .concat(this.getAllTokenBannerSingle(2))
       .concat(this.getAllTokenBannerSingle(3));
     return (
-      <HStack
-        width="100%"
-        height="var(--banner-height)"
+      <Stack
+        direction={this.props.isMobile ? "column" : "row"}
+        alignItems="center"
+        width={
+          this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
+        }
+        height={this.props.isMobile ? "100%" : "var(--banner-height)"}
+        fontSize={this.props.isMobile ? "0.8em" : undefined}
         cursor="pointer"
         userSelect="none"
         overflowX="hidden"
-        borderTop="var(--border)"
-        borderBottom="var(--border)"
+        overflowY="hidden"
+        borderTop={this.props.isMobile ? undefined : "var(--border)"}
+        borderBottom={this.props.isMobile ? undefined : "var(--border)"}
+        borderRight={this.props.isMobile ? "var(--border)" : undefined}
         borderColor="border"
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onMouseDown={this.onMouseDown}
-        onMouseUp={this.onMouseUp}
-        onMouseMove={this.onMouseMove}
-        className="all-tokens-banner"
+        onMouseEnter={this.props.isMobile ? undefined : this.onMouseEnter}
+        onMouseLeave={this.props.isMobile ? undefined : this.onMouseLeave}
+        onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
+        onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
+        onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
+        ref={this.state.allTokensBannerRef}
       >
         {allTokenBannerSingle}
-      </HStack>
+      </Stack>
     );
   }
 }

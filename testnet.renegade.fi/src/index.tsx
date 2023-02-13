@@ -7,6 +7,7 @@ import {
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
+  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { mainnet } from "@wagmi/chains";
@@ -16,10 +17,12 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { WagmiConfig, createClient } from "wagmi";
 
-import Footer from "./components/Desktop/Footer";
-import GlobalModal from "./components/Desktop/GlobalModal";
-import Header from "./components/Desktop/Header";
-import TradingInterface from "./components/Desktop/TradingInterface";
+import DesktopFooter from "./components/Desktop/Footer";
+import DesktopGlobalModal from "./components/Desktop/GlobalModal";
+import DesktopHeader from "./components/Desktop/Header";
+import DesktopTradingInterface from "./components/Desktop/TradingInterface";
+import MobileBody from "./components/Mobile/Body";
+import MobileHeader from "./components/Mobile/Header";
 import KeyStore from "./connections/KeyStore";
 import KeyStoreContext from "./contexts/KeyStoreContext";
 import "./css/animations.css";
@@ -131,6 +134,17 @@ const components = {
         fontWeight: "700",
         color: "white.50",
       },
+      "rotate-left": {
+        lineHeight: "1",
+        transform: "rotate(180deg)",
+        writingMode: "vertical-rl",
+        textOrientation: "sideways",
+      },
+      "rotate-right": {
+        lineHeight: "1",
+        writingMode: "vertical-rl",
+        textOrientation: "sideways",
+      },
     },
   },
   Button: {
@@ -170,6 +184,23 @@ const client = createClient(
 function Testnet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [keyStoreState, setKeyStoreState] = React.useState(KeyStore.default());
+  const testnetDesktop = (
+    <>
+      <DesktopHeader onOpenGlobalModal={onOpen} />
+      <DesktopTradingInterface
+        onOpenGlobalModal={onOpen}
+        isOpenGlobalModal={isOpen}
+      />
+      <DesktopFooter />
+      <DesktopGlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+    </>
+  );
+  const testnetMobile = (
+    <>
+      <MobileHeader />
+      <MobileBody />
+    </>
+  );
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider
@@ -190,13 +221,7 @@ function Testnet() {
             minHeight="100vh"
             overflowX="hidden"
           >
-            <Header onOpenGlobalModal={onOpen} />
-            <TradingInterface
-              onOpenGlobalModal={onOpen}
-              isOpenGlobalModal={isOpen}
-            />
-            <Footer />
-            <GlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+            {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
           </Flex>
         </KeyStoreContext.Provider>
       </ConnectKitProvider>

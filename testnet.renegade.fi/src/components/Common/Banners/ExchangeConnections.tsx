@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Link, Spacer, Text } from "@chakra-ui/react";
+import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR } from "../../../../tokens";
@@ -46,6 +46,7 @@ interface ExchangeConnectionTripleProps {
   activeQuoteTicker: string;
   exchange: Exchange;
   healthState: HealthState;
+  isMobile?: boolean;
 }
 function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   // Remap some tickers, as different exchanges use different names
@@ -121,7 +122,9 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   return (
     <>
       <LinkWrapper link={link}>
-        <Text>{props.exchange[0].toUpperCase() + props.exchange.slice(1)}</Text>
+        <Text variant={props.isMobile ? "rotate-right" : undefined}>
+          {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
+        </Text>
       </LinkWrapper>
       <BannerSeparator flexGrow={1} link={link} />
       {showPrice && (
@@ -131,13 +134,32 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           quoteTicker={props.activeQuoteTicker}
           exchange={props.exchange}
           link={link}
+          isMobile={props.isMobile}
         />
       )}
       <LinkWrapper link={link}>
-        <HStack spacing="5px">
-          <Text variant={textVariant}>{connectionText}</Text>
+        <Stack
+          direction={props.isMobile ? "column" : "row"}
+          alignItems="center"
+          justifyContent="center"
+          spacing={props.isMobile ? "8px" : "5px"}
+        >
+          <Text
+            variant={textVariant}
+            lineHeight="1"
+            sx={
+              props.isMobile
+                ? {
+                    writingMode: "vertical-rl",
+                    textOrientation: "sideways",
+                  }
+                : undefined
+            }
+          >
+            {connectionText}
+          </Text>
           <PulsingConnection state={pulseState} />
-        </HStack>
+        </Stack>
       </LinkWrapper>
     </>
   );
@@ -148,17 +170,26 @@ interface MedianTripleProps {
   activeBaseTicker: string;
   activeQuoteTicker: string;
   healthState: HealthState;
+  isMobile?: boolean;
 }
 function MedianTriple(props: MedianTripleProps) {
   return (
     <Flex
-      width="24%"
-      minWidth="400px"
+      flexDirection={props.isMobile ? "column" : "row"}
+      height={props.isMobile ? "40%" : "100%"}
+      width={props.isMobile ? "100%" : "24%"}
+      minWidth={props.isMobile ? undefined : "400px"}
+      paddingTop={props.isMobile ? "10px" : undefined}
       alignItems="center"
       justifyContent="center"
     >
       <Spacer flexGrow="3" />
-      <Text>NBBO Feed</Text>
+      <Text
+        variant={props.isMobile ? "rotate-right" : undefined}
+        whiteSpace="nowrap"
+      >
+        NBBO Feed
+      </Text>
       <BannerSeparator flexGrow={4} />
       <ExchangeConnectionTriple
         renegadeConnection={props.renegadeConnection}
@@ -166,6 +197,7 @@ function MedianTriple(props: MedianTripleProps) {
         activeQuoteTicker={props.activeQuoteTicker}
         exchange="median"
         healthState={props.healthState}
+        isMobile={props.isMobile}
       />
       <BannerSeparator flexGrow={4} />
     </Flex>
@@ -176,8 +208,10 @@ interface ExchangeConnectionsBannerProps {
   renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
+  isMobile?: boolean;
 }
 interface ExchangeConnectionsBannerState {
+  exchangeConnectionsBannerRef: React.RefObject<HTMLDivElement>;
   priceReporterHealthStates: {
     [exchange: string]: HealthState;
   };
@@ -228,6 +262,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
 
   defaultState(): ExchangeConnectionsBannerState {
     return {
+      exchangeConnectionsBannerRef: React.createRef(),
       priceReporterHealthStates: {
         median: "connecting",
         binance: "connecting",
@@ -291,19 +326,19 @@ export default class ExchangeConnectionsBanner extends React.Component<
     setTimeout(this.checkExchangeHealthStates, 1000);
   }
 
-  getExchangeConnectionsBanner() {
-    return document.getElementsByClassName("exchange-connections-banner")[0];
-  }
-
   performScroll() {
-    const exchangeConnectionsBanner = this.getExchangeConnectionsBanner();
+    const exchangeConnectionsBanner =
+      this.state.exchangeConnectionsBannerRef.current;
     if (exchangeConnectionsBanner && this.state.isScrolling) {
-      let scrollDest =
-        exchangeConnectionsBanner.scrollLeft +
-        (this.state.scrollDirection === "left" ? 1 : -1);
-      const maxScroll =
-        exchangeConnectionsBanner.scrollWidth -
-        exchangeConnectionsBanner.clientWidth;
+      let scrollDest = this.props.isMobile
+        ? exchangeConnectionsBanner.scrollTop
+        : exchangeConnectionsBanner.scrollLeft;
+      scrollDest += this.state.scrollDirection === "left" ? 1 : -1;
+      const maxScroll = this.props.isMobile
+        ? exchangeConnectionsBanner.scrollHeight -
+          exchangeConnectionsBanner.clientHeight
+        : exchangeConnectionsBanner.scrollWidth -
+          exchangeConnectionsBanner.clientWidth;
       this.setState({ isTooShort: maxScroll > 5 });
       if (maxScroll > 5 && !this.state.isHovered && !this.state.isClicked) {
         if (scrollDest <= 0) {
@@ -321,7 +356,10 @@ export default class ExchangeConnectionsBanner extends React.Component<
           });
           setTimeout(() => this.setState({ isScrolling: true }), 1000);
         }
-        exchangeConnectionsBanner.scrollTo(scrollDest, 0);
+        exchangeConnectionsBanner.scrollTo(
+          this.props.isMobile ? 0 : scrollDest,
+          this.props.isMobile ? scrollDest : 0,
+        );
       }
     }
     setTimeout(this.performScroll, 50);
@@ -353,8 +391,9 @@ export default class ExchangeConnectionsBanner extends React.Component<
   }
 
   onMouseMove(event: React.MouseEvent) {
-    if (this.state.isClicked) {
-      const exchangeConnectionsBanner = this.getExchangeConnectionsBanner();
+    const exchangeConnectionsBanner =
+      this.state.exchangeConnectionsBannerRef.current;
+    if (exchangeConnectionsBanner && this.state.isClicked) {
       exchangeConnectionsBanner.scrollBy(
         -event.movementX / window.devicePixelRatio,
         0,
@@ -364,10 +403,17 @@ export default class ExchangeConnectionsBanner extends React.Component<
 
   render() {
     return (
-      <HStack
-        width="100%"
-        height="var(--banner-height)"
-        borderBottom="var(--border)"
+      <Stack
+        direction={this.props.isMobile ? "column" : "row"}
+        width={
+          this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
+        }
+        height={this.props.isMobile ? "220vw" : "var(--banner-height)"}
+        alignItems="center"
+        justifyContent="flex-start"
+        fontSize={this.props.isMobile ? "0.8em" : undefined}
+        borderBottom={this.props.isMobile ? undefined : "var(--border)"}
+        borderLeft={this.props.isMobile ? "var(--border)" : undefined}
         borderColor="border"
         color="white.80"
         userSelect="none"
@@ -378,41 +424,64 @@ export default class ExchangeConnectionsBanner extends React.Component<
           activeBaseTicker={this.props.activeBaseTicker}
           activeQuoteTicker={this.props.activeQuoteTicker}
           healthState={this.state.priceReporterHealthStates["median"]}
+          isMobile={this.props.isMobile}
         />
-        <Box width="76%" position="relative">
+        <Flex
+          flexDirection={this.props.isMobile ? "column" : "row"}
+          height={this.props.isMobile ? "60%" : undefined}
+          width={this.props.isMobile ? undefined : "76%"}
+          position="relative"
+        >
           <Box
-            width="10px"
+            height={this.props.isMobile ? "10px" : undefined}
+            width={this.props.isMobile ? undefined : "10px"}
             position="absolute"
-            top="1px"
-            bottom="1px"
-            left="0"
+            top={this.props.isMobile ? "0px" : "1px"}
+            bottom={this.props.isMobile ? undefined : "1px"}
+            left={this.props.isMobile ? "1px" : "0px"}
+            right={this.props.isMobile ? "1px" : undefined}
             visibility={this.state.isTooShort ? undefined : "hidden"}
-            bg="linear-gradient(90deg, rgba(0,0,0,1), rgba(0,0,0,0))"
+            bg={`linear-gradient(${
+              this.props.isMobile ? "180deg" : "90deg"
+            }, rgba(0,0,0,1), rgba(0,0,0,0))`}
             zIndex="1"
           ></Box>
           <Box
+            height="100%"
+            width="100%"
             overflowX="hidden"
-            onMouseEnter={this.onMouseEnter}
-            onMouseLeave={this.onMouseLeave}
-            onMouseDown={this.onMouseDown}
-            onMouseUp={this.onMouseUp}
-            onMouseMove={this.onMouseMove}
+            overflowY="hidden"
+            onMouseEnter={this.props.isMobile ? undefined : this.onMouseEnter}
+            onMouseLeave={this.props.isMobile ? undefined : this.onMouseLeave}
+            onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
+            onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
+            onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
             onDragStart={(e) => e.preventDefault()}
             onClick={(e) => {
-              if (Math.abs(e.clientX - this.state.mouseDownX) > 5) {
+              if (
+                this.props.isMobile ||
+                Math.abs(e.clientX - this.state.mouseDownX) > 5
+              ) {
                 e.preventDefault();
               }
             }}
             position="relative"
-            className="exchange-connections-banner"
+            ref={this.state.exchangeConnectionsBannerRef}
           >
-            <Flex minWidth="1200px" height="var(--banner-height)">
+            <Flex
+              flexDirection={this.props.isMobile ? "column" : "row"}
+              alignItems="center"
+              justifyContent="center"
+              minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
+              minWidth={this.props.isMobile ? undefined : "1200px"}
+            >
               <ExchangeConnectionTriple
                 renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="binance"
                 healthState={this.state.priceReporterHealthStates["binance"]}
+                isMobile={this.props.isMobile}
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
@@ -421,6 +490,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="coinbase"
                 healthState={this.state.priceReporterHealthStates["coinbase"]}
+                isMobile={this.props.isMobile}
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
@@ -429,6 +499,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="kraken"
                 healthState={this.state.priceReporterHealthStates["kraken"]}
+                isMobile={this.props.isMobile}
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
@@ -437,6 +508,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="okx"
                 healthState={this.state.priceReporterHealthStates["okx"]}
+                isMobile={this.props.isMobile}
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
@@ -445,12 +517,13 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="uniswapv3"
                 healthState={this.state.priceReporterHealthStates["uniswapv3"]}
+                isMobile={this.props.isMobile}
               />
               <Spacer flexGrow="3" />
             </Flex>
           </Box>
-        </Box>
-      </HStack>
+        </Flex>
+      </Stack>
     );
   }
 }
