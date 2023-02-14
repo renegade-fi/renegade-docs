@@ -6,6 +6,7 @@ import backgroundPattern from "../../icons/background_pattern.png";
 import AllTokensBanner from "../Common/Banners/AllTokens";
 import ExchangeConnectionsBanner from "../Common/Banners/ExchangeConnections";
 import RelayerStatusBanner from "./Banners/RelayerStatus";
+import { GlobalModalState } from "./GlobalModal";
 import OrdersAndCounterpartiesPanel from "./Panels/OrdersAndCounterparties";
 import WalletsPanel from "./Panels/Wallets";
 import TradingBody from "./TradingBody";
@@ -23,6 +24,7 @@ const renegadeConnection = new RenegadeConnection({
 interface TradingInterfaceProps {
   onOpenGlobalModal: () => void;
   isOpenGlobalModal: boolean;
+  setGlobalModalState: (state: GlobalModalState) => void;
 }
 interface TradingInterfaceState {
   activeBuyOrSell: "buy" | "sell";
@@ -86,6 +88,7 @@ export default class TradingInterface extends React.Component<
             renegadeConnection={renegadeConnection}
             onOpenGlobalModal={this.props.onOpenGlobalModal}
             isOpenGlobalModal={this.props.isOpenGlobalModal}
+            setGlobalModalState={this.props.setGlobalModalState}
           />
           <Flex flexDirection="column" flexGrow="1" overflowX="hidden">
             <RelayerStatusBanner
@@ -95,10 +98,12 @@ export default class TradingInterface extends React.Component<
             />
             <TradingBody
               renegadeConnection={renegadeConnection}
+              onOpenGlobalModal={this.props.onOpenGlobalModal}
               activeBuyOrSell={this.state.activeBuyOrSell}
               activeBaseTicker={this.state.activeBaseTicker}
               activeQuoteTicker={this.state.activeQuoteTicker}
               setDirectionAndTickers={this.setDirectionAndTickers}
+              setGlobalModalState={this.props.setGlobalModalState}
             />
           </Flex>
           <OrdersAndCounterpartiesPanel

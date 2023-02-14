@@ -18,6 +18,7 @@ import RenegadeConnection from "../../../connections/RenegadeConnection";
 import KeyStoreContext from "../../../contexts/KeyStoreContext";
 import { LivePrices } from "../../Common/Banner";
 import { Panel, expandedPanelWidth } from "../../Common/Panel";
+import { GlobalModalState } from "../GlobalModal";
 import { ConnectWalletButton } from "../Header";
 
 interface TokenBalanceProps {
@@ -246,6 +247,7 @@ function DepositWithdrawButtons() {
 
 interface RenegadeWalletPanelProps {
   onOpenGlobalModal: () => void;
+  setGlobalModalState: (state: GlobalModalState) => void;
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi();
@@ -265,7 +267,13 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           padding="0 15% 0 15%"
           opacity={address ? 1 : 0.4}
           cursor={address ? "pointer" : "inherit"}
-          onClick={address ? props.onOpenGlobalModal : undefined}
+          onClick={() => {
+            if (!address) {
+              return;
+            }
+            props.setGlobalModalState("sign-in");
+            props.onOpenGlobalModal();
+          }}
           transition="0.2s"
           _hover={address ? undefined : {}}
         >
@@ -327,6 +335,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 interface WalletsPanelExpandedProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
+  setGlobalModalState: (state: GlobalModalState) => void;
   isLocked: boolean;
   toggleIsLocked: () => void;
 }
@@ -346,7 +355,10 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
         toggleIsLocked={props.toggleIsLocked}
       />
       <DepositWithdrawButtons />
-      <RenegadeWalletPanel onOpenGlobalModal={props.onOpenGlobalModal} />
+      <RenegadeWalletPanel
+        onOpenGlobalModal={props.onOpenGlobalModal}
+        setGlobalModalState={props.setGlobalModalState}
+      />
     </Flex>
   );
 }
@@ -355,6 +367,7 @@ interface WalletsPanelProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   isOpenGlobalModal: boolean;
+  setGlobalModalState: (state: GlobalModalState) => void;
 }
 export default function WalletsPanel(props: WalletsPanelProps) {
   const { open } = useModalConnectKit();
@@ -364,6 +377,7 @@ export default function WalletsPanel(props: WalletsPanelProps) {
         <WalletsPanelExpanded
           renegadeConnection={props.renegadeConnection}
           onOpenGlobalModal={props.onOpenGlobalModal}
+          setGlobalModalState={props.setGlobalModalState}
           isLocked={isLocked}
           toggleIsLocked={toggleIsLocked}
         />

@@ -18,7 +18,9 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { WagmiConfig, createClient } from "wagmi";
 
 import DesktopFooter from "./components/Desktop/Footer";
-import DesktopGlobalModal from "./components/Desktop/GlobalModal";
+import DesktopGlobalModal, {
+  GlobalModalState,
+} from "./components/Desktop/GlobalModal";
 import DesktopHeader from "./components/Desktop/Header";
 import DesktopTradingInterface from "./components/Desktop/TradingInterface";
 import MobileBody from "./components/Mobile/Body";
@@ -184,15 +186,27 @@ const client = createClient(
 function Testnet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [keyStoreState, setKeyStoreState] = React.useState(KeyStore.default());
+  const [globalModalState, setGlobalModalState] =
+    React.useState<GlobalModalState>(null);
   const testnetDesktop = (
     <>
-      <DesktopHeader onOpenGlobalModal={onOpen} />
+      <DesktopHeader
+        onOpenGlobalModal={onOpen}
+        setGlobalModalState={setGlobalModalState}
+      />
       <DesktopTradingInterface
         onOpenGlobalModal={onOpen}
         isOpenGlobalModal={isOpen}
+        setGlobalModalState={setGlobalModalState}
       />
       <DesktopFooter />
-      <DesktopGlobalModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+      <DesktopGlobalModal
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        globalModalState={globalModalState}
+        setGlobalModalState={setGlobalModalState}
+      />
     </>
   );
   const testnetMobile = (

@@ -14,6 +14,7 @@ import React from "react";
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
 import RenegadeConnection from "../../connections/RenegadeConnection";
 import { LivePrices } from "../Common/Banner";
+import { GlobalModalState } from "./GlobalModal";
 
 function snapAnimation(translateY: number) {
   return keyframes`
@@ -299,6 +300,7 @@ Selectable.displayName = "selectable";
 
 interface TradingBodyProps {
   renegadeConnection: RenegadeConnection;
+  onOpenGlobalModal: () => void;
   activeBuyOrSell: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
@@ -307,6 +309,7 @@ interface TradingBodyProps {
     baseTicker?: string,
     quoteTicker?: string,
   ) => void;
+  setGlobalModalState: (state: GlobalModalState) => void;
 }
 interface TradingBodyState {
   activeModal: null | "buy-sell" | "base-token" | "quote-token";
@@ -459,48 +462,63 @@ export default class TradingBody extends React.Component<
             ref={this.state.quoteTokenSelectableRef}
           />
         </HStack>
-        <HStack
-          display={this.state.baseTokenAmount ? "none" : "inherit"}
-          marginTop="5px"
-          color="white.50"
-          fontFamily="Favorit Extended"
-          fontWeight="100"
-          spacing="0"
+        <Flex
+          position="relative"
+          marginBottom={this.state.baseTokenAmount ? "20px" : "0px"}
+          transition="0.1s"
         >
-          <Text marginRight="4px">
-            Trades are end-to-end encrypted and always clear at the real-time
-            midpoint of
-          </Text>
-          <Box fontFamily="Favorit Mono">
-            <LivePrices
-              renegadeConnection={this.props.renegadeConnection}
-              baseTicker={this.props.activeBaseTicker}
-              quoteTicker={this.props.activeQuoteTicker}
-              exchange="median"
-              onlyShowPrice
-            />
-          </Box>
-          <Text>.</Text>
-        </HStack>
-        <Button
-          display={this.state.baseTokenAmount ? "inherit" : "none"}
-          marginTop="10px"
-          width="38vw"
-          padding="20px"
-          backgroundColor="transparent"
-          fontSize="1.3em"
-          fontWeight="200"
-          color="white.80"
-          border="var(--border)"
-          borderRadius="15px"
-          borderColor="border"
-          opacity={this.state.baseTokenAmount ? "1" : "0.3"}
-        >
-          <HStack>
-            <Text>Place Order</Text>
-            {this.state.baseTokenAmount ? <ArrowForwardIcon /> : null}
+          <HStack
+            opacity={this.state.baseTokenAmount ? "0" : "1"}
+            transition="0.1s"
+            marginTop="5px"
+            color="white.50"
+            fontFamily="Favorit Extended"
+            fontWeight="100"
+            spacing="0"
+          >
+            <Text marginRight="4px">
+              Trades are end-to-end encrypted and always clear at the real-time
+              midpoint of
+            </Text>
+            <Box fontFamily="Favorit Mono">
+              <LivePrices
+                renegadeConnection={this.props.renegadeConnection}
+                baseTicker={this.props.activeBaseTicker}
+                quoteTicker={this.props.activeQuoteTicker}
+                exchange="median"
+                onlyShowPrice
+              />
+            </Box>
           </HStack>
-        </Button>
+          <Button
+            position="absolute"
+            top="0"
+            opacity={this.state.baseTokenAmount ? "1" : "0"}
+            transition="0.1s"
+            marginTop="15px"
+            width="38vw"
+            padding="20px"
+            backgroundColor="transparent"
+            fontSize="1.3em"
+            fontWeight="200"
+            color="white.80"
+            border="var(--border)"
+            borderRadius="15px"
+            borderColor="white.30"
+            _hover={{
+              borderColor: "white.50",
+            }}
+            onClick={() => {
+              this.props.setGlobalModalState("place-order");
+              this.props.onOpenGlobalModal();
+            }}
+          >
+            <HStack>
+              <Text>Place Order</Text>
+              <ArrowForwardIcon />
+            </HStack>
+          </Button>
+        </Flex>
         <BlurredOverlay
           activeModal={this.state.activeModal}
           setActiveModal={this.setActiveModal}

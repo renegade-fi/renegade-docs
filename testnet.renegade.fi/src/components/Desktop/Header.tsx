@@ -19,6 +19,7 @@ import {
 import KeyStore from "../../connections/KeyStore";
 import KeyStoreContext from "../../contexts/KeyStoreContext";
 import glyphDark from "../../icons/glyph_dark.svg";
+import { GlobalModalState } from "./GlobalModal";
 
 interface GlyphProps {
   glyphRef: React.RefObject<HTMLDivElement>;
@@ -79,7 +80,11 @@ export function ConnectWalletButton() {
  * The "Sign In with..." button. Only visible if the user has connected their
  * wallet, but we have not re-derived the key hierarchy.
  */
-function SignInButton(props: { onOpenGlobalModal: () => void }) {
+interface SignInButtonProps {
+  onOpenGlobalModal: () => void;
+  setGlobalModalState: (state: GlobalModalState) => void;
+}
+function SignInButton(props: SignInButtonProps) {
   const { address } = useAccountWagmi();
   const { data } = useEnsNameWagmi({ address });
   const [keyStoreState] = React.useContext(KeyStoreContext);
@@ -109,7 +114,13 @@ function SignInButton(props: { onOpenGlobalModal: () => void }) {
   }
 
   return (
-    <Button variant="wallet-connect" onClick={props.onOpenGlobalModal}>
+    <Button
+      variant="wallet-connect"
+      onClick={() => {
+        props.setGlobalModalState("sign-in");
+        props.onOpenGlobalModal();
+      }}
+    >
       {buttonContent}
     </Button>
   );
@@ -164,6 +175,7 @@ function DisconnectWalletButton() {
 
 interface HeaderProps {
   onOpenGlobalModal: () => void;
+  setGlobalModalState: (state: GlobalModalState) => void;
 }
 interface HeaderState {
   glyphRef: React.RefObject<HTMLDivElement>;
@@ -249,7 +261,10 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
         <Flex width="30%" justifyContent="right" paddingRight="1.5%">
           <Box onClick={(event) => event.stopPropagation()}>
             <ConnectWalletButton />
-            <SignInButton onOpenGlobalModal={this.props.onOpenGlobalModal} />
+            <SignInButton
+              onOpenGlobalModal={this.props.onOpenGlobalModal}
+              setGlobalModalState={this.props.setGlobalModalState}
+            />
             <DisconnectWalletButton />
           </Box>
         </Flex>
