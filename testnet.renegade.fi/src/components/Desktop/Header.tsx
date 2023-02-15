@@ -21,6 +21,54 @@ import KeyStoreContext from "../../contexts/KeyStoreContext";
 import glyphDark from "../../icons/glyph_dark.svg";
 import { GlobalModalState } from "./GlobalModal";
 
+function FancyUnderline(props: { children: React.ReactElement }) {
+  const [isHovering, setIsHovering] = React.useState(false);
+  const [isCompleted, setIsCompleted] = React.useState(false);
+  const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null);
+  return (
+    <Box
+      position="relative"
+      onMouseEnter={() => {
+        setIsHovering(true);
+        setIsCompleted(false);
+        if (delay) clearTimeout(delay);
+        setDelay(setTimeout(() => setIsCompleted(true), 200));
+      }}
+      onMouseLeave={() => {
+        setIsHovering(false);
+        if (delay) clearTimeout(delay);
+      }}
+    >
+      {React.cloneElement(props.children, {
+        textDecoration: "none",
+        _hover: {
+          textDecoration: "none",
+        },
+      })}
+      <Box
+        opacity={isCompleted ? "0" : "1"}
+        position="absolute"
+        height="1.5px"
+        bottom="3px"
+        width={isHovering ? "100%" : "0%"}
+        left="0"
+        backgroundColor={props.children.props.color || "white.80"}
+        transition="width 0.15s"
+      />
+      <Box
+        opacity={isCompleted ? "1" : "0"}
+        position="absolute"
+        height="1.5px"
+        bottom="3px"
+        width={isHovering ? "100%" : "0%"}
+        right="0"
+        backgroundColor={props.children.props.color || "white.80"}
+        transition="width 0.15s"
+      />
+    </Box>
+  );
+}
+
 interface GlyphProps {
   glyphRef: React.RefObject<HTMLDivElement>;
   showDownloadPrompt: boolean;
@@ -237,25 +285,34 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
           fontSize="1.1em"
           color="white.80"
           fontWeight="300"
+          textDecoration="none"
           onClick={(event) => event.stopPropagation()}
         >
-          <Link
-            fontWeight="400"
-            href="https://twitter.com/renegade_fi"
-            isExternal
-            color="white.100"
-          >
-            Twitter
-          </Link>
-          <Link href="https://discord.gg/renegade-fi" isExternal>
-            Discord
-          </Link>
-          <Link href="https://docs.renegade.fi" isExternal>
-            Docs
-          </Link>
-          <Link href="https://whitepaper.renegade.fi" isExternal>
-            Whitepaper
-          </Link>
+          <FancyUnderline>
+            <Link
+              fontWeight="400"
+              href="https://twitter.com/renegade_fi"
+              isExternal
+              color="white.100"
+            >
+              Twitter
+            </Link>
+          </FancyUnderline>
+          <FancyUnderline>
+            <Link href="https://discord.gg/renegade-fi" isExternal>
+              Discord
+            </Link>
+          </FancyUnderline>
+          <FancyUnderline>
+            <Link href="https://docs.renegade.fi" isExternal>
+              Docs
+            </Link>
+          </FancyUnderline>
+          <FancyUnderline>
+            <Link href="https://whitepaper.renegade.fi" isExternal>
+              Whitepaper
+            </Link>
+          </FancyUnderline>
         </HStack>
         <Spacer />
         <Flex width="30%" justifyContent="right" paddingRight="1.5%">
