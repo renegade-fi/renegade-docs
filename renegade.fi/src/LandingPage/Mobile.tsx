@@ -5,7 +5,6 @@ import { useInView } from "react-intersection-observer";
 
 import backgroundPatternVertical from "../icons/background_pattern_vertical.svg";
 import logoDark from "../icons/logo_dark.svg";
-import { linksThinUnderline } from "./Common";
 
 export default function LandingPageMobile() {
   const useInViewOptions = {
@@ -82,18 +81,10 @@ export default function LandingPageMobile() {
         >
           Get Network Access
         </Link>
-        <Link
-          isExternal
-          sx={linksThinUnderline}
-          href="https://whitepaper.renegade.fi"
-        >
+        <Link isExternal href="https://whitepaper.renegade.fi">
           See the Whitepaper
         </Link>
-        <Link
-          isExternal
-          sx={linksThinUnderline}
-          href="https://docs.renegade.fi"
-        >
+        <Link isExternal href="https://docs.renegade.fi">
           Read the Docs
         </Link>
       </Flex>
@@ -113,7 +104,6 @@ export default function LandingPageMobile() {
           fontSize="4vw"
           lineHeight="140%"
           opacity="80%"
-          sx={linksThinUnderline}
         >
           <Link isExternal href="https://twitter.com/dragonfly_xyz">
             Dragonfly
@@ -148,25 +138,13 @@ export default function LandingPageMobile() {
         >
           Follow us on Twitter
         </Link>
-        <Link
-          isExternal
-          sx={linksThinUnderline}
-          href="https://renegadefi.substack.com"
-        >
+        <Link isExternal href="https://renegadefi.substack.com">
           Read our Substack
         </Link>
-        <Link
-          isExternal
-          sx={linksThinUnderline}
-          href="https://discord.gg/renegade-fi"
-        >
+        <Link isExternal href="https://discord.gg/renegade-fi">
           Join the Discord
         </Link>
-        <Link
-          isExternal
-          sx={linksThinUnderline}
-          href="https://jobs.renegade.fi"
-        >
+        <Link isExternal href="https://jobs.renegade.fi">
           Work with Us
         </Link>
       </Flex>

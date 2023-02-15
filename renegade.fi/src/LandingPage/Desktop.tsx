@@ -3,7 +3,186 @@ import React from "react";
 
 import backgroundPattern from "../icons/background_pattern.svg";
 import logoDarkVertical from "../icons/logo_dark_vertical.svg";
-import { linksThinUnderline } from "./Common";
+
+function FancyUnderline(props: { children: React.ReactElement }) {
+  const [isHovering, setIsHovering] = React.useState(false);
+  const [isCompleted, setIsCompleted] = React.useState(false);
+  const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null);
+  return (
+    <Box
+      position="relative"
+      onMouseEnter={() => {
+        setIsHovering(true);
+        setIsCompleted(false);
+        if (delay) clearTimeout(delay);
+        setDelay(setTimeout(() => setIsCompleted(true), 250));
+      }}
+      onMouseLeave={() => {
+        setIsHovering(false);
+        if (delay) clearTimeout(delay);
+        setDelay(setTimeout(() => setIsCompleted(false), 250));
+      }}
+    >
+      {React.cloneElement(props.children, {
+        textDecoration: "none",
+        _hover: {
+          textDecoration: "none",
+        },
+      })}
+      <Box
+        opacity={isCompleted ? "0" : "1"}
+        position="absolute"
+        height="1.5px"
+        width="100%"
+        bottom="2px"
+        left="0"
+        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+        transformOrigin="left"
+        backgroundColor={props.children.props.color || "#ccc"}
+        transition="transform 0.25s"
+      />
+      <Box
+        opacity={isCompleted ? "1" : "0"}
+        position="absolute"
+        height="1.5px"
+        width="100%"
+        bottom="2px"
+        right="0"
+        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+        transformOrigin="right"
+        backgroundColor={props.children.props.color || "#ccc"}
+        transition="transform 0.25s"
+      />
+    </Box>
+  );
+}
+
+function AllLinks() {
+  return (
+    <Flex
+      flexDirection="column"
+      justifyContent="space-between"
+      alignItems="end"
+      lineHeight="115%"
+    >
+      <Flex
+        className="fade-in-left"
+        flexDirection="column"
+        alignItems="end"
+        fontWeight="300"
+        fontSize="0.9em"
+        color="#ccc"
+      >
+        <FancyUnderline>
+          <Link
+            href="https://renegadefi.typeform.com/access"
+            isExternal
+            fontWeight="700"
+            fontSize="1.2em"
+            color="white"
+          >
+            Get Network Access
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://whitepaper.renegade.fi" isExternal>
+            See the Whitepaper
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://docs.renegade.fi" isExternal>
+            Read the Docs
+          </Link>
+        </FancyUnderline>
+      </Flex>
+      <Flex
+        className="fade-in-left"
+        flexDirection="column"
+        alignItems="end"
+        fontWeight="300"
+        fontSize="0.9em"
+        color="#ccc"
+        sx={{ animationDelay: "0.15s" }}
+      >
+        <Text fontWeight="700" fontSize="1.2em" color="white">
+          Our Investors
+        </Text>
+        <Flex
+          flexDirection="column"
+          alignItems="end"
+          lineHeight="125%"
+          fontSize="0.9em"
+        >
+          <Flex gap="5px">
+            <FancyUnderline>
+              <Link href="https://twitter.com/dragonfly_xyz" isExternal>
+                Dragonfly
+              </Link>
+            </FancyUnderline>
+            {" & "}
+            <FancyUnderline>
+              <Link href="https://twitter.com/naval" isExternal>
+                Naval
+              </Link>
+            </FancyUnderline>
+          </Flex>
+          <FancyUnderline>
+            <Link href="https://twitter.com/robotventures" isExternal>
+              Robot Ventures
+            </Link>
+          </FancyUnderline>
+          <FancyUnderline>
+            <Link href="https://twitter.com/balajis" isExternal>
+              Balaji Srinivasan
+            </Link>
+          </FancyUnderline>
+          <FancyUnderline>
+            <Link href="https://symbolic.partners" isExternal>
+              Symbolic Partners
+            </Link>
+          </FancyUnderline>
+        </Flex>
+      </Flex>
+      <Flex
+        className="fade-in-left"
+        flexDirection="column"
+        alignItems="end"
+        fontWeight="300"
+        fontSize="0.9em"
+        color="#ccc"
+        marginBottom="8px"
+        sx={{ animationDelay: "0.3s" }}
+      >
+        <FancyUnderline>
+          <Link
+            href="https://twitter.com/renegade_fi"
+            isExternal
+            fontWeight="700"
+            fontSize="1.2em"
+            color="white"
+          >
+            Follow on Twitter
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://renegadefi.substack.com" isExternal>
+            Read our Substack
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://discord.gg/renegade-fi" isExternal>
+            Join the Discord
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://jobs.renegade.fi" isExternal>
+            Work with Us
+          </Link>
+        </FancyUnderline>
+      </Flex>
+    </Flex>
+  );
+}
 
 interface VerticalLogoProps {
   clickX: number;
@@ -117,7 +296,6 @@ export default class LandingPageDesktop extends React.Component<
   }
 
   handleContextMenu(e) {
-    e.preventDefault();
     if (!this.state.logoRef.current) {
       return;
     }
@@ -131,6 +309,7 @@ export default class LandingPageDesktop extends React.Component<
     ) {
       return;
     }
+    e.preventDefault();
     this.setState({
       clickX: e.pageX,
       clickY: e.pageY,
@@ -210,118 +389,7 @@ export default class LandingPageDesktop extends React.Component<
                     Pool.
                   </Text>
                 </Box>
-                <Flex
-                  flexDirection="column"
-                  justifyContent="space-between"
-                  alignItems="end"
-                  lineHeight="125%"
-                  className="links"
-                >
-                  <Flex
-                    flexDirection="column"
-                    alignItems="end"
-                    fontWeight="300"
-                    className="fade-in-left"
-                  >
-                    <Link
-                      isExternal
-                      fontWeight="700"
-                      href="https://renegadefi.typeform.com/access"
-                    >
-                      Get Network Access
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://whitepaper.renegade.fi"
-                    >
-                      See the Whitepaper
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://docs.renegade.fi"
-                    >
-                      Read the Docs
-                    </Link>
-                  </Flex>
-                  <Flex
-                    flexDirection="column"
-                    alignItems="end"
-                    className="fade-in-left"
-                    sx={{ animationDelay: "0.15s" }}
-                  >
-                    <Text fontWeight="700">Our Investors</Text>
-                    <Flex
-                      flexDirection="column"
-                      alignItems="end"
-                      fontWeight="300"
-                      fontSize="calc(0.16 * (2vw + 70px))" /* 1vw */
-                      opacity="80%"
-                      lineHeight="125%"
-                      sx={linksThinUnderline}
-                    >
-                      <Box>
-                        <Link
-                          isExternal
-                          href="https://twitter.com/dragonfly_xyz"
-                        >
-                          Dragonfly
-                        </Link>
-                        {" & "}
-                        <Link isExternal href="https://twitter.com/naval">
-                          Naval
-                        </Link>
-                      </Box>
-                      <Link isExternal href="https://twitter.com/robotventures">
-                        Robot Ventures
-                      </Link>
-                      <Link isExternal href="https://twitter.com/balajis">
-                        Balaji Srinivasan
-                      </Link>
-                      <Link isExternal href="https://symbolic.partners">
-                        Symbolic Partners
-                      </Link>
-                    </Flex>
-                  </Flex>
-                  <Flex
-                    flexDirection="column"
-                    alignItems="end"
-                    fontWeight="300"
-                    paddingBottom="8px"
-                    className="fade-in-left"
-                    sx={{ animationDelay: "0.3s" }}
-                  >
-                    <Link
-                      isExternal
-                      fontWeight="700"
-                      href="https://twitter.com/renegade_fi"
-                    >
-                      Follow us on Twitter
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://renegadefi.substack.com"
-                    >
-                      Read our Substack
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://discord.gg/renegade-fi"
-                    >
-                      Join the Discord
-                    </Link>
-                    <Link
-                      isExternal
-                      sx={linksThinUnderline}
-                      href="https://jobs.renegade.fi"
-                    >
-                      Work with Us
-                    </Link>
-                  </Flex>
-                </Flex>
+                <AllLinks />
               </Flex>
               <Box
                 fontWeight="300"
