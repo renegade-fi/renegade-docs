@@ -9,8 +9,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import LandingPageDesktop from "./LandingPage/LandingPageDesktop";
-import LandingPageMobile from "./LandingPage/LandingPageMobile";
+import LandingPageDesktop from "./LandingPage/Desktop";
+import LandingPageMobile from "./LandingPage/Mobile";
 import "./animations.css";
 import "./fonts.css";
 

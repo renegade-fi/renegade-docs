@@ -3,7 +3,7 @@ import React from "react";
 
 import backgroundPattern from "../icons/background_pattern.svg";
 import logoDarkVertical from "../icons/logo_dark_vertical.svg";
-import { linksThinUnderline } from "./LandingPageCommon";
+import { linksThinUnderline } from "./Common";
 
 interface VerticalLogoProps {
   clickX: number;

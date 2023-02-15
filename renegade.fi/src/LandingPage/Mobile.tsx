@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 
 import backgroundPatternVertical from "../icons/background_pattern_vertical.svg";
 import logoDark from "../icons/logo_dark.svg";
-import { linksThinUnderline } from "./LandingPageCommon";
+import { linksThinUnderline } from "./Common";
 
 export default function LandingPageMobile() {
   const useInViewOptions = {
