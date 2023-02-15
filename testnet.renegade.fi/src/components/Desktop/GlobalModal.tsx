@@ -45,9 +45,7 @@ export default function GlobalModal(props: GlobalModalProps) {
           {props.globalModalState === "sign-in" && (
             <SignInModal onClose={props.onClose} />
           )}
-          {props.globalModalState === "place-order" && (
-            <PlaceOrderModal onClose={props.onClose} />
-          )}
+          {props.globalModalState === "place-order" && <PlaceOrderModal />}
         </ModalBody>
       </ModalContent>
     </Modal>

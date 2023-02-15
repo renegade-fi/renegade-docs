@@ -437,9 +437,20 @@ export default class TradingBody extends React.Component<
             width="200px"
             borderRadius="100px"
             type="number"
+            outline="none !important"
             onChange={(e) =>
               this.setBaseTokenAmount(parseFloat(e.target.value))
             }
+            onKeyPress={(e) => e.key === "-" && e.preventDefault()}
+            onFocus={(e) =>
+              e.target.addEventListener("wheel", (e) => e.preventDefault(), {
+                passive: false,
+              })
+            }
+            _focus={{
+              borderColor: "white.50 !important",
+              boxShadow: "none !important",
+            }}
           />
           <Selectable
             text={this.props.activeBaseTicker}
@@ -462,24 +473,57 @@ export default class TradingBody extends React.Component<
             ref={this.state.quoteTokenSelectableRef}
           />
         </HStack>
-        <Flex
-          position="relative"
-          marginBottom={this.state.baseTokenAmount ? "20px" : "0px"}
-          transition="0.1s"
+        <HStack
+          marginTop="5px"
+          color="white.50"
+          fontFamily="Favorit Extended"
+          fontWeight="100"
+          spacing="0"
         >
-          <HStack
-            opacity={this.state.baseTokenAmount ? "0" : "1"}
-            transition="0.1s"
-            marginTop="5px"
-            color="white.50"
-            fontFamily="Favorit Extended"
-            fontWeight="100"
-            spacing="0"
-          >
-            <Text marginRight="4px">
-              Trades are end-to-end encrypted and always clear at the real-time
-              midpoint of
-            </Text>
+          <Text marginRight="4px">
+            Trades are end-to-end encrypted and always clear at the real-time
+            midpoint of
+          </Text>
+          <Box fontFamily="Favorit Mono">
+            <LivePrices
+              renegadeConnection={this.props.renegadeConnection}
+              baseTicker={this.props.activeBaseTicker}
+              quoteTicker={this.props.activeQuoteTicker}
+              exchange="median"
+              onlyShowPrice
+              withCommas
+            />
+          </Box>
+        </HStack>
+        <Button
+          opacity={this.state.baseTokenAmount ? "1" : "0"}
+          marginTop={this.state.baseTokenAmount ? "20px" : "-50px"}
+          transition="0.15s"
+          padding="20px"
+          backgroundColor="transparent"
+          fontSize="1.2em"
+          fontWeight="200"
+          color="white.60"
+          borderWidth="thin"
+          borderRadius="15px"
+          borderColor="white.20"
+          _hover={{
+            borderColor: "white.30",
+            color: "white.80",
+          }}
+          _focus={{
+            backgroundColor: "transparent",
+          }}
+          onClick={() => {
+            if (!this.state.baseTokenAmount) {
+              return;
+            }
+            this.props.setGlobalModalState("place-order");
+            this.props.onOpenGlobalModal();
+          }}
+        >
+          <HStack spacing="4px">
+            <Text>Place Order for</Text>
             <Box fontFamily="Favorit Mono">
               <LivePrices
                 renegadeConnection={this.props.renegadeConnection}
@@ -487,38 +531,13 @@ export default class TradingBody extends React.Component<
                 quoteTicker={this.props.activeQuoteTicker}
                 exchange="median"
                 onlyShowPrice
+                withCommas
+                scaleBy={this.state.baseTokenAmount}
               />
             </Box>
+            <ArrowForwardIcon />
           </HStack>
-          <Button
-            position="absolute"
-            top="0"
-            opacity={this.state.baseTokenAmount ? "1" : "0"}
-            transition="0.1s"
-            marginTop="15px"
-            width="38vw"
-            padding="20px"
-            backgroundColor="transparent"
-            fontSize="1.3em"
-            fontWeight="200"
-            color="white.80"
-            border="var(--border)"
-            borderRadius="15px"
-            borderColor="white.30"
-            _hover={{
-              borderColor: "white.50",
-            }}
-            onClick={() => {
-              this.props.setGlobalModalState("place-order");
-              this.props.onOpenGlobalModal();
-            }}
-          >
-            <HStack>
-              <Text>Place Order</Text>
-              <ArrowForwardIcon />
-            </HStack>
-          </Button>
-        </Flex>
+        </Button>
         <BlurredOverlay
           activeModal={this.state.activeModal}
           setActiveModal={this.setActiveModal}

@@ -126,6 +126,7 @@ interface LivePricesProps {
   exchange: Exchange;
   link?: string;
   onlyShowPrice?: boolean;
+  withCommas?: boolean;
   scaleBy?: number;
   isMobile?: boolean;
   shouldRotate?: boolean;
@@ -288,7 +289,7 @@ export class LivePrices extends React.Component<
     }
 
     // If the caller supplied a scaleBy prop, scale the price appropriately
-    if (this.props.scaleBy) {
+    if (this.props.scaleBy !== undefined) {
       price *= this.props.scaleBy;
     }
 
@@ -305,13 +306,20 @@ export class LivePrices extends React.Component<
     }
     let priceStr = price.toFixed(trailingDecimals);
     if (
-      this.state.currentPriceReport == DEFAULT_PRICE_REPORT &&
+      (this.state.currentPriceReport == DEFAULT_PRICE_REPORT ||
+        this.props.scaleBy === 0) &&
       baseDefaultDecimals > 0
     ) {
       const leadingDecimals = priceStr.split(".")[0].length;
       priceStr =
         "0".repeat(Math.max(0, baseDefaultDecimals - leadingDecimals)) +
         priceStr;
+    }
+    // Add commmas to the price string
+    if (this.props.withCommas) {
+      const priceStrParts = priceStr.split(".");
+      priceStrParts[0] = priceStrParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      priceStr = priceStrParts.join(".");
     }
 
     if (this.props.onlyShowPrice) {
