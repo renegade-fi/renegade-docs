@@ -60,7 +60,7 @@ interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
   baseTokenTicker: string;
   quoteTokenTicker: string;
-  setOrderInfo: (
+  setOrderInfo?: (
     direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
@@ -74,6 +74,9 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
       direction={props.isMobile ? "column-reverse" : "row"}
       alignItems="center"
       onClick={() => {
+        if (!props.setOrderInfo) {
+          return;
+        }
         props.setOrderInfo(
           undefined,
           props.baseTokenTicker,

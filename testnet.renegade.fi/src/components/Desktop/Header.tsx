@@ -17,7 +17,7 @@ import {
 } from "wagmi";
 
 import KeyStore from "../../connections/KeyStore";
-import KeyStoreContext from "../../contexts/KeyStoreContext";
+import KeyStoreContext from "../../contexts/KeyStore";
 import glyphDark from "../../icons/glyph_dark.svg";
 import { GlobalModalState } from "./GlobalModal";
 

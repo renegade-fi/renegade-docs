@@ -15,7 +15,7 @@ import {
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
 import KeyStore from "../../../connections/KeyStore";
 import RenegadeConnection from "../../../connections/RenegadeConnection";
-import KeyStoreContext from "../../../contexts/KeyStoreContext";
+import KeyStoreContext from "../../../contexts/KeyStore";
 import { LivePrices } from "../../Common/Banner";
 import { Panel, expandedPanelWidth } from "../../Common/Panel";
 import { GlobalModalState } from "../GlobalModal";

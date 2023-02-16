@@ -27,7 +27,7 @@ import MobileBody from "./components/Mobile/Body";
 import MobileHeader from "./components/Mobile/Header";
 import KeyStore from "./connections/KeyStore";
 import RenegadeConnection from "./connections/RenegadeConnection";
-import KeyStoreContext from "./contexts/KeyStoreContext";
+import KeyStoreContext from "./contexts/KeyStore";
 import "./css/animations.css";
 import "./css/fonts.css";
 import "./css/index.css";

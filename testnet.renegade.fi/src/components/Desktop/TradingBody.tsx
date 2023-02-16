@@ -16,7 +16,7 @@ import { useAccount as useAccountWagmi } from "wagmi";
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
 import KeyStore from "../../connections/KeyStore";
 import RenegadeConnection from "../../connections/RenegadeConnection";
-import KeyStoreContext from "../../contexts/KeyStoreContext";
+import KeyStoreContext from "../../contexts/KeyStore";
 import { LivePrices } from "../Common/Banner";
 import { GlobalModalState } from "./GlobalModal";
 
