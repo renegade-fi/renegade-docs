@@ -71,7 +71,7 @@ export default function TradingInterface(props: TradingInterfaceProps) {
       </Flex>
       <AllTokensBanner
         renegadeConnection={props.renegadeConnection}
-        setDirectionAndTickers={this.setDirectionAndTickers}
+        setOrderInfo={props.setOrderInfo}
       />
     </Flex>
   );

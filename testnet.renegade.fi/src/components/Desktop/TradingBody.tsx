@@ -416,101 +416,114 @@ export default class TradingBody extends React.Component<
         position="relative"
         flexGrow="1"
       >
-        <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
-          <Selectable
-            text={this.props.activeDirection.toUpperCase()}
-            onClick={() => this.setActiveModal("buy-sell")}
-            activeModal={this.state.activeModal}
-            ref={this.state.buySellSelectableRef}
-          />
-          <Input
-            fontFamily="Favorit"
-            fontSize="0.8em"
-            placeholder="0.00"
-            width="200px"
-            borderRadius="100px"
-            type="number"
-            outline="none !important"
-            value={this.props.activeBaseTokenAmount || ""}
-            onChange={(e) =>
-              this.props.setOrderInfo(
-                undefined,
-                undefined,
-                undefined,
-                parseFloat(e.target.value),
-              )
-            }
-            onKeyPress={(e) => e.key === "-" && e.preventDefault()}
-            onFocus={(e) =>
-              e.target.addEventListener("wheel", (e) => e.preventDefault(), {
-                passive: false,
-              })
-            }
-            _focus={{
-              borderColor: "white.50 !important",
-              boxShadow: "none !important",
-            }}
-          />
-          <Selectable
-            text={this.props.activeBaseTicker}
-            onClick={() => this.setActiveModal("base-token")}
-            activeModal={this.state.activeModal}
-            ref={this.state.baseTokenSelectableRef}
-          />
-          <Text
-            fontFamily="Favorit"
-            fontWeight="200"
-            fontSize="0.9em"
-            color="white.50"
-          >
-            {this.props.activeDirection === "buy" ? "with" : "for"}
-          </Text>
-          <Selectable
-            text={this.props.activeQuoteTicker}
-            onClick={() => this.setActiveModal("quote-token")}
-            activeModal={this.state.activeModal}
-            ref={this.state.quoteTokenSelectableRef}
-          />
-        </HStack>
-        <HStack
-          marginTop="5px"
-          color="white.50"
-          fontFamily="Favorit Extended"
-          fontWeight="100"
-          spacing="0"
+        <Box
+          transform={
+            this.props.activeBaseTokenAmount
+              ? "translateY(-15px)"
+              : "translateY(0px)"
+          }
+          transition="0.15s"
         >
-          <Text marginRight="4px">
-            Trades are end-to-end encrypted and always clear at the real-time
-            midpoint of
-          </Text>
-          <Box fontFamily="Favorit Mono">
-            <LivePrices
-              renegadeConnection={this.props.renegadeConnection}
-              baseTicker={this.props.activeBaseTicker}
-              quoteTicker={this.props.activeQuoteTicker}
-              exchange="median"
-              onlyShowPrice
-              withCommas
+          <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
+            <Selectable
+              text={this.props.activeDirection.toUpperCase()}
+              onClick={() => this.setActiveModal("buy-sell")}
+              activeModal={this.state.activeModal}
+              ref={this.state.buySellSelectableRef}
             />
-          </Box>
-        </HStack>
+            <Input
+              fontFamily="Favorit"
+              fontSize="0.8em"
+              placeholder="0.00"
+              width="200px"
+              borderRadius="100px"
+              type="number"
+              outline="none !important"
+              value={this.props.activeBaseTokenAmount || ""}
+              onChange={(e) =>
+                this.props.setOrderInfo(
+                  undefined,
+                  undefined,
+                  undefined,
+                  parseFloat(e.target.value),
+                )
+              }
+              onKeyPress={(e) => e.key === "-" && e.preventDefault()}
+              onFocus={(e) =>
+                e.target.addEventListener("wheel", (e) => e.preventDefault(), {
+                  passive: false,
+                })
+              }
+              _focus={{
+                borderColor: "white.50 !important",
+                boxShadow: "none !important",
+              }}
+            />
+            <Selectable
+              text={this.props.activeBaseTicker}
+              onClick={() => this.setActiveModal("base-token")}
+              activeModal={this.state.activeModal}
+              ref={this.state.baseTokenSelectableRef}
+            />
+            <Text
+              fontFamily="Favorit"
+              fontWeight="200"
+              fontSize="0.9em"
+              color="white.50"
+            >
+              {this.props.activeDirection === "buy" ? "with" : "for"}
+            </Text>
+            <Selectable
+              text={this.props.activeQuoteTicker}
+              onClick={() => this.setActiveModal("quote-token")}
+              activeModal={this.state.activeModal}
+              ref={this.state.quoteTokenSelectableRef}
+            />
+          </HStack>
+          <HStack
+            marginTop="5px"
+            color="white.50"
+            fontFamily="Favorit Extended"
+            fontWeight="100"
+            spacing="0"
+          >
+            <Text marginRight="4px">
+              Trades are end-to-end encrypted and always clear at the real-time
+              midpoint of
+            </Text>
+            <Box fontFamily="Favorit Mono">
+              <LivePrices
+                renegadeConnection={this.props.renegadeConnection}
+                baseTicker={this.props.activeBaseTicker}
+                quoteTicker={this.props.activeQuoteTicker}
+                exchange="median"
+                onlyShowPrice
+                withCommas
+              />
+            </Box>
+          </HStack>
+        </Box>
         <Button
           opacity={this.props.activeBaseTokenAmount ? "1" : "0"}
           visibility={this.props.activeBaseTokenAmount ? "visible" : "hidden"}
-          marginTop={this.props.activeBaseTokenAmount ? "20px" : "-50px"}
+          transform={
+            this.props.activeBaseTokenAmount
+              ? "translateY(10px)"
+              : "translateY(-10px)"
+          }
           cursor={this.props.activeBaseTokenAmount ? "pointer" : "default"}
           transition="0.15s"
           padding="20px"
           backgroundColor="transparent"
           fontSize="1.2em"
           fontWeight="200"
-          color="white.60"
+          color="white.80"
           borderWidth="thin"
-          borderRadius="15px"
-          borderColor="white.20"
+          borderRadius="100px"
+          borderColor="white.40"
           _hover={{
-            borderColor: "white.30",
-            color: "white.80",
+            borderColor: "white.60",
+            color: "white",
           }}
           _focus={{
             backgroundColor: "transparent",

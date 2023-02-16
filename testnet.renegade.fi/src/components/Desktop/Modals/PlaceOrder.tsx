@@ -117,9 +117,10 @@ export default class PlaceOrderModal extends React.Component<
           <Text fontFamily="Favorit Mono">renegade-relayer.eth</Text>
           <Flex
             opacity={this.state.isPlacingOrder ? 0 : 1}
-            height={this.state.isPlacingOrder ? "0px" : "100px"}
+            height={this.state.isPlacingOrder ? "0px" : "110px"}
             marginTop={this.state.isPlacingOrder ? "0px" : "10px"}
             marginBottom="10px"
+            marginLeft="10px"
             transition="0.2s"
             flexDirection="column"
             fontFamily="Favorit Mono"

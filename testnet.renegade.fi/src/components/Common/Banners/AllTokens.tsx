@@ -60,10 +60,11 @@ interface TokenBannerSingleProps {
   renegadeConnection: RenegadeConnection;
   baseTokenTicker: string;
   quoteTokenTicker: string;
-  setDirectionAndTickers?: (
-    buyOrSell?: "buy" | "sell",
+  setOrderInfo: (
+    direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
+    baseTokenAmount?: number,
   ) => void;
   isMobile?: boolean;
 }
@@ -73,10 +74,7 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
       direction={props.isMobile ? "column-reverse" : "row"}
       alignItems="center"
       onClick={() => {
-        if (!props.setDirectionAndTickers) {
-          return;
-        }
-        props.setDirectionAndTickers(
+        props.setOrderInfo(
           undefined,
           props.baseTokenTicker,
           props.quoteTokenTicker,
@@ -104,10 +102,11 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
 
 interface AllTokensBannerProps {
   renegadeConnection: RenegadeConnection;
-  setDirectionAndTickers?: (
-    buyOrSell?: "buy" | "sell",
+  setOrderInfo: (
+    direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
+    baseTokenAmount?: number,
   ) => void;
   isMobile?: boolean;
 }
@@ -151,7 +150,7 @@ export default class AllTokensBanner extends React.Component<
           renegadeConnection={this.props.renegadeConnection}
           baseTokenTicker={tickers[0]}
           quoteTokenTicker={tickers[1]}
-          setDirectionAndTickers={this.props.setDirectionAndTickers}
+          setOrderInfo={this.props.setOrderInfo}
           isMobile={this.props.isMobile}
           key={tickers.toString() + "_" + key.toString()}
         />
