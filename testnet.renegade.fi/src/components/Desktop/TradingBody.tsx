@@ -9,10 +9,14 @@ import {
   Text,
   keyframes,
 } from "@chakra-ui/react";
+import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
+import { useAccount as useAccountWagmi } from "wagmi";
 
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
+import KeyStore from "../../connections/KeyStore";
 import RenegadeConnection from "../../connections/RenegadeConnection";
+import KeyStoreContext from "../../contexts/KeyStoreContext";
 import { LivePrices } from "../Common/Banner";
 import { GlobalModalState } from "./GlobalModal";
 
@@ -299,6 +303,96 @@ const Selectable = React.forwardRef(
 );
 Selectable.displayName = "selectable";
 
+interface PlaceOrderButtonProps {
+  renegadeConnection: RenegadeConnection;
+  onOpenGlobalModal: () => void;
+  activeBaseTicker: string;
+  activeQuoteTicker: string;
+  activeBaseTokenAmount: number;
+  setGlobalModalState: (state: GlobalModalState) => void;
+}
+function PlaceOrderButton(props: PlaceOrderButtonProps) {
+  const { address } = useAccountWagmi();
+  const { setOpen } = useModalConnectKit();
+  const [keyStoreState] = React.useContext(KeyStoreContext);
+  const isSignedIn = !KeyStore.isUnpopulated(keyStoreState);
+  let placeOrderButtonContent: React.ReactElement;
+  if (!address) {
+    placeOrderButtonContent = <Text>Connect Wallet to Place Orders</Text>;
+  } else if (!isSignedIn) {
+    placeOrderButtonContent = <Text>Sign in to Place Orders</Text>;
+  } else {
+    placeOrderButtonContent = (
+      <HStack spacing="4px">
+        <Text>Place Order for</Text>
+        <Box fontFamily="Favorit Mono">
+          <LivePrices
+            renegadeConnection={props.renegadeConnection}
+            baseTicker={props.activeBaseTicker}
+            quoteTicker={props.activeQuoteTicker}
+            exchange="median"
+            onlyShowPrice
+            withCommas
+            scaleBy={props.activeBaseTokenAmount}
+          />
+        </Box>
+        <ArrowForwardIcon />
+      </HStack>
+    );
+  }
+
+  return (
+    <Button
+      opacity={
+        !props.activeBaseTokenAmount
+          ? "0"
+          : !address || !isSignedIn
+          ? "0.6"
+          : "1"
+      }
+      visibility={props.activeBaseTokenAmount ? "visible" : "hidden"}
+      transform={
+        props.activeBaseTokenAmount ? "translateY(10px)" : "translateY(-10px)"
+      }
+      cursor={props.activeBaseTokenAmount ? "pointer" : "default"}
+      transition="0.15s"
+      padding="20px"
+      backgroundColor="transparent"
+      fontSize="1.2em"
+      fontWeight="200"
+      color="white.80"
+      borderWidth="thin"
+      borderRadius="100px"
+      borderColor="white.40"
+      _hover={{
+        borderColor: "white.60",
+        color: "white",
+      }}
+      _focus={{
+        backgroundColor: "transparent",
+      }}
+      onClick={() => {
+        if (!props.activeBaseTokenAmount) {
+          return;
+        }
+        if (!address) {
+          setOpen(true);
+          return;
+        }
+        if (!isSignedIn) {
+          props.setGlobalModalState("sign-in");
+          props.onOpenGlobalModal();
+          return;
+        }
+        props.setGlobalModalState("place-order");
+        props.onOpenGlobalModal();
+      }}
+    >
+      {placeOrderButtonContent}
+    </Button>
+  );
+}
+
 interface TradingBodyProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
@@ -420,7 +514,7 @@ export default class TradingBody extends React.Component<
           transform={
             this.props.activeBaseTokenAmount
               ? "translateY(-15px)"
-              : "translateY(0px)"
+              : "translateY(10px)"
           }
           transition="0.15s"
         >
@@ -503,55 +597,14 @@ export default class TradingBody extends React.Component<
             </Box>
           </HStack>
         </Box>
-        <Button
-          opacity={this.props.activeBaseTokenAmount ? "1" : "0"}
-          visibility={this.props.activeBaseTokenAmount ? "visible" : "hidden"}
-          transform={
-            this.props.activeBaseTokenAmount
-              ? "translateY(10px)"
-              : "translateY(-10px)"
-          }
-          cursor={this.props.activeBaseTokenAmount ? "pointer" : "default"}
-          transition="0.15s"
-          padding="20px"
-          backgroundColor="transparent"
-          fontSize="1.2em"
-          fontWeight="200"
-          color="white.80"
-          borderWidth="thin"
-          borderRadius="100px"
-          borderColor="white.40"
-          _hover={{
-            borderColor: "white.60",
-            color: "white",
-          }}
-          _focus={{
-            backgroundColor: "transparent",
-          }}
-          onClick={() => {
-            if (!this.props.activeBaseTokenAmount) {
-              return;
-            }
-            this.props.setGlobalModalState("place-order");
-            this.props.onOpenGlobalModal();
-          }}
-        >
-          <HStack spacing="4px">
-            <Text>Place Order for</Text>
-            <Box fontFamily="Favorit Mono">
-              <LivePrices
-                renegadeConnection={this.props.renegadeConnection}
-                baseTicker={this.props.activeBaseTicker}
-                quoteTicker={this.props.activeQuoteTicker}
-                exchange="median"
-                onlyShowPrice
-                withCommas
-                scaleBy={this.props.activeBaseTokenAmount}
-              />
-            </Box>
-            <ArrowForwardIcon />
-          </HStack>
-        </Button>
+        <PlaceOrderButton
+          renegadeConnection={this.props.renegadeConnection}
+          onOpenGlobalModal={this.props.onOpenGlobalModal}
+          activeBaseTicker={this.props.activeBaseTicker}
+          activeQuoteTicker={this.props.activeQuoteTicker}
+          activeBaseTokenAmount={this.props.activeBaseTokenAmount}
+          setGlobalModalState={this.props.setGlobalModalState}
+        />
         <BlurredOverlay
           activeModal={this.state.activeModal}
           setActiveModal={this.setActiveModal}
