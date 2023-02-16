@@ -57,10 +57,11 @@ interface BlurredOverlayProps {
   buySellSelectableCoords: [number, number];
   baseTokenSelectableCoords: [number, number];
   quoteTokenSelectableCoords: [number, number];
-  setDirectionAndTickers: (
-    buyOrSell?: "buy" | "sell",
+  setOrderInfo: (
+    direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
+    baseTokenAmount?: number,
   ) => void;
 }
 function BlurredOverlay(props: BlurredOverlayProps) {
@@ -95,7 +96,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setDirectionAndTickers("buy");
+            props.setOrderInfo("buy");
           }}
         >
           BUY
@@ -107,7 +108,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(-70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setDirectionAndTickers("sell");
+            props.setOrderInfo("sell");
           }}
         >
           SELL
@@ -151,7 +152,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           color="border"
           onClick={() => {
             props.setActiveModal(null);
-            props.setDirectionAndTickers(undefined, this.props.ticker);
+            props.setOrderInfo(undefined, this.props.ticker);
           }}
         >
           <Image src={this.state.imageUrl} width="20px" height="20px" />
@@ -222,7 +223,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setDirectionAndTickers(undefined, undefined, "USDC");
+            props.setOrderInfo(undefined, undefined, "USDC");
           }}
         >
           USDC
@@ -235,7 +236,7 @@ function BlurredOverlay(props: BlurredOverlayProps) {
           animation={`${snapAnimation(-70)} 0.15s ease both`}
           onClick={() => {
             props.setActiveModal(null);
-            props.setDirectionAndTickers(undefined, undefined, "USDT");
+            props.setOrderInfo(undefined, undefined, "USDT");
           }}
         >
           USDT
@@ -301,19 +302,20 @@ Selectable.displayName = "selectable";
 interface TradingBodyProps {
   renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
-  activeBuyOrSell: "buy" | "sell";
+  activeDirection: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
-  setDirectionAndTickers: (
-    buyOrSell?: "buy" | "sell",
+  activeBaseTokenAmount: number;
+  setOrderInfo: (
+    direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
+    baseTokenAmount?: number,
   ) => void;
   setGlobalModalState: (state: GlobalModalState) => void;
 }
 interface TradingBodyState {
   activeModal: null | "buy-sell" | "base-token" | "quote-token";
-  baseTokenAmount: number;
   buySellSelectableRef: React.RefObject<HTMLDivElement>;
   baseTokenSelectableRef: React.RefObject<HTMLDivElement>;
   quoteTokenSelectableRef: React.RefObject<HTMLDivElement>;
@@ -329,7 +331,6 @@ export default class TradingBody extends React.Component<
     super(props);
     this.state = {
       activeModal: null,
-      baseTokenAmount: 0,
       buySellSelectableRef: React.createRef(),
       baseTokenSelectableRef: React.createRef(),
       quoteTokenSelectableRef: React.createRef(),
@@ -338,7 +339,6 @@ export default class TradingBody extends React.Component<
       quoteTokenSelectableCoords: [0, 0],
     };
     this.setActiveModal = this.setActiveModal.bind(this);
-    this.setBaseTokenAmount = this.setBaseTokenAmount.bind(this);
   }
 
   shouldComponentUpdate(
@@ -347,8 +347,7 @@ export default class TradingBody extends React.Component<
   ): boolean {
     if (
       nextProps !== this.props ||
-      nextState.activeModal !== this.state.activeModal ||
-      nextState.baseTokenAmount !== this.state.baseTokenAmount
+      nextState.activeModal !== this.state.activeModal
     ) {
       return true;
     }
@@ -408,12 +407,6 @@ export default class TradingBody extends React.Component<
     });
   }
 
-  setBaseTokenAmount(baseTokenAmount: number) {
-    this.setState({
-      baseTokenAmount: baseTokenAmount ? baseTokenAmount : 0,
-    });
-  }
-
   render() {
     return (
       <Flex
@@ -425,7 +418,7 @@ export default class TradingBody extends React.Component<
       >
         <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
           <Selectable
-            text={this.props.activeBuyOrSell.toUpperCase()}
+            text={this.props.activeDirection.toUpperCase()}
             onClick={() => this.setActiveModal("buy-sell")}
             activeModal={this.state.activeModal}
             ref={this.state.buySellSelectableRef}
@@ -438,8 +431,14 @@ export default class TradingBody extends React.Component<
             borderRadius="100px"
             type="number"
             outline="none !important"
+            value={this.props.activeBaseTokenAmount || ""}
             onChange={(e) =>
-              this.setBaseTokenAmount(parseFloat(e.target.value))
+              this.props.setOrderInfo(
+                undefined,
+                undefined,
+                undefined,
+                parseFloat(e.target.value),
+              )
             }
             onKeyPress={(e) => e.key === "-" && e.preventDefault()}
             onFocus={(e) =>
@@ -464,7 +463,7 @@ export default class TradingBody extends React.Component<
             fontSize="0.9em"
             color="white.50"
           >
-            {this.props.activeBuyOrSell === "buy" ? "with" : "for"}
+            {this.props.activeDirection === "buy" ? "with" : "for"}
           </Text>
           <Selectable
             text={this.props.activeQuoteTicker}
@@ -496,8 +495,10 @@ export default class TradingBody extends React.Component<
           </Box>
         </HStack>
         <Button
-          opacity={this.state.baseTokenAmount ? "1" : "0"}
-          marginTop={this.state.baseTokenAmount ? "20px" : "-50px"}
+          opacity={this.props.activeBaseTokenAmount ? "1" : "0"}
+          visibility={this.props.activeBaseTokenAmount ? "visible" : "hidden"}
+          marginTop={this.props.activeBaseTokenAmount ? "20px" : "-50px"}
+          cursor={this.props.activeBaseTokenAmount ? "pointer" : "default"}
           transition="0.15s"
           padding="20px"
           backgroundColor="transparent"
@@ -515,7 +516,7 @@ export default class TradingBody extends React.Component<
             backgroundColor: "transparent",
           }}
           onClick={() => {
-            if (!this.state.baseTokenAmount) {
+            if (!this.props.activeBaseTokenAmount) {
               return;
             }
             this.props.setGlobalModalState("place-order");
@@ -532,7 +533,7 @@ export default class TradingBody extends React.Component<
                 exchange="median"
                 onlyShowPrice
                 withCommas
-                scaleBy={this.state.baseTokenAmount}
+                scaleBy={this.props.activeBaseTokenAmount}
               />
             </Box>
             <ArrowForwardIcon />
@@ -544,7 +545,7 @@ export default class TradingBody extends React.Component<
           buySellSelectableCoords={this.state.buySellSelectableCoords}
           baseTokenSelectableCoords={this.state.baseTokenSelectableCoords}
           quoteTokenSelectableCoords={this.state.quoteTokenSelectableCoords}
-          setDirectionAndTickers={this.props.setDirectionAndTickers}
+          setOrderInfo={this.props.setOrderInfo}
         />
       </Flex>
     );

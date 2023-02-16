@@ -11,111 +11,68 @@ import OrdersAndCounterpartiesPanel from "./Panels/OrdersAndCounterparties";
 import WalletsPanel from "./Panels/Wallets";
 import TradingBody from "./TradingBody";
 
-// Create a connection to a relayer
-const renegadeConnection = new RenegadeConnection({
-  relayerUrl: "stage.relayer.renegade.fi",
-  // relayerUrl: "127.0.0.1",
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useTls: true,
-  // useTls: false,
-});
-
 interface TradingInterfaceProps {
+  renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   isOpenGlobalModal: boolean;
   setGlobalModalState: (state: GlobalModalState) => void;
-}
-interface TradingInterfaceState {
-  activeBuyOrSell: "buy" | "sell";
+  activeDirection: "buy" | "sell";
   activeBaseTicker: string;
   activeQuoteTicker: string;
-}
-export default class TradingInterface extends React.Component<
-  TradingInterfaceProps,
-  TradingInterfaceState
-> {
-  constructor(props: TradingInterfaceProps) {
-    super(props);
-    this.state = {
-      // We randomly set initial buy/sell bit in order to discourage order
-      // asymmetry for users who are trying the product for the first time
-      activeBuyOrSell:
-        localStorage.getItem("renegade-direction") || Math.random() < 0.5
-          ? "buy"
-          : "sell",
-      activeBaseTicker: localStorage.getItem("renegade-base-ticker") || "WBTC",
-      activeQuoteTicker:
-        localStorage.getItem("renegade-quote-ticker") || "USDC",
-    };
-    this.setDirectionAndTickers = this.setDirectionAndTickers.bind(this);
-  }
-
-  setDirectionAndTickers(
-    buyOrSell?: "buy" | "sell",
+  activeBaseTokenAmount: number;
+  setOrderInfo: (
+    direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
-  ) {
-    if (buyOrSell) {
-      localStorage.setItem("renegade-direction", buyOrSell);
-      this.setState({ activeBuyOrSell: buyOrSell });
-    }
-    if (baseTicker) {
-      localStorage.setItem("renegade-base-ticker", baseTicker);
-      this.setState({ activeBaseTicker: baseTicker });
-    }
-    if (quoteTicker) {
-      localStorage.setItem("renegade-quote-ticker", quoteTicker);
-      this.setState({ activeQuoteTicker: quoteTicker });
-    }
-  }
-
-  render() {
-    return (
-      <Flex
-        flexDirection="column"
-        flexGrow="1"
-        backgroundImage={backgroundPattern}
-        backgroundSize="cover"
-      >
-        <ExchangeConnectionsBanner
-          renegadeConnection={renegadeConnection}
-          activeBaseTicker={this.state.activeBaseTicker}
-          activeQuoteTicker={this.state.activeQuoteTicker}
+    baseTokenAmount?: number,
+  ) => void;
+}
+export default function TradingInterface(props: TradingInterfaceProps) {
+  return (
+    <Flex
+      flexDirection="column"
+      flexGrow="1"
+      backgroundImage={backgroundPattern}
+      backgroundSize="cover"
+    >
+      <ExchangeConnectionsBanner
+        renegadeConnection={props.renegadeConnection}
+        activeBaseTicker={props.activeBaseTicker}
+        activeQuoteTicker={props.activeQuoteTicker}
+      />
+      <Flex flexGrow="1">
+        <WalletsPanel
+          renegadeConnection={props.renegadeConnection}
+          onOpenGlobalModal={props.onOpenGlobalModal}
+          isOpenGlobalModal={props.isOpenGlobalModal}
+          setGlobalModalState={props.setGlobalModalState}
         />
-        <Flex flexGrow="1">
-          <WalletsPanel
-            renegadeConnection={renegadeConnection}
-            onOpenGlobalModal={this.props.onOpenGlobalModal}
-            isOpenGlobalModal={this.props.isOpenGlobalModal}
-            setGlobalModalState={this.props.setGlobalModalState}
+        <Flex flexDirection="column" flexGrow="1" overflowX="hidden">
+          <RelayerStatusBanner
+            renegadeConnection={props.renegadeConnection}
+            activeBaseTicker={props.activeBaseTicker}
+            activeQuoteTicker={props.activeQuoteTicker}
           />
-          <Flex flexDirection="column" flexGrow="1" overflowX="hidden">
-            <RelayerStatusBanner
-              renegadeConnection={renegadeConnection}
-              activeBaseTicker={this.state.activeBaseTicker}
-              activeQuoteTicker={this.state.activeQuoteTicker}
-            />
-            <TradingBody
-              renegadeConnection={renegadeConnection}
-              onOpenGlobalModal={this.props.onOpenGlobalModal}
-              activeBuyOrSell={this.state.activeBuyOrSell}
-              activeBaseTicker={this.state.activeBaseTicker}
-              activeQuoteTicker={this.state.activeQuoteTicker}
-              setDirectionAndTickers={this.setDirectionAndTickers}
-              setGlobalModalState={this.props.setGlobalModalState}
-            />
-          </Flex>
-          <OrdersAndCounterpartiesPanel
-            renegadeConnection={renegadeConnection}
-            isOpenGlobalModal={this.props.isOpenGlobalModal}
+          <TradingBody
+            renegadeConnection={props.renegadeConnection}
+            onOpenGlobalModal={props.onOpenGlobalModal}
+            activeDirection={props.activeDirection}
+            activeBaseTicker={props.activeBaseTicker}
+            activeQuoteTicker={props.activeQuoteTicker}
+            activeBaseTokenAmount={props.activeBaseTokenAmount}
+            setOrderInfo={props.setOrderInfo}
+            setGlobalModalState={props.setGlobalModalState}
           />
         </Flex>
-        <AllTokensBanner
-          renegadeConnection={renegadeConnection}
-          setDirectionAndTickers={this.setDirectionAndTickers}
+        <OrdersAndCounterpartiesPanel
+          renegadeConnection={props.renegadeConnection}
+          isOpenGlobalModal={props.isOpenGlobalModal}
         />
       </Flex>
-    );
-  }
+      <AllTokensBanner
+        renegadeConnection={props.renegadeConnection}
+        setDirectionAndTickers={this.setDirectionAndTickers}
+      />
+    </Flex>
+  );
 }

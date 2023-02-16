@@ -26,6 +26,7 @@ import DesktopTradingInterface from "./components/Desktop/TradingInterface";
 import MobileBody from "./components/Mobile/Body";
 import MobileHeader from "./components/Mobile/Header";
 import KeyStore from "./connections/KeyStore";
+import RenegadeConnection from "./connections/RenegadeConnection";
 import KeyStoreContext from "./contexts/KeyStoreContext";
 import "./css/animations.css";
 import "./css/fonts.css";
@@ -183,11 +184,59 @@ const client = createClient(
   }),
 );
 
+// Create a connection to a relayer
+const renegadeConnection = new RenegadeConnection({
+  relayerUrl: "stage.relayer.renegade.fi",
+  // relayerUrl: "127.0.0.1",
+  relayerHttpPort: 3000,
+  relayerWsPort: 4000,
+  useTls: true,
+  // useTls: false,
+});
+
 function Testnet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [keyStoreState, setKeyStoreState] = React.useState(KeyStore.default());
   const [globalModalState, setGlobalModalState] =
     React.useState<GlobalModalState>(null);
+
+  // We randomly set initial buy/sell bit in order to discourage order
+  // asymmetry for users who are trying the product for the first time
+  const [activeDirection, setActiveDirection] = React.useState<"buy" | "sell">(
+    localStorage.getItem("renegade-direction") || Math.random() < 0.5
+      ? "buy"
+      : "sell",
+  );
+  const [activeBaseTicker, setActiveBaseTicker] = React.useState(
+    localStorage.getItem("renegade-base-ticker") || "WBTC",
+  );
+  const [activeQuoteTicker, setActiveQuoteTicker] = React.useState(
+    localStorage.getItem("renegade-quote-ticker") || "USDC",
+  );
+  const [activeBaseTokenAmount, setActiveBaseTokenAmount] = React.useState(0);
+  const setOrderInfo = (
+    direction?: "buy" | "sell",
+    baseTicker?: string,
+    quoteTicker?: string,
+    baseTokenAmount?: number,
+  ) => {
+    if (direction) {
+      localStorage.setItem("renegade-direction", direction);
+      setActiveDirection(direction);
+    }
+    if (baseTicker) {
+      localStorage.setItem("renegade-base-ticker", baseTicker);
+      setActiveBaseTicker(baseTicker);
+    }
+    if (quoteTicker) {
+      localStorage.setItem("renegade-quote-ticker", quoteTicker);
+      setActiveQuoteTicker(quoteTicker);
+    }
+    if (baseTokenAmount !== undefined) {
+      setActiveBaseTokenAmount(baseTokenAmount || 0);
+    }
+  };
+
   const testnetDesktop = (
     <>
       <DesktopHeader
@@ -195,17 +244,29 @@ function Testnet() {
         setGlobalModalState={setGlobalModalState}
       />
       <DesktopTradingInterface
+        renegadeConnection={renegadeConnection}
         onOpenGlobalModal={onOpen}
         isOpenGlobalModal={isOpen}
         setGlobalModalState={setGlobalModalState}
+        activeDirection={activeDirection}
+        activeBaseTicker={activeBaseTicker}
+        activeQuoteTicker={activeQuoteTicker}
+        activeBaseTokenAmount={activeBaseTokenAmount}
+        setOrderInfo={setOrderInfo}
       />
       <DesktopFooter />
       <DesktopGlobalModal
+        renegadeConnection={renegadeConnection}
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
         globalModalState={globalModalState}
         setGlobalModalState={setGlobalModalState}
+        activeDirection={activeDirection}
+        activeBaseTicker={activeBaseTicker}
+        activeQuoteTicker={activeQuoteTicker}
+        activeBaseTokenAmount={activeBaseTokenAmount}
+        setOrderInfo={setOrderInfo}
       />
     </>
   );
