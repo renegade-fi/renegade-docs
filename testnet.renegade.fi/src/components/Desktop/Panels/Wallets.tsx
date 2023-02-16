@@ -14,7 +14,6 @@ import {
 
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
 import KeyStore from "../../../connections/KeyStore";
-import RenegadeConnection from "../../../connections/RenegadeConnection";
 import KeyStoreContext from "../../../contexts/KeyStore";
 import { LivePrices } from "../../Common/Banner";
 import { Panel, expandedPanelWidth } from "../../Common/Panel";
@@ -22,7 +21,6 @@ import { GlobalModalState } from "../GlobalModal";
 import { ConnectWalletButton } from "../Header";
 
 interface TokenBalanceProps {
-  renegadeConnection: RenegadeConnection;
   userAddr: string;
   tokenAddr: string;
 }
@@ -71,7 +69,6 @@ function TokenBalance(props: TokenBalanceProps) {
         </Text>
         <Box fontSize="0.8em" color="white.40" lineHeight="1">
           <LivePrices
-            renegadeConnection={props.renegadeConnection}
             baseTicker={ADDR_TO_TICKER[props.tokenAddr]}
             quoteTicker={"USDC"}
             exchange="median"
@@ -115,7 +112,6 @@ function callAfterTimeout(func: () => void, timeout: number) {
 }
 
 interface EthereumWalletPanelProps {
-  renegadeConnection: RenegadeConnection;
   isLocked: boolean;
   toggleIsLocked: () => void;
 }
@@ -128,7 +124,6 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
         <Box height="10px" />
         {Object.keys(ADDR_TO_TICKER).map((tokenAddr) => (
           <TokenBalance
-            renegadeConnection={props.renegadeConnection}
             userAddr={address}
             tokenAddr={tokenAddr}
             key={tokenAddr}
@@ -333,7 +328,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 }
 
 interface WalletsPanelExpandedProps {
-  renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   setGlobalModalState: (state: GlobalModalState) => void;
   isLocked: boolean;
@@ -350,7 +344,6 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
       borderColor="border"
     >
       <EthereumWalletPanel
-        renegadeConnection={props.renegadeConnection}
         isLocked={props.isLocked}
         toggleIsLocked={props.toggleIsLocked}
       />
@@ -364,7 +357,6 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
 }
 
 interface WalletsPanelProps {
-  renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   isOpenGlobalModal: boolean;
   setGlobalModalState: (state: GlobalModalState) => void;
@@ -375,7 +367,6 @@ export default function WalletsPanel(props: WalletsPanelProps) {
     <Panel
       panelExpanded={(isLocked, toggleIsLocked) => (
         <WalletsPanelExpanded
-          renegadeConnection={props.renegadeConnection}
           onOpenGlobalModal={props.onOpenGlobalModal}
           setGlobalModalState={props.setGlobalModalState}
           isLocked={isLocked}

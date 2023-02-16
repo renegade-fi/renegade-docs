@@ -3,10 +3,12 @@ import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../../tokens";
-import RenegadeConnection, {
+import RenegadeConnection from "../../connections/RenegadeConnection";
+import {
   DEFAULT_PRICE_REPORT,
   PriceReport,
 } from "../../connections/RenegadeConnection";
+import RenegadeConnectionContext from "../../contexts/RenegadeConnection";
 
 export type Exchange =
   | "median"
@@ -120,7 +122,6 @@ const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
 export const PulsingConnection = React.memo(PulsingConnectionUnmemoized);
 
 interface LivePricesProps {
-  renegadeConnection: RenegadeConnection;
   baseTicker: string;
   quoteTicker: string;
   exchange: Exchange;
@@ -141,6 +142,8 @@ export class LivePrices extends React.Component<
   LivePricesProps,
   LivePricesState
 > {
+  static contextType = RenegadeConnectionContext;
+
   constructor(props: LivePricesProps) {
     super(props);
     this.state = {
@@ -153,7 +156,7 @@ export class LivePrices extends React.Component<
   }
 
   async componentDidMount() {
-    await this.props.renegadeConnection.awaitConnection();
+    await (this.context as RenegadeConnection).awaitConnection();
     await this.queryFallbackPriceReport();
     this.streamPriceReports();
   }
@@ -168,7 +171,7 @@ export class LivePrices extends React.Component<
     if (!this.state.listenerId) {
       return;
     }
-    this.props.renegadeConnection.unlistenToTopic(this.state.listenerId);
+    (this.context as RenegadeConnection).unlistenToTopic(this.state.listenerId);
     this.setState({
       fallbackPriceReport: DEFAULT_PRICE_REPORT,
       previousPriceReport: DEFAULT_PRICE_REPORT,
@@ -182,11 +185,12 @@ export class LivePrices extends React.Component<
     if (this.props.baseTicker === this.props.quoteTicker) {
       return;
     }
-    const healthStates =
-      await this.props.renegadeConnection.checkExchangeHealthStates(
-        TICKER_TO_ADDR[this.props.baseTicker],
-        TICKER_TO_ADDR[this.props.quoteTicker],
-      );
+    const healthStates = await (
+      this.context as RenegadeConnection
+    ).checkExchangeHealthStates(
+      TICKER_TO_ADDR[this.props.baseTicker],
+      TICKER_TO_ADDR[this.props.quoteTicker],
+    );
     let medianPriceReport = null;
     if (healthStates["median"]["Nominal"]) {
       medianPriceReport = healthStates["median"]["Nominal"];
@@ -226,13 +230,13 @@ export class LivePrices extends React.Component<
     const baseTokenAddr = TICKER_TO_ADDR[this.props.baseTicker];
     const quoteTokenAddr = TICKER_TO_ADDR[this.props.quoteTicker];
     const topic = `${this.props.exchange}-price-report-${baseTokenAddr}-${quoteTokenAddr}`;
-    this.props.renegadeConnection.subscribeToTopic(topic);
+    (this.context as RenegadeConnection).subscribeToTopic(topic);
 
     // Keep track of the last update timestamp
     let lastUpdate = 0;
 
     // Listen for topic messages
-    const listenerId = this.props.renegadeConnection.listenToTopic(
+    const listenerId = (this.context as RenegadeConnection).listenToTopic(
       topic,
       (priceReport) => {
         // If the priceReport does not change the median price, ignore it

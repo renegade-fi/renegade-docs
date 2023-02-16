@@ -47,6 +47,15 @@ export default class RenegadeConnection {
   props: RenegadeConnectionProps;
   state: RenegadeConnectionState;
 
+  static default(): RenegadeConnection {
+    return new RenegadeConnection({
+      relayerUrl: "stage.relayer.renegade.fi",
+      relayerHttpPort: 3000,
+      relayerWsPort: 4000,
+      useTls: true,
+    });
+  }
+
   constructor(props: RenegadeConnectionProps) {
     this.props = props;
 

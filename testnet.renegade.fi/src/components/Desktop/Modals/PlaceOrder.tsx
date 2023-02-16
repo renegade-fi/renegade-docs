@@ -2,10 +2,12 @@ import { Button, Flex, HStack, Spinner, Text } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR } from "../../../../tokens";
-import RenegadeConnection, {
+import RenegadeConnection from "../../../connections/RenegadeConnection";
+import {
   DEFAULT_PRICE_REPORT,
   PriceReport,
 } from "../../../connections/RenegadeConnection";
+import RenegadeConnectionContext from "../../../contexts/RenegadeConnection";
 
 const SLIPPAGE_TOLERANCE = 1.05;
 
@@ -40,7 +42,6 @@ function ConfirmButton(props: ConfirmButtonProps) {
 }
 
 interface PlaceOrderModalProps {
-  renegadeConnection: RenegadeConnection;
   onClose: () => void;
   activeDirection: "buy" | "sell";
   activeBaseTicker: string;
@@ -61,6 +62,8 @@ export default class PlaceOrderModal extends React.Component<
   PlaceOrderModalProps,
   PlaceOrderModalState
 > {
+  static contextType = RenegadeConnectionContext;
+
   constructor(props: PlaceOrderModalProps) {
     super(props);
     this.state = {
@@ -75,11 +78,12 @@ export default class PlaceOrderModal extends React.Component<
   }
 
   async queryMedianPrice() {
-    const healthStates =
-      await this.props.renegadeConnection.checkExchangeHealthStates(
-        TICKER_TO_ADDR[this.props.activeBaseTicker],
-        TICKER_TO_ADDR[this.props.activeQuoteTicker],
-      );
+    const healthStates = await (
+      this.context as RenegadeConnection
+    ).checkExchangeHealthStates(
+      TICKER_TO_ADDR[this.props.activeBaseTicker],
+      TICKER_TO_ADDR[this.props.activeQuoteTicker],
+    );
     if (healthStates["median"]["Nominal"]) {
       this.setState({ medianPriceReport: healthStates["median"]["Nominal"] });
     }

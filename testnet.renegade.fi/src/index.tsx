@@ -28,6 +28,7 @@ import MobileHeader from "./components/Mobile/Header";
 import KeyStore from "./connections/KeyStore";
 import RenegadeConnection from "./connections/RenegadeConnection";
 import KeyStoreContext from "./contexts/KeyStore";
+import RenegadeConnectionContext from "./contexts/RenegadeConnection";
 import "./css/animations.css";
 import "./css/fonts.css";
 import "./css/index.css";
@@ -244,7 +245,6 @@ function Testnet() {
         setGlobalModalState={setGlobalModalState}
       />
       <DesktopTradingInterface
-        renegadeConnection={renegadeConnection}
         onOpenGlobalModal={onOpen}
         isOpenGlobalModal={isOpen}
         setGlobalModalState={setGlobalModalState}
@@ -256,7 +256,6 @@ function Testnet() {
       />
       <DesktopFooter />
       <DesktopGlobalModal
-        renegadeConnection={renegadeConnection}
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
@@ -289,16 +288,18 @@ function Testnet() {
           "--ck-focus-color": "#ffffff",
         }}
       >
-        <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
-          <Flex
-            flexDirection="column"
-            width="100vw"
-            minHeight="100vh"
-            overflowX="hidden"
-          >
-            {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
-          </Flex>
-        </KeyStoreContext.Provider>
+        <RenegadeConnectionContext.Provider value={renegadeConnection}>
+          <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
+            <Flex
+              flexDirection="column"
+              width="100vw"
+              minHeight="100vh"
+              overflowX="hidden"
+            >
+              {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
+            </Flex>
+          </KeyStoreContext.Provider>
+        </RenegadeConnectionContext.Provider>
       </ConnectKitProvider>
     </WagmiConfig>
   );

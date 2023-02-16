@@ -2,21 +2,10 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { Button, Flex, HStack, Image, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../../connections/RenegadeConnection";
 import backgroundPattern from "../../icons/background_pattern.png";
 import logoDark from "../../icons/logo_dark.svg";
 import AllTokensBanner from "../Common/Banners/AllTokens";
 import ExchangeConnectionsBanner from "../Common/Banners/ExchangeConnections";
-
-// Create a connection to a relayer
-const renegadeConnection = new RenegadeConnection({
-  relayerUrl: "stage.relayer.renegade.fi",
-  // relayerUrl: "127.0.0.1",
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useTls: true,
-  // useTls: false,
-});
 
 function BodyText() {
   return (
@@ -81,10 +70,9 @@ export default function Body() {
       width="100%"
       height="220vw"
     >
-      <AllTokensBanner renegadeConnection={renegadeConnection} isMobile />
+      <AllTokensBanner isMobile />
       <BodyText />
       <ExchangeConnectionsBanner
-        renegadeConnection={renegadeConnection}
         activeBaseTicker="WBTC"
         activeQuoteTicker="USDC"
         isMobile

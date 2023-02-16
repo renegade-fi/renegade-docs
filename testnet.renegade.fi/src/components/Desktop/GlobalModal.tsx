@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../../connections/RenegadeConnection";
 import PlaceOrderModal from "./Modals/PlaceOrder";
 import SignInModal from "./Modals/SignIn";
 
@@ -20,7 +19,6 @@ export type GlobalModalState =
   | "place-order";
 
 interface GlobalModalProps {
-  renegadeConnection: RenegadeConnection;
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
@@ -59,7 +57,6 @@ export default function GlobalModal(props: GlobalModalProps) {
           )}
           {props.globalModalState === "place-order" && (
             <PlaceOrderModal
-              renegadeConnection={props.renegadeConnection}
               onClose={props.onClose}
               activeDirection={props.activeDirection}
               activeBaseTicker={props.activeBaseTicker}

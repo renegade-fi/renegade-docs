@@ -3,7 +3,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 
-import RenegadeConnection from "../../../connections/RenegadeConnection";
 import { Panel } from "../../Common/Panel";
 
 interface OrdersPanelProps {
@@ -74,7 +73,6 @@ function CounterpartiesPanel() {
 }
 
 interface OrdersAndCounterpartiesPanelExpandedProps {
-  renegadeConnection: RenegadeConnection;
   isLocked: boolean;
   toggleIsLocked: () => void;
 }
@@ -100,7 +98,6 @@ function OrdersAndCounterpartiesPanelExpanded(
 }
 
 interface OrdersAndCounterpartiesPanelProps {
-  renegadeConnection: RenegadeConnection;
   isOpenGlobalModal: boolean;
 }
 export default function OrdersAndCounterpartiesPanel(
@@ -111,7 +108,6 @@ export default function OrdersAndCounterpartiesPanel(
     <Panel
       panelExpanded={(isLocked, toggleIsLocked) => (
         <OrdersAndCounterpartiesPanelExpanded
-          renegadeConnection={props.renegadeConnection}
           isLocked={isLocked}
           toggleIsLocked={toggleIsLocked}
         />

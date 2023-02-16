@@ -2,9 +2,9 @@ import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import React from "react";
 
 import { TICKER_TO_ADDR } from "../../../../tokens";
-import RenegadeConnection, {
-  PriceReport,
-} from "../../../connections/RenegadeConnection";
+import RenegadeConnection from "../../../connections/RenegadeConnection";
+import { PriceReport } from "../../../connections/RenegadeConnection";
+import RenegadeConnectionContext from "../../../contexts/RenegadeConnection";
 import {
   BannerSeparator,
   Exchange,
@@ -41,7 +41,6 @@ function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
 }
 
 interface ExchangeConnectionTripleProps {
-  renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
   exchange: Exchange;
@@ -129,7 +128,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       <BannerSeparator flexGrow={1} link={link} />
       {showPrice && (
         <LivePrices
-          renegadeConnection={props.renegadeConnection}
           baseTicker={props.activeBaseTicker}
           quoteTicker={props.activeQuoteTicker}
           exchange={props.exchange}
@@ -166,7 +164,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
 }
 
 interface MedianTripleProps {
-  renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
   healthState: HealthState;
@@ -192,7 +189,6 @@ function MedianTriple(props: MedianTripleProps) {
       </Text>
       <BannerSeparator flexGrow={4} />
       <ExchangeConnectionTriple
-        renegadeConnection={props.renegadeConnection}
         activeBaseTicker={props.activeBaseTicker}
         activeQuoteTicker={props.activeQuoteTicker}
         exchange="median"
@@ -205,7 +201,6 @@ function MedianTriple(props: MedianTripleProps) {
 }
 
 interface ExchangeConnectionsBannerProps {
-  renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
   isMobile?: boolean;
@@ -226,6 +221,8 @@ export default class ExchangeConnectionsBanner extends React.Component<
   ExchangeConnectionsBannerProps,
   ExchangeConnectionsBannerState
 > {
+  static contextType = RenegadeConnectionContext;
+
   constructor(props: ExchangeConnectionsBannerProps) {
     super(props);
     this.state = this.defaultState();
@@ -240,7 +237,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
 
   async componentDidMount() {
     // Await the connection to the relayer
-    await this.props.renegadeConnection.awaitConnection();
+    await (this.context as RenegadeConnection).awaitConnection();
     // Periodically check for health, setting live/dead appropriately
     this.checkExchangeHealthStates();
     // Add listeners for mouse events
@@ -284,11 +281,12 @@ export default class ExchangeConnectionsBanner extends React.Component<
     if (this.props.activeBaseTicker === this.props.activeQuoteTicker) {
       return;
     }
-    const healthStates =
-      await this.props.renegadeConnection.checkExchangeHealthStates(
-        TICKER_TO_ADDR[this.props.activeBaseTicker],
-        TICKER_TO_ADDR[this.props.activeQuoteTicker],
-      );
+    const healthStates = await (
+      this.context as RenegadeConnection
+    ).checkExchangeHealthStates(
+      TICKER_TO_ADDR[this.props.activeBaseTicker],
+      TICKER_TO_ADDR[this.props.activeQuoteTicker],
+    );
     function getHealthState(
       priceReport: string | Record<string, PriceReport>,
     ): HealthState {
@@ -420,7 +418,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
         spacing="0px"
       >
         <MedianTriple
-          renegadeConnection={this.props.renegadeConnection}
           activeBaseTicker={this.props.activeBaseTicker}
           activeQuoteTicker={this.props.activeQuoteTicker}
           healthState={this.state.priceReporterHealthStates["median"]}
@@ -476,7 +473,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
               minWidth={this.props.isMobile ? undefined : "1200px"}
             >
               <ExchangeConnectionTriple
-                renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="binance"
@@ -485,7 +481,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
-                renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="coinbase"
@@ -494,7 +489,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
-                renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="kraken"
@@ -503,7 +497,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
-                renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="okx"
@@ -512,7 +505,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple
-                renegadeConnection={this.props.renegadeConnection}
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange="uniswapv3"

@@ -1,7 +1,6 @@
 import { Stack, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../../../connections/RenegadeConnection";
 import { LivePrices } from "../Banner";
 
 const DISPLAYED_TICKERS: [string, string][] = [
@@ -57,7 +56,6 @@ const DISPLAYED_TICKERS: [string, string][] = [
 ];
 
 interface TokenBannerSingleProps {
-  renegadeConnection: RenegadeConnection;
   baseTokenTicker: string;
   quoteTokenTicker: string;
   setOrderInfo?: (
@@ -92,7 +90,6 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
         {props.baseTokenTicker}
       </Text>
       <LivePrices
-        renegadeConnection={props.renegadeConnection}
         baseTicker={props.baseTokenTicker}
         quoteTicker={props.quoteTokenTicker}
         exchange="median"
@@ -104,8 +101,7 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
 }
 
 interface AllTokensBannerProps {
-  renegadeConnection: RenegadeConnection;
-  setOrderInfo: (
+  setOrderInfo?: (
     direction?: "buy" | "sell",
     baseTicker?: string,
     quoteTicker?: string,
@@ -150,7 +146,6 @@ export default class AllTokensBanner extends React.Component<
     const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
       return (
         <TokenBannerSingle
-          renegadeConnection={this.props.renegadeConnection}
           baseTokenTicker={tickers[0]}
           quoteTokenTicker={tickers[1]}
           setOrderInfo={this.props.setOrderInfo}

@@ -15,7 +15,6 @@ import { useAccount as useAccountWagmi } from "wagmi";
 
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
 import KeyStore from "../../connections/KeyStore";
-import RenegadeConnection from "../../connections/RenegadeConnection";
 import KeyStoreContext from "../../contexts/KeyStore";
 import { LivePrices } from "../Common/Banner";
 import { GlobalModalState } from "./GlobalModal";
@@ -304,7 +303,6 @@ const Selectable = React.forwardRef(
 Selectable.displayName = "selectable";
 
 interface PlaceOrderButtonProps {
-  renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   activeBaseTicker: string;
   activeQuoteTicker: string;
@@ -327,7 +325,6 @@ function PlaceOrderButton(props: PlaceOrderButtonProps) {
         <Text>Place Order for</Text>
         <Box fontFamily="Favorit Mono">
           <LivePrices
-            renegadeConnection={props.renegadeConnection}
             baseTicker={props.activeBaseTicker}
             quoteTicker={props.activeQuoteTicker}
             exchange="median"
@@ -394,7 +391,6 @@ function PlaceOrderButton(props: PlaceOrderButtonProps) {
 }
 
 interface TradingBodyProps {
-  renegadeConnection: RenegadeConnection;
   onOpenGlobalModal: () => void;
   activeDirection: "buy" | "sell";
   activeBaseTicker: string;
@@ -587,7 +583,6 @@ export default class TradingBody extends React.Component<
             </Text>
             <Box fontFamily="Favorit Mono">
               <LivePrices
-                renegadeConnection={this.props.renegadeConnection}
                 baseTicker={this.props.activeBaseTicker}
                 quoteTicker={this.props.activeQuoteTicker}
                 exchange="median"
@@ -598,7 +593,6 @@ export default class TradingBody extends React.Component<
           </HStack>
         </Box>
         <PlaceOrderButton
-          renegadeConnection={this.props.renegadeConnection}
           onOpenGlobalModal={this.props.onOpenGlobalModal}
           activeBaseTicker={this.props.activeBaseTicker}
           activeQuoteTicker={this.props.activeQuoteTicker}

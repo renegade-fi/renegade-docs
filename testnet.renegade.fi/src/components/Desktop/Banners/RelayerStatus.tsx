@@ -2,10 +2,10 @@ import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
 import RenegadeConnection from "../../../connections/RenegadeConnection";
+import RenegadeConnectionContext from "../../../contexts/RenegadeConnection";
 import { BannerSeparator, PulsingConnection } from "../../Common/Banner";
 
 interface RelayerStatusBannerProps {
-  renegadeConnection: RenegadeConnection;
   activeBaseTicker: string;
   activeQuoteTicker: string;
 }
@@ -21,6 +21,8 @@ export default class RelayerStatusBanner extends React.Component<
   RelayerStatusBannerProps,
   RelayerStatusBannerState
 > {
+  static contextType = RenegadeConnectionContext;
+
   constructor(props: RelayerStatusBannerProps) {
     super(props);
     this.state = {
@@ -51,7 +53,7 @@ export default class RelayerStatusBanner extends React.Component<
   }
 
   async pingRelayer() {
-    const isOk = await this.props.renegadeConnection.ping();
+    const isOk = await (this.context as RenegadeConnection).ping();
     if (isOk) {
       this.setState({ connectionState: "live" });
     } else {
