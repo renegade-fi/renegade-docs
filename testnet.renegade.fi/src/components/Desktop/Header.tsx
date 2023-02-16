@@ -32,11 +32,12 @@ function FancyUnderline(props: { children: React.ReactElement }) {
         setIsHovering(true);
         setIsCompleted(false);
         if (delay) clearTimeout(delay);
-        setDelay(setTimeout(() => setIsCompleted(true), 200));
+        setDelay(setTimeout(() => setIsCompleted(true), 250));
       }}
       onMouseLeave={() => {
         setIsHovering(false);
         if (delay) clearTimeout(delay);
+        setDelay(setTimeout(() => setIsCompleted(false), 250));
       }}
     >
       {React.cloneElement(props.children, {
@@ -49,21 +50,25 @@ function FancyUnderline(props: { children: React.ReactElement }) {
         opacity={isCompleted ? "0" : "1"}
         position="absolute"
         height="1.5px"
-        bottom="3px"
-        width={isHovering ? "100%" : "0%"}
+        width="100%"
+        bottom="2px"
         left="0"
+        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+        transformOrigin="left"
         backgroundColor={props.children.props.color || "white.80"}
-        transition="width 0.15s"
+        transition="transform 0.25s"
       />
       <Box
         opacity={isCompleted ? "1" : "0"}
         position="absolute"
         height="1.5px"
-        bottom="3px"
-        width={isHovering ? "100%" : "0%"}
+        width="100%"
+        bottom="2px"
         right="0"
+        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+        transformOrigin="right"
         backgroundColor={props.children.props.color || "white.80"}
-        transition="width 0.15s"
+        transition="transform 0.25s"
       />
     </Box>
   );
