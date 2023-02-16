@@ -480,12 +480,17 @@ export default class TradingBody extends React.Component<
   }
 
   getRefCoords(ref: React.RefObject<HTMLDivElement>): [number, number] {
-    if (!ref.current) {
+    if (!ref.current || !ref.current.offsetParent) {
       return [0, 0];
     }
     return [
-      ref.current.offsetLeft + ref.current.offsetWidth / 2,
-      ref.current.offsetTop + ref.current.offsetHeight / 2,
+      ref.current.offsetParent.offsetLeft +
+        ref.current.offsetLeft +
+        ref.current.offsetWidth / 2,
+      ref.current.offsetParent.offsetTop +
+        ref.current.offsetTop +
+        ref.current.offsetHeight / 2 +
+        (this.props.activeBaseTokenAmount ? -15 : 10),
     ];
   }
 
