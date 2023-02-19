@@ -4,13 +4,18 @@ import React from "react";
 import backgroundPattern from "../icons/background_pattern.svg";
 import logoDarkVertical from "../icons/logo_dark_vertical.svg";
 
-function FancyUnderline(props: { children: React.ReactElement }) {
+function FancyUnderline(props: {
+  padding?: string;
+  children: React.ReactElement;
+}) {
   const [isHovering, setIsHovering] = React.useState(false);
   const [isCompleted, setIsCompleted] = React.useState(false);
   const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null);
   return (
-    <Box
-      position="relative"
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+      padding={props.padding}
       onMouseEnter={() => {
         setIsHovering(true);
         setIsCompleted(false);
@@ -23,37 +28,39 @@ function FancyUnderline(props: { children: React.ReactElement }) {
         setDelay(setTimeout(() => setIsCompleted(false), 250));
       }}
     >
-      {React.cloneElement(props.children, {
-        textDecoration: "none",
-        _hover: {
+      <Box position="relative">
+        {React.cloneElement(props.children, {
           textDecoration: "none",
-        },
-      })}
-      <Box
-        opacity={isCompleted ? "0" : "1"}
-        position="absolute"
-        height="1.5px"
-        width="100%"
-        bottom="2px"
-        left="0"
-        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
-        transformOrigin="left"
-        backgroundColor={props.children.props.color || "#ccc"}
-        transition="transform 0.25s"
-      />
-      <Box
-        opacity={isCompleted ? "1" : "0"}
-        position="absolute"
-        height="1.5px"
-        width="100%"
-        bottom="2px"
-        right="0"
-        transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
-        transformOrigin="right"
-        backgroundColor={props.children.props.color || "#ccc"}
-        transition="transform 0.25s"
-      />
-    </Box>
+          _hover: {
+            textDecoration: "none",
+          },
+        })}
+        <Box
+          opacity={isCompleted ? "0" : "1"}
+          position="absolute"
+          height="1.5px"
+          width="100%"
+          bottom="2px"
+          left="0"
+          transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+          transformOrigin="left"
+          backgroundColor={props.children.props.color || "#ccc"}
+          transition="transform 0.25s"
+        />
+        <Box
+          opacity={isCompleted ? "1" : "0"}
+          position="absolute"
+          height="1.5px"
+          width="100%"
+          bottom="2px"
+          right="0"
+          transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
+          transformOrigin="right"
+          backgroundColor={props.children.props.color || "#ccc"}
+          transition="transform 0.25s"
+        />
+      </Box>
+    </Flex>
   );
 }
 
@@ -86,12 +93,17 @@ function AllLinks() {
         </FancyUnderline>
         <FancyUnderline>
           <Link href="https://whitepaper.renegade.fi" isExternal>
-            See the Whitepaper
+            Read the Whitepaper
           </Link>
         </FancyUnderline>
         <FancyUnderline>
           <Link href="https://docs.renegade.fi" isExternal>
-            Read the Docs
+            Browse the Docs
+          </Link>
+        </FancyUnderline>
+        <FancyUnderline>
+          <Link href="https://github.com/renegade-fi" isExternal>
+            See the Code
           </Link>
         </FancyUnderline>
       </Flex>
@@ -166,7 +178,7 @@ function AllLinks() {
         </FancyUnderline>
         <FancyUnderline>
           <Link href="https://renegadefi.substack.com" isExternal>
-            Read our Substack
+            Read the Substack
           </Link>
         </FancyUnderline>
         <FancyUnderline>
@@ -218,12 +230,12 @@ function VerticalLogo(props: VerticalLogoProps) {
         position="fixed"
         zIndex="2"
         bg="black"
+        padding="0"
         left={props.clickX + 2}
         top={props.clickY - 20}
-        padding="10px"
         border="1px"
-        borderColor="#888"
-        borderRadius="5px"
+        borderColor="#aaa"
+        borderRadius="0px"
         fontSize="0.7em"
         onClick={() => {
           if (!props.showMenu) {
@@ -233,10 +245,12 @@ function VerticalLogo(props: VerticalLogoProps) {
           window.open("/logos.zip", "_blank");
         }}
         _hover={{
-          backgroundColor: "#333",
+          backgroundColor: "black",
         }}
       >
-        Download Logo Pack
+        <FancyUnderline padding="10px">
+          <Text>Download Logo Pack</Text>
+        </FancyUnderline>
       </Button>
     </Box>
   );

@@ -55,7 +55,7 @@ export default function LandingPageMobile() {
           paddingTop="10px"
           fontFamily="Aime"
           fontSize="6vw"
-          fontWeight="600"
+          fontWeight="400"
           className="fade-in-left"
         >
           On-Chain Dark Pool
@@ -69,84 +69,102 @@ export default function LandingPageMobile() {
       <Flex
         paddingTop="80px"
         flexDirection="column"
-        alignItems="center"
+        alignItems="flex-start"
+        alignSelf="flex-start"
+        paddingLeft="10%"
         fontWeight="300"
+        fontSize="0.9em"
+        color="#ccc"
         className={inViewLinksFirst ? "fade-in-right" : "pre-animation"}
         ref={refLinksFirst}
       >
         <Link
+          href="https://renegadefi.typeform.com/access"
           isExternal
           fontWeight="700"
-          href="https://renegadefi.typeform.com/access"
+          fontSize="1.3em"
+          color="white"
         >
           Get Network Access
         </Link>
-        <Link isExternal href="https://whitepaper.renegade.fi">
-          See the Whitepaper
+        <Link href="https://whitepaper.renegade.fi" isExternal>
+          Read the Whitepaper
         </Link>
-        <Link isExternal href="https://docs.renegade.fi">
-          Read the Docs
+        <Link href="https://docs.renegade.fi" isExternal>
+          Browse the Docs
+        </Link>
+        <Link href="https://github.com/renegade-fi" isExternal>
+          See the Code
         </Link>
       </Flex>
       <Flex
-        paddingTop="50px"
+        paddingTop="80px"
         flexDirection="column"
-        alignItems="center"
+        alignItems="flex-end"
+        alignSelf="flex-end"
+        paddingRight="10%"
         fontWeight="300"
-        className={inViewLinksSecond ? "fade-in-left" : "pre-animation"}
-        ref={refLinksSecond}
-        sx={{ animationDelay: "0.15s" }}
-      >
-        <Text fontWeight="700">Our Investors</Text>
-        <Flex
-          flexDirection="column"
-          alignItems="center"
-          fontSize="4vw"
-          lineHeight="140%"
-          opacity="80%"
-        >
-          <Link isExternal href="https://twitter.com/dragonfly_xyz">
-            Dragonfly
-          </Link>
-          <Link isExternal href="https://twitter.com/naval">
-            Naval Ravikant
-          </Link>
-          <Link isExternal href="https://twitter.com/robotventures">
-            Robot Ventures
-          </Link>
-          <Link isExternal href="https://twitter.com/balajis">
-            Balaji Srinivasan
-          </Link>
-          <Link isExternal href="https://symbolic.partners">
-            Symbolic Partners
-          </Link>
-        </Flex>
-      </Flex>
-      <Flex
-        paddingTop="50px"
-        flexDirection="column"
-        alignItems="center"
-        fontWeight="300"
-        className={inViewLinksThird ? "fade-in-right" : "pre-animation"}
+        fontSize="0.9em"
+        color="#ccc"
+        className={inViewLinksThird ? "fade-in-left" : "pre-animation"}
         ref={refLinksThird}
         sx={{ animationDelay: "0.3s" }}
       >
         <Link
+          href="https://twitter.com/renegade_fi"
           isExternal
           fontWeight="700"
-          href="https://twitter.com/renegade_fi"
+          fontSize="1.3em"
+          color="white"
         >
-          Follow us on Twitter
+          Follow on Twitter
         </Link>
-        <Link isExternal href="https://renegadefi.substack.com">
-          Read our Substack
+        <Link href="https://renegadefi.substack.com" isExternal>
+          Read the Substack
         </Link>
-        <Link isExternal href="https://discord.gg/renegade-fi">
+        <Link href="https://discord.gg/renegade-fi" isExternal>
           Join the Discord
         </Link>
-        <Link isExternal href="https://jobs.renegade.fi">
+        <Link href="https://jobs.renegade.fi" isExternal>
           Work with Us
         </Link>
+      </Flex>
+      <Flex
+        paddingTop="80px"
+        flexDirection="column"
+        alignItems="flex-start"
+        alignSelf="flex-start"
+        paddingLeft="10%"
+        fontWeight="300"
+        fontSize="0.9em"
+        color="#ccc"
+        className={inViewLinksSecond ? "fade-in-right" : "pre-animation"}
+        ref={refLinksSecond}
+        sx={{ animationDelay: "0.15s" }}
+      >
+        <Text fontWeight="700" fontSize="1.3em" color="white">
+          Proudly Backed By
+        </Text>
+        <Flex flexDirection="column" alignItems="flex-start">
+          <Flex gap="5px">
+            <Link href="https://twitter.com/dragonfly_xyz" isExternal>
+              Dragonfly
+            </Link>
+            {" & "}
+            <Link href="https://twitter.com/naval" isExternal>
+              Naval
+            </Link>
+          </Flex>
+          <Link href="https://twitter.com/robotventures" isExternal>
+            Robot Ventures
+          </Link>
+          <Link href="https://twitter.com/balajis" isExternal>
+            Balaji Srinivasan
+          </Link>
+          <Link href="https://symbolic.partners" isExternal>
+            Symbolic Partners
+          </Link>
+        </Flex>
       </Flex>
     </Flex>
   );
