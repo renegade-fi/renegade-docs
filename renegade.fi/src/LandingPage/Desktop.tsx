@@ -409,6 +409,7 @@ export default class LandingPageDesktop extends React.Component<
                 fontWeight="300"
                 fontSize="calc(0.13 * (2vw + 70px))" /* 0.8vw */
                 letterSpacing="calc(0.2 * (2vw + 70px))" /* 1.2vw */
+                marginLeft="calc(0.05 * (2vw + 70px))"
                 marginRight="calc(-0.2 * (2vw + 70px))" /* -1.2vw */
                 paddingTop="15px"
                 className="fade-in-compress"
