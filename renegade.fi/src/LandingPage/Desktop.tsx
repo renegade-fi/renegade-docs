@@ -268,7 +268,7 @@ function Overlay(props: OverlayProps) {
       right="0"
       top="0"
       bottom="0"
-      backdropFilter={props.showMenu ? "brightness(50%)" : ""}
+      backdropFilter={props.showMenu ? "brightness(50%)" : "brightness(100%)"}
       transition="0.3s ease"
       userSelect="none"
       onClick={() => {

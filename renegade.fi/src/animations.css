@@ -1,8 +1,6 @@
 :root {
   --animation-duration: 0.75s;
   --slide-in-distance: 15px;
-  --compress-letter-spacing-start: calc(0.23 * (2vw + 70px)); /* 1.4vw */
-  --compress-letter-spacing-end: calc(0.2 * (2vw + 70px)); /* 1.2vw */
 }
 
 .pre-animation {
@@ -74,10 +72,10 @@
 
 @keyframes compress {
   0% {
-    letter-spacing: var(--compress-letter-spacing-start);
+    transform: scaleX(1.1);
   }
   100% {
-    letter-spacing: var(--compress-letter-spacing-end);
+    transform: scaleX(1);
   }
 }
 
