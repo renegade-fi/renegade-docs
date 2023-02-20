@@ -10,8 +10,11 @@ description: Frequently Asked Questions about Renegade.
 The project is under active development. As of Feburuary 2023, we have
 implemented core handshakes, SPDZ, and Bulletproofs primitives, and have begun
 work on circuit implementations, interface design, and bridging. A public
-testnet is expected in Q2 2023. You can follow along with our open-source code
-on [GitHub](https://github.com/renegade-fi).
+testnet is expected in Q2 2023.
+
+For priority access onto the whitelisted testnet, [sign up
+here](https://renegadefi.typeform.com/access). Otherwise, you can follow along
+with our open-source code on [GitHub](https://github.com/renegade-fi).
 
 ### Midpoint prices sound too good to be true. What's the tradeoff?
 The core tradeoff in Renegade (and dark pools in general) is
@@ -30,9 +33,7 @@ more details.
 
 ### What blockchain is Renegade built on?
 Peer discovery and order matching occurs on our independent p2p gossip network.
-Consensus and security is inherited from Ethereum via StarkNet. We expect to
-migrate the network to our own sovereign rollup or similar as that technology
-comes online.
+Consensus and security is inherited from Ethereum via StarkNet.
 
 ### Does Renegade use Trusted Execution Environments?
 No, trusted execution environments (including Intel SGX) have been [broken many

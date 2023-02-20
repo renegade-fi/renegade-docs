@@ -30,7 +30,7 @@ parties.
   LightImage={MpcIdealLight}
   DarkImage={MpcIdealDark}
   isSvg={true}
-  caption="The idealized version of MPC with a trusted evaluator."
+  caption="The idealized version of MPC with a trusted evaluator. The actual MPC protocol does not require a trusted party."
   width="50%"
   widthMobile="90%"
 />
@@ -73,10 +73,10 @@ explainer.
 
 ## Using MPC for Dark Pools
 
-In the context of a dark pool, the use of MPC is pretty natural: The private
-inputs are each trader's personal order book, and the output of the MPC is a
-list of any tokens that have been swapped as a result of executing the matching
-engine on the pairs of order books.
+In the context of a dark pool, the use of MPC is natural: The private inputs
+are each trader's personal order book, and the output of the MPC is a list of
+any tokens that have been swapped as a result of executing the matching engine
+on the pairs of order books.
 
 <Figure
   LightImage={MatchingEngineLight}

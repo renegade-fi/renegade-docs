@@ -5,9 +5,9 @@ description: Exchange fees and governance ability for Renegade.
 
 # Fees and Governance
 
-:::caution
-All fees and governance parameters may change in advance of mainnet launch.
-:::
+<div style={{ marginBottom: -15 }}>
+  <i>Note: All fees and governance parameters may change in advance of mainnet launch.</i>
+</div>
 
 ## Gas Fees
 

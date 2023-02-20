@@ -87,7 +87,14 @@ Super Relayers, see the [Advanced Concepts](/advanced-concepts/ioi).  And
 finally, for the most precise description of the protocol, see the detailed
 [Whitepaper](/getting-started/whitepaper).
 
-## Contact Information
+## Get Access to Renegade
+
+Renegade is currently in an internal testnet, with a public testnet expected in
+Q2 2023. The network will be rolled out to whitelisted testnet participants
+over time: [Sign up here](https://renegadefi.typeform.com/access) for priority
+access.
+
+Otherwise, feel free to contact us with any questions or feedback:
 - [@renegade_fi](https://twitter.com/renegade_fi) on Twitter.
 - [chris@renegade.fi](mailto:chris@renegade.fi) via email.
 - [Discord](https://discord.gg/renegade-fi) for quick questions.
