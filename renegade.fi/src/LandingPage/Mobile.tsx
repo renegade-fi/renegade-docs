@@ -1,9 +1,10 @@
 import { ArrowDownIcon } from "@chakra-ui/icons";
-import { Box, Flex, Image, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Image, Link, Text } from "@chakra-ui/react";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 
 import backgroundPatternVertical from "../icons/background_pattern_vertical.svg";
+import dragonflyLogo from "../icons/dragonfly_logo.svg";
 import logoDark from "../icons/logo_dark.svg";
 
 export default function LandingPageMobile() {
@@ -146,15 +147,17 @@ export default function LandingPageMobile() {
           Proudly Backed By
         </Text>
         <Flex flexDirection="column" alignItems="flex-start">
-          <Flex gap="5px">
-            <Link href="https://twitter.com/dragonfly_xyz" isExternal>
-              Dragonfly
-            </Link>
-            {" & "}
-            <Link href="https://twitter.com/naval" isExternal>
-              Naval
-            </Link>
-          </Flex>
+          <Link href="https://twitter.com/dragonfly_xyz" isExternal>
+            <HStack spacing="5px">
+              <Text>Dragonfly</Text>
+              <Image
+                paddingTop="3px"
+                src={dragonflyLogo}
+                height="16px"
+                opacity="80%"
+              />
+            </HStack>
+          </Link>
           <Link href="https://twitter.com/robotventures" isExternal>
             Robot Ventures
           </Link>

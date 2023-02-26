@@ -1,7 +1,8 @@
-import { Box, Button, Flex, Image, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, HStack, Image, Link, Text } from "@chakra-ui/react";
 import React from "react";
 
 import backgroundPattern from "../icons/background_pattern.svg";
+import dragonflyLogo from "../icons/dragonfly_logo.svg";
 import logoDarkVertical from "../icons/logo_dark_vertical.svg";
 
 function FancyUnderline(props: {
@@ -125,19 +126,19 @@ function AllLinks() {
           lineHeight="125%"
           fontSize="0.9em"
         >
-          <Flex gap="5px">
-            <FancyUnderline>
-              <Link href="https://twitter.com/dragonfly_xyz" isExternal>
-                Dragonfly
-              </Link>
-            </FancyUnderline>
-            {" & "}
-            <FancyUnderline>
-              <Link href="https://twitter.com/naval" isExternal>
-                Naval
-              </Link>
-            </FancyUnderline>
-          </Flex>
+          <FancyUnderline>
+            <Link href="https://twitter.com/dragonfly_xyz" isExternal>
+              <HStack spacing="5px">
+                <Text>Dragonfly</Text>
+                <Image
+                  paddingTop="3px"
+                  src={dragonflyLogo}
+                  height="16px"
+                  opacity="80%"
+                />
+              </HStack>
+            </Link>
+          </FancyUnderline>
           <FancyUnderline>
             <Link href="https://twitter.com/robotventures" isExternal>
               Robot Ventures
