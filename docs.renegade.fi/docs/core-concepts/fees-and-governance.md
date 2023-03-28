@@ -39,8 +39,8 @@ following authority:
 - Flip a boolean flag to halt all deposits into the exchange. This authority
   would be used in the event of exploits or to migrate the exchange to a new
   deployment.
-- Mutate the global in-protocol fee, capped to 1 basis point for each side of
-  the trade. The fee may be changed anywhere in the [0, 1] basis point range,
+- Mutate the global in-protocol fee, capped to 2 basis points for each side of
+  the trade. The fee may be changed anywhere in the [0, 2] basis point range,
   including turning off the fee entirely.
 - Change the public key where the in-protocol fees are sent.
 - Delegate the above authorities to a new address, or change the authority to a
