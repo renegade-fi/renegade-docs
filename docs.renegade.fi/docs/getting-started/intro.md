@@ -41,15 +41,17 @@ markets, ultimately giving you better prices and optimal execution:
 1. **Post-trade privacy**. After an order is filled, only the counterparty
    learns what assets were swapped. This prevents third-parties from tracking
    and copying your trading strategies.
-1. **Minimal MEV**. Since validators only ever see zero-knowledge proofs of
+1. **Zero MEV**. Since validators only ever see zero-knowledge proofs of
    valid trades, there is no ability for block producers to front-run, back-run,
    or sandwich your trades.
+1. **Midpoint execution**. All trades clear directly at the real-time aggregate
+   CEX midpoint price. Trades do not need to cross a spread, and there is never
+   any slippage.
 
 By default, trades on Renegade are **anonymous crosses** that trade at the
-theoretically-optimal midpoint price, with no market makers taking a spread.
-However, Renegade optionally implements [Indications of
-Interest](/advanced-concepts/ioi) to allow for full price discovery and better
-liquidity provision.
+theoretically-optimal midpoint price. However, Renegade optionally implements
+[Indications of Interest](/advanced-concepts/ioi) to allow for full price
+discovery and better liquidity provision.
 
 ## Who uses Renegade?
 
