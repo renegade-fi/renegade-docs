@@ -120,7 +120,7 @@ export default function LandingPageMobile() {
         >
           Follow on Twitter
         </Link>
-        <Link href="https://renegadefi.substack.com" isExternal>
+        <Link href="https://substack.renegade.fi" isExternal>
           Read the Substack
         </Link>
         <Link href="https://discord.gg/renegade-fi" isExternal>

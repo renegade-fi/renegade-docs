@@ -178,7 +178,7 @@ function AllLinks() {
           </Link>
         </FancyUnderline>
         <FancyUnderline>
-          <Link href="https://renegadefi.substack.com" isExternal>
+          <Link href="https://substack.renegade.fi" isExternal>
             Read the Substack
           </Link>
         </FancyUnderline>
