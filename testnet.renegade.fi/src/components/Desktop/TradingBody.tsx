@@ -9,13 +9,13 @@ import {
   Text,
   keyframes,
 } from "@chakra-ui/react";
+import { Exchange } from "@renegade-fi/renegade-js";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 import { useAccount as useAccountWagmi } from "wagmi";
 
 import { TICKER_TO_LOGO_URL_HANDLE } from "../../../tokens";
-import KeyStore from "../../connections/KeyStore";
-import KeyStoreContext from "../../contexts/KeyStore";
+import RenegadeContext from "../../contexts/RenegadeContext";
 import { LivePrices } from "../Common/Banner";
 import { GlobalModalState } from "./GlobalModal";
 
@@ -312,8 +312,8 @@ interface PlaceOrderButtonProps {
 function PlaceOrderButton(props: PlaceOrderButtonProps) {
   const { address } = useAccountWagmi();
   const { setOpen } = useModalConnectKit();
-  const [keyStoreState] = React.useContext(KeyStoreContext);
-  const isSignedIn = !KeyStore.isUnpopulated(keyStoreState);
+  const { accountId } = React.useContext(RenegadeContext);
+  const isSignedIn = accountId !== undefined;
   let placeOrderButtonContent: React.ReactElement;
   if (!address) {
     placeOrderButtonContent = <Text>Connect Wallet to Place Orders</Text>;
@@ -327,7 +327,7 @@ function PlaceOrderButton(props: PlaceOrderButtonProps) {
           <LivePrices
             baseTicker={props.activeBaseTicker}
             quoteTicker={props.activeQuoteTicker}
-            exchange="median"
+            exchange={Exchange.Median}
             onlyShowPrice
             withCommas
             scaleBy={props.activeBaseTokenAmount}
@@ -484,9 +484,11 @@ export default class TradingBody extends React.Component<
       return [0, 0];
     }
     return [
+      // @ts-ignore
       ref.current.offsetParent.offsetLeft +
         ref.current.offsetLeft +
         ref.current.offsetWidth / 2,
+      // @ts-ignore
       ref.current.offsetParent.offsetTop +
         ref.current.offsetTop +
         ref.current.offsetHeight / 2 +
@@ -590,7 +592,7 @@ export default class TradingBody extends React.Component<
               <LivePrices
                 baseTicker={this.props.activeBaseTicker}
                 quoteTicker={this.props.activeQuoteTicker}
-                exchange="median"
+                exchange={Exchange.Median}
                 onlyShowPrice
                 withCommas
               />

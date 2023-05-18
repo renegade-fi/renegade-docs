@@ -1,13 +1,12 @@
 import { Button, Flex, HStack, Spinner, Text } from "@chakra-ui/react";
+import { Order, Token } from "@renegade-fi/renegade-js";
 import React from "react";
 
-import { TICKER_TO_ADDR } from "../../../../tokens";
-import RenegadeConnection from "../../../connections/RenegadeConnection";
-import {
+import RenegadeContext, {
   DEFAULT_PRICE_REPORT,
   PriceReport,
-} from "../../../connections/RenegadeConnection";
-import RenegadeConnectionContext from "../../../contexts/RenegadeConnection";
+  RenegadeContextType,
+} from "../../../contexts/RenegadeContext";
 
 const SLIPPAGE_TOLERANCE = 1.05;
 
@@ -62,7 +61,7 @@ export default class PlaceOrderModal extends React.Component<
   PlaceOrderModalProps,
   PlaceOrderModalState
 > {
-  static contextType = RenegadeConnectionContext;
+  static contextType = RenegadeContext;
 
   constructor(props: PlaceOrderModalProps) {
     super(props);
@@ -77,21 +76,46 @@ export default class PlaceOrderModal extends React.Component<
     await this.queryMedianPrice();
   }
 
+  getLimitPrice(): number {
+    let limitPrice =
+      this.props.activeBaseTokenAmount *
+      this.state.medianPriceReport.midpointPrice;
+    if (this.props.activeDirection === "buy") {
+      limitPrice *= SLIPPAGE_TOLERANCE;
+    } else {
+      limitPrice /= SLIPPAGE_TOLERANCE;
+    }
+    return limitPrice;
+  }
+
   async queryMedianPrice() {
-    const healthStates = await (
-      this.context as RenegadeConnection
-    ).checkExchangeHealthStates(
-      TICKER_TO_ADDR[this.props.activeBaseTicker],
-      TICKER_TO_ADDR[this.props.activeQuoteTicker],
+    const { renegade } = this.context as RenegadeContextType;
+    const healthStates = await renegade?.queryExchangeHealthStates(
+      new Token({ ticker: this.props.activeBaseTicker }),
+      new Token({ ticker: this.props.activeQuoteTicker }),
     );
     if (healthStates["median"]["Nominal"]) {
       this.setState({ medianPriceReport: healthStates["median"]["Nominal"] });
     }
   }
 
-  placeOrder() {
-    // TODO: Actually submit the order to the relayer
+  async placeOrder() {
     this.setState({ isPlacingOrder: true });
+    const { renegade, accountId, setTask } = this
+      .context as RenegadeContextType;
+    if (!renegade || !accountId) {
+      return;
+    }
+    const order = new Order({
+      baseToken: new Token({ ticker: this.props.activeBaseTicker }),
+      quoteToken: new Token({ ticker: this.props.activeQuoteTicker }),
+      side: this.props.activeDirection,
+      type: "limit",
+      amount: BigInt(this.props.activeBaseTokenAmount),
+      price: this.getLimitPrice(),
+    });
+    const [taskId] = await renegade.task.placeOrder(accountId, order);
+    setTask(taskId);
     setTimeout(() => {
       this.props.setOrderInfo(undefined, undefined, undefined, 0);
       this.props.onClose();
@@ -100,14 +124,6 @@ export default class PlaceOrderModal extends React.Component<
   }
 
   render() {
-    let limitAmount =
-      this.props.activeBaseTokenAmount *
-      this.state.medianPriceReport.midpointPrice;
-    if (this.props.activeDirection === "buy") {
-      limitAmount *= SLIPPAGE_TOLERANCE;
-    } else {
-      limitAmount /= SLIPPAGE_TOLERANCE;
-    }
     return (
       <Flex flexDirection="column" justifyContent="center" alignItems="center">
         <Flex
@@ -164,7 +180,9 @@ export default class PlaceOrderModal extends React.Component<
               <Text color="white">
                 {this.state.medianPriceReport === DEFAULT_PRICE_REPORT
                   ? "?????"
-                  : limitAmount.toFixed(2) + " " + this.props.activeQuoteTicker}
+                  : this.getLimitPrice().toFixed(2) +
+                    " " +
+                    this.props.activeQuoteTicker}
               </Text>
             </Flex>
           </Flex>

@@ -1,4 +1,5 @@
 import { Stack, Text } from "@chakra-ui/react";
+import { Exchange } from "@renegade-fi/renegade-js";
 import React from "react";
 
 import { LivePrices } from "../Banner";
@@ -92,7 +93,7 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
       <LivePrices
         baseTicker={props.baseTokenTicker}
         quoteTicker={props.quoteTokenTicker}
-        exchange="median"
+        exchange={Exchange.Median}
         isMobile={props.isMobile}
         shouldRotate={props.isMobile}
       />
@@ -181,6 +182,7 @@ export default class AllTokensBanner extends React.Component<
 
   async componentDidMount() {
     window.addEventListener("mouseup", this.onMouseUp);
+    // @ts-ignore
     window.addEventListener("mousemove", this.onMouseMove);
     if (!this.props.isMobile) {
       this.performScroll();

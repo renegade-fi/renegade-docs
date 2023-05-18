@@ -16,8 +16,8 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi";
 
-import KeyStore from "../../connections/KeyStore";
-import KeyStoreContext from "../../contexts/KeyStore";
+import RenegadeContext from "../../contexts/RenegadeContext";
+// @ts-ignore
 import glyphDark from "../../icons/glyph_dark.svg";
 import { GlobalModalState } from "./GlobalModal";
 
@@ -140,11 +140,11 @@ interface SignInButtonProps {
 function SignInButton(props: SignInButtonProps) {
   const { address } = useAccountWagmi();
   const { data } = useEnsNameWagmi({ address });
-  const [keyStoreState] = React.useContext(KeyStoreContext);
+  const { accountId } = React.useContext(RenegadeContext);
   if (!address) {
     return null;
   }
-  if (!KeyStore.isUnpopulated(keyStoreState)) {
+  if (accountId) {
     return null;
   }
 
@@ -187,11 +187,11 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi();
   const { address } = useAccountWagmi();
   const { data } = useEnsNameWagmi({ address });
-  const [keyStoreState, setKeyStoreState] = React.useContext(KeyStoreContext);
   if (!address) {
     return null;
   }
-  if (KeyStore.isUnpopulated(keyStoreState)) {
+  const { accountId, setAccount } = React.useContext(RenegadeContext);
+  if (!accountId) {
     return null;
   }
 
@@ -217,7 +217,7 @@ function DisconnectWalletButton() {
       variant="wallet-connect"
       background="white.10"
       onClick={() => {
-        setKeyStoreState(KeyStore.default());
+        setAccount(accountId, undefined);
         disconnect();
       }}
     >

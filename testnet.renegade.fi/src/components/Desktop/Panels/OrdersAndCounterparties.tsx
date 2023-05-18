@@ -3,6 +3,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 
+import RenegadeContext from "../../../contexts/RenegadeContext";
 import { Panel } from "../../Common/Panel";
 
 interface OrdersPanelProps {
@@ -10,6 +11,13 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void;
 }
 function OrdersPanel(props: OrdersPanelProps) {
+  const { renegade, accountId } = React.useContext(RenegadeContext);
+  const orders = accountId ? renegade?.getOrders(accountId) : null;
+  const serializedOrders = orders
+    ? JSON.stringify(orders, (k, v) =>
+        typeof v === "bigint" ? v.toString() : v,
+      )
+    : null;
   return (
     <>
       <Flex
@@ -45,6 +53,7 @@ function OrdersPanel(props: OrdersPanelProps) {
       </Flex>
       <Flex flexDirection="column" flexGrow="1">
         <Box height="10px" />
+        <Text>Orders: {serializedOrders}</Text>
       </Flex>
     </>
   );

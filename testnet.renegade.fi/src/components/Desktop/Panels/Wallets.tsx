@@ -5,6 +5,7 @@ import {
   UnlockIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
+import { Exchange } from "@renegade-fi/renegade-js";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 import {
@@ -13,8 +14,7 @@ import {
 } from "wagmi";
 
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
-import KeyStore from "../../../connections/KeyStore";
-import KeyStoreContext from "../../../contexts/KeyStore";
+import RenegadeContext from "../../../contexts/RenegadeContext";
 import { LivePrices } from "../../Common/Banner";
 import { Panel, expandedPanelWidth } from "../../Common/Panel";
 import { GlobalModalState } from "../GlobalModal";
@@ -71,7 +71,7 @@ function TokenBalance(props: TokenBalanceProps) {
           <LivePrices
             baseTicker={ADDR_TO_TICKER[props.tokenAddr]}
             quoteTicker={"USDC"}
-            exchange="median"
+            exchange={Exchange.Median}
             onlyShowPrice
             scaleBy={Number.parseFloat(data.formatted)}
           />
@@ -123,11 +123,9 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
       <>
         <Box height="10px" />
         {Object.keys(ADDR_TO_TICKER).map((tokenAddr) => (
-          <TokenBalance
-            userAddr={address}
-            tokenAddr={tokenAddr}
-            key={tokenAddr}
-          />
+          <Box width="100%" key={tokenAddr}>
+            <TokenBalance userAddr={address} tokenAddr={tokenAddr} />
+          </Box>
         ))}
         <Box height="10px" />
       </>
@@ -246,10 +244,10 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi();
-  const [keyStoreState] = React.useContext(KeyStoreContext);
+  const { renegade, accountId } = React.useContext(RenegadeContext);
   let panelBody: React.ReactElement;
 
-  if (KeyStore.isUnpopulated(keyStoreState)) {
+  if (!accountId) {
     panelBody = (
       <Flex
         flexDirection="column"
@@ -288,17 +286,13 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       </Flex>
     );
   } else {
-    const root = keyStoreState.renegadeKeypairs.root.publicKey;
-    const match = keyStoreState.renegadeKeypairs.match.publicKey;
-    const settle = keyStoreState.renegadeKeypairs.settle.publicKey;
-    const view = keyStoreState.renegadeKeypairs.view.publicKey;
+    const balances = renegade?.getBalances(accountId);
     panelBody = (
       <Box fontSize="0.9em" color="white.60">
         <Box height="10px" />
-        <Text>rng-root-{root && root.toString("hex").slice(0, 12)}</Text>
-        <Text>rng-match-{match && match.toString("hex").slice(0, 12)}</Text>
-        <Text>rng-settle-{settle && settle.toString("hex").slice(0, 12)}</Text>
-        <Text>rng-view-{view && view.toString("hex").slice(0, 12)}</Text>
+        <Text>Signed in to Renegade</Text>
+        <Text>AccountId: {accountId.toString()}</Text>
+        <Text>Balances: {JSON.stringify(balances)}</Text>
       </Box>
     );
   }

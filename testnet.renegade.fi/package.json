@@ -5,9 +5,8 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "^2.3.4",
-    "@noble/ed25519": "^1.7.1",
+    "@renegade-fi/renegade-js": "=0.2.1",
     "@wagmi/chains": "^0.1.11",
-    "bn.js": "^5.2.1",
     "connectkit": "1.0.0",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
@@ -54,6 +53,7 @@
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "buffer": "^5.7.1",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-config-standard": "^16.0.3",

@@ -9,7 +9,14 @@ import {
   keyframes,
   useBreakpointValue,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import {
+  AccountId,
+  Keychain,
+  Renegade,
+  TaskId,
+} from "@renegade-fi/renegade-js";
 import { mainnet } from "@wagmi/chains";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import React from "react";
@@ -25,10 +32,7 @@ import DesktopHeader from "./components/Desktop/Header";
 import DesktopTradingInterface from "./components/Desktop/TradingInterface";
 import MobileBody from "./components/Mobile/Body";
 import MobileHeader from "./components/Mobile/Header";
-import KeyStore from "./connections/KeyStore";
-import RenegadeConnection from "./connections/RenegadeConnection";
-import KeyStoreContext from "./contexts/KeyStore";
-import RenegadeConnectionContext from "./contexts/RenegadeConnection";
+import RenegadeContext from "./contexts/RenegadeContext";
 import "./css/animations.css";
 import "./css/fonts.css";
 import "./css/index.css";
@@ -181,29 +185,81 @@ const client = createClient(
   getDefaultClient({
     appName: "Renegade",
     infuraId,
+    // @ts-ignore
     chains,
   }),
 );
 
-// Create a connection to a relayer
-const renegadeConnection = new RenegadeConnection({
-  relayerUrl: "stage.relayer.renegade.fi",
-  // relayerUrl: "127.0.0.1",
+// The global Renegade object
+const renegade = new Renegade({
+  relayerHostname: "127.0.0.1",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
-  useTls: true,
-  // useTls: false,
+  useInsecureTransport: true,
+  verbose: false,
 });
 
 function Testnet() {
+  // Task state for long-running relayer tasks
+  const [taskId, setTaskId] = React.useState<TaskId>();
+  const [taskState, setTaskState] = React.useState<string>();
+  const toast = useToast();
+  const setTask = async (newTaskId: TaskId) => {
+    if (newTaskId === "DONE") {
+      return;
+    }
+    setTaskId(newTaskId);
+    setTaskState("Proving");
+    toast({
+      title: "New Task State",
+      description: "Proving",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
+    const callback = (message: string) => {
+      const taskState = JSON.parse(message).state;
+      setTaskState(taskState.state);
+      toast({
+        title: "New Task State",
+        description: taskState.state,
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+    await renegade.registerTaskCallback(callback, newTaskId);
+  };
+
+  // Renegade connection state
+  const [accountId, setAccountId] = React.useState<AccountId>();
+  const setAccount = async (
+    oldAccountId: AccountId | undefined,
+    keychain: Keychain | undefined,
+  ) => {
+    if (oldAccountId) {
+      await renegade.unregisterAccount(oldAccountId);
+    }
+    if (!keychain) {
+      setAccountId(undefined);
+      return;
+    }
+    const accountId = renegade.registerAccount(keychain);
+    const [taskId, taskJob] = await renegade.task.initializeAccount(accountId);
+    setTask(taskId);
+    await taskJob;
+    setAccountId(accountId);
+  };
+
+  // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [keyStoreState, setKeyStoreState] = React.useState(KeyStore.default());
   const [globalModalState, setGlobalModalState] =
     React.useState<GlobalModalState>(null);
 
-  // We randomly set initial buy/sell bit in order to discourage order
-  // asymmetry for users who are trying the product for the first time
+  // Selected order info state, saved in local storage
   const [activeDirection, setActiveDirection] = React.useState<"buy" | "sell">(
+    // We randomly set initial buy/sell bit in order to discourage order
+    // asymmetry for users who are trying the product for the first time
     localStorage.getItem("renegade-direction") || Math.random() < 0.5
       ? "buy"
       : "sell",
@@ -288,25 +344,35 @@ function Testnet() {
           "--ck-focus-color": "#ffffff",
         }}
       >
-        <RenegadeConnectionContext.Provider value={renegadeConnection}>
-          <KeyStoreContext.Provider value={[keyStoreState, setKeyStoreState]}>
-            <Flex
-              flexDirection="column"
-              width="100vw"
-              minHeight="100vh"
-              overflowX="hidden"
-            >
-              {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
-            </Flex>
-          </KeyStoreContext.Provider>
-        </RenegadeConnectionContext.Provider>
+        <RenegadeContext.Provider
+          value={{
+            renegade,
+            accountId,
+            taskId,
+            taskState,
+            setAccount,
+            setTask,
+          }}
+        >
+          <Flex
+            flexDirection="column"
+            width="100vw"
+            minHeight="100vh"
+            overflowX="hidden"
+          >
+            {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
+          </Flex>
+        </RenegadeContext.Provider>
       </ConnectKitProvider>
     </WagmiConfig>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+const root = document.getElementById("root");
+if (!root) {
+  throw new Error("Root element not found");
+}
+ReactDOM.createRoot(root).render(
   <ChakraProvider theme={theme}>
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
     <BrowserRouter>

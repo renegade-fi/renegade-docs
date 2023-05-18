@@ -1,22 +1,14 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react";
+import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js";
 import React from "react";
 
-import { TICKER_TO_ADDR, TICKER_TO_DEFAULT_DECIMALS } from "../../../tokens";
-import RenegadeConnection from "../../connections/RenegadeConnection";
-import {
+import { TICKER_TO_DEFAULT_DECIMALS } from "../../../tokens";
+import RenegadeContext, {
   DEFAULT_PRICE_REPORT,
   PriceReport,
-} from "../../connections/RenegadeConnection";
-import RenegadeConnectionContext from "../../contexts/RenegadeConnection";
-
-export type Exchange =
-  | "median"
-  | "binance"
-  | "coinbase"
-  | "kraken"
-  | "okx"
-  | "uniswapv3";
+  RenegadeContextType,
+} from "../../contexts/RenegadeContext";
 
 const UPDATE_THRESHOLD_MS = 50;
 
@@ -136,13 +128,13 @@ interface LivePricesState {
   fallbackPriceReport: PriceReport;
   previousPriceReport: PriceReport;
   currentPriceReport: PriceReport;
-  listenerId?: string;
+  callbackId?: CallbackId;
 }
 export class LivePrices extends React.Component<
   LivePricesProps,
   LivePricesState
 > {
-  static contextType = RenegadeConnectionContext;
+  static contextType = RenegadeContext;
 
   constructor(props: LivePricesProps) {
     super(props);
@@ -156,9 +148,8 @@ export class LivePrices extends React.Component<
   }
 
   async componentDidMount() {
-    await (this.context as RenegadeConnection).awaitConnection();
     await this.queryFallbackPriceReport();
-    this.streamPriceReports();
+    await this.streamPriceReports();
   }
 
   async componentDidUpdate(prevProps: LivePricesProps) {
@@ -168,28 +159,28 @@ export class LivePrices extends React.Component<
     ) {
       return;
     }
-    if (!this.state.listenerId) {
+    if (!this.state.callbackId) {
       return;
     }
-    (this.context as RenegadeConnection).unlistenToTopic(this.state.listenerId);
+    const { renegade } = this.context as RenegadeContextType;
+    renegade?.releaseCallback(this.state.callbackId);
     this.setState({
       fallbackPriceReport: DEFAULT_PRICE_REPORT,
       previousPriceReport: DEFAULT_PRICE_REPORT,
       currentPriceReport: DEFAULT_PRICE_REPORT,
     });
     await this.queryFallbackPriceReport();
-    this.streamPriceReports();
+    await this.streamPriceReports();
   }
 
   async queryFallbackPriceReport() {
     if (this.props.baseTicker === this.props.quoteTicker) {
       return;
     }
-    const healthStates = await (
-      this.context as RenegadeConnection
-    ).checkExchangeHealthStates(
-      TICKER_TO_ADDR[this.props.baseTicker],
-      TICKER_TO_ADDR[this.props.quoteTicker],
+    const { renegade } = this.context as RenegadeContextType;
+    const healthStates = await renegade?.queryExchangeHealthStates(
+      new Token({ ticker: this.props.baseTicker }),
+      new Token({ ticker: this.props.quoteTicker }),
     );
     let medianPriceReport = null;
     if (healthStates["median"]["Nominal"]) {
@@ -222,40 +213,40 @@ export class LivePrices extends React.Component<
     this.setState({ fallbackPriceReport });
   }
 
-  streamPriceReports() {
+  async streamPriceReports() {
     if (this.props.baseTicker === "USDC" || this.props.baseTicker === "USDT") {
       return;
     }
-    // Send a subscription request to the relayer
-    const baseTokenAddr = TICKER_TO_ADDR[this.props.baseTicker];
-    const quoteTokenAddr = TICKER_TO_ADDR[this.props.quoteTicker];
-    const topic = `${this.props.exchange}-price-report-${baseTokenAddr}-${quoteTokenAddr}`;
-    (this.context as RenegadeConnection).subscribeToTopic(topic);
 
     // Keep track of the last update timestamp
     let lastUpdate = 0;
 
-    // Listen for topic messages
-    const listenerId = (this.context as RenegadeConnection).listenToTopic(
-      topic,
-      (priceReport) => {
-        // If the priceReport does not change the median price, ignore it
-        if (
-          this.state.currentPriceReport.midpointPrice ===
-          priceReport.midpointPrice
-        ) {
-          return;
-        }
-        // If this price report was received too quickly after the previous, ignore it
-        const now = Date.now();
-        if (now - lastUpdate <= UPDATE_THRESHOLD_MS) {
-          return;
-        }
-        lastUpdate = now;
-        this.handlePriceReport(priceReport);
-      },
+    // Create a price report callback
+    const { renegade } = this.context as RenegadeContextType;
+    const callback = (message: string) => {
+      const priceReport = JSON.parse(message) as PriceReport;
+      // If the priceReport does not change the median price, ignore it
+      if (
+        this.state.currentPriceReport.midpointPrice ===
+        priceReport.midpointPrice
+      ) {
+        return;
+      }
+      // If this price report was received too quickly after the previous, ignore it
+      const now = Date.now();
+      if (now - lastUpdate <= UPDATE_THRESHOLD_MS) {
+        return;
+      }
+      lastUpdate = now;
+      this.handlePriceReport(priceReport);
+    };
+    const callbackId = await renegade?.registerPriceReportCallback(
+      callback,
+      this.props.exchange,
+      new Token({ ticker: this.props.baseTicker }),
+      new Token({ ticker: this.props.quoteTicker }),
     );
-    this.setState({ listenerId });
+    this.setState({ callbackId });
   }
 
   handlePriceReport(newPriceReport: PriceReport) {
@@ -291,6 +282,7 @@ export class LivePrices extends React.Component<
           ? "fade-green-to-white"
           : "fade-red-to-white";
     }
+    price = price || 0;
 
     // If the caller supplied a scaleBy prop, scale the price appropriately
     if (this.props.scaleBy !== undefined) {

@@ -1,8 +1,9 @@
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
-import RenegadeConnection from "../../../connections/RenegadeConnection";
-import RenegadeConnectionContext from "../../../contexts/RenegadeConnection";
+import RenegadeContext, {
+  RenegadeContextType,
+} from "../../../contexts/RenegadeContext";
 import { BannerSeparator, PulsingConnection } from "../../Common/Banner";
 
 interface RelayerStatusBannerProps {
@@ -21,7 +22,7 @@ export default class RelayerStatusBanner extends React.Component<
   RelayerStatusBannerProps,
   RelayerStatusBannerState
 > {
-  static contextType = RenegadeConnectionContext;
+  static contextType = RenegadeContext;
 
   constructor(props: RelayerStatusBannerProps) {
     super(props);
@@ -47,16 +48,18 @@ export default class RelayerStatusBanner extends React.Component<
     setTimeout(this.pingRelayer, 500);
     // Add listeners for mouse events
     window.addEventListener("mouseup", this.onMouseUp);
+    // @ts-ignore
     window.addEventListener("mousemove", this.onMouseMove);
     // Animate scroll if banner is compressed
     this.performScroll();
   }
 
   async pingRelayer() {
-    const isOk = await (this.context as RenegadeConnection).ping();
-    if (isOk) {
+    const { renegade } = this.context as RenegadeContextType;
+    try {
+      await renegade?.ping();
       this.setState({ connectionState: "live" });
-    } else {
+    } catch (e) {
       this.setState({ connectionState: "dead" });
     }
     setTimeout(this.pingRelayer, 5000);

@@ -1,4 +1,5 @@
 import { Button, Flex, HStack, Icon, Spinner, Text } from "@chakra-ui/react";
+import { Keychain } from "@renegade-fi/renegade-js";
 import { verifyMessage } from "ethers/lib/utils";
 import React from "react";
 import { AiOutlineDisconnect } from "react-icons/ai";
@@ -8,8 +9,7 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi";
 
-import KeyStore from "../../../connections/KeyStore";
-import KeyStoreContext from "../../../contexts/KeyStore";
+import RenegadeContext from "../../../contexts/RenegadeContext";
 
 interface SignInButtonProps {
   isLoading: boolean;
@@ -71,12 +71,12 @@ interface SignInModalProps {
   onClose: () => void;
 }
 export default function SignInModal(props: SignInModalProps) {
-  const [, setKeyStoreState] = React.useContext(KeyStoreContext);
+  const { accountId, setAccount } = React.useContext(RenegadeContext);
   const { isLoading, signMessage } = useSignMessageWagmi({
-    message: KeyStore.CREATE_SK_ROOT_MESSAGE,
+    message: "Temporary sign in message.",
     async onSuccess(data, variables) {
       verifyMessage(variables.message, data); // TODO: Verify this output address.
-      setKeyStoreState(await KeyStore.fromSignature(data));
+      setAccount(accountId, new Keychain({ seed: data }));
       props.onClose();
     },
   });
