@@ -5,7 +5,7 @@ import {
   UnlockIcon,
 } from "@chakra-ui/icons";
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
-import { Exchange } from "@renegade-fi/renegade-js";
+import { Balance, Exchange, Token } from "@renegade-fi/renegade-js";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 import {
@@ -16,27 +16,41 @@ import {
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
 import RenegadeContext from "../../../contexts/RenegadeContext";
 import { LivePrices } from "../../Common/Banner";
-import { Panel, expandedPanelWidth } from "../../Common/Panel";
+import {
+  Panel,
+  callAfterTimeout,
+  expandedPanelWidth,
+} from "../../Common/Panel";
 import { GlobalModalState } from "../GlobalModal";
 import { ConnectWalletButton } from "../Header";
 
 interface TokenBalanceProps {
-  userAddr: string;
   tokenAddr: string;
+  userAddr?: string;
+  amount?: bigint;
 }
 function TokenBalance(props: TokenBalanceProps) {
+  const { renegade, accountId, setTask } = React.useContext(RenegadeContext);
   const [logoUrl, setLogoUrl] = React.useState("DEFAULT.png");
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
       setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[props.tokenAddr]]);
     });
   });
-  const { data } = useBalanceWagmi({
-    addressOrName: props.userAddr,
-    token: props.tokenAddr,
-  });
-  if (!data || data.value.isZero()) {
-    return null;
+  let amount: string;
+  if (props.amount !== undefined) {
+    amount = props.amount.toString();
+  } else if (props.userAddr) {
+    const { data } = useBalanceWagmi({
+      addressOrName: props.userAddr,
+      token: props.tokenAddr,
+    });
+    if (!data || data.value.isZero()) {
+      return null;
+    }
+    amount = data.formatted;
+  } else {
+    throw new Error("Exactly one of userAddr or amount must be provided.");
   }
   return (
     <Flex
@@ -65,7 +79,7 @@ function TokenBalance(props: TokenBalanceProps) {
         flexGrow="1"
       >
         <Text fontSize="1.1em" lineHeight="1">
-          {data.formatted.slice(0, 6)} {ADDR_TO_TICKER[props.tokenAddr]}
+          {amount.slice(0, 6)} {ADDR_TO_TICKER[props.tokenAddr]}
         </Text>
         <Box fontSize="0.8em" color="white.40" lineHeight="1">
           <LivePrices
@@ -73,7 +87,7 @@ function TokenBalance(props: TokenBalanceProps) {
             quoteTicker={"USDC"}
             exchange={Exchange.Median}
             onlyShowPrice
-            scaleBy={Number.parseFloat(data.formatted)}
+            scaleBy={Number.parseFloat(amount)}
           />
         </Box>
       </Flex>
@@ -85,6 +99,13 @@ function TokenBalance(props: TokenBalanceProps) {
         _hover={{
           background: "white.10",
         }}
+        onClick={() => {
+          if (accountId) {
+            renegade?.task
+              .deposit(accountId, new Token({ address: props.tokenAddr }), 10n)
+              .then(([taskId]) => setTask(taskId));
+          }
+        }}
       />
       <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
@@ -94,21 +115,16 @@ function TokenBalance(props: TokenBalanceProps) {
         _hover={{
           background: "white.10",
         }}
+        onClick={() => {
+          if (accountId) {
+            renegade?.task
+              .withdraw(accountId, new Token({ address: props.tokenAddr }), 10n)
+              .then(([taskId]) => setTask(taskId));
+          }
+        }}
       />
     </Flex>
   );
-}
-
-// Set the scrollbar to hidden after a timeout.
-let scrollTimer: NodeJS.Timeout;
-function callAfterTimeout(func: () => void, timeout: number) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (...args: any[]) => {
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
 }
 
 interface EthereumWalletPanelProps {
@@ -118,16 +134,15 @@ interface EthereumWalletPanelProps {
 function EthereumWalletPanel(props: EthereumWalletPanelProps) {
   const { address } = useAccountWagmi();
   let panelBody: React.ReactElement;
+
   if (address) {
     panelBody = (
       <>
-        <Box height="10px" />
         {Object.keys(ADDR_TO_TICKER).map((tokenAddr) => (
           <Box width="100%" key={tokenAddr}>
-            <TokenBalance userAddr={address} tokenAddr={tokenAddr} />
+            <TokenBalance tokenAddr={tokenAddr} userAddr={address} />
           </Box>
         ))}
-        <Box height="10px" />
       </>
     );
   } else {
@@ -151,6 +166,7 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
       </Flex>
     );
   }
+
   return (
     <>
       <Flex
@@ -191,9 +207,9 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
         maxHeight="30vh"
         flexGrow="1"
         overflow="overlay"
-        className="scroll hidden"
+        className="scroll scroll-eth-wallet hidden"
         onWheel={() => {
-          const query = document.querySelector(".scroll");
+          const query = document.querySelector(".scroll-eth-wallet");
           if (query) {
             query.classList.remove("hidden");
             callAfterTimeout(() => {
@@ -209,6 +225,7 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
 }
 
 function DepositWithdrawButtons() {
+  const { renegade, accountId, setTask } = React.useContext(RenegadeContext);
   return (
     <Flex
       width="100%"
@@ -218,6 +235,13 @@ function DepositWithdrawButtons() {
       borderBottom="var(--border)"
       borderColor="border"
       cursor="pointer"
+      onClick={() => {
+        if (accountId) {
+          renegade?.task
+            .deposit(accountId, new Token({ ticker: "USDC" }), 20n)
+            .then(([taskId]) => setTask(taskId));
+        }
+      }}
     >
       <Flex
         justifyContent="center"
@@ -226,6 +250,13 @@ function DepositWithdrawButtons() {
         borderRight="var(--border)"
         borderColor="border"
         flexGrow="1"
+        onClick={() => {
+          if (accountId) {
+            renegade?.task
+              .withdraw(accountId, new Token({ ticker: "USDC" }), 10n)
+              .then(([taskId]) => setTask(taskId));
+          }
+        }}
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />
@@ -247,7 +278,52 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { renegade, accountId } = React.useContext(RenegadeContext);
   let panelBody: React.ReactElement;
 
-  if (!accountId) {
+  if (accountId) {
+    if (!renegade) {
+      throw new Error("Unreachable. TODO: Remove this type helper.");
+    }
+    const balances = renegade?.getBalances(accountId);
+    const pkView = renegade.getKeychain(accountId).keyHierarchy.view.publicKey;
+    // Serialize pkView from Uint8Array to hex string
+    const pkViewHex = Buffer.from(pkView).toString("hex");
+    panelBody = (
+      <>
+        {Object.keys(balances).length === 0 && (
+          <Text
+            marginTop="20px"
+            padding="0 10% 0 10%"
+            fontSize="0.8em"
+            fontWeight="100"
+            color="white.50"
+            textAlign="center"
+          >
+            No tokens have been deposited into Renegade.
+          </Text>
+        )}
+        {Object.values(balances).map((balance: Balance) =>
+          balance.amount ? (
+            <Box width="100%" key={balance.mint.address}>
+              <TokenBalance
+                tokenAddr={"0x" + balance.mint.address}
+                amount={balance.amount}
+              />
+            </Box>
+          ) : null,
+        )}
+        <Text
+          marginTop="auto"
+          fontSize="0.5em"
+          padding="10%"
+          textAlign="start"
+          fontWeight="100"
+          overflowWrap="anywhere"
+          color="white.40"
+        >
+          View Key: 0x{pkViewHex}
+        </Text>
+      </>
+    );
+  } else {
     panelBody = (
       <Flex
         flexDirection="column"
@@ -274,6 +350,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         </Button>
         <Text
           marginTop="10px"
+          padding="0 10% 0 10%"
           fontSize="0.8em"
           fontWeight="100"
           color={address ? "white.50" : "white.40"}
@@ -284,16 +361,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             : "Connect your Ethereum wallet before signing in."}
         </Text>
       </Flex>
-    );
-  } else {
-    const balances = renegade?.getBalances(accountId);
-    panelBody = (
-      <Box fontSize="0.9em" color="white.60">
-        <Box height="10px" />
-        <Text>Signed in to Renegade</Text>
-        <Text>AccountId: {accountId.toString()}</Text>
-        <Text>Balances: {JSON.stringify(balances)}</Text>
-      </Box>
     );
   }
 
@@ -311,9 +378,21 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       </Flex>
       <Flex
         flexDirection="column"
+        alignItems="center"
         width="100%"
-        padding="0 9% 0 9%"
+        maxHeight="30vh"
         flexGrow="1"
+        overflow="overlay"
+        className="scroll scroll-renegade-wallet hidden"
+        onWheel={() => {
+          const query = document.querySelector(".scroll-renegade-wallet");
+          if (query) {
+            query.classList.remove("hidden");
+            callAfterTimeout(() => {
+              query.classList.add("hidden");
+            }, 400)();
+          }
+        }}
       >
         {panelBody}
       </Flex>

@@ -5,7 +5,7 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "^2.3.4",
-    "@renegade-fi/renegade-js": "=0.2.1",
+    "@renegade-fi/renegade-js": "=0.2.3",
     "@wagmi/chains": "^0.1.11",
     "connectkit": "1.0.0",
     "ethers": "^5.7.2",

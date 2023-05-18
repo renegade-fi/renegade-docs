@@ -5,6 +5,18 @@ import React from "react";
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))";
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))";
 
+// Set the scrollbar to hidden after a timeout.
+let scrollTimer: NodeJS.Timeout;
+export function callAfterTimeout(func: () => void, timeout: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (...args: any[]) => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      func.apply(this, args);
+    }, timeout);
+  };
+}
+
 interface SinglePanelCollapsedProps {
   displayText: string;
   flipDirection: boolean;
