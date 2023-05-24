@@ -2,6 +2,7 @@ import { Button, Flex, HStack, Spinner, Text } from "@chakra-ui/react";
 import { Order, Token } from "@renegade-fi/renegade-js";
 import React from "react";
 
+import { renegade } from "../../..";
 import RenegadeContext, {
   DEFAULT_PRICE_REPORT,
   PriceReport,
@@ -89,8 +90,7 @@ export default class PlaceOrderModal extends React.Component<
   }
 
   async queryMedianPrice() {
-    const { renegade } = this.context as RenegadeContextType;
-    const healthStates = await renegade?.queryExchangeHealthStates(
+    const healthStates = await renegade.queryExchangeHealthStates(
       new Token({ ticker: this.props.activeBaseTicker }),
       new Token({ ticker: this.props.activeQuoteTicker }),
     );
@@ -101,9 +101,8 @@ export default class PlaceOrderModal extends React.Component<
 
   async placeOrder() {
     this.setState({ isPlacingOrder: true });
-    const { renegade, accountId, setTask } = this
-      .context as RenegadeContextType;
-    if (!renegade || !accountId) {
+    const { accountId, setTask } = this.context as RenegadeContextType;
+    if (!accountId) {
       return;
     }
     const order = new Order({

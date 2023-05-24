@@ -2,11 +2,9 @@ import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import { Exchange, Token } from "@renegade-fi/renegade-js";
 import React from "react";
 
+import { renegade } from "../../..";
 import { TICKER_TO_ADDR } from "../../../../tokens";
-import RenegadeContext, {
-  PriceReport,
-  RenegadeContextType,
-} from "../../../contexts/RenegadeContext";
+import { PriceReport } from "../../../contexts/RenegadeContext";
 import { BannerSeparator, LivePrices, PulsingConnection } from "../Banner";
 
 type HealthState =
@@ -218,8 +216,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
   ExchangeConnectionsBannerProps,
   ExchangeConnectionsBannerState
 > {
-  static contextType = RenegadeContext;
-
   constructor(props: ExchangeConnectionsBannerProps) {
     super(props);
     this.state = this.defaultState();
@@ -277,8 +273,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     if (this.props.activeBaseTicker === this.props.activeQuoteTicker) {
       return;
     }
-    const { renegade } = this.context as RenegadeContextType;
-    const healthStates = await renegade?.queryExchangeHealthStates(
+    const healthStates = await renegade.queryExchangeHealthStates(
       new Token({ ticker: this.props.activeBaseTicker }),
       new Token({ ticker: this.props.activeQuoteTicker }),
     );

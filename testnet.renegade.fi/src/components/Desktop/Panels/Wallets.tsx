@@ -13,6 +13,7 @@ import {
   useBalance as useBalanceWagmi,
 } from "wagmi";
 
+import { renegade } from "../../..";
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
 import RenegadeContext from "../../../contexts/RenegadeContext";
 import { LivePrices } from "../../Common/Banner";
@@ -30,7 +31,7 @@ interface TokenBalanceProps {
   amount?: bigint;
 }
 function TokenBalance(props: TokenBalanceProps) {
-  const { renegade, accountId, setTask } = React.useContext(RenegadeContext);
+  const { accountId, setTask } = React.useContext(RenegadeContext);
   const [logoUrl, setLogoUrl] = React.useState("DEFAULT.png");
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
@@ -101,7 +102,7 @@ function TokenBalance(props: TokenBalanceProps) {
         }}
         onClick={() => {
           if (accountId) {
-            renegade?.task
+            renegade.task
               .deposit(accountId, new Token({ address: props.tokenAddr }), 10n)
               .then(([taskId]) => setTask(taskId));
           }
@@ -117,7 +118,7 @@ function TokenBalance(props: TokenBalanceProps) {
         }}
         onClick={() => {
           if (accountId) {
-            renegade?.task
+            renegade.task
               .withdraw(accountId, new Token({ address: props.tokenAddr }), 10n)
               .then(([taskId]) => setTask(taskId));
           }
@@ -225,7 +226,7 @@ function EthereumWalletPanel(props: EthereumWalletPanelProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { renegade, accountId, setTask } = React.useContext(RenegadeContext);
+  const { accountId, setTask } = React.useContext(RenegadeContext);
   return (
     <Flex
       width="100%"
@@ -237,7 +238,7 @@ function DepositWithdrawButtons() {
       cursor="pointer"
       onClick={() => {
         if (accountId) {
-          renegade?.task
+          renegade.task
             .deposit(accountId, new Token({ ticker: "USDC" }), 20n)
             .then(([taskId]) => setTask(taskId));
         }
@@ -252,7 +253,7 @@ function DepositWithdrawButtons() {
         flexGrow="1"
         onClick={() => {
           if (accountId) {
-            renegade?.task
+            renegade.task
               .withdraw(accountId, new Token({ ticker: "USDC" }), 10n)
               .then(([taskId]) => setTask(taskId));
           }
@@ -275,17 +276,14 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi();
-  const { renegade, accountId } = React.useContext(RenegadeContext);
+  const { balances, accountId } = React.useContext(RenegadeContext);
   let panelBody: React.ReactElement;
 
   if (accountId) {
-    if (!renegade) {
-      throw new Error("Unreachable. TODO: Remove this type helper.");
-    }
-    const balances = renegade?.getBalances(accountId);
-    const pkView = renegade.getKeychain(accountId).keyHierarchy.view.publicKey;
-    // Serialize pkView from Uint8Array to hex string
-    const pkViewHex = Buffer.from(pkView).toString("hex");
+    const pkSettle =
+      renegade.getKeychain(accountId).keyHierarchy.settle.publicKey;
+    // Serialize pkSettle from Uint8Array to hex string
+    const pkSettleHex = Buffer.from(pkSettle).toString("hex");
     panelBody = (
       <>
         {Object.keys(balances).length === 0 && (
@@ -319,7 +317,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           overflowWrap="anywhere"
           color="white.40"
         >
-          View Key: 0x{pkViewHex}
+          Settle Key: 0x{pkSettleHex}
         </Text>
       </>
     );
