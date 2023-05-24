@@ -9,14 +9,9 @@ import {
   keyframes,
   useBreakpointValue,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
-import {
-  AccountId,
-  Keychain,
-  Renegade,
-  TaskId,
-} from "@renegade-fi/renegade-js";
+import { Renegade } from "@renegade-fi/renegade-js";
+// @ts-ignore
 import { mainnet } from "@wagmi/chains";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import React from "react";
@@ -32,7 +27,9 @@ import DesktopHeader from "./components/Desktop/Header";
 import DesktopTradingInterface from "./components/Desktop/TradingInterface";
 import MobileBody from "./components/Mobile/Body";
 import MobileHeader from "./components/Mobile/Header";
-import RenegadeContext from "./contexts/RenegadeContext";
+import RenegadeContext, {
+  prepareRenegadeContext,
+} from "./contexts/RenegadeContext";
 import "./css/animations.css";
 import "./css/fonts.css";
 import "./css/index.css";
@@ -191,7 +188,7 @@ const client = createClient(
 );
 
 // The global Renegade object
-const renegade = new Renegade({
+export const renegade = new Renegade({
   relayerHostname: "127.0.0.1",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
@@ -200,57 +197,6 @@ const renegade = new Renegade({
 });
 
 function Testnet() {
-  // Task state for long-running relayer tasks
-  const [taskId, setTaskId] = React.useState<TaskId>();
-  const [taskState, setTaskState] = React.useState<string>();
-  const toast = useToast();
-  const setTask = async (newTaskId: TaskId) => {
-    if (newTaskId === "DONE") {
-      return;
-    }
-    setTaskId(newTaskId);
-    setTaskState("Proving");
-    toast({
-      title: "New Task State",
-      description: "Proving",
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
-    const callback = (message: string) => {
-      const taskState = JSON.parse(message).state;
-      setTaskState(taskState.state);
-      toast({
-        title: "New Task State",
-        description: taskState.state,
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-      });
-    };
-    await renegade.registerTaskCallback(callback, newTaskId);
-  };
-
-  // Renegade connection state
-  const [accountId, setAccountId] = React.useState<AccountId>();
-  const setAccount = async (
-    oldAccountId: AccountId | undefined,
-    keychain: Keychain | undefined,
-  ) => {
-    if (oldAccountId) {
-      await renegade.unregisterAccount(oldAccountId);
-    }
-    if (!keychain) {
-      setAccountId(undefined);
-      return;
-    }
-    const accountId = renegade.registerAccount(keychain);
-    const [taskId, taskJob] = await renegade.task.initializeAccount(accountId);
-    setTask(taskId);
-    await taskJob;
-    setAccountId(accountId);
-  };
-
   // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [globalModalState, setGlobalModalState] =
@@ -344,16 +290,7 @@ function Testnet() {
           "--ck-focus-color": "#ffffff",
         }}
       >
-        <RenegadeContext.Provider
-          value={{
-            renegade,
-            accountId,
-            taskId,
-            taskState,
-            setAccount,
-            setTask,
-          }}
-        >
+        <RenegadeContext.Provider value={prepareRenegadeContext(renegade)}>
           <Flex
             flexDirection="column"
             width="100vw"

@@ -9,6 +9,7 @@ import { Order } from "@renegade-fi/renegade-js";
 import { useModal as useModalConnectKit } from "connectkit";
 import React from "react";
 
+import { renegade } from "../../..";
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
 import RenegadeContext from "../../../contexts/RenegadeContext";
 import {
@@ -21,7 +22,7 @@ interface SingleOrderProps {
   order: Order;
 }
 function SingleOrder(props: SingleOrderProps) {
-  const { renegade, accountId, setTask } = React.useContext(RenegadeContext);
+  const { accountId, setTask } = React.useContext(RenegadeContext);
   const [baseLogoUrl, setBaseLogoUrl] = React.useState("DEFAULT.png");
   const [quoteLogoUrl, setQuoteLogoUrl] = React.useState("DEFAULT.png");
   React.useEffect(() => {
@@ -92,7 +93,7 @@ function SingleOrder(props: SingleOrderProps) {
         }}
         onClick={() => {
           if (accountId) {
-            renegade?.task
+            renegade.task
               .cancelOrder(accountId, props.order.orderId)
               .then(([taskId]) => setTask(taskId));
           }
@@ -108,7 +109,7 @@ function SingleOrder(props: SingleOrderProps) {
         }}
         onClick={() => {
           if (accountId) {
-            renegade?.task
+            renegade.task
               .cancelOrder(accountId, props.order.orderId)
               .then(([taskId]) => setTask(taskId));
           }
@@ -123,8 +124,7 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void;
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const { renegade, accountId } = React.useContext(RenegadeContext);
-  const orders = accountId ? renegade?.getOrders(accountId) : null;
+  const { orders } = React.useContext(RenegadeContext);
   let panelBody: React.ReactElement;
 
   if (orders && Object.keys(orders).length > 0) {

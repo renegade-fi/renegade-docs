@@ -3,11 +3,11 @@ import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react";
 import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js";
 import React from "react";
 
+import { renegade } from "../..";
 import { TICKER_TO_DEFAULT_DECIMALS } from "../../../tokens";
-import RenegadeContext, {
+import {
   DEFAULT_PRICE_REPORT,
   PriceReport,
-  RenegadeContextType,
 } from "../../contexts/RenegadeContext";
 
 const UPDATE_THRESHOLD_MS = 50;
@@ -134,8 +134,6 @@ export class LivePrices extends React.Component<
   LivePricesProps,
   LivePricesState
 > {
-  static contextType = RenegadeContext;
-
   constructor(props: LivePricesProps) {
     super(props);
     this.state = {
@@ -162,8 +160,7 @@ export class LivePrices extends React.Component<
     if (!this.state.callbackId) {
       return;
     }
-    const { renegade } = this.context as RenegadeContextType;
-    renegade?.releaseCallback(this.state.callbackId);
+    renegade.releaseCallback(this.state.callbackId);
     this.setState({
       fallbackPriceReport: DEFAULT_PRICE_REPORT,
       previousPriceReport: DEFAULT_PRICE_REPORT,
@@ -177,8 +174,7 @@ export class LivePrices extends React.Component<
     if (this.props.baseTicker === this.props.quoteTicker) {
       return;
     }
-    const { renegade } = this.context as RenegadeContextType;
-    const healthStates = await renegade?.queryExchangeHealthStates(
+    const healthStates = await renegade.queryExchangeHealthStates(
       new Token({ ticker: this.props.baseTicker }),
       new Token({ ticker: this.props.quoteTicker }),
     );
@@ -222,7 +218,6 @@ export class LivePrices extends React.Component<
     let lastUpdate = 0;
 
     // Create a price report callback
-    const { renegade } = this.context as RenegadeContextType;
     const callback = (message: string) => {
       const priceReport = JSON.parse(message) as PriceReport;
       // If the priceReport does not change the median price, ignore it
@@ -240,7 +235,7 @@ export class LivePrices extends React.Component<
       lastUpdate = now;
       this.handlePriceReport(priceReport);
     };
-    const callbackId = await renegade?.registerPriceReportCallback(
+    const callbackId = await renegade.registerPriceReportCallback(
       callback,
       this.props.exchange,
       new Token({ ticker: this.props.baseTicker }),
