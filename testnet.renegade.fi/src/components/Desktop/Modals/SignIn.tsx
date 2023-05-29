@@ -73,7 +73,7 @@ interface SignInModalProps {
 export default function SignInModal(props: SignInModalProps) {
   const { accountId, setAccount } = React.useContext(RenegadeContext);
   const { isLoading, signMessage } = useSignMessageWagmi({
-    message: "Temporary sign in message.",
+    message: "Unlock your Renegade account.\nTestnet v0",
     async onSuccess(data, variables) {
       verifyMessage(variables.message, data); // TODO: Verify this output address.
       setAccount(accountId, new Keychain({ seed: data }));

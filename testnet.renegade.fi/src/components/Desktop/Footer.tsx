@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Link, Spacer, Text } from "@chakra-ui/react";
 import React from "react";
 
+// @ts-ignore
 import logoDark from "../../icons/logo_dark.svg";
 
 interface FooterState {

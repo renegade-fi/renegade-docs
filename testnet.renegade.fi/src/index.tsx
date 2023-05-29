@@ -189,10 +189,10 @@ const client = createClient(
 
 // The global Renegade object
 export const renegade = new Renegade({
-  relayerHostname: "127.0.0.1",
+  relayerHostname: "stage.relayer.renegade.fi",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
-  useInsecureTransport: true,
+  useInsecureTransport: false,
   verbose: false,
 });
 
@@ -297,7 +297,10 @@ function Testnet() {
             minHeight="100vh"
             overflowX="hidden"
           >
-            {useBreakpointValue({ base: testnetMobile, md: testnetDesktop })}
+            {useBreakpointValue(
+              { base: testnetMobile, md: testnetDesktop },
+              { ssr: false, fallback: "md" },
+            )}
           </Flex>
         </RenegadeContext.Provider>
       </ConnectKitProvider>

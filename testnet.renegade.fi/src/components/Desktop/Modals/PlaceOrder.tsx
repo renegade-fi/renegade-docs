@@ -7,6 +7,7 @@ import RenegadeContext, {
   DEFAULT_PRICE_REPORT,
   PriceReport,
   RenegadeContextType,
+  TaskType,
 } from "../../../contexts/RenegadeContext";
 
 const SLIPPAGE_TOLERANCE = 1.05;
@@ -114,12 +115,10 @@ export default class PlaceOrderModal extends React.Component<
       price: this.getLimitPrice(),
     });
     const [taskId] = await renegade.task.placeOrder(accountId, order);
-    setTask(taskId);
-    setTimeout(() => {
-      this.props.setOrderInfo(undefined, undefined, undefined, 0);
-      this.props.onClose();
-      setTimeout(() => this.setState({ isPlacingOrder: false }), 100);
-    }, 1000);
+    setTask(taskId, TaskType.PlaceOrder);
+    this.props.setOrderInfo(undefined, undefined, undefined, 0);
+    this.props.onClose();
+    setTimeout(() => this.setState({ isPlacingOrder: false }), 100);
   }
 
   render() {

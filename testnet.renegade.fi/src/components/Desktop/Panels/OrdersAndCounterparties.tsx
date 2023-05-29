@@ -11,7 +11,7 @@ import React from "react";
 
 import { renegade } from "../../..";
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
-import RenegadeContext from "../../../contexts/RenegadeContext";
+import RenegadeContext, { TaskType } from "../../../contexts/RenegadeContext";
 import {
   Panel,
   callAfterTimeout,
@@ -95,7 +95,7 @@ function SingleOrder(props: SingleOrderProps) {
           if (accountId) {
             renegade.task
               .cancelOrder(accountId, props.order.orderId)
-              .then(([taskId]) => setTask(taskId));
+              .then(([taskId]) => setTask(taskId, TaskType.CancelOrder));
           }
         }}
       />
@@ -111,7 +111,7 @@ function SingleOrder(props: SingleOrderProps) {
           if (accountId) {
             renegade.task
               .cancelOrder(accountId, props.order.orderId)
-              .then(([taskId]) => setTask(taskId));
+              .then(([taskId]) => setTask(taskId, TaskType.CancelOrder));
           }
         }}
       />

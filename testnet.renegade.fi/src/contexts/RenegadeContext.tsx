@@ -35,7 +35,25 @@ export const DEFAULT_PRICE_REPORT = {
   reportedTimestamp: 0,
 };
 
-export type TaskState = string; // TODO: Put this into renegade-js.
+export enum TaskType {
+  InitializeAccount = "InitializeAccount",
+  Deposit = "Deposit",
+  Withdrawal = "Withdrawal",
+  PlaceOrder = "PlaceOrder",
+  ModifyOrder = "ModifyOrder",
+  CancelOrder = "CancelOrder",
+  ApproveFee = "ApproveFee",
+  ModifyFee = "ModifyFee",
+  RevokeFee = "RevokeFee",
+}
+
+export enum TaskState {
+  Proving = "Proving",
+  SubmittingTx = "SubmittingTx",
+  FindingMerkleOpening = "FindingMerkleOpening",
+  UpdatingValidityProofs = "UpdatingValidityProofs",
+  Completed = "Completed",
+}
 
 export type RenegadeContextType = {
   balances: Record<BalanceId, Balance>;
@@ -43,9 +61,10 @@ export type RenegadeContextType = {
   fees: Record<FeeId, Fee>;
   accountId?: AccountId;
   taskId?: TaskId;
+  taskType?: TaskType;
   taskState?: TaskState;
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => void;
-  setTask: (newTaskId: TaskId) => void;
+  setTask: (newTaskId: TaskId, newTaskType: TaskType) => void;
 };
 
 const RenegadeContext = React.createContext<RenegadeContextType>({
@@ -67,6 +86,7 @@ export function prepareRenegadeContext(
   const [fees, setFees] = React.useState<Record<FeeId, Fee>>({});
   const [accountId, setAccountId] = React.useState<AccountId>();
   const [taskId, setTaskId] = React.useState<TaskId>();
+  const [taskType, setTaskType] = React.useState<TaskType>();
   const [taskState, setTaskState] = React.useState<TaskState>();
 
   // Define the setAccount handler. This handler unregisters the previous
@@ -90,13 +110,12 @@ export function prepareRenegadeContext(
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain);
     const [taskId, taskJob] = await renegade.task.initializeAccount(accountId);
-    setTask(taskId);
+    setTask(taskId, TaskType.InitializeAccount);
     await taskJob;
     setAccountId(accountId);
     // After the initialization has completed, query the current balances,
     // orders, and fees, and start streaming.
     const refreshAccount = () => {
-      console.log("Refreshing account.");
       setBalances(renegade.getBalances(accountId));
       setOrders(renegade.getOrders(accountId));
       setFees(renegade.getFees(accountId));
@@ -108,12 +127,13 @@ export function prepareRenegadeContext(
   // Define the setTask handler. Given a new task ID, this handler starts
   // streaming task updates to the task state.
   const toast = useToast();
-  const setTask = async (newTaskId: TaskId) => {
+  const setTask = async (newTaskId: TaskId, taskType: TaskType) => {
     if (newTaskId === "DONE") {
       return;
     }
     setTaskId(newTaskId);
-    setTaskState("Proving");
+    setTaskType(taskType);
+    setTaskState(TaskState.Proving);
     toast({
       title: "New Task State",
       description: "Proving",
@@ -122,11 +142,11 @@ export function prepareRenegadeContext(
       isClosable: true,
     });
     await renegade.registerTaskCallback((message: string) => {
-      const taskState = JSON.parse(message).state;
-      setTaskState(taskState.state);
+      const taskUpdate = JSON.parse(message).state;
+      setTaskState(taskUpdate.state as TaskState);
       toast({
         title: "New Task State",
-        description: taskState.state,
+        description: taskUpdate.state,
         status: "info",
         duration: 5000,
         isClosable: true,
@@ -140,6 +160,7 @@ export function prepareRenegadeContext(
     fees,
     accountId,
     taskId,
+    taskType,
     taskState,
     setAccount,
     setTask,
