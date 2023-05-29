@@ -15,7 +15,7 @@ import {
 
 import { renegade } from "../../..";
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "../../../../tokens";
-import RenegadeContext from "../../../contexts/RenegadeContext";
+import RenegadeContext, { TaskType } from "../../../contexts/RenegadeContext";
 import { LivePrices } from "../../Common/Banner";
 import {
   Panel,
@@ -104,7 +104,7 @@ function TokenBalance(props: TokenBalanceProps) {
           if (accountId) {
             renegade.task
               .deposit(accountId, new Token({ address: props.tokenAddr }), 10n)
-              .then(([taskId]) => setTask(taskId));
+              .then(([taskId]) => setTask(taskId, TaskType.Deposit));
           }
         }}
       />
@@ -120,7 +120,7 @@ function TokenBalance(props: TokenBalanceProps) {
           if (accountId) {
             renegade.task
               .withdraw(accountId, new Token({ address: props.tokenAddr }), 10n)
-              .then(([taskId]) => setTask(taskId));
+              .then(([taskId]) => setTask(taskId, TaskType.Withdrawal));
           }
         }}
       />
@@ -236,13 +236,6 @@ function DepositWithdrawButtons() {
       borderBottom="var(--border)"
       borderColor="border"
       cursor="pointer"
-      onClick={() => {
-        if (accountId) {
-          renegade.task
-            .deposit(accountId, new Token({ ticker: "USDC" }), 20n)
-            .then(([taskId]) => setTask(taskId));
-        }
-      }}
     >
       <Flex
         justifyContent="center"
@@ -254,15 +247,27 @@ function DepositWithdrawButtons() {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .withdraw(accountId, new Token({ ticker: "USDC" }), 10n)
-              .then(([taskId]) => setTask(taskId));
+              .deposit(accountId, new Token({ ticker: "USDC" }), 10n)
+              .then(([taskId]) => setTask(taskId, TaskType.Deposit));
           }
         }}
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />
       </Flex>
-      <Flex justifyContent="center" gap="5px" alignItems="center" flexGrow="1">
+      <Flex
+        justifyContent="center"
+        gap="5px"
+        alignItems="center"
+        flexGrow="1"
+        onClick={() => {
+          if (accountId) {
+            renegade.task
+              .withdraw(accountId, new Token({ ticker: "USDC" }), 20n)
+              .then(([taskId]) => setTask(taskId, TaskType.Withdrawal));
+          }
+        }}
+      >
         <Text>Withdraw</Text>
         <ArrowUpIcon />
       </Flex>
