@@ -25,4 +25,18 @@
 
 # Secrets
 /testnet.renegade.fi/.env
+.env*.local
+
+# Next.js
+**/.next/
+/out/
+
+# Misc
+.DS_Store
+*.pem
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts
+
 
