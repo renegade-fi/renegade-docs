@@ -230,7 +230,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ChakraProvider theme={theme}>
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <WagmiConfig config={wagmiConfig}>
-            <ConnectKitProvider>
+            <ConnectKitProvider
+              customTheme={{
+                "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+                "--ck-overlay-backdrop-filter": "blur(8px)",
+                "--ck-font-family": "Favorit",
+                "--ck-border-radius": "10px",
+                "--ck-body-background": "#231f20",
+                "--ck-body-background-secondary": "#372f2f",
+                "--ck-focus-color": "#ffffff",
+              }}
+            >
               <OrderProvider>
                 <RenegadeContext.Provider
                   value={{
