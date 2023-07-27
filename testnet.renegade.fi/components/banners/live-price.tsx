@@ -160,36 +160,36 @@ export class LivePrices extends React.Component<
   render() {
     // Given the previous and current price reports, determine the displayed
     // price and red/green fade class
-    // let price: number
-    const price = this.props.price
+    let price = this.props.price
     let priceStrClass = ""
-    // if (this.state.currentPriceReport === DEFAULT_PRICE_REPORT) {
-    //   if (this.state.fallbackPriceReport !== DEFAULT_PRICE_REPORT) {
-    //     price = this.state.fallbackPriceReport.midpointPrice
-    //   } else if (
-    //     this.props.baseTicker === "USDC" ||
-    //     this.props.baseTicker === "USDT"
-    //   ) {
-    //     price = 1
-    //   } else {
-    //     price = 0
-    //   }
-    // } else if (this.state.previousPriceReport === DEFAULT_PRICE_REPORT) {
-    //   price = this.state.currentPriceReport.midpointPrice
-    // } else {
-    //   price = this.state.currentPriceReport.midpointPrice
-    //   priceStrClass =
-    //     this.state.currentPriceReport.midpointPrice >
-    //     this.state.previousPriceReport.midpointPrice
-    //       ? "fade-green-to-white"
-    //       : "fade-red-to-white"
-    // }
-    // price = price || 0
+    if (this.state.currentPriceReport === DEFAULT_PRICE_REPORT) {
+      if (this.state.fallbackPriceReport !== DEFAULT_PRICE_REPORT) {
+        price = this.state.fallbackPriceReport.midpointPrice
+      }
+      // else if (
+      //   this.props.baseTicker === "USDC" ||
+      //   this.props.baseTicker === "USDT"
+      // ) {
+      //   price = 1
+      // } else {
+      //   price = 0
+      // }
+    } else if (this.state.previousPriceReport === DEFAULT_PRICE_REPORT) {
+      price = this.state.currentPriceReport.midpointPrice
+    } else {
+      price = this.state.currentPriceReport.midpointPrice
+      priceStrClass =
+        this.state.currentPriceReport.midpointPrice >
+        this.state.previousPriceReport.midpointPrice
+          ? "fade-green-to-white"
+          : "fade-red-to-white"
+    }
+    price = price || 0
 
-    // // If the caller supplied a scaleBy prop, scale the price appropriately
-    // if (this.props.scaleBy !== undefined) {
-    //   price *= this.props.scaleBy
-    // }
+    // If the caller supplied a scaleBy prop, scale the price appropriately
+    if (this.props.scaleBy !== undefined) {
+      price *= this.props.scaleBy
+    }
 
     // Format the price as a string
     let trailingDecimals: number

@@ -17,3 +17,12 @@ export interface ExchangeData {
   okx: PriceReport
   uniswapv3: PriceReport
 }
+
+type HealthState =
+  | "connecting"
+  | "unsupported"
+  | "live"
+  | "no-data"
+  | "too-stale"
+  | "not-enough-data"
+  | "too-much-deviation"

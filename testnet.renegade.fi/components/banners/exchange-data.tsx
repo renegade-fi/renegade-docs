@@ -34,13 +34,59 @@ async function ExchangeTape() {
       healthStatesExchanges["UniswapV3"] &&
       healthStatesExchanges["UniswapV3"]["Nominal"],
   }
+  const newPriceReporterHealthStates = {
+    median: getHealthState(healthStates["median"]),
+    binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
+    coinbase: getHealthState(healthStates["all_exchanges"]["Coinbase"]),
+    kraken: getHealthState(healthStates["all_exchanges"]["Kraken"]),
+    okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
+    uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
+  }
   return (
     <ExchangeConnectionsBanner
-      activeBaseTicker="WETH"
-      activeQuoteTicker="USDC"
       priceReport={fallbackPriceReport}
+      priceReporterHealthStates={newPriceReporterHealthStates}
     />
   )
 }
+function getHealthState(priceReport: any): HealthState {
+  if (!priceReport || priceReport === "Unsupported") {
+    return "unsupported"
+  }
+  if (typeof priceReport === "object" && priceReport["Nominal"] !== undefined) {
+    return "live"
+  }
+  if (priceReport === "NoDataReported") {
+    return "no-data"
+  }
+  if (
+    typeof priceReport === "object" &&
+    priceReport["DataTooStale"] !== undefined
+  ) {
+    return "too-stale"
+  }
+  if (
+    typeof priceReport === "object" &&
+    priceReport["NotEnoughDataReported"] !== undefined
+  ) {
+    return "not-enough-data"
+  }
+  if (
+    typeof priceReport === "object" &&
+    priceReport["TooMuchDeviation"] !== undefined
+  ) {
+    return "too-much-deviation"
+  }
+  throw new Error("Invalid priceReport: " + priceReport)
+}
+
+type HealthState =
+  | "connecting"
+  | "unsupported"
+  | "live"
+  | "no-data"
+  | "too-stale"
+  | "not-enough-data"
+  | "too-much-deviation"
 
 export default ExchangeTape
