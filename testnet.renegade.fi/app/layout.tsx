@@ -39,20 +39,7 @@ export default function RootLayout({
             }}
           >
             <MainNav />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: "1",
-                backgroundImage: `url(${backgroundPattern.src})`,
-                backgroundSize: "cover",
-              }}
-            >
-              <ExchangeData />
-              <RelayerStatusData />
-              {children}
-              <AllTokensData />
-            </div>
+            {children}
             <Footer />
           </div>
         </Providers>

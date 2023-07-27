@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
 
 import { Direction, OrderContextValue } from "./types"
 
@@ -9,11 +10,19 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 )
 
 function OrderProvider({ children }: OrderProviderProps) {
+  const params = useParams()
+  const router = useRouter()
   const [direction, setDirection] = useState<Direction>(
     Direction.ACTIVE_TO_QUOTE
   )
-  const [baseToken, setBaseToken] = useState("WBTC")
-  const [quoteToken, setQuoteToken] = useState("USDC")
+  const baseToken = params.base.toString()
+  const handleSetBaseToken = (token: string) => {
+    router.push(`/${token}/${quoteToken}`)
+  }
+  const quoteToken = params.quote.toString()
+  const handleSetQuoteToken = (token: string) => {
+    router.push(`/${baseToken}/${token}`)
+  }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
   // TODO: sync order details with local storage
   // TODO: use handle -> on pattern
@@ -23,9 +32,9 @@ function OrderProvider({ children }: OrderProviderProps) {
         direction,
         setDirection,
         baseToken,
-        setBaseToken,
+        setBaseToken: handleSetBaseToken,
         quoteToken,
-        setQuoteToken,
+        setQuoteToken: handleSetQuoteToken,
         baseTokenAmount,
         setBaseTokenAmount,
       }}

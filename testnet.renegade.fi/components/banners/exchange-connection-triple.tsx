@@ -132,7 +132,7 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           exchange={props.exchange}
           link={link}
           isMobile={props.isMobile}
-          price={props.priceReport.midpointPrice}
+          price={props.priceReport?.midpointPrice}
         />
       )}
       <LinkWrapper link={link}>

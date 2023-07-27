@@ -11,14 +11,20 @@ const renegade = new Renegade({
   verbose: false,
 })
 
-async function ExchangeTape() {
+async function ExchangeTape({
+  baseToken,
+  quoteToken,
+}: {
+  baseToken: string
+  quoteToken: string
+}) {
   const healthStates: HealthStates = await renegade?.queryExchangeHealthStates(
-    new Token({ ticker: "WETH" }),
-    new Token({ ticker: "USDC" })
+    new Token({ ticker: baseToken }),
+    new Token({ ticker: quoteToken })
   )
   const healthStatesExchanges = healthStates["all_exchanges"]
   const fallbackPriceReport: ExchangeData = {
-    median: healthStates["median"]["DataTooStale"][0],
+    median: healthStates["median"]["DataTooStale"]?.[0],
     binance:
       healthStatesExchanges["Binance"] &&
       healthStatesExchanges["Binance"]["Nominal"],
