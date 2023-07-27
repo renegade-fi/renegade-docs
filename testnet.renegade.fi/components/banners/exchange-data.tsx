@@ -1,10 +1,10 @@
 import { ExchangeData, HealthStates } from "@/types"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
 
-import ExchangeConnectionsBanner from "@/components/banners/exchange-connections"
+import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 
 const renegade = new Renegade({
-  relayerHostname: "cluster-node0.renegade-devnet.renegade.fi",
+  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport: false,
@@ -48,10 +48,16 @@ async function ExchangeTape({
     okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
     uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
   }
+  console.log(
+    "🚀 ~ file: exchange-data.tsx:54 ~ fallbackPriceReport:",
+    fallbackPriceReport
+  )
   return (
     <ExchangeConnectionsBanner
       priceReport={fallbackPriceReport}
       priceReporterHealthStates={newPriceReporterHealthStates}
+      activeBaseTicker={baseToken}
+      activeQuoteTicker={quoteToken}
     />
   )
 }

@@ -15,11 +15,11 @@ function OrderProvider({ children }: OrderProviderProps) {
   const [direction, setDirection] = useState<Direction>(
     Direction.ACTIVE_TO_QUOTE
   )
-  const baseToken = params.base.toString()
+  const baseToken = params.base.toString().toUpperCase()
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}/${quoteToken}`)
   }
-  const quoteToken = params.quote.toString()
+  const quoteToken = params.quote.toString().toUpperCase()
   const handleSetQuoteToken = (token: string) => {
     router.push(`/${baseToken}/${token}`)
   }

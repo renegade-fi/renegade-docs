@@ -31,6 +31,7 @@ interface LivePricesState {
   currentPriceReport: PriceReport
   callbackId?: CallbackId
 }
+// TODO: Initial price comes top down (data fetch server components), live price comes from leaves (this component)
 export class LivePrices extends React.Component<
   LivePricesProps,
   LivePricesState

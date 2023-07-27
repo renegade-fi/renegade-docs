@@ -1,23 +1,33 @@
 import { Renegade } from "@renegade-fi/renegade-js"
 
-import RelayerStatusBanner from "./relayer-status-banner"
-
-export const revalidate = 1
+import RelayerStatusBanner from "./relayer-banner"
 
 const renegade = new Renegade({
-  relayerHostname: "cluster-node0.renegade-devnet.renegade.fi",
+  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport: false,
   verbose: false,
 })
 
-async function RelayerStatusData() {
+async function RelayerStatusData({
+  baseToken,
+  quoteToken,
+}: {
+  baseToken: string
+  quoteToken: string
+}) {
   const ping = await renegade
     ?.ping()
     .then(() => "live")
     .catch(() => "dead")
-  return <RelayerStatusBanner connectionState={ping} />
+  return (
+    <RelayerStatusBanner
+      connectionState={ping}
+      activeBaseTicker={baseToken}
+      activeQuoteTicker={quoteToken}
+    />
+  )
 }
 
 export default RelayerStatusData

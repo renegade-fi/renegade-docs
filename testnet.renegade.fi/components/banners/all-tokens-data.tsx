@@ -6,7 +6,7 @@ import { TICKER_TO_NAME_AND_DEFAULT_DECIMALS } from "@/lib/tokens"
 import AllTokensBanner from "./all-tokens"
 
 const renegade = new Renegade({
-  relayerHostname: "cluster-node0.renegade-devnet.renegade.fi",
+  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport: false,
