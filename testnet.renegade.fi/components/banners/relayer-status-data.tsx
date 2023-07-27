@@ -17,7 +17,6 @@ async function RelayerStatusData() {
     ?.ping()
     .then(() => "live")
     .catch(() => "dead")
-  // TODO: add back activeBaseTicker and activeQuoteTicker
   return <RelayerStatusBanner connectionState={ping} />
 }
 
