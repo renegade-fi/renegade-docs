@@ -21,7 +21,7 @@ export default function Home({
       }}
     >
       <ExchangeData baseToken={params.base} quoteToken={params.quote} />
-      <RelayerStatusData />
+      <RelayerStatusData baseToken={params.base} quoteToken={params.quote} />
       <TradingBody />
       <AllTokensData />
     </div>

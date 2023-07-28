@@ -7,11 +7,6 @@ import "./fonts.css"
 // TODO: merge globals.css and index.css
 import "./globals.css"
 import "./index.css"
-import backgroundPattern from "@/icons/background_pattern.png"
-
-import AllTokensData from "@/components/banners/all-tokens-data"
-import ExchangeData from "@/components/banners/exchange-data"
-import RelayerStatusData from "@/components/banners/relayer-status-data"
 import Footer from "@/components/footer"
 import MainNav from "@/components/main-nav"
 
