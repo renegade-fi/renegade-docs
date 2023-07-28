@@ -214,18 +214,7 @@ interface ExchangeConnectionsBannerProps {
     uniswapv3: HealthState
   }
 }
-interface ExchangeConnectionsBannerProps {
-  isMobile?: boolean
-  priceReport: ExchangeData
-  priceReporterHealthStates: {
-    median: HealthState
-    binance: HealthState
-    coinbase: HealthState
-    kraken: HealthState
-    okx: HealthState
-    uniswapv3: HealthState
-  }
-}
+
 interface ExchangeConnectionsBannerState {
   exchangeConnectionsBannerRef: React.RefObject<HTMLDivElement>
   priceReporterHealthStates: {

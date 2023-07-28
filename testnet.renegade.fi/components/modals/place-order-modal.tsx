@@ -58,12 +58,6 @@ interface PlaceOrderModalProps {
   activeBaseTicker: string
   activeQuoteTicker: string
   activeBaseTokenAmount: number
-  setOrderInfo: (
-    direction?: "buy" | "sell",
-    baseTicker?: string,
-    quoteTicker?: string,
-    baseTokenAmount?: number
-  ) => void
 }
 interface PlaceOrderModalState {
   medianPriceReport: PriceReport
@@ -128,7 +122,7 @@ export default class PlaceOrderModal extends React.Component<
     const [taskId] = await renegade.task.placeOrder(accountId, order)
     setTask(taskId)
     setTimeout(() => {
-      this.props.setOrderInfo(undefined, undefined, undefined, 0)
+      // this.props.setOrderInfo(undefined, undefined, undefined, 0)
       this.props.onClose()
       setTimeout(() => this.setState({ isPlacingOrder: false }), 100)
     }, 1000)

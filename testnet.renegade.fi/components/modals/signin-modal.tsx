@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   Spinner,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import RenegadeContext from "contexts/RenegadeContext"

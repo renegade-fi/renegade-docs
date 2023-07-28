@@ -106,14 +106,6 @@ export default function PlaceOrderButton() {
         activeBaseTicker={baseToken}
         activeQuoteTicker={quoteToken}
         activeBaseTokenAmount={baseTokenAmount}
-        setOrderInfo={function (
-          direction?: "buy" | "sell" | undefined,
-          baseTicker?: string | undefined,
-          quoteTicker?: string | undefined,
-          baseTokenAmount?: number | undefined
-        ): void {
-          throw new Error("Function not implemented.")
-        }}
       />
     </>
   )

@@ -26,6 +26,7 @@ import SignInModal from "./modals/signin-modal"
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
   const [isCompleted, setIsCompleted] = React.useState(false)
+  // eslint-disable-next-line no-undef
   const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null)
   return (
     <Box
@@ -220,13 +221,6 @@ function DisconnectWalletButton() {
   )
 }
 
-interface HeaderProps {
-  onOpenGlobalModal?: () => void
-}
-interface HeaderState {
-  glyphRef: React.RefObject<HTMLDivElement>
-  showDownloadPrompt: boolean
-}
 export default function MainNav() {
   const [showDownloadPrompt, setshowDownloadPrompt] = useState(false)
   const glyphRef = createRef<HTMLDivElement>()

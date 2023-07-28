@@ -5,7 +5,7 @@ import RenegadeContext, {
   RenegadeContextType,
 } from "@/contexts/RenegadeContext"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react"
+import { Box, Flex, Link, Text } from "@chakra-ui/react"
 import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
