@@ -58,7 +58,7 @@ export default class AllTokensBanner extends React.Component<
       isHovered: false,
       isClicked: false,
     }
-    // this.getAllTokenBannerSingle = this.getAllTokenBannerSingle.bind(this)
+    this.getAllTokenBannerSingle = this.getAllTokenBannerSingle.bind(this)
     this.performScroll = this.performScroll.bind(this)
     this.onMouseEnter = this.onMouseEnter.bind(this)
     this.onMouseLeave = this.onMouseLeave.bind(this)
@@ -67,28 +67,30 @@ export default class AllTokensBanner extends React.Component<
     this.onMouseMove = this.onMouseMove.bind(this)
   }
 
-  // getAllTokenBannerSingle(key: number) {
-  //   const selectedDisplayedTickers = this.props.isMobile
-  //     ? [
-  //         ["WBTC", "USDC"],
-  //         ["WETH", "USDC"],
-  //         ["UNI", "USDC"],
-  //         ["AAVE", "USDC"],
-  //       ]
-  //     : DISPLAYED_TICKERS
-  //   const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
-  //     return (
-  //       <TokenBannerSingle
-  //         baseTokenTicker={tickers[0]}
-  //         quoteTokenTicker={tickers[1]}
-  //         setOrderInfo={this.props.setOrderInfo}
-  //         isMobile={this.props.isMobile}
-  //         key={tickers.toString() + "_" + key.toString()}
-  //       />
-  //     )
-  //   })
-  //   return allTokenBannerSingle
-  // }
+  getAllTokenBannerSingle(key: number) {
+    const selectedDisplayedTickers = this.props.isMobile
+      ? [
+          ["WBTC", "USDC"],
+          ["WETH", "USDC"],
+          ["UNI", "USDC"],
+          ["AAVE", "USDC"],
+        ]
+      : DISPLAYED_TICKERS
+    const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
+      return (
+        // TODO: not safe if custom logic in setBaseToken/setQuoteToken
+        <Link href={`/${tickers[0]}/${tickers[1]}`}>
+          <TokenBannerSingle
+            baseTokenTicker={tickers[0]}
+            quoteTokenTicker={tickers[1]}
+            isMobile={this.props.isMobile}
+            key={tickers.toString() + "_" + key.toString()}
+          />
+        </Link>
+      )
+    })
+    return allTokenBannerSingle
+  }
 
   performScroll() {
     const allTokensBanner = this.state.allTokensBannerRef.current
@@ -153,9 +155,9 @@ export default class AllTokensBanner extends React.Component<
   }
 
   render() {
-    // const allTokenBannerSingle = this.getAllTokenBannerSingle(1)
-    //   .concat(this.getAllTokenBannerSingle(2))
-    //   .concat(this.getAllTokenBannerSingle(3))
+    const allTokenBannerSingle = this.getAllTokenBannerSingle(1)
+      .concat(this.getAllTokenBannerSingle(2))
+      .concat(this.getAllTokenBannerSingle(3))
     return (
       <Stack
         direction={this.props.isMobile ? "column" : "row"}
@@ -180,22 +182,7 @@ export default class AllTokensBanner extends React.Component<
         onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
         ref={this.state.allTokensBannerRef}
       >
-        {/* {allTokenBannerSingle} */}
-        {/* TODO: use priceReports for initial cache */}
-        {this.props.priceReports.map((priceReport, index) => {
-          return (
-            <Link
-              href={`/${DISPLAYED_TICKERS[index][0]}/${DISPLAYED_TICKERS[index][1]}`}
-            >
-              <TokenBannerSingle
-                baseTokenTicker={DISPLAYED_TICKERS[index][0]}
-                quoteTokenTicker={DISPLAYED_TICKERS[index][1]}
-                isMobile={this.props.isMobile}
-                key={DISPLAYED_TICKERS[index][0].toString()}
-              />
-            </Link>
-          )
-        })}
+        {allTokenBannerSingle}
       </Stack>
     )
   }

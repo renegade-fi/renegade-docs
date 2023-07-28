@@ -513,7 +513,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 exchange={Exchange.Coinbase}
                 healthState={this.props.priceReporterHealthStates["coinbase"]}
                 isMobile={this.props.isMobile}
-                priceReport={this.props.priceReport["binance"]}
+                priceReport={this.props.priceReport["coinbase"]}
               />
               <BannerSeparator flexGrow={4} />
               <ExchangeConnectionTriple

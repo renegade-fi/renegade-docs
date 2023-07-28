@@ -26,7 +26,6 @@ async function AllTokensData() {
       healthState.median.TooMuchDeviation?.[0]
     )
   })
-  // TODO: Add setOrderInfo prop
   return <AllTokensBanner priceReports={fallbackPriceReport} />
 }
 
