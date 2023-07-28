@@ -6,7 +6,8 @@ import { PriceReport } from "@/contexts/RenegadeContext"
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 
-import { DISPLAYED_TICKERS } from "./all-tokens-data"
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
+
 import { LivePrices } from "./live-price"
 
 interface TokenBannerSingleProps {

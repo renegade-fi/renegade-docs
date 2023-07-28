@@ -13,7 +13,7 @@ export interface HealthStates {
   }
 }
 
-export interface ExchangeData {
+export interface ExchangeReport {
   median?: PriceReport
   binance: PriceReport
   coinbase: PriceReport

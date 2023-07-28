@@ -5,7 +5,7 @@ import RenegadeContext, {
   PriceReport,
   RenegadeContextType,
 } from "@/contexts/RenegadeContext"
-import { ExchangeData, HealthState } from "@/types"
+import { ExchangeReport, HealthState } from "@/types"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import { Exchange, Token } from "@renegade-fi/renegade-js"
 
@@ -203,7 +203,7 @@ function MedianTriple(props: MedianTripleProps) {
 interface ExchangeConnectionsBannerProps {
   activeBaseTicker: string
   activeQuoteTicker: string
-  priceReport: ExchangeData
+  priceReport: ExchangeReport
   isMobile?: boolean
   priceReporterHealthStates: {
     median: HealthState

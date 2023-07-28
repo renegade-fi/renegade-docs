@@ -193,6 +193,10 @@ export const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: {
   // BAT: ["Basic Attention Token", -1],
 }
 
+export const DISPLAYED_TICKERS: [string, string][] = Object.keys(
+  TICKER_TO_NAME_AND_DEFAULT_DECIMALS
+).map((ticker: string) => [ticker, "USDC"])
+
 export const TICKER_TO_NAME: { [key in string]: string } = {}
 export const TICKER_TO_DEFAULT_DECIMALS: { [key in string]: number } = {}
 for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
