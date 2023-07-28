@@ -1,14 +1,5 @@
 import React from "react"
-import RenegadeContext, {
-  DEFAULT_PRICE_REPORT,
-  PriceReport,
-  RenegadeContextType,
-} from "@/contexts/RenegadeContext"
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { Box, Center, Flex, Link, Text, keyframes } from "@chakra-ui/react"
-import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js"
-
-import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
+import { Box, Center, Flex, Link } from "@chakra-ui/react"
 
 interface BannerSeparatorProps {
   flexGrow?: number

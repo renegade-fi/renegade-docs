@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { PriceReport } from "@/contexts/RenegadeContext"
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
@@ -11,12 +12,6 @@ import { LivePrices } from "./live-price"
 interface TokenBannerSingleProps {
   baseTokenTicker: string
   quoteTokenTicker: string
-  setOrderInfo?: (
-    direction?: "buy" | "sell",
-    baseTicker?: string,
-    quoteTicker?: string,
-    baseTokenAmount?: number
-  ) => void
   isMobile?: boolean
 }
 function TokenBannerSingle(props: TokenBannerSingleProps) {
@@ -24,16 +19,6 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
     <Stack
       direction={props.isMobile ? "column-reverse" : "row"}
       alignItems="center"
-      onClick={() => {
-        if (!props.setOrderInfo) {
-          return
-        }
-        props.setOrderInfo(
-          undefined,
-          props.baseTokenTicker,
-          props.quoteTokenTicker
-        )
-      }}
     >
       <Text
         fontFamily="Favorit Expanded"
@@ -54,14 +39,8 @@ function TokenBannerSingle(props: TokenBannerSingleProps) {
 }
 
 interface AllTokensBannerProps {
-  setOrderInfo?: (
-    direction?: "buy" | "sell",
-    baseTicker?: string,
-    quoteTicker?: string,
-    baseTokenAmount?: number
-  ) => void
   isMobile?: boolean
-  priceReports: PriceReport[]
+  priceReports: (PriceReport | undefined)[]
 }
 interface AllTokensBannerState {
   allTokensBannerRef: React.RefObject<HTMLDivElement>
@@ -79,7 +58,7 @@ export default class AllTokensBanner extends React.Component<
       isHovered: false,
       isClicked: false,
     }
-    this.getAllTokenBannerSingle = this.getAllTokenBannerSingle.bind(this)
+    // this.getAllTokenBannerSingle = this.getAllTokenBannerSingle.bind(this)
     this.performScroll = this.performScroll.bind(this)
     this.onMouseEnter = this.onMouseEnter.bind(this)
     this.onMouseLeave = this.onMouseLeave.bind(this)
@@ -88,28 +67,28 @@ export default class AllTokensBanner extends React.Component<
     this.onMouseMove = this.onMouseMove.bind(this)
   }
 
-  getAllTokenBannerSingle(key: number) {
-    const selectedDisplayedTickers = this.props.isMobile
-      ? [
-          ["WBTC", "USDC"],
-          ["WETH", "USDC"],
-          ["UNI", "USDC"],
-          ["AAVE", "USDC"],
-        ]
-      : DISPLAYED_TICKERS
-    const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
-      return (
-        <TokenBannerSingle
-          baseTokenTicker={tickers[0]}
-          quoteTokenTicker={tickers[1]}
-          setOrderInfo={this.props.setOrderInfo}
-          isMobile={this.props.isMobile}
-          key={tickers.toString() + "_" + key.toString()}
-        />
-      )
-    })
-    return allTokenBannerSingle
-  }
+  // getAllTokenBannerSingle(key: number) {
+  //   const selectedDisplayedTickers = this.props.isMobile
+  //     ? [
+  //         ["WBTC", "USDC"],
+  //         ["WETH", "USDC"],
+  //         ["UNI", "USDC"],
+  //         ["AAVE", "USDC"],
+  //       ]
+  //     : DISPLAYED_TICKERS
+  //   const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
+  //     return (
+  //       <TokenBannerSingle
+  //         baseTokenTicker={tickers[0]}
+  //         quoteTokenTicker={tickers[1]}
+  //         setOrderInfo={this.props.setOrderInfo}
+  //         isMobile={this.props.isMobile}
+  //         key={tickers.toString() + "_" + key.toString()}
+  //       />
+  //     )
+  //   })
+  //   return allTokenBannerSingle
+  // }
 
   performScroll() {
     const allTokensBanner = this.state.allTokensBannerRef.current
@@ -174,9 +153,9 @@ export default class AllTokensBanner extends React.Component<
   }
 
   render() {
-    const allTokenBannerSingle = this.getAllTokenBannerSingle(1)
-      .concat(this.getAllTokenBannerSingle(2))
-      .concat(this.getAllTokenBannerSingle(3))
+    // const allTokenBannerSingle = this.getAllTokenBannerSingle(1)
+    //   .concat(this.getAllTokenBannerSingle(2))
+    //   .concat(this.getAllTokenBannerSingle(3))
     return (
       <Stack
         direction={this.props.isMobile ? "column" : "row"}
@@ -202,39 +181,19 @@ export default class AllTokensBanner extends React.Component<
         ref={this.state.allTokensBannerRef}
       >
         {/* {allTokenBannerSingle} */}
+        {/* TODO: use priceReports for initial cache */}
         {this.props.priceReports.map((priceReport, index) => {
           return (
-            <Stack
-              direction={this.props.isMobile ? "column-reverse" : "row"}
-              key={`${DISPLAYED_TICKERS[index][0]}_${DISPLAYED_TICKERS[index][1]}`}
-              alignItems="center"
-              onClick={() => {
-                if (!this.props.setOrderInfo) {
-                  return
-                }
-                this.props.setOrderInfo(
-                  undefined,
-                  DISPLAYED_TICKERS[index][0],
-                  DISPLAYED_TICKERS[index][1]
-                )
-              }}
+            <Link
+              href={`/${DISPLAYED_TICKERS[index][0]}/${DISPLAYED_TICKERS[index][1]}`}
             >
-              <Text
-                fontFamily="Favorit Expanded"
-                color="white.80"
-                variant={this.props.isMobile ? "rotate-left" : undefined}
-              >
-                {DISPLAYED_TICKERS[index][0]}
-              </Text>
-              <LivePrices
-                baseTicker={DISPLAYED_TICKERS[index][0]}
-                quoteTicker={DISPLAYED_TICKERS[index][1]}
-                exchange={Exchange.Median}
+              <TokenBannerSingle
+                baseTokenTicker={DISPLAYED_TICKERS[index][0]}
+                quoteTokenTicker={DISPLAYED_TICKERS[index][1]}
                 isMobile={this.props.isMobile}
-                shouldRotate={this.props.isMobile}
-                price={priceReport?.midpointPrice}
+                key={DISPLAYED_TICKERS[index][0].toString()}
               />
-            </Stack>
+            </Link>
           )
         })}
       </Stack>

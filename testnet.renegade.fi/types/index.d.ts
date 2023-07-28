@@ -1,6 +1,10 @@
+import { PriceReport } from "@/contexts/RenegadeContext"
+
 export interface HealthStates {
   median: {
-    DataTooStale: [PriceReport, number]
+    DataTooStale?: [PriceReport, number]
+    Nominal?: PriceReport
+    TooMuchDeviation?: [PriceReport, number]
   }
   all_exchanges: {
     [key: string]: {
@@ -10,7 +14,7 @@ export interface HealthStates {
 }
 
 export interface ExchangeData {
-  median: PriceReport
+  median?: PriceReport
   binance: PriceReport
   coinbase: PriceReport
   kraken: PriceReport

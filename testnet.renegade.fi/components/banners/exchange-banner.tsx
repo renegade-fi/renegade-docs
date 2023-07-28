@@ -40,7 +40,7 @@ interface ExchangeConnectionTripleProps {
   exchange: Exchange
   healthState: HealthState
   isMobile?: boolean
-  priceReport: PriceReport
+  priceReport?: PriceReport
 }
 function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   // Remap some tickers, as different exchanges use different names
@@ -166,7 +166,7 @@ interface MedianTripleProps {
   activeQuoteTicker: string
   healthState: HealthState
   isMobile?: boolean
-  priceReport: PriceReport
+  priceReport?: PriceReport
 }
 function MedianTriple(props: MedianTripleProps) {
   return (

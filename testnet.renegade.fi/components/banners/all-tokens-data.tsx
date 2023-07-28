@@ -19,9 +19,13 @@ async function AllTokensData() {
     }
   )
   const healthStates = await Promise.all(res)
-  const fallbackPriceReport = healthStates.map(
-    (healthState) => healthState.median.DataTooStale?.[0]
-  )
+  const fallbackPriceReport = healthStates.map((healthState) => {
+    return (
+      healthState.median.DataTooStale?.[0] ||
+      healthState.median.Nominal ||
+      healthState.median.TooMuchDeviation?.[0]
+    )
+  })
   // TODO: Add setOrderInfo prop
   return <AllTokensBanner priceReports={fallbackPriceReport} />
 }

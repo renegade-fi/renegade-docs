@@ -48,10 +48,6 @@ async function ExchangeTape({
     okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
     uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
   }
-  console.log(
-    "🚀 ~ file: exchange-data.tsx:54 ~ fallbackPriceReport:",
-    fallbackPriceReport
-  )
   return (
     <ExchangeConnectionsBanner
       priceReport={fallbackPriceReport}
