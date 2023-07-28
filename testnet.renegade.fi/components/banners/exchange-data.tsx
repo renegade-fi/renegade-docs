@@ -3,11 +3,11 @@ import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 
-const renegade = new Renegade({
+export const renegade = new Renegade({
   relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
-  useInsecureTransport: false,
+  useInsecureTransport: true,
   verbose: false,
 })
 

@@ -1,17 +1,10 @@
 import { HealthStates } from "@/types"
-import { Renegade, Token } from "@renegade-fi/renegade-js"
+import { Token } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_NAME_AND_DEFAULT_DECIMALS } from "@/lib/tokens"
 
-import AllTokensBanner from "./all-tokens"
-
-const renegade = new Renegade({
-  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport: false,
-  verbose: false,
-})
+import { renegade } from "./exchange-data"
+import AllTokensBanner from "./tokens-banner"
 
 async function AllTokensData() {
   const res: Promise<HealthStates>[] = []
