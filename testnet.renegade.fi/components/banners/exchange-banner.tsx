@@ -453,7 +453,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
             left={this.props.isMobile ? "1px" : "0px"}
             width={this.props.isMobile ? undefined : "10px"}
             height={this.props.isMobile ? "10px" : undefined}
-            bg={`linear-gradient(${
+            background={`linear-gradient(${
               this.props.isMobile ? "180deg" : "90deg"
             }, rgba(0,0,0,1), rgba(0,0,0,0))`}
             visibility={this.state.isTooShort ? undefined : "hidden"}
