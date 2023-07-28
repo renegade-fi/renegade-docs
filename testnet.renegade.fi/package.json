@@ -22,6 +22,7 @@
     "@emotion/styled": "^11.11.0",
     "@renegade-fi/renegade-js": "^0.3.1",
     "connectkit": "^1.4.0",
+    "eslint-plugin-chakra-ui": "^0.9.1",
     "ethers": "^6.6.4",
     "framer-motion": "^10.12.22",
     "next": "^13.4.10",

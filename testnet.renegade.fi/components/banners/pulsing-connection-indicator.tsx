@@ -37,22 +37,22 @@ const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
       position="relative"
       alignItems="center"
       justifyContent="center"
-      height="8px"
       width="8px"
+      height="8px"
     >
       <Box
         position="absolute"
         width="8px"
         height="8px"
-        borderRadius="4px"
-        backgroundColor="black"
         border="1px solid"
         borderColor={backgroundColor}
+        borderRadius="4px"
         animation={
           props.state === "live"
             ? `${pulseAnimation(2.25)} 2s ease-out infinite ${randomDelay}s`
             : ""
         }
+        backgroundColor="black"
       />
       <Box
         position="absolute"

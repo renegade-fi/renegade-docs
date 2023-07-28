@@ -50,28 +50,28 @@ function FancyUnderline(props: { children: React.ReactElement }) {
         },
       })}
       <Box
-        opacity={isCompleted ? "0" : "1"}
         position="absolute"
-        height="1.5px"
-        width="100%"
         bottom="2px"
         left="0"
+        width="100%"
+        height="1.5px"
+        opacity={isCompleted ? "0" : "1"}
         transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
         transformOrigin="left"
-        backgroundColor={props.children.props.color || "white.80"}
         transition="transform 0.25s"
+        backgroundColor={props.children.props.color || "white.80"}
       />
       <Box
-        opacity={isCompleted ? "1" : "0"}
         position="absolute"
-        height="1.5px"
-        width="100%"
-        bottom="2px"
         right="0"
+        bottom="2px"
+        width="100%"
+        height="1.5px"
+        opacity={isCompleted ? "1" : "0"}
         transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
         transformOrigin="right"
-        backgroundColor={props.children.props.color || "white.80"}
         transition="transform 0.25s"
+        backgroundColor={props.children.props.color || "white.80"}
       />
     </Box>
   )
@@ -85,23 +85,23 @@ function Glyph(props: GlyphProps) {
   return (
     <Flex
       alignItems="center"
+      gap="20px"
       width="30%"
       marginLeft="1.2%"
       userSelect="none"
-      gap="20px"
     >
       <Box ref={props.glyphRef}>
         <Image alt="Renegade Logo" height="38" src={glyphDark} />
       </Box>
       <Link
+        color="white.90"
+        fontWeight="300"
         opacity={props.showDownloadPrompt ? 1 : 0}
         transform={
           props.showDownloadPrompt ? "translateX(0px)" : "translateX(-10px)"
         }
         pointerEvents={props.showDownloadPrompt ? undefined : "none"}
         transition="0.2s"
-        fontWeight="300"
-        color="white.90"
         href="https://renegade.fi/logos.zip"
         isExternal
       >
@@ -123,7 +123,7 @@ export function ConnectWalletButton() {
           return null
         }
         return (
-          <Button variant="wallet-connect" onClick={show}>
+          <Button onClick={show} variant="wallet-connect">
             Connect Wallet
           </Button>
         )
@@ -167,7 +167,7 @@ function SignInButton() {
   }
 
   return (
-    <Button variant="wallet-connect" onClick={onOpen}>
+    <Button onClick={onOpen} variant="wallet-connect">
       {buttonContent}
       <SignInModal isOpen={isOpen} onClose={onClose} />
     </Button>
@@ -209,12 +209,12 @@ function DisconnectWalletButton() {
 
   return (
     <Button
-      variant="wallet-connect"
       background="white.10"
       onClick={() => {
         setAccount(accountId, undefined)
         disconnect()
       }}
+      variant="wallet-connect"
     >
       {buttonContent}
     </Button>
@@ -243,26 +243,26 @@ export default function MainNav() {
       alignItems="center"
       width="100%"
       height="calc(2 * var(--banner-height))"
-      borderBottom="var(--border)"
       borderColor="border"
+      borderBottom="var(--border)"
       onClick={() => setshowDownloadPrompt(false)}
     >
       <Glyph glyphRef={glyphRef} showDownloadPrompt={showDownloadPrompt} />
       <Spacer />
       <HStack
-        spacing="20px"
-        fontSize="1.1em"
         color="white.80"
+        fontSize="1.1em"
         fontWeight="300"
         textDecoration="none"
         onClick={(event) => event.stopPropagation()}
+        spacing="20px"
       >
         <FancyUnderline>
           <Link
+            color="white.100"
             fontWeight="400"
             href="https://twitter.com/renegade_fi"
             isExternal
-            color="white.100"
           >
             Twitter
           </Link>
@@ -284,7 +284,7 @@ export default function MainNav() {
         </FancyUnderline>
       </HStack>
       <Spacer />
-      <Flex width="30%" justifyContent="right" paddingRight="1.5%">
+      <Flex justifyContent="right" width="30%" paddingRight="1.5%">
         <Box onClick={(event) => event.stopPropagation()}>
           <ConnectWalletButton />
           <SignInButton />

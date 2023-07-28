@@ -58,15 +58,18 @@ export default class Footer extends React.Component<
       >
         <Flex
           alignItems="center"
+          gap="30px"
           width="30%"
           marginLeft="2%"
           userSelect="none"
-          gap="30px"
         >
           <Box ref={this.state.logoRef}>
             <Image alt="Renegade Logo" height="30" src={logoDark} />
           </Box>
           <Link
+            color="white.90"
+            fontSize="1.1em"
+            fontWeight="300"
             opacity={this.state.showDownloadPrompt ? 1 : 0}
             transform={
               this.state.showDownloadPrompt
@@ -75,9 +78,6 @@ export default class Footer extends React.Component<
             }
             pointerEvents={this.state.showDownloadPrompt ? undefined : "none"}
             transition="0.2s"
-            fontSize="1.1em"
-            fontWeight="300"
-            color="white.90"
             href="https://renegade.fi/logos.zip"
             isExternal
           >
@@ -85,7 +85,7 @@ export default class Footer extends React.Component<
           </Link>
         </Flex>
         <Spacer />
-        <Text fontWeight="300" fontSize="1.1em" color="white.90">
+        <Text color="white.90" fontSize="1.1em" fontWeight="300">
           TESTNET
         </Text>
         <Spacer />

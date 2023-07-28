@@ -19,15 +19,15 @@ function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
   return (
     <Flex
       as={Link}
-      cursor={props.link ? undefined : "inherit"}
-      height="100%"
       alignItems="center"
       justifyContent="center"
+      flexGrow="1"
+      height="100%"
+      _hover={{ textDecoration: "none" }}
+      userSelect="none"
+      cursor={props.link ? undefined : "inherit"}
       href={props.link}
       isExternal
-      flexGrow="1"
-      userSelect="none"
-      _hover={{ textDecoration: "none" }}
     >
       {props.children}
     </Flex>
@@ -135,14 +135,12 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       )}
       <LinkWrapper link={link}>
         <Stack
-          direction={props.isMobile ? "column" : "row"}
           alignItems="center"
           justifyContent="center"
+          direction={props.isMobile ? "column" : "row"}
           spacing={props.isMobile ? "8px" : "5px"}
         >
           <Text
-            variant={textVariant}
-            lineHeight="1"
             sx={
               props.isMobile
                 ? {
@@ -151,6 +149,8 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
                   }
                 : undefined
             }
+            lineHeight="1"
+            variant={textVariant}
           >
             {connectionText}
           </Text>
@@ -171,18 +171,18 @@ interface MedianTripleProps {
 function MedianTriple(props: MedianTripleProps) {
   return (
     <Flex
-      flexDirection={props.isMobile ? "column" : "row"}
-      height={props.isMobile ? "40%" : "100%"}
-      width={props.isMobile ? "100%" : "24%"}
-      minWidth={props.isMobile ? undefined : "400px"}
-      paddingTop={props.isMobile ? "10px" : undefined}
       alignItems="center"
       justifyContent="center"
+      flexDirection={props.isMobile ? "column" : "row"}
+      width={props.isMobile ? "100%" : "24%"}
+      minWidth={props.isMobile ? undefined : "400px"}
+      height={props.isMobile ? "40%" : "100%"}
+      paddingTop={props.isMobile ? "10px" : undefined}
     >
       <Spacer flexGrow="3" />
       <Text
-        variant={props.isMobile ? "rotate-right" : undefined}
         whiteSpace="nowrap"
+        variant={props.isMobile ? "rotate-right" : undefined}
       >
         NBBO Feed
       </Text>
@@ -416,18 +416,18 @@ export default class ExchangeConnectionsBanner extends React.Component<
   render() {
     return (
       <Stack
+        alignItems="center"
+        justifyContent="flex-start"
         direction={this.props.isMobile ? "column" : "row"}
         width={
           this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
         }
         height={this.props.isMobile ? "220vw" : "var(--banner-height)"}
-        alignItems="center"
-        justifyContent="flex-start"
+        color="white.80"
         fontSize={this.props.isMobile ? "0.8em" : undefined}
+        borderColor="border"
         borderBottom={this.props.isMobile ? undefined : "var(--border)"}
         borderLeft={this.props.isMobile ? "var(--border)" : undefined}
-        borderColor="border"
-        color="white.80"
         userSelect="none"
         spacing="0px"
       >
@@ -439,36 +439,32 @@ export default class ExchangeConnectionsBanner extends React.Component<
           priceReport={this.props.priceReport["median"]}
         />
         <Flex
-          flexDirection={this.props.isMobile ? "column" : "row"}
-          height={this.props.isMobile ? "60%" : undefined}
-          width={this.props.isMobile ? undefined : "76%"}
           position="relative"
+          flexDirection={this.props.isMobile ? "column" : "row"}
+          width={this.props.isMobile ? undefined : "76%"}
+          height={this.props.isMobile ? "60%" : undefined}
         >
           <Box
-            height={this.props.isMobile ? "10px" : undefined}
-            width={this.props.isMobile ? undefined : "10px"}
             position="absolute"
+            zIndex="1"
             top={this.props.isMobile ? "0px" : "1px"}
+            right={this.props.isMobile ? "1px" : undefined}
             bottom={this.props.isMobile ? undefined : "1px"}
             left={this.props.isMobile ? "1px" : "0px"}
-            right={this.props.isMobile ? "1px" : undefined}
-            visibility={this.state.isTooShort ? undefined : "hidden"}
+            width={this.props.isMobile ? undefined : "10px"}
+            height={this.props.isMobile ? "10px" : undefined}
             bg={`linear-gradient(${
               this.props.isMobile ? "180deg" : "90deg"
             }, rgba(0,0,0,1), rgba(0,0,0,0))`}
-            zIndex="1"
+            visibility={this.state.isTooShort ? undefined : "hidden"}
           ></Box>
           <Box
-            height="100%"
-            width="100%"
+            ref={this.state.exchangeConnectionsBannerRef}
+            position="relative"
             overflowX="hidden"
             overflowY="hidden"
-            onMouseEnter={this.props.isMobile ? undefined : this.onMouseEnter}
-            onMouseLeave={this.props.isMobile ? undefined : this.onMouseLeave}
-            onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
-            onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
-            onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
-            onDragStart={(e) => e.preventDefault()}
+            width="100%"
+            height="100%"
             onClick={(e) => {
               if (
                 this.props.isMobile ||
@@ -477,15 +473,19 @@ export default class ExchangeConnectionsBanner extends React.Component<
                 e.preventDefault()
               }
             }}
-            position="relative"
-            ref={this.state.exchangeConnectionsBannerRef}
+            onDragStart={(e) => e.preventDefault()}
+            onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
+            onMouseEnter={this.props.isMobile ? undefined : this.onMouseEnter}
+            onMouseLeave={this.props.isMobile ? undefined : this.onMouseLeave}
+            onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
+            onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
           >
             <Flex
-              flexDirection={this.props.isMobile ? "column" : "row"}
               alignItems="center"
               justifyContent="center"
-              minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
+              flexDirection={this.props.isMobile ? "column" : "row"}
               minWidth={this.props.isMobile ? undefined : "1200px"}
+              minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}

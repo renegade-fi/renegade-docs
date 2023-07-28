@@ -21,9 +21,9 @@ const Selectable = React.forwardRef(
     return (
       <HStack
         ref={ref}
-        onClick={props.onClick}
-        cursor="pointer"
         userSelect="none"
+        cursor="pointer"
+        onClick={props.onClick}
       >
         <Text
           variant={
@@ -86,10 +86,10 @@ export default function TradingBody() {
 
   return (
     <Flex
+      position="relative"
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      position="relative"
       flexGrow="1"
     >
       <Box
@@ -104,27 +104,27 @@ export default function TradingBody() {
             ref={buySellSelectableRef}
           />
           <Input
-            borderColor="whiteAlpha.300"
-            _placeholder={{ color: "whiteAlpha.400" }}
+            width="200px"
             fontFamily="Favorit"
             fontSize="0.8em"
-            placeholder="0.00"
-            width="200px"
+            borderColor="whiteAlpha.300"
             borderRadius="100px"
-            type="number"
+            _focus={{
+              borderColor: "white.50 !important",
+              boxShadow: "none !important",
+            }}
+            _placeholder={{ color: "whiteAlpha.400" }}
             outline="none !important"
-            value={baseTokenAmount || ""}
             onChange={(e) => setBaseTokenAmount(parseFloat(e.target.value))}
-            onKeyPress={(e) => e.key === "-" && e.preventDefault()}
             onFocus={(e) =>
               e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                 passive: false,
               })
             }
-            _focus={{
-              borderColor: "white.50 !important",
-              boxShadow: "none !important",
-            }}
+            onKeyPress={(e) => e.key === "-" && e.preventDefault()}
+            placeholder="0.00"
+            type="number"
+            value={baseTokenAmount || ""}
           />
           <Selectable
             text={baseToken}
@@ -133,10 +133,10 @@ export default function TradingBody() {
             ref={baseTokenSelectableRef}
           />
           <Text
-            fontFamily="Favorit"
-            fontWeight="200"
-            fontSize="0.9em"
             color="white.50"
+            fontFamily="Favorit"
+            fontSize="0.9em"
+            fontWeight="200"
           >
             {direction === Direction.QUOTE_TO_ACTIVE ? "with" : "for"}
           </Text>

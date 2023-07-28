@@ -33,11 +33,11 @@ function SignInButton(props: SignInButtonProps) {
     <Button
       width="100%"
       height={props.isLoading ? "50px" : "40px"}
-      transition="0.2s"
       marginTop="20px"
-      fontWeight="800"
-      backgroundColor="brown.light"
       color="white.90"
+      fontWeight="800"
+      transition="0.2s"
+      backgroundColor="brown.light"
       onClick={() => props.signMessage()}
     >
       <HStack spacing="10px">
@@ -59,16 +59,16 @@ function DisconnectWalletButton(props: { onClose: () => void }) {
   const { disconnect } = useDisconnectWagmi()
   return (
     <Button
-      variant="transparent"
       padding="0"
-      fontFamily="Favorit"
-      fontWeight="400"
-      fontSize="1.05em"
       color="white.50"
+      fontFamily="Favorit"
+      fontSize="1.05em"
+      fontWeight="400"
       onClick={() => {
         disconnect()
         props.onClose()
       }}
+      variant="transparent"
     >
       <HStack spacing="0px">
         <Icon as={AiOutlineDisconnect} marginRight="5px" />
@@ -94,21 +94,21 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
     },
   })
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="sm">
+    <Modal isCentered isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
       />
-      <ModalContent borderRadius="10px" background="brown">
+      <ModalContent background="brown" borderRadius="10px">
         <ModalHeader paddingBottom="0">Unlock your Wallet</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex
-            flexDirection="column"
-            justifyContent="center"
             alignItems="center"
+            justifyContent="center"
+            flexDirection="column"
           >
-            <Text fontSize="0.9em" color="white.60">
+            <Text color="white.60" fontSize="0.9em">
               To trade on Renegade, we require a one-time signature to unlock
               and create your wallet.
             </Text>
@@ -118,10 +118,10 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
               onClose={onClose}
             />
             <Flex
-              marginTop="10px"
               alignItems="center"
-              opacity={isLoading ? 0 : 1}
               height={isLoading ? "0px" : "40px"}
+              marginTop="10px"
+              opacity={isLoading ? 0 : 1}
               transition="0.2s"
             >
               <DisconnectWalletButton onClose={onClose} />

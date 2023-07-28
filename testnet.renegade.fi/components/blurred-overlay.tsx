@@ -65,9 +65,9 @@ export default function BlurredOverlay({
     return (
       <Text
         margin="-10px 0 -5px 0"
+        color="white.70"
         fontFamily="Aime"
         fontSize="0.8em"
-        color="white.70"
       >
         or
       </Text>
@@ -77,35 +77,35 @@ export default function BlurredOverlay({
   function BuySellMenu() {
     return (
       <Flex
-        flexDirection="column"
-        alignItems="center"
-        hidden={activeModal !== "buy-sell"}
         position="absolute"
-        left={buySellSelectableCoords[0]}
         top={buySellSelectableCoords[1]}
-        transform="translate(-50%, -50%) translateX(-20px)"
+        left={buySellSelectableCoords[0]}
+        alignItems="center"
+        flexDirection="column"
         fontSize="1.9em"
+        transform="translate(-50%, -50%) translateX(-20px)"
+        hidden={activeModal !== "buy-sell"}
       >
         <Text
-          variant="trading-body-button"
-          cursor="pointer"
           animation={`${snapAnimation(70)} 0.15s ease both`}
+          cursor="pointer"
           onClick={() => {
             onClose()
             setDirection(Direction.QUOTE_TO_ACTIVE)
           }}
+          variant="trading-body-button"
         >
           BUY
         </Text>
         <OrText />
         <Text
-          variant="trading-body-button"
-          cursor="pointer"
           animation={`${snapAnimation(-70)} 0.15s ease both`}
+          cursor="pointer"
           onClick={() => {
             onClose()
             setDirection(Direction.ACTIVE_TO_QUOTE)
           }}
+          variant="trading-body-button"
         >
           SELL
         </Text>
@@ -132,16 +132,16 @@ export default function BlurredOverlay({
         as={Button}
         margin="5px"
         padding="8px"
+        color="border"
         border="var(--border)"
         borderRadius="5px"
-        color="border"
         onClick={() => {
           onClose()
           setBaseToken(ticker)
         }}
       >
-        <Image alt="Ticker" src={imageUrl} width="20px" height="20px" />
-        <Text fontSize="0.8em" color="white.90">
+        <Image width="20px" height="20px" alt="Ticker" src={imageUrl} />
+        <Text color="white.90" fontSize="0.8em">
           {ticker}
         </Text>
       </HStack>
@@ -151,23 +151,23 @@ export default function BlurredOverlay({
   function BaseTokenMenu() {
     return (
       <Flex
-        flexDirection="column"
         alignItems="center"
-        padding="25px"
+        flexDirection="column"
         maxWidth="25%"
         minHeight="75%"
-        hidden={activeModal !== "base-token"}
+        padding="25px"
         fontSize="1.5em"
-        backgroundColor="white.5"
         border="var(--border)"
         borderColor="white.30"
         borderRadius="15px"
         animation={`${popAnimation(1.015)} 0.1s ease both`}
+        backgroundColor="white.5"
+        hidden={activeModal !== "base-token"}
         onClick={(e) => {
           e.stopPropagation()
         }}
       >
-        <Text width="100%" fontSize="0.8em" textAlign="left" color="white.80">
+        <Text width="100%" color="white.80" fontSize="0.8em" textAlign="left">
           Select a Token
         </Text>
         <Input
@@ -175,8 +175,8 @@ export default function BlurredOverlay({
           margin="15px 10px 0 10px"
           fontFamily="Favorit"
           fontSize="0.8em"
-          placeholder="Search name or paste ERC-20 address"
           borderRadius="10px"
+          placeholder="Search name or paste ERC-20 address"
           type="text"
         />
         <Flex flexWrap="wrap" margin="15px 0 0 0">
@@ -191,37 +191,37 @@ export default function BlurredOverlay({
   function QuoteTokenMenu() {
     return (
       <Flex
-        flexDirection="column"
-        alignItems="center"
-        hidden={activeModal !== "quote-token"}
         position="absolute"
-        left={quoteTokenSelectableCoords[0]}
         top={quoteTokenSelectableCoords[1]}
-        transform="translate(-50%, -50%) translateX(-20px)"
+        left={quoteTokenSelectableCoords[0]}
+        alignItems="center"
+        flexDirection="column"
         fontSize="1.9em"
+        transform="translate(-50%, -50%) translateX(-20px)"
+        hidden={activeModal !== "quote-token"}
       >
         <Text
-          variant="trading-body-button"
-          cursor="pointer"
           margin="-5px 0 -5px 0"
           animation={`${snapAnimation(70)} 0.15s ease both`}
+          cursor="pointer"
           onClick={() => {
             onClose()
             setQuoteToken("USDC")
           }}
+          variant="trading-body-button"
         >
           USDC
         </Text>
         <OrText />
         <Text
-          variant="trading-body-button"
-          cursor="pointer"
           margin="-5px 0 -5px 0"
           animation={`${snapAnimation(-70)} 0.15s ease both`}
+          cursor="pointer"
           onClick={() => {
             onClose()
             setQuoteToken("USDT")
           }}
+          variant="trading-body-button"
         >
           USDT
         </Text>
@@ -231,20 +231,20 @@ export default function BlurredOverlay({
 
   return (
     <Flex
+      position="absolute"
+      top="0"
+      right="0"
+      bottom="0"
+      left="0"
       alignItems="center"
       justifyContent="center"
-      position="absolute"
-      left="0"
-      right="0"
-      top="0"
-      bottom="0"
-      backdropFilter={activeModal ? "blur(8px)" : ""}
-      transition="0.1s"
       userSelect="none"
+      pointerEvents={activeModal ? "auto" : "none"}
+      transition="0.1s"
+      backdropFilter={activeModal ? "blur(8px)" : ""}
       onClick={() => {
         onClose()
       }}
-      pointerEvents={activeModal ? "auto" : "none"}
     >
       <BuySellMenu />
       <BaseTokenMenu />

@@ -265,23 +265,9 @@ export class LivePrices extends React.Component<
     return (
       <>
         <Flex
+          className={priceStrClass}
+          key={key + "_price"}
           as={Link}
-          href={this.props.link}
-          isExternal
-          alignItems="center"
-          justifyContent="center"
-          flexGrow="1"
-          width={this.props.isMobile ? "100%" : undefined}
-          fontFamily="Favorit Mono"
-          color="white.80"
-          opacity={price == 0 ? "20%" : "100%"}
-          transform={
-            this.props.isMobile && this.props.shouldRotate
-              ? "rotate(180deg)"
-              : undefined
-          }
-          _hover={{ textDecoration: "none" }}
-          lineHeight="1"
           sx={
             this.props.isMobile
               ? {
@@ -290,21 +276,35 @@ export class LivePrices extends React.Component<
                 }
               : undefined
           }
-          className={priceStrClass}
-          key={key + "_price"}
+          alignItems="center"
+          justifyContent="center"
+          flexGrow="1"
+          width={this.props.isMobile ? "100%" : undefined}
+          color="white.80"
+          fontFamily="Favorit Mono"
+          lineHeight="1"
+          opacity={price == 0 ? "20%" : "100%"}
+          _hover={{ textDecoration: "none" }}
+          transform={
+            this.props.isMobile && this.props.shouldRotate
+              ? "rotate(180deg)"
+              : undefined
+          }
+          href={this.props.link}
+          isExternal
         >
           ${priceStr}
         </Flex>
         <Flex
           as={Link}
-          href={this.props.link}
-          isExternal
-          height="100%"
-          width={this.props.isMobile ? "100%" : undefined}
+          position="relative"
           alignItems="center"
           justifyContent="center"
-          position="relative"
+          width={this.props.isMobile ? "100%" : undefined}
+          height="100%"
           _hover={{ textDecoration: "none" }}
+          href={this.props.link}
+          isExternal
         >
           <Box position="absolute">
             <BannerSeparator />

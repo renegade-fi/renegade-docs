@@ -59,19 +59,14 @@ export default function PlaceOrderButton() {
   return (
     <>
       <Button
-        opacity={!baseTokenAmount ? "0" : !address || !isSignedIn ? "0.6" : "1"}
-        visibility={baseTokenAmount ? "visible" : "hidden"}
-        transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-        cursor={baseTokenAmount ? "pointer" : "default"}
-        transition="0.15s"
         padding="20px"
-        backgroundColor="transparent"
+        color="white.80"
         fontSize="1.2em"
         fontWeight="200"
-        color="white.80"
+        opacity={!baseTokenAmount ? "0" : !address || !isSignedIn ? "0.6" : "1"}
         borderWidth="thin"
-        borderRadius="100px"
         borderColor="white.40"
+        borderRadius="100px"
         _hover={{
           borderColor: "white.60",
           color: "white",
@@ -79,6 +74,11 @@ export default function PlaceOrderButton() {
         _focus={{
           backgroundColor: "transparent",
         }}
+        transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
+        visibility={baseTokenAmount ? "visible" : "hidden"}
+        cursor={baseTokenAmount ? "pointer" : "default"}
+        transition="0.15s"
+        backgroundColor="transparent"
         onClick={() => {
           if (!baseTokenAmount) {
             return

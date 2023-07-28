@@ -11,19 +11,19 @@ export function BannerSeparator(props: BannerSeparatorProps) {
       return (
         <Flex
           as={Link}
-          href={props.link}
-          isExternal
           alignItems="center"
           justifyContent="center"
-          height="100%"
           flexGrow={props.flexGrow}
+          height="100%"
+          href={props.link}
+          isExternal
         >
           <Center height="100%">{wrapperProps.children}</Center>
         </Flex>
       )
     } else {
       return (
-        <Center height="100%" flexGrow={props.flexGrow}>
+        <Center flexGrow={props.flexGrow} height="100%">
           {wrapperProps.children}
         </Center>
       )
@@ -32,7 +32,7 @@ export function BannerSeparator(props: BannerSeparatorProps) {
 
   return (
     <Wrapper>
-      <Box width="4px" height="4px" borderRadius="2px" background="white.80" />
+      <Box width="4px" height="4px" background="white.80" borderRadius="2px" />
     </Wrapper>
   )
 }

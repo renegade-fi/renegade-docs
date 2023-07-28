@@ -31,10 +31,10 @@ function ConfirmButton(props: ConfirmButtonProps) {
     <Button
       width="100%"
       height={props.isPlacingOrder ? "50px" : "40px"}
-      transition="0.2s"
-      fontWeight="800"
-      backgroundColor="brown.light"
       color="white.90"
+      fontWeight="800"
+      transition="0.2s"
+      backgroundColor="brown.light"
       onClick={() => props.placeOrder()}
     >
       <HStack spacing="10px">
@@ -131,44 +131,44 @@ export default class PlaceOrderModal extends React.Component<
   render() {
     return (
       <Modal
+        isCentered
         isOpen={this.props.isOpen}
         onClose={this.props.onClose}
-        isCentered
         size="sm"
       >
         <ModalOverlay
           background="rgba(0, 0, 0, 0.25)"
           backdropFilter="blur(8px)"
         />
-        <ModalContent borderRadius="10px" background="brown">
+        <ModalContent background="brown" borderRadius="10px">
           <ModalHeader paddingBottom="0">Confirm your Order</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex
-              flexDirection="column"
-              justifyContent="center"
               alignItems="center"
+              justifyContent="center"
+              flexDirection="column"
             >
               <Flex
                 flexDirection="column"
                 width="100%"
                 marginBottom="10px"
-                fontSize="0.9em"
                 color="white.60"
+                fontSize="0.9em"
               >
                 <Text>Submit your order for MPC matching to relayer</Text>
                 <Text fontFamily="Favorit Mono">renegade-relayer.eth</Text>
                 <Flex
-                  opacity={this.state.isPlacingOrder ? 0 : 1}
+                  flexDirection="column"
+                  gap="3px"
                   height={this.state.isPlacingOrder ? "0px" : "110px"}
                   marginTop={this.state.isPlacingOrder ? "0px" : "10px"}
                   marginBottom="10px"
                   marginLeft="10px"
-                  transition="0.2s"
-                  flexDirection="column"
                   fontFamily="Favorit Mono"
                   fontSize="1.2em"
-                  gap="3px"
+                  opacity={this.state.isPlacingOrder ? 0 : 1}
+                  transition="0.2s"
                 >
                   <Flex gap="8px">
                     <Text>Buying</Text>

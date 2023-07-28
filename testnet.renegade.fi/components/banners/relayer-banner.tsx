@@ -149,18 +149,18 @@ export default class RelayerStatusBanner extends React.Component<
     }
     return (
       <Box
-        height="var(--banner-height)"
+        ref={this.state.relayerStatusBannerRef}
         overflow="hidden"
-        borderBottom="var(--border)"
-        borderColor="border"
+        height="var(--banner-height)"
         color="white.80"
+        borderColor="border"
+        borderBottom="var(--border)"
         userSelect="none"
+        onMouseDown={this.onMouseDown}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
-        onMouseDown={this.onMouseDown}
-        onMouseUp={this.onMouseUp}
         onMouseMove={this.onMouseMove}
-        ref={this.state.relayerStatusBannerRef}
+        onMouseUp={this.onMouseUp}
       >
         <Flex
           alignItems="center"

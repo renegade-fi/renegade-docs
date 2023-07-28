@@ -17,12 +17,12 @@ interface TokenBannerSingleProps {
 function TokenBannerSingle(props: TokenBannerSingleProps) {
   return (
     <Stack
-      direction={props.isMobile ? "column-reverse" : "row"}
       alignItems="center"
+      direction={props.isMobile ? "column-reverse" : "row"}
     >
       <Text
-        fontFamily="Favorit Expanded"
         color="white.80"
+        fontFamily="Favorit Expanded"
         variant={props.isMobile ? "rotate-left" : undefined}
       >
         {props.baseTokenTicker}
@@ -160,27 +160,27 @@ export default class AllTokensBanner extends React.Component<
       .concat(this.getAllTokenBannerSingle(3))
     return (
       <Stack
-        direction={this.props.isMobile ? "column" : "row"}
+        ref={this.state.allTokensBannerRef}
         alignItems="center"
+        direction={this.props.isMobile ? "column" : "row"}
+        overflowX="hidden"
+        overflowY="hidden"
         width={
           this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
         }
         height={this.props.isMobile ? "100%" : "var(--banner-height)"}
         fontSize={this.props.isMobile ? "0.8em" : undefined}
-        cursor="pointer"
-        userSelect="none"
-        overflowX="hidden"
-        overflowY="hidden"
-        borderTop={this.props.isMobile ? undefined : "var(--border)"}
-        borderBottom={this.props.isMobile ? undefined : "var(--border)"}
-        borderRight={this.props.isMobile ? "var(--border)" : undefined}
         borderColor="border"
+        borderTop={this.props.isMobile ? undefined : "var(--border)"}
+        borderRight={this.props.isMobile ? "var(--border)" : undefined}
+        borderBottom={this.props.isMobile ? undefined : "var(--border)"}
+        userSelect="none"
+        cursor="pointer"
+        onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
         onMouseEnter={this.props.isMobile ? undefined : this.onMouseEnter}
         onMouseLeave={this.props.isMobile ? undefined : this.onMouseLeave}
-        onMouseDown={this.props.isMobile ? undefined : this.onMouseDown}
-        onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
         onMouseMove={this.props.isMobile ? undefined : this.onMouseMove}
-        ref={this.state.allTokensBannerRef}
+        onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
       >
         {allTokenBannerSingle}
       </Stack>
