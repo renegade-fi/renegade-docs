@@ -168,7 +168,7 @@ const wagmiConfig = createConfig(
 )
 
 const renegade = new Renegade({
-  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
+  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport:
