@@ -3,6 +3,7 @@
 import React from "react"
 import { OrderProvider } from "@/contexts/Order/order-context"
 import RenegadeContext from "@/contexts/RenegadeContext"
+import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -160,10 +161,8 @@ const theme = extendTheme({ config, styles, colors, components })
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
-    alchemyId: process.env.ALCHEMY_ID, // or infuraId
-    // TODO: use zod to typecheck .env
-    walletConnectProjectId:
-      process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
+    alchemyId: "",
+    walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
     appName: "Renegade",
   })
 )

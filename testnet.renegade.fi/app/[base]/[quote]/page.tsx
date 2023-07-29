@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
 import { ExchangeReport, HealthStates } from "@/types"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
@@ -10,7 +11,7 @@ import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
 
 const renegade = new Renegade({
-  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
+  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport: true,
