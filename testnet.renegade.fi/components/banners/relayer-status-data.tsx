@@ -1,5 +1,14 @@
-import { renegade } from "./exchange-data"
+import { Renegade } from "@renegade-fi/renegade-js"
+
 import RelayerStatusBanner from "./relayer-banner"
+
+const renegade = new Renegade({
+  relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
+  relayerHttpPort: 3000,
+  relayerWsPort: 4000,
+  useInsecureTransport: true,
+  verbose: false,
+})
 
 async function RelayerStatusData({
   baseToken,

@@ -9,7 +9,7 @@ import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
 
-export const renegade = new Renegade({
+const renegade = new Renegade({
   relayerHostname: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME || "",
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
