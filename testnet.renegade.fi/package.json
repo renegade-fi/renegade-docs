@@ -5,7 +5,7 @@
   "scripts": {
     "preinstall": "npx only-allow yarn",
     "dev": "next dev",
-    "build": "next build",
+    "build": "./build.sh && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
