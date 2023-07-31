@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Set the names of the font files (replace 'font1', 'font2', etc. with actual font file names)
-font_names=("ABCFavoritExtended-Light-Named.ttf" "ABCFavoritExtended-Regular-Named.ttf" "FAMAime-Bold.ttf")
-
-# S3 bucket and region information
-S3_BUCKET="testnet-fonts"
-S3_REGION="us-east-2"
+# Read the command-line arguments
+S3_BUCKET="$1"
+S3_REGION="$2"
+FONT_NAMES="$3"
 
 # Directory to store the downloaded font files
 DOWNLOAD_DIR="fonts"
@@ -19,6 +17,9 @@ download_from_s3() {
   local url="https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${file_name}"
   curl --silent --remote-name "$url"
 }
+
+# Convert space-separated font names to an array
+font_names=($FONT_NAMES)
 
 # Loop through the font files and download each one
 for font_name in "${font_names[@]}"; do
