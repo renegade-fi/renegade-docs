@@ -1,7 +1,11 @@
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
+import { AccountId } from "@renegade-fi/renegade-js";
 import React from "react";
 
 import { renegade } from "../../..";
+import RenegadeContext, {
+  RenegadeContextType,
+} from "../../../contexts/RenegadeContext";
 import { BannerSeparator, PulsingConnection } from "../../Common/Banner";
 
 interface RelayerStatusBannerProps {
@@ -20,6 +24,8 @@ export default class RelayerStatusBanner extends React.Component<
   RelayerStatusBannerProps,
   RelayerStatusBannerState
 > {
+  static contextType = RenegadeContext;
+
   constructor(props: RelayerStatusBannerProps) {
     super(props);
     this.state = {
@@ -142,6 +148,7 @@ export default class RelayerStatusBanner extends React.Component<
         "Invalid connection state: " + this.state.connectionState,
       );
     }
+    const { accountId, refreshAccount } = this.context as RenegadeContextType;
     return (
       <Box
         height="var(--banner-height)"
@@ -185,7 +192,9 @@ export default class RelayerStatusBanner extends React.Component<
           <BannerSeparator flexGrow={1} />
           <Text>Protocol 0.02%</Text>
           <BannerSeparator flexGrow={3} />
-          <Text>Debug</Text>
+          <Box onClick={() => refreshAccount(accountId as AccountId)}>
+            <Text>Refresh</Text>
+          </Box>
           <Spacer flexGrow="2" />
         </Flex>
       </Box>

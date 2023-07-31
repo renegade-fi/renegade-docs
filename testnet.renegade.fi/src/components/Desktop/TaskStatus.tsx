@@ -16,6 +16,7 @@ import RenegadeContext, {
 const TASK_TO_LATENCY = {
   [TaskType.InitializeAccount]: {
     [TaskState.Proving]: 2_000,
+    [TaskState.FindingMerkleOpening]: 1_000,
     [TaskState.SubmittingTx]: 4_000,
   },
   [TaskType.Deposit]: {
@@ -85,11 +86,6 @@ export class TaskStatus extends React.Component<
   }
 
   refreshCurrentTime() {
-    console.log(
-      this.state.currentTime &&
-        this.state.taskStartTime &&
-        this.state.currentTime - this.state.taskStartTime,
-    );
     this.setState({ currentTime: Date.now() });
     setTimeout(this.refreshCurrentTime, 100);
   }
@@ -139,18 +135,21 @@ export class TaskStatus extends React.Component<
     const isDisplayed = taskState && taskState !== TaskState.Completed;
     return (
       <Flex
+        margin="0 40px 30px 0"
         flexDirection="row"
         alignItems="center"
         justifyContent="center"
         gap="10px"
         transform={isDisplayed ? "translateX(0)" : "translateX(30%)"}
-        transitionDelay={isDisplayed ? "0s" : "5s"}
         opacity={isDisplayed ? 1 : 0}
         transition="all 0.25s ease-in-out"
+        transitionDelay={isDisplayed ? "0s" : "5s"}
       >
         <CircularProgress
           value={progress}
-          isIndeterminate={progress === 100}
+          isIndeterminate={
+            progress === 100 && taskState !== TaskState.Completed
+          }
           size="40px"
           thickness="8px"
           color="green"
@@ -158,7 +157,9 @@ export class TaskStatus extends React.Component<
           capIsRound={true}
         >
           <CircularProgressLabel fontSize="0.3em" color="white.60">
-            {progress === 100 ? 99 : progress}
+            {progress === 100 && taskState !== TaskState.Completed
+              ? 99
+              : progress}
           </CircularProgressLabel>
         </CircularProgress>
         <Box flexDirection="column" alignItems="start" justifyContent="center">

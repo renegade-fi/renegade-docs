@@ -200,7 +200,11 @@ function BlurredOverlay(props: BlurredOverlayProps) {
         />
         <Flex flexWrap="wrap" margin="15px 0 0 0">
           {["WBTC", "WETH", "UNI", "CRV", "AAVE", "LDO"].map((ticker) => {
-            return <SingleBaseToken key={ticker} ticker={ticker} />;
+            return (
+              <Box key={ticker}>
+                <SingleBaseToken ticker={ticker} />
+              </Box>
+            );
           })}
         </Flex>
       </Flex>

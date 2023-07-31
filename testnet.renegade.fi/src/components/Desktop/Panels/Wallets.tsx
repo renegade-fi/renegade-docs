@@ -103,7 +103,7 @@ function TokenBalance(props: TokenBalanceProps) {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .deposit(accountId, new Token({ address: props.tokenAddr }), 10n)
+              .deposit(accountId, new Token({ address: props.tokenAddr }), 1n)
               .then(([taskId]) => setTask(taskId, TaskType.Deposit));
           }
         }}
@@ -119,7 +119,7 @@ function TokenBalance(props: TokenBalanceProps) {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .withdraw(accountId, new Token({ address: props.tokenAddr }), 10n)
+              .withdraw(accountId, new Token({ address: props.tokenAddr }), 1n)
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal));
           }
         }}
@@ -247,7 +247,7 @@ function DepositWithdrawButtons() {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .deposit(accountId, new Token({ ticker: "USDC" }), 10n)
+              .deposit(accountId, new Token({ ticker: "USDC" }), 1n)
               .then(([taskId]) => setTask(taskId, TaskType.Deposit));
           }
         }}
@@ -263,7 +263,7 @@ function DepositWithdrawButtons() {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .withdraw(accountId, new Token({ ticker: "USDC" }), 20n)
+              .withdraw(accountId, new Token({ ticker: "USDC" }), 1n)
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal));
           }
         }}
