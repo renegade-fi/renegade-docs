@@ -1,15 +1,15 @@
 import React from "react"
 import type { Metadata } from "next"
 
+import Footer from "@/components/footer"
+import MainNav from "@/components/main-nav"
 import { Providers } from "@/app/providers"
 
+// TODO: merge globals.css and index.css
 import "./animations.css"
 import "./fonts.css"
 import "./globals.css"
 import "./index.css"
-// TODO: merge globals.css and index.css
-import Footer from "@/components/footer"
-import MainNav from "@/components/main-nav"
 
 export const metadata: Metadata = {
   title: "Renegade Migration",
