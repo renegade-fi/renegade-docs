@@ -12,10 +12,9 @@ import {
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
-  useToast,
   type ThemeConfig,
 } from "@chakra-ui/react"
-import { AccountId, Keychain, Renegade, TaskId } from "@renegade-fi/renegade-js"
+import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { WagmiConfig, createConfig } from "wagmi"
 
@@ -52,7 +51,6 @@ const styles = {
 }
 
 const colors = {
-  border: "#808080",
   green: "#43e043",
   red: "#e04943",
   brown: "#231f20",

@@ -419,7 +419,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
         height={this.props.isMobile ? "220vw" : "var(--banner-height)"}
         color="white.80"
         fontSize={this.props.isMobile ? "0.8em" : undefined}
-        borderColor="border"
         borderBottom={this.props.isMobile ? undefined : "var(--border)"}
         borderLeft={this.props.isMobile ? "var(--border)" : undefined}
         userSelect="none"

@@ -1,6 +1,7 @@
 :root {
   --banner-height: 38px;
-  --border: 0.25px solid;
+  --border-color: #808080;
+  --border: 0.25px solid var(--border-color);
 }
 
 .scroll::-webkit-scrollbar {

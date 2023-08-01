@@ -243,7 +243,6 @@ export default function MainNav() {
       alignItems="center"
       width="100%"
       height="calc(2 * var(--banner-height))"
-      borderColor="border"
       borderBottom="var(--border)"
       onClick={() => setshowDownloadPrompt(false)}
     >

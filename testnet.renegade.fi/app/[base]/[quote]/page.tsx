@@ -5,10 +5,10 @@ import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { getHealthState } from "@/lib/getHealthState"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import TradingBody from "@/components/TradingBody"
 import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
+import TradingBody from "@/components/trading-body"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,

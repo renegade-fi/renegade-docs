@@ -156,7 +156,6 @@ export default class RelayerStatusBanner extends React.Component<
             overflow="hidden"
             height="var(--banner-height)"
             color="white.80"
-            borderColor="border"
             borderBottom="var(--border)"
             userSelect="none"
             onMouseDown={this.onMouseDown}
