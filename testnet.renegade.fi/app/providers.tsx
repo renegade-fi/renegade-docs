@@ -2,7 +2,7 @@
 
 import React from "react"
 import { OrderProvider } from "@/contexts/Order/order-context"
-import RenegadeContext from "@/contexts/RenegadeContext"
+import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
@@ -167,7 +167,7 @@ const wagmiConfig = createConfig(
   })
 )
 
-const renegade = new Renegade({
+export const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
@@ -177,53 +177,6 @@ const renegade = new Renegade({
 })
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [taskId, setTaskId] = React.useState<TaskId>()
-  const [taskState, setTaskState] = React.useState<string>()
-  const toast = useToast()
-  const setTask = async (newTaskId: TaskId) => {
-    if (newTaskId === "DONE") {
-      return
-    }
-    setTaskId(newTaskId)
-    setTaskState("Proving")
-    toast({
-      title: "New Task State",
-      description: "Proving",
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    })
-    const callback = (message: string) => {
-      const taskState = JSON.parse(message).state
-      setTaskState(taskState.state)
-      toast({
-        title: "New Task State",
-        description: taskState.state,
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-      })
-    }
-    await renegade.registerTaskCallback(callback, newTaskId)
-  }
-  const [accountId, setAccountId] = React.useState<AccountId>()
-  const setAccount = async (
-    oldAccountId: AccountId | undefined,
-    keychain: Keychain | undefined
-  ) => {
-    if (oldAccountId) {
-      await renegade.unregisterAccount(oldAccountId)
-    }
-    if (!keychain) {
-      setAccountId(undefined)
-      return
-    }
-    const accountId = renegade.registerAccount(keychain)
-    const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
-    setTask(taskId)
-    await taskJob
-    setAccountId(accountId)
-  }
   return (
     <>
       <CacheProvider>
@@ -241,20 +194,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 "--ck-focus-color": "#ffffff",
               }}
             >
-              <OrderProvider>
-                <RenegadeContext.Provider
-                  value={{
-                    renegade,
-                    accountId,
-                    taskId,
-                    taskState,
-                    setAccount,
-                    setTask,
-                  }}
-                >
-                  {children}
-                </RenegadeContext.Provider>
-              </OrderProvider>
+              <RenegadeProvider>
+                <OrderProvider>{children}</OrderProvider>
+              </RenegadeProvider>
             </ConnectKitProvider>
           </WagmiConfig>
         </ChakraProvider>

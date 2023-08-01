@@ -2,7 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
-import { PriceReport } from "@/contexts/RenegadeContext"
+import { PriceReport } from "@/contexts/Renegade/types"
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 
@@ -80,12 +80,14 @@ export default class AllTokensBanner extends React.Component<
     const allTokenBannerSingle = selectedDisplayedTickers.map((tickers) => {
       return (
         // TODO: not safe if custom logic in setBaseToken/setQuoteToken
-        <Link href={`/${tickers[0]}/${tickers[1]}`}>
+        <Link
+          href={`/${tickers[0]}/${tickers[1]}`}
+          key={tickers.toString() + "_" + key.toString()}
+        >
           <TokenBannerSingle
             baseTokenTicker={tickers[0]}
             quoteTokenTicker={tickers[1]}
             isMobile={this.props.isMobile}
-            key={tickers.toString() + "_" + key.toString()}
           />
         </Link>
       )

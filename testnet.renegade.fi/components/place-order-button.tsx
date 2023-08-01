@@ -3,7 +3,7 @@
 import React from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
-import RenegadeContext from "@/contexts/RenegadeContext"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Box, Button, HStack, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
@@ -28,7 +28,7 @@ export default function PlaceOrderButton() {
     onClose: onCloseSignIn,
   } = useDisclosure()
   const { setOpen } = useModalConnectKit()
-  const { accountId } = React.useContext(RenegadeContext)
+  const { accountId } = useRenegade()
   const { baseToken, direction, quoteToken, baseTokenAmount } = useOrder()
 
   const isSignedIn = accountId !== undefined
@@ -97,16 +97,7 @@ export default function PlaceOrderButton() {
         {placeOrderButtonContent}
       </Button>
       <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
-      <PlaceOrderModal
-        isOpen={placeOrderIsOpen}
-        onClose={onClosePlaceOrder}
-        activeDirection={
-          direction === Direction.QUOTE_TO_ACTIVE ? "buy" : "sell"
-        }
-        activeBaseTicker={baseToken}
-        activeQuoteTicker={quoteToken}
-        activeBaseTokenAmount={baseTokenAmount}
-      />
+      <PlaceOrderModal isOpen={placeOrderIsOpen} onClose={onClosePlaceOrder} />
     </>
   )
 }

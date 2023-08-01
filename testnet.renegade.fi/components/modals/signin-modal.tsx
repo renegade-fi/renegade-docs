@@ -1,4 +1,5 @@
 import React from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Button,
   Flex,
@@ -14,7 +15,6 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
-import RenegadeContext from "contexts/RenegadeContext"
 import { verifyMessage } from "ethers"
 import { AiOutlineDisconnect } from "react-icons/ai"
 import {
@@ -84,9 +84,9 @@ interface SignInModalProps {
   onClose: () => void
 }
 export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
-  const { accountId, setAccount } = React.useContext(RenegadeContext)
+  const { accountId, setAccount } = useRenegade()
   const { isLoading, signMessage } = useSignMessageWagmi({
-    message: "Temporary sign in message.",
+    message: "Unlock your Renegade account.\nTestnet v0",
     async onSuccess(data, variables) {
       verifyMessage(variables.message, data) // TODO: Verify this output address.
       setAccount(accountId, new Keychain({ seed: data }))

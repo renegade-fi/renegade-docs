@@ -2,7 +2,7 @@
 
 import React, { createRef, useEffect, useState } from "react"
 import Image from "next/image"
-import RenegadeContext from "@/contexts/RenegadeContext"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import glyphDark from "@/icons/glyph_dark.svg"
 import {
   Box,
@@ -140,7 +140,7 @@ function SignInButton() {
   const { address } = useAccountWagmi()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data } = useEnsNameWagmi({ address })
-  const { accountId } = React.useContext(RenegadeContext)
+  const { accountId } = useRenegade()
   if (!address) {
     return null
   }
@@ -182,7 +182,7 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi()
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
-  const { accountId, setAccount } = React.useContext(RenegadeContext)
+  const { accountId, setAccount } = useRenegade()
   if (!address) {
     return null
   }

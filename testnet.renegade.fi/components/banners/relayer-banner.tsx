@@ -1,8 +1,9 @@
 "use client"
 
 import React from "react"
-import RenegadeContext from "@/contexts/RenegadeContext"
+import { RenegadeContext } from "@/contexts/Renegade/renegade-context"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import { AccountId } from "@renegade-fi/renegade-js"
 
 import { BannerSeparator } from "./banner-separator"
 import { PulsingConnection } from "./pulsing-connection-indicator"
@@ -10,7 +11,7 @@ import { PulsingConnection } from "./pulsing-connection-indicator"
 interface RelayerStatusBannerProps {
   activeBaseTicker: string
   activeQuoteTicker: string
-  connectionState?: string
+  connectionState?: "live" | "dead" | "loading"
 }
 interface RelayerStatusBannerState {
   relayerStatusBannerRef: React.RefObject<HTMLDivElement>
@@ -148,52 +149,64 @@ export default class RelayerStatusBanner extends React.Component<
       throw new Error("Invalid connection state: " + this.props.connectionState)
     }
     return (
-      <Box
-        ref={this.state.relayerStatusBannerRef}
-        overflow="hidden"
-        height="var(--banner-height)"
-        color="white.80"
-        borderColor="border"
-        borderBottom="var(--border)"
-        userSelect="none"
-        onMouseDown={this.onMouseDown}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}
-      >
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          minWidth="1200px"
-          height="var(--banner-height)"
-        >
-          <Spacer flexGrow="2" />
-          <Text>Liquidity</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>420.00 {this.props.activeBaseTicker}</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
-          <BannerSeparator flexGrow={3} />
-          <Text>Relayer</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>renegade-relayer.eth</Text>
-          <BannerSeparator flexGrow={1} />
-          <HStack>
-            {connectionText}
-            <PulsingConnection state={this.props.connectionState} />
-          </HStack>
-          <BannerSeparator flexGrow={3} />
-          <Text>Fees</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>Relayer 0.08%</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>Protocol 0.02%</Text>
-          <BannerSeparator flexGrow={3} />
-          <Text>Debug</Text>
-          <Spacer flexGrow="2" />
-        </Flex>
-      </Box>
+      <RenegadeContext.Consumer>
+        {(value) => (
+          <Box
+            ref={this.state.relayerStatusBannerRef}
+            overflow="hidden"
+            height="var(--banner-height)"
+            color="white.80"
+            borderColor="border"
+            borderBottom="var(--border)"
+            userSelect="none"
+            onMouseDown={this.onMouseDown}
+            onMouseEnter={this.onMouseEnter}
+            onMouseLeave={this.onMouseLeave}
+            onMouseMove={this.onMouseMove}
+            onMouseUp={this.onMouseUp}
+          >
+            <Flex
+              alignItems="center"
+              justifyContent="center"
+              minWidth="1200px"
+              height="var(--banner-height)"
+            >
+              <Spacer flexGrow="2" />
+              <Text>Liquidity</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>420.00 {this.props.activeBaseTicker}</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
+              <BannerSeparator flexGrow={3} />
+              <Text>Relayer</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>renegade-relayer.eth</Text>
+              <BannerSeparator flexGrow={1} />
+              <HStack>
+                {connectionText}
+                <PulsingConnection
+                  state={this.props.connectionState || "dead"}
+                />
+              </HStack>
+              <BannerSeparator flexGrow={3} />
+              <Text>Fees</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>Relayer 0.08%</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>Protocol 0.02%</Text>
+              <BannerSeparator flexGrow={3} />
+              <Box
+                onClick={() =>
+                  value?.refreshAccount(value?.accountId as AccountId)
+                }
+              >
+                <Text>Refresh</Text>
+              </Box>
+              <Spacer flexGrow="2" />
+            </Flex>
+          </Box>
+        )}
+      </RenegadeContext.Consumer>
     )
   }
 }

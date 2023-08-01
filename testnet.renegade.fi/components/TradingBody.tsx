@@ -176,6 +176,9 @@ export default function TradingBody() {
         buySellSelectableCoords={buySellSelectableCoords.current}
         quoteTokenSelectableCoords={quoteTokenSelectableCoords.current}
       />
+      <Box position="absolute" right="0" bottom="0">
+        {/* <TaskStatus /> */}
+      </Box>
     </Flex>
   )
 }

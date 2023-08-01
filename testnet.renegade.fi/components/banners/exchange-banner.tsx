@@ -1,15 +1,12 @@
 "use client"
 
 import React from "react"
-import RenegadeContext, {
-  PriceReport,
-  RenegadeContextType,
-} from "@/contexts/RenegadeContext"
-import { ExchangeReport, HealthState } from "@/types"
+import { ExchangeReport, HealthState, PriceReport } from "@/types"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import { Exchange, Token } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_ADDR } from "@/lib/tokens"
+import { renegade } from "@/app/providers"
 
 import { BannerSeparator } from "./banner-separator"
 import { LivePrices } from "./live-price"
@@ -231,8 +228,6 @@ export default class ExchangeConnectionsBanner extends React.Component<
   ExchangeConnectionsBannerProps,
   ExchangeConnectionsBannerState
 > {
-  static contextType = RenegadeContext
-
   constructor(props: ExchangeConnectionsBannerProps) {
     super(props)
     this.state = this.defaultState()
@@ -290,8 +285,7 @@ export default class ExchangeConnectionsBanner extends React.Component<
     if (this.props.activeBaseTicker === this.props.activeQuoteTicker) {
       return
     }
-    const { renegade } = this.context as RenegadeContextType
-    const healthStates = await renegade?.queryExchangeHealthStates(
+    const healthStates = await renegade.queryExchangeHealthStates(
       new Token({ ticker: this.props.activeBaseTicker }),
       new Token({ ticker: this.props.activeQuoteTicker })
     )

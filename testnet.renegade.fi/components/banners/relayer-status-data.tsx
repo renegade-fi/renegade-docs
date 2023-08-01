@@ -25,6 +25,7 @@ async function RelayerStatusData({
     .catch(() => "dead")
   return (
     <RelayerStatusBanner
+      // @ts-ignore
       connectionState={ping}
       activeBaseTicker={baseToken}
       activeQuoteTicker={quoteToken}
