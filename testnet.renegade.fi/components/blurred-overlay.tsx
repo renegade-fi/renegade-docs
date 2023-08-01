@@ -92,7 +92,7 @@ export default function BlurredOverlay({
           cursor="pointer"
           onClick={() => {
             onClose()
-            setDirection(Direction.QUOTE_TO_ACTIVE)
+            setDirection(Direction.BUY)
           }}
           variant="trading-body-button"
         >
@@ -104,7 +104,7 @@ export default function BlurredOverlay({
           cursor="pointer"
           onClick={() => {
             onClose()
-            setDirection(Direction.ACTIVE_TO_QUOTE)
+            setDirection(Direction.SELL)
           }}
           variant="trading-body-button"
         >

@@ -14,36 +14,36 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 function OrderProvider({ children }: OrderProviderProps) {
   const params = useParams()
   const router = useRouter()
-  const [direction, setDirection] = useState<Direction>(
-    Direction.ACTIVE_TO_QUOTE
-  )
-  const baseToken = params.base?.toString()
+  const [direction, setDirection] = useState<Direction>(Direction.BUY)
+  const baseTicker = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
-    router.push(`/${token}/${quoteToken}`)
+    router.push(`/${token}/${quoteTicker}`)
   }
-  const quoteToken = params.quote?.toString()
+  const quoteTicker = params.quote?.toString()
   const handleSetQuoteToken = (token: string) => {
-    router.push(`/${baseToken}/${token}`)
+    router.push(`/${baseTicker}/${token}`)
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
   // TODO: sync order details with local storage
 
   useEffect(() => {
-    if (!baseToken || !quoteToken) return
+    if (!baseTicker || !quoteTicker) return
     const regex = /[a-z]/
-    if (regex.test(baseToken) || regex.test(quoteToken)) {
-      router.replace(`/${baseToken.toUpperCase()}/${quoteToken.toUpperCase()}`)
+    if (regex.test(baseTicker) || regex.test(quoteTicker)) {
+      router.replace(
+        `/${baseTicker.toUpperCase()}/${quoteTicker.toUpperCase()}`
+      )
     }
-  }, [baseToken, quoteToken, router])
+  }, [baseTicker, quoteTicker, router])
 
   return (
     <OrderStateContext.Provider
       value={{
         direction,
         setDirection,
-        baseToken,
+        baseTicker,
         setBaseToken: handleSetBaseToken,
-        quoteToken,
+        quoteTicker,
         setQuoteToken: handleSetQuoteToken,
         baseTokenAmount,
         setBaseTokenAmount,

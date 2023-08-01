@@ -30,8 +30,8 @@ export default function PlaceOrderModal({
   onClose,
 }: PlaceOrderModalProps) {
   const {
-    baseToken,
-    quoteToken,
+    baseTicker,
+    quoteTicker,
     baseTokenAmount,
     direction,
     setBaseTokenAmount,
@@ -43,7 +43,7 @@ export default function PlaceOrderModal({
 
   function getLimitPrice(): number {
     let limitPrice = baseTokenAmount * medianPriceReport.midpointPrice
-    if (direction === Direction.ACTIVE_TO_QUOTE) {
+    if (direction === Direction.BUY) {
       limitPrice *= SLIPPAGE_TOLERANCE
     } else {
       limitPrice /= SLIPPAGE_TOLERANCE
@@ -57,9 +57,9 @@ export default function PlaceOrderModal({
     }
     setIsPlacingOrder(true)
     const order = new Order({
-      baseToken: new Token({ ticker: baseToken }),
-      quoteToken: new Token({ ticker: quoteToken }),
-      side: direction === Direction.ACTIVE_TO_QUOTE ? "buy" : "sell",
+      baseToken: new Token({ ticker: baseTicker }),
+      quoteToken: new Token({ ticker: quoteTicker }),
+      side: direction,
       type: "limit",
       amount: BigInt(baseTokenAmount),
       price: getLimitPrice(),
@@ -76,15 +76,15 @@ export default function PlaceOrderModal({
   useEffect(() => {
     async function queryMedianPrice() {
       const healthStates = await renegade.queryExchangeHealthStates(
-        new Token({ ticker: baseToken }),
-        new Token({ ticker: quoteToken })
+        new Token({ ticker: baseTicker }),
+        new Token({ ticker: quoteTicker })
       )
       if (healthStates["median"]["Nominal"]) {
         setMedianPriceReport(healthStates["median"]["Nominal"])
       }
     }
     queryMedianPrice()
-  }, [baseToken, quoteToken])
+  }, [baseTicker, quoteTicker])
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size="sm">
@@ -125,17 +125,17 @@ export default function PlaceOrderModal({
                 <Flex gap="8px">
                   <Text>Buying</Text>
                   <Text color="white">
-                    {direction === Direction.ACTIVE_TO_QUOTE
-                      ? baseTokenAmount + " " + baseToken
-                      : quoteToken}
+                    {direction === Direction.BUY
+                      ? baseTokenAmount + " " + baseTicker
+                      : quoteTicker}
                   </Text>
                 </Flex>
                 <Flex gap="8px">
                   <Text>Selling</Text>
                   <Text color="white">
-                    {direction === Direction.ACTIVE_TO_QUOTE
-                      ? quoteToken
-                      : baseTokenAmount + " " + baseToken}
+                    {direction === Direction.BUY
+                      ? quoteTicker
+                      : baseTokenAmount + " " + baseTicker}
                   </Text>
                 </Flex>
                 <Flex gap="8px">
@@ -144,14 +144,14 @@ export default function PlaceOrderModal({
                 </Flex>
                 <Flex gap="8px">
                   <Text>
-                    {direction === Direction.ACTIVE_TO_QUOTE
+                    {direction === Direction.BUY
                       ? "Pay at Most"
                       : "Receive at Least"}
                   </Text>
                   <Text color="white">
                     {medianPriceReport === DEFAULT_PRICE_REPORT
                       ? "?????"
-                      : getLimitPrice().toFixed(2) + " " + quoteToken}
+                      : getLimitPrice().toFixed(2) + " " + quoteTicker}
                   </Text>
                 </Flex>
               </Flex>

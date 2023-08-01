@@ -1,13 +1,13 @@
 export enum Direction {
-  ACTIVE_TO_QUOTE,
-  QUOTE_TO_ACTIVE,
+  BUY = "buy",
+  SELL = "sell",
 }
 
 export interface OrderContextValue {
   direction: Direction
   setDirection: (direction: Direction) => void
-  baseToken: string
-  quoteToken: string
+  baseTicker: string
+  quoteTicker: string
   setBaseToken: (token: string) => void
   setQuoteToken: (token: string) => void
   baseTokenAmount: number

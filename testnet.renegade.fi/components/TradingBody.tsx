@@ -44,8 +44,8 @@ Selectable.displayName = "selectable"
 export default function TradingBody() {
   const {
     direction,
-    baseToken,
-    quoteToken,
+    baseTicker,
+    quoteTicker,
     baseTokenAmount,
     setBaseTokenAmount,
   } = useOrder()
@@ -98,7 +98,7 @@ export default function TradingBody() {
       >
         <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
           <Selectable
-            text={direction === Direction.QUOTE_TO_ACTIVE ? "BUY" : "SELL"}
+            text={direction.toString().toUpperCase()}
             onClick={() => setActiveModal("buy-sell")}
             activeModal={activeModal}
             ref={buySellSelectableRef}
@@ -127,7 +127,7 @@ export default function TradingBody() {
             value={baseTokenAmount || ""}
           />
           <Selectable
-            text={baseToken}
+            text={baseTicker}
             onClick={() => setActiveModal("base-token")}
             activeModal={activeModal}
             ref={baseTokenSelectableRef}
@@ -138,10 +138,10 @@ export default function TradingBody() {
             fontSize="0.9em"
             fontWeight="200"
           >
-            {direction === Direction.QUOTE_TO_ACTIVE ? "with" : "for"}
+            {direction === Direction.BUY ? "with" : "for"}
           </Text>
           <Selectable
-            text={quoteToken}
+            text={quoteTicker}
             onClick={() => setActiveModal("quote-token")}
             activeModal={activeModal}
             ref={quoteTokenSelectableRef}
@@ -160,8 +160,8 @@ export default function TradingBody() {
           </Text>
           <Box fontFamily="Favorit Mono">
             <LivePrices
-              baseTicker={baseToken}
-              quoteTicker={quoteToken}
+              baseTicker={baseTicker}
+              quoteTicker={quoteTicker}
               exchange={Exchange.Median}
               onlyShowPrice
               withCommas

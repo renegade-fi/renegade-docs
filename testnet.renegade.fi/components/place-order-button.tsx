@@ -29,7 +29,7 @@ export default function PlaceOrderButton() {
   } = useDisclosure()
   const { setOpen } = useModalConnectKit()
   const { accountId } = useRenegade()
-  const { baseToken, direction, quoteToken, baseTokenAmount } = useOrder()
+  const { baseTicker, quoteTicker, baseTokenAmount } = useOrder()
 
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: React.ReactElement
@@ -43,8 +43,8 @@ export default function PlaceOrderButton() {
         <Text>Place Order for</Text>
         <Box fontFamily="Favorit Mono">
           <LivePrices
-            baseTicker={baseToken}
-            quoteTicker={quoteToken}
+            baseTicker={baseTicker}
+            quoteTicker={quoteTicker}
             exchange={Exchange.Median}
             onlyShowPrice
             withCommas
