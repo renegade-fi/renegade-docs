@@ -2,34 +2,27 @@
 *.sw[a-p]
 
 # Node
-/renegade.fi/node_modules
-/docs.renegade.fi/node_modules
-/testnet.renegade.fi/node_modules
+**/node_modules/
 
 # Parcel
-/renegade.fi/.parcel-cache
-/testnet.renegade.fi/.parcel-cache
+**/.parcel-cache/
 
 # Build
-/renegade.fi/dist
-/docs.renegade.fi/build
-/testnet.renegade.fi/dist
+**/dist/
+**/build/
 
 # Docusaurus
-/docs.renegade.fi/.docusaurus
+**/.docusaurus/
 
 # Fonts
-/renegade.fi/src/fonts
-/docs.renegade.fi/src/fonts
-/testnet.renegade.fi/src/fonts
+**/fonts/
 
 # Secrets
-/testnet.renegade.fi/.env
-.env*.local
+**/.env*
 
 # Next.js
 **/.next/
-/out/
+**/out/
 
 # Misc
 .DS_Store
@@ -38,5 +31,3 @@
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
-
-
