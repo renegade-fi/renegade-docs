@@ -18,8 +18,7 @@ jobs:
         run: |
           npm ci
           npx eslint src/ --ext .js --config ./.eslintrc.js
-      - name: Install yarn (testnet.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
+      - uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
           dir: "testnet.renegade.fi"
