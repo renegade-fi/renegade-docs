@@ -22,4 +22,4 @@ jobs:
         working-directory: ./testnet.renegade.fi
         run: |
           npm ci
-          npx prettier --check src/ --config ./.prettierrc
+          npx prettier --check ./ --config ./.prettierrc
