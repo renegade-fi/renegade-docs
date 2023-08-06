@@ -8,7 +8,9 @@ import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
-import TradingBody from "@/components/trading-body"
+import Main from "@/components/main"
+import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
+import WalletsPanel from "@/components/wallets-panel"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -102,8 +104,39 @@ export default async function Home({
         activeBaseTicker={baseToken}
         activeQuoteTicker={quoteToken}
       />
-      <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
-      <TradingBody />
+      <div style={{ flexGrow: 1, display: "flex" }}>
+        <WalletsPanel />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            overflowX: "hidden",
+          }}
+        >
+          <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: "1",
+              position: "relative",
+            }}
+          >
+            <Main />
+            <div
+              style={{
+                position: "absolute",
+                right: "0",
+                bottom: "0",
+              }}
+            >
+              {/* <TaskStatus /> */}
+            </div>
+          </div>
+        </div>
+        <OrdersAndCounterpartiesPanel />
+      </div>
       <AllTokensBanner priceReports={initialAllTokens} />
     </div>
   )

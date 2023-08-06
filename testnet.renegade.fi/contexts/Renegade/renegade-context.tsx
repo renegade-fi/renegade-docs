@@ -10,6 +10,7 @@ import {
   Order,
   OrderId,
   TaskId,
+  Token,
 } from "@renegade-fi/renegade-js"
 
 import { renegade } from "@/app/providers"
@@ -21,6 +22,7 @@ import {
   RenegadeContextType,
   TaskState,
   TaskType,
+  View,
 } from "./types"
 
 type RenegadeProviderProps = { children: React.ReactNode }
@@ -34,11 +36,35 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
   const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:36 ~ RenegadeProvider ~ balances:",
+    balances
+  )
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:38 ~ RenegadeProvider ~ orders:",
+    orders
+  )
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:40 ~ RenegadeProvider ~ fees:",
+    fees
+  )
   const [accountId, setAccountId] = React.useState<AccountId>()
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:39 ~ RenegadeProvider ~ accountId:",
+    accountId
+  )
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:42 ~ RenegadeProvider ~ taskId:",
+    taskId
+  )
   const [taskType, setTaskType] = React.useState<TaskType>()
+  console.log(
+    "🚀 ~ file: renegade-context.tsx:44 ~ RenegadeProvider ~ taskType:",
+    taskType
+  )
   const [taskState, setTaskState] = React.useState<TaskState>()
 
   // Create network (counterparties) and order book states.
@@ -48,6 +74,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [orderBook, setOrderBook] = React.useState<
     Record<OrderId, CounterpartyOrder>
   >({})
+  const [view, setView] = React.useState(View.TRADING)
 
   // Stream network, order book, and MPC events.
   renegade.registerNetworkCallback((message: string) => {
@@ -154,6 +181,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     keychain?: Keychain
   ): Promise<void> {
     if (oldAccountId) {
+      console.log("unregistering old account")
       await renegade.unregisterAccount(oldAccountId)
     }
     // TODO: Tear down the previously-registered callback ID.
@@ -163,12 +191,31 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
+    console.log(
+      "🚀 ~ file: renegade-context.tsx:167 ~ RenegadeProvider ~ accountId:",
+      accountId
+    )
     const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
+    console.log(
+      "🚀 ~ file: renegade-context.tsx:169 ~ RenegadeProvider ~ taskJob:",
+      taskJob
+    )
+    console.log(
+      "🚀 ~ file: renegade-context.tsx:169 ~ RenegadeProvider ~ taskId:",
+      taskId
+    )
     setTask(taskId, TaskType.InitializeAccount)
     await taskJob
     setAccountId(accountId)
     // After the initialization has completed, query the current balances,
     // orders, and fees, and start streaming.
+    const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
+      accountId,
+      new Token({ ticker: "WETH" }),
+      BigInt(10)
+    )
+    setTask(depositTaskId, TaskType.Deposit)
+    await depositTaskJob
     const refreshAccount = () => {
       setBalances(renegade.getBalances(accountId))
       setOrders(renegade.getOrders(accountId))
@@ -177,6 +224,38 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     refreshAccount()
     await renegade.registerAccountCallback(refreshAccount, accountId, -1)
   }
+
+  // async function preloadWallet() {
+  //   console.log("in preloadWallet")
+  //   if (!accountId) {
+  //     console.log(
+  //       "🚀 ~ file: renegade-context.tsx:211 ~ preloadWallet ~ accountId:",
+  //       accountId
+  //     )
+
+  //     return
+  //   }
+  //   const isPreloaded = localStorage.getItem("isPreloaded")
+  //   if (isPreloaded) return
+  //   console.log("isPreloaded: ", isPreloaded)
+  //   const [taskId, taskJob] = await renegade.task.deposit(
+  //     accountId,
+  //     new Token({ ticker: "WETH" }),
+  //     BigInt(10)
+  //   )
+  //   console.log(
+  //     "🚀 ~ file: renegade-context.tsx:205 ~ preloadWallet ~ taskId:",
+  //     taskId
+  //   )
+  //   console.log(
+  //     "🚀 ~ file: renegade-context.tsx:201 ~ preloadWallet ~ taskJob:",
+  //     taskJob
+  //   )
+  //   setTask(taskId, TaskType.Deposit)
+  //   await taskJob
+  //   refreshAccount(accountId)
+  //   localStorage.setItem("isPreloaded", "true")
+  // }
 
   // Define the setTask handler. Given a new task ID, this handler starts
   // streaming task updates to the task state.
@@ -227,6 +306,8 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
         setAccount,
         setTask,
         refreshAccount,
+        view,
+        setView,
       }}
     >
       {children}
