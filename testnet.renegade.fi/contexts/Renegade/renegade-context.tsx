@@ -36,35 +36,35 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
   const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:36 ~ RenegadeProvider ~ balances:",
-    balances
-  )
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:38 ~ RenegadeProvider ~ orders:",
-    orders
-  )
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:40 ~ RenegadeProvider ~ fees:",
-    fees
-  )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:36 ~ RenegadeProvider ~ balances:",
+  //   balances
+  // )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:38 ~ RenegadeProvider ~ orders:",
+  //   orders
+  // )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:40 ~ RenegadeProvider ~ fees:",
+  //   fees
+  // )
   const [accountId, setAccountId] = React.useState<AccountId>()
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:39 ~ RenegadeProvider ~ accountId:",
-    accountId
-  )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:39 ~ RenegadeProvider ~ accountId:",
+  //   accountId
+  // )
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:42 ~ RenegadeProvider ~ taskId:",
-    taskId
-  )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:42 ~ RenegadeProvider ~ taskId:",
+  //   taskId
+  // )
   const [taskType, setTaskType] = React.useState<TaskType>()
-  console.log(
-    "🚀 ~ file: renegade-context.tsx:44 ~ RenegadeProvider ~ taskType:",
-    taskType
-  )
+  // console.log(
+  //   "🚀 ~ file: renegade-context.tsx:44 ~ RenegadeProvider ~ taskType:",
+  //   taskType
+  // )
   const [taskState, setTaskState] = React.useState<TaskState>()
 
   // Create network (counterparties) and order book states.

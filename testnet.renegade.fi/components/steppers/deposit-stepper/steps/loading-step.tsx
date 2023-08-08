@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Flex, ModalBody, ModalFooter, Text } from "@chakra-ui/react"
+import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
 import { Step, useStepper } from "../deposit-stepper"
 
@@ -18,6 +18,7 @@ export default function LoadingStep() {
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
+          gap="48px"
           textAlign="center"
         >
           <Text
@@ -28,6 +29,7 @@ export default function LoadingStep() {
           >
             Deposit in progress...
           </Text>
+          <Spinner />
         </Flex>
       </ModalBody>
       <ModalFooter justifyContent="center"></ModalFooter>

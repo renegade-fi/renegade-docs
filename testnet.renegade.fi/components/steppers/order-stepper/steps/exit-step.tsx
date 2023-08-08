@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
@@ -17,7 +17,14 @@ import { useStepper } from "../order-stepper"
 export default function DefaultStep() {
   const { baseTicker, baseTokenAmount } = useOrder()
   const { onClose } = useStepper()
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(true)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsHovered(false)
+    }, 1000)
+    return () => clearTimeout(timeout)
+  }, [])
+
   return (
     <>
       <ModalCloseButton />

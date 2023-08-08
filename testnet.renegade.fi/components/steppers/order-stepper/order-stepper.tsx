@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react"
-import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
 import DefaultStep from "./steps/confirm-step"
 import ExitStep from "./steps/exit-step"
@@ -21,14 +21,28 @@ const OrderStepperInner = () => {
         backdropFilter="blur(8px)"
       />
       <ModalContent
-        paddingTop="6"
-        paddingBottom="4"
+        // paddingTop="6"
+        // paddingBottom="4"
         background="surfaces.1"
         borderRadius="10px"
       >
-        {step === Step.DEFAULT && <DefaultStep />}
-        {step === Step.LOADING && <LoadingStep />}
-        {step === Step.EXIT && <ExitStep />}
+        <Flex justifyContent="center" flexDirection="column" height="324px">
+          <Fade
+            transition={{ enter: { duration: 1 } }}
+            in={step === Step.DEFAULT}
+          >
+            {step === Step.DEFAULT && <DefaultStep />}
+          </Fade>
+          <Fade
+            transition={{ enter: { duration: 1 } }}
+            in={step === Step.LOADING}
+          >
+            {step === Step.LOADING && <LoadingStep />}
+          </Fade>
+          <Fade transition={{ enter: { duration: 1 } }} in={step === Step.EXIT}>
+            {step === Step.EXIT && <ExitStep />}
+          </Fade>
+        </Flex>
       </ModalContent>
     </Modal>
   )
