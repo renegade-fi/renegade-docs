@@ -59,13 +59,14 @@ function SingleOrder(props: SingleOrderProps) {
         Open
       </Text>
       <Box position="relative" width="30px" height="40px">
-        <Image width="25px" height="25px" src={quoteLogoUrl} />
+        <Image width="25px" height="25px" alt="Quote logo" src={quoteLogoUrl} />
         <Image
           position="absolute"
           right="0"
           bottom="0"
           width="25px"
           height="25px"
+          alt="Base logo"
           src={baseLogoUrl}
         />
       </Box>
@@ -216,95 +217,6 @@ function OrdersPanel(props: OrdersPanelProps) {
   )
 }
 
-function OrderBookPanel() {
-  const { orderBook } = useRenegade()
-  let panelBody: React.ReactElement
-
-  if (Object.keys(orderBook).length === 0) {
-    panelBody = (
-      <Text
-        marginTop="120px"
-        padding="0 10% 0 10%"
-        color="white.50"
-        fontSize="0.8em"
-        fontWeight="100"
-        textAlign="center"
-      >
-        No counterparty orders have been received.
-      </Text>
-    )
-  } else {
-    console.log(orderBook)
-    panelBody = (
-      <>
-        {Object.values(orderBook).map((counterpartyOrder) => {
-          const nullifier = counterpartyOrder.orderId.split("-")[0] // TODO: Incorrect.
-          return (
-            <Flex
-              key={counterpartyOrder.orderId}
-              flexDirection="row"
-              width="100%"
-              padding="4% 8% 4% 8%"
-              borderColor="white.20"
-              borderBottom="var(--border)"
-            >
-              <Flex flexDirection="column">
-                <Text color="white.80" fontSize="1.1em">
-                  Nullifier: {nullifier.toString()}
-                </Text>
-                <Text
-                  color="white.60"
-                  fontFamily="Favorit Expanded"
-                  fontSize="0.6em"
-                  fontWeight="500"
-                >
-                  {counterpartyOrder.state.toUpperCase()}
-                </Text>
-              </Flex>
-            </Flex>
-          )
-        })}
-      </>
-    )
-  }
-  return (
-    <>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        height="var(--banner-height)"
-        borderColor="border"
-        borderTop="var(--border)"
-        borderBottom="var(--border)"
-      >
-        <Text>Order Book</Text>
-      </Flex>
-      <Flex
-        className="scroll scroll-order-book hidden"
-        alignItems="center"
-        flexDirection="column"
-        flexGrow="1"
-        overflow="overlay"
-        width="100%"
-        maxHeight="30vh"
-        onWheel={() => {
-          const query = document.querySelector(".scroll-order-book")
-          if (query) {
-            query.classList.remove("hidden")
-            callAfterTimeout(() => {
-              query.classList.add("hidden")
-            }, 400)()
-          }
-        }}
-      >
-        {panelBody}
-      </Flex>
-    </>
-  )
-}
-
 function CounterpartiesPanel() {
   const { counterparties } = useRenegade()
   let panelBody: React.ReactElement
@@ -392,11 +304,7 @@ function OrdersAndCounterpartiesPanelExpanded(
   )
 }
 
-interface OrdersAndCounterpartiesPanelProps {
-  //   isOpenGlobalModal: boolean
-}
 export default function OrdersAndCounterpartiesPanel() {
-  //   props: OrdersAndCounterpartiesPanelProps
   const { open } = useModalConnectKit()
   return (
     <Panel
@@ -407,7 +315,6 @@ export default function OrdersAndCounterpartiesPanel() {
         />
       )}
       panelCollapsedDisplayTexts={["Orders", "Counterparties"]}
-      //   isOpenGlobalModal={props.isOpenGlobalModal}
       isOpenConnectKitModal={open}
       flipDirection={true}
     />

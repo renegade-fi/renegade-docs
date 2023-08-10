@@ -72,7 +72,7 @@ function TokenBalance(props: TokenBalanceProps) {
       transition="filter 0.1s"
       filter="grayscale(1)"
     >
-      <Image width="25px" height="25px" src={logoUrl} />
+      <Image width="25px" height="25px" alt="Logo" src={logoUrl} />
       <Flex
         alignItems="flex-start"
         flexDirection="column"
@@ -138,10 +138,6 @@ function TokenBalance(props: TokenBalanceProps) {
   )
 }
 
-interface EthereumWalletPanelProps {
-  isLocked: boolean
-  toggleIsLocked: () => void
-}
 function DepositWithdrawButtons() {
   const { accountId, setTask } = useRenegade()
   const router = useRouter()
@@ -361,8 +357,7 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
   )
 }
 
-interface WalletsPanelProps {}
-export default function WalletsPanel(props: WalletsPanelProps) {
+export default function WalletsPanel() {
   const { open } = useModalConnectKit()
   return (
     <Panel
