@@ -1,9 +1,9 @@
-import { useOrder } from "@/contexts/Order/order-context"
+import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { View } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
+  Divider,
   Flex,
   HStack,
   ModalBody,
@@ -12,12 +12,17 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import { findBalanceByTicker } from "@/lib/helpers"
+import { useDeposit } from "@/app/deposit/deposit-context"
+
 import { useStepper } from "../deposit-stepper"
 
 export default function DefaultStep() {
-  const { baseTicker, baseTokenAmount } = useOrder()
+  const { baseTicker, baseTokenAmount } = useDeposit()
   const { onClose } = useStepper()
-  const { setView } = useRenegade()
+  const { balances } = useRenegade()
+  const router = useRouter()
+  const balance = findBalanceByTicker(balances, baseTicker)?.amount.toString()
   return (
     <>
       <ModalCloseButton />
@@ -26,27 +31,44 @@ export default function DefaultStep() {
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
+          gap="4"
           textAlign="center"
         >
-          <Text
-            color="white.50"
-            fontFamily="Favorit Extended"
-            fontSize="1.3em"
-            fontWeight="200"
-          >
-            You&apos;ve deposited
-          </Text>
-          <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-            {`${baseTokenAmount} ${baseTicker}`}
-          </Text>
-          <Text
-            color="white.50"
-            fontFamily="Favorit Extended"
-            fontSize="1.3em"
-            fontWeight="200"
-          >
-            into your Renegade Account
-          </Text>
+          <div>
+            <Text
+              color="white.50"
+              fontFamily="Favorit Extended"
+              fontSize="1.3em"
+              fontWeight="200"
+            >
+              You&apos;ve deposited
+            </Text>
+            <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
+              {`${baseTokenAmount} ${baseTicker}`}
+            </Text>
+            <Text
+              color="white.50"
+              fontFamily="Favorit Extended"
+              fontSize="1.3em"
+              fontWeight="200"
+            >
+              into your Renegade Account
+            </Text>
+          </div>
+          <Divider />
+          <Flex>
+            <Text
+              color="white.50"
+              fontFamily="Favorit Extended"
+              fontSize="1.3em"
+              fontWeight="200"
+            >
+              Your new balance is&nbsp;
+            </Text>
+            <Text fontFamily="Aime" fontSize="1.3em" fontWeight="700">
+              {`${balance} ${baseTicker}`}
+            </Text>
+          </Flex>
         </Flex>
       </ModalBody>
       <ModalFooter justifyContent="center">
@@ -68,7 +90,7 @@ export default function DefaultStep() {
           transition="0.15s"
           backgroundColor="transparent"
           onClick={() => {
-            setView(View.TRADING)
+            router.push(`/${baseTicker}/USDC`)
             onClose()
           }}
         >

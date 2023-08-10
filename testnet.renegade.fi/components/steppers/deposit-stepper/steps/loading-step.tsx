@@ -1,15 +1,25 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
-import { Step, useStepper } from "../deposit-stepper"
+import { findBalanceByTicker } from "@/lib/helpers"
+import { useDeposit } from "@/app/deposit/deposit-context"
+
+import { useStepper } from "../deposit-stepper"
 
 export default function LoadingStep() {
-  const { setStep } = useStepper()
+  const { onNext } = useStepper()
+  const { balances } = useRenegade()
+  const prevBalance = useRef(balances)
+  const { baseTicker } = useDeposit()
+
   useEffect(() => {
-    setTimeout(() => {
-      setStep(Step.EXIT)
-    }, 2000)
-  }, [setStep])
+    const oldBalance = findBalanceByTicker(prevBalance.current, baseTicker)
+    const newBalance = findBalanceByTicker(balances, baseTicker)
+    if (oldBalance && newBalance && oldBalance.amount !== newBalance.amount) {
+      onNext()
+    }
+  }, [balances, baseTicker, onNext])
 
   return (
     <>

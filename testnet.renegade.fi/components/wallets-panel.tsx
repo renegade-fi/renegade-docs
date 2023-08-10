@@ -1,8 +1,9 @@
 "use client"
 
 import React from "react"
+import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType, View } from "@/contexts/Renegade/types"
+import { TaskType } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -142,7 +143,8 @@ interface EthereumWalletPanelProps {
   toggleIsLocked: () => void
 }
 function DepositWithdrawButtons() {
-  const { accountId, setTask, setView } = useRenegade()
+  const { accountId, setTask } = useRenegade()
+  const router = useRouter()
   return (
     <Flex
       flexDirection="row"
@@ -161,8 +163,7 @@ function DepositWithdrawButtons() {
         borderColor="border"
         borderRight="var(--border)"
         onClick={() => {
-          // TODO: Open deposit interface
-          setView(View.DEPOSIT)
+          router.push("/deposit")
         }}
       >
         <Text>Deposit</Text>

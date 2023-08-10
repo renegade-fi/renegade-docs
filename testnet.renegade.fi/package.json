@@ -20,7 +20,7 @@
     "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@renegade-fi/renegade-js": "^0.3.2",
+    "@renegade-fi/renegade-js": "../../renegade-js",
     "@t3-oss/env-nextjs": "^0.6.0",
     "connectkit": "^1.4.0",
     "eslint-plugin-chakra-ui": "^0.9.1",

@@ -8,8 +8,8 @@ import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
-import Main from "@/components/main"
 import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
+import TradingBody from "@/components/trading-body"
 import WalletsPanel from "@/components/wallets-panel"
 
 const renegade = new Renegade({
@@ -123,7 +123,7 @@ export default async function Home({
               position: "relative",
             }}
           >
-            <Main />
+            <TradingBody />
             <div
               style={{
                 position: "absolute",

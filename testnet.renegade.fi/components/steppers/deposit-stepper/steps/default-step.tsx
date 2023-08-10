@@ -1,4 +1,5 @@
-import { useOrder } from "@/contexts/Order/order-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -9,12 +10,30 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
 
-import { Step, useStepper } from "../deposit-stepper"
+import { useDeposit } from "@/app/deposit/deposit-context"
+import { renegade } from "@/app/providers"
+
+import { useStepper } from "../deposit-stepper"
 
 export default function DefaultStep() {
-  const { setStep } = useStepper()
-  const { baseTicker, baseTokenAmount } = useOrder()
+  const { baseTicker, baseTokenAmount } = useDeposit()
+  const { setTask, accountId } = useRenegade()
+  const { onNext } = useStepper()
+
+  const handleDeposit = async () => {
+    if (!accountId) return
+    onNext()
+    const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
+      accountId,
+      new Token({ ticker: baseTicker }),
+      BigInt(baseTokenAmount)
+    )
+    setTask(depositTaskId, TaskType.Deposit)
+    await depositTaskJob
+  }
+
   return (
     <>
       <ModalCloseButton />
@@ -64,9 +83,7 @@ export default function DefaultStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={() => {
-            setStep(Step.LOADING)
-          }}
+          onClick={handleDeposit}
         >
           <HStack spacing="4px">
             <Text>Deposit</Text>

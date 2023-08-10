@@ -52,8 +52,6 @@ export interface RenegadeContextType {
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
   setTask: (newTaskId: TaskId, taskType: TaskType) => Promise<void>
   refreshAccount: (accountId: AccountId) => void
-  view: View
-  setView: (view: View) => void
 }
 
 export enum TaskState {
@@ -74,9 +72,4 @@ export enum TaskType {
   PlaceOrder = "PlaceOrder",
   RevokeFee = "RevokeFee",
   Withdrawal = "Withdrawal",
-}
-
-export enum View {
-  DEPOSIT,
-  TRADING,
 }
