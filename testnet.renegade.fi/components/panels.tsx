@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react"
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
