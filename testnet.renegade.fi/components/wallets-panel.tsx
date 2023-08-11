@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
@@ -152,15 +153,15 @@ function DepositWithdrawButtons() {
       cursor="pointer"
     >
       <Flex
+        as={NextLink}
         alignItems="center"
         justifyContent="center"
         flexGrow="1"
         gap="5px"
         borderColor="border"
         borderRight="var(--border)"
-        onClick={() => {
-          router.push("/deposit")
-        }}
+        cursor="pointer"
+        href="/deposit"
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />

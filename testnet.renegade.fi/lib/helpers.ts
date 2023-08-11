@@ -11,23 +11,3 @@ export function findBalanceByTicker(
 
   return foundBalance
 }
-
-export function compareBalances(
-  oldBalances: Record<BalanceId, Balance>,
-  newBalances: Record<BalanceId, Balance>
-): boolean {
-  return Object.keys(oldBalances).every((balanceId) => {
-    const oldBalance = oldBalances[balanceId as keyof typeof oldBalances]
-    const newBalance = newBalances[balanceId as keyof typeof newBalances]
-
-    if (
-      oldBalance &&
-      newBalance &&
-      oldBalance.mint.address === newBalance.mint.address
-    ) {
-      return oldBalance.amount !== newBalance.amount
-    }
-
-    return true
-  })
-}
