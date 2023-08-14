@@ -118,7 +118,7 @@ export default function BlurredOverlay({
     ticker: string
   }
   function SingleBaseToken({ ticker }: SingleBaseTokenProps) {
-    const [imageUrl, setImageUrl] = useState("DEFAULT.png")
+    const [imageUrl, setImageUrl] = useState("")
     useEffect(() => {
       const getLogos = async () => {
         await TICKER_TO_LOGO_URL_HANDLE.then((TICKER_TO_LOGO_URL) =>
