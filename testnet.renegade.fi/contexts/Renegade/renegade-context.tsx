@@ -1,6 +1,10 @@
+"use client"
+
 import * as React from "react"
 import {
   AccountId,
+  Balance,
+  BalanceId,
   Fee,
   FeeId,
   Keychain,
@@ -13,7 +17,6 @@ import { useAccount } from "wagmi"
 
 import { renegade } from "@/app/providers"
 
-import useBalance from "../../hooks/useBalance"
 import {
   Counterparty,
   CounterpartyOrder,
@@ -32,10 +35,10 @@ const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
 function RenegadeProvider({ children }: RenegadeProviderProps) {
   const { address } = useAccount()
   // Create balance, order, fee, an account states.
+  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
   const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
   const [accountId, setAccountId] = React.useState<AccountId>()
-  const balances = useBalance(accountId)
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -49,6 +52,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [orderBook, setOrderBook] = React.useState<
     Record<OrderId, CounterpartyOrder>
   >({})
+
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -60,10 +64,8 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     keychain?: Keychain
   ): Promise<void> {
     if (oldAccountId) {
-      console.log("unregistering old account")
       await renegade.unregisterAccount(oldAccountId)
     }
-    // TODO: Tear down the previously-registered callback ID.
     if (!keychain) {
       setAccountId(undefined)
       return
@@ -72,8 +74,19 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     const accountId = renegade.registerAccount(keychain)
     const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
     setTask(taskId, TaskType.InitializeAccount)
-    await taskJob
+    await taskJob.then(() => setTask(undefined))
     setAccountId(accountId)
+    refreshAccount(accountId)
+    await renegade.registerAccountCallback(
+      () => refreshAccount(accountId),
+      accountId,
+      -1
+    )
+  }
+
+  const refreshAccount = (accountId?: AccountId) => {
+    if (!accountId) return
+    setBalances(renegade.getBalances(accountId))
   }
 
   React.useEffect(() => {
@@ -96,28 +109,19 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
 
   // Define the setTask handler. Given a new task ID, this handler starts
   // streaming task updates to the task state.
-  async function setTask(newTaskId: TaskId, taskType: TaskType) {
+  async function setTask(newTaskId?: TaskId, taskType?: TaskType) {
     if (newTaskId === "DONE") {
       return
     }
-    setTaskId((old) => {
-      if (old === newTaskId) {
-        return old
-      }
-      return newTaskId
-    })
-    setTaskType((old) => {
-      if (old === taskType) {
-        return old
-      }
-      return taskType
-    })
-    setTaskState((old) => {
-      if (old === TaskState.Proving) {
-        return old
-      }
-      return TaskState.Proving
-    })
+    if (!newTaskId) {
+      setTaskId(undefined)
+      setTaskType(undefined)
+      setTaskState(undefined)
+      return
+    }
+    setTaskId(newTaskId)
+    setTaskType(taskType)
+    setTaskState(TaskState.Proving)
     // toast({
     //   title: "New Task State",
     //   description: "Proving",
@@ -125,17 +129,17 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     //   duration: 5000,
     //   isClosable: true,
     // });
-    // await renegade.registerTaskCallback((message: string) => {
-    //   const taskUpdate = JSON.parse(message).state
-    //   setTaskState(taskUpdate.state as TaskState)
-    //   // toast({
-    //   //   title: "New Task State",
-    //   //   description: taskUpdate.state,
-    //   //   status: "info",
-    //   //   duration: 5000,
-    //   //   isClosable: true,
-    //   // });
-    // }, newTaskId)
+    await renegade.registerTaskCallback((message: string) => {
+      const taskUpdate = JSON.parse(message).state
+      setTaskState(taskUpdate.state as TaskState)
+      // toast({
+      //   title: "New Task State",
+      //   description: taskUpdate.state,
+      //   status: "info",
+      //   duration: 5000,
+      //   isClosable: true,
+      // });
+    }, newTaskId)
   }
 
   return (

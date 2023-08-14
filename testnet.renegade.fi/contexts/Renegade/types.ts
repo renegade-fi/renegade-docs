@@ -55,7 +55,7 @@ export interface RenegadeContextType {
 
 export enum TaskState {
   Completed = "Completed",
-  FindingMerkleOpening = "FindingMerkleOpening",
+  FindingOpening = "FindingOpening",
   Proving = "Proving",
   SubmittingTx = "SubmittingTx",
   UpdatingValidityProofs = "UpdatingValidityProofs",

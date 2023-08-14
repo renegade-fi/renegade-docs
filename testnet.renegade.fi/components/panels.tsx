@@ -4,6 +4,11 @@ import React from "react"
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
 
+import {
+  safeLocalStorageGetItem,
+  safeLocalStorageSetItem,
+} from "../lib/safeLocalStorage"
+
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))"
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))"
 
@@ -113,7 +118,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
     this.state = {
       isHovering: false,
       isLocked:
-        localStorage.getItem(this.getLocalStorageKey()) === "true" || false,
+        safeLocalStorageGetItem(this.getLocalStorageKey()) === "true" || false,
       isOpenModalWhenLeft: false,
       isModalJustClosed: false,
     }
@@ -160,7 +165,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
   }
 
   toggleIsLocked() {
-    localStorage.setItem(
+    safeLocalStorageSetItem(
       this.getLocalStorageKey(),
       (!this.state.isLocked).toString()
     )
