@@ -50,7 +50,7 @@ export interface RenegadeContextType {
   counterparties: Record<PeerId, Counterparty>
   orderBook: Record<OrderId, CounterpartyOrder>
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
-  setTask: (newTaskId: TaskId, taskType: TaskType) => Promise<void>
+  setTask: (newTaskId?: TaskId, taskType?: TaskType) => Promise<void>
 }
 
 export enum TaskState {
