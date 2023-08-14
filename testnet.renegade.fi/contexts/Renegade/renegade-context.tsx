@@ -5,6 +5,7 @@ import {
   AccountId,
   Balance,
   BalanceId,
+  CallbackId,
   Fee,
   FeeId,
   Keychain,
@@ -53,6 +54,49 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     Record<OrderId, CounterpartyOrder>
   >({})
 
+  // TODO: Does not include existing peers
+  // Stream network, order book, and MPC events.
+  const networkCallbackId = React.useRef<CallbackId>()
+  React.useEffect(() => {
+    if (networkCallbackId.current) return
+    const handleNetworkListener = async () => {
+      console.log("adding listener")
+      await renegade
+        .registerNetworkCallback((message: string) => {
+          console.log("[Network]", message)
+          const networkEvent = JSON.parse(message)
+          const networkEventType = networkEvent.type
+          const networkEventPeer = networkEvent.peer
+          if (networkEventType === "NewPeer") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              newCounterparties[networkEventPeer.id] = {
+                peerId: networkEventPeer.id,
+                clusterId: networkEventPeer.cluster_id,
+                multiaddr: networkEventPeer.addr,
+              } as Counterparty
+              return newCounterparties
+            })
+          } else if (networkEventType === "PeerExpired") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              delete newCounterparties[networkEventPeer.id]
+              return newCounterparties
+            })
+          } else {
+            console.error("Unknown network event type:", networkEventType)
+          }
+        })
+        .then((callbackId) => (networkCallbackId.current = callbackId))
+    }
+    handleNetworkListener()
+    return () => {
+      if (networkCallbackId.current) {
+        renegade.releaseCallback(networkCallbackId.current)
+      }
+    }
+  }, [])
+
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -82,6 +126,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
       accountId,
       -1
     )
+    // handleNetworkListener()
   }
 
   const refreshAccount = (accountId?: AccountId) => {

@@ -205,47 +205,6 @@ function OrdersPanel(props: OrdersPanelProps) {
 
 function CounterpartiesPanel() {
   const { counterparties } = useRenegade()
-  let panelBody: React.ReactElement
-
-  if (Object.keys(counterparties).length === 0) {
-    panelBody = (
-      <Text
-        padding="0 10% 0 10%"
-        color="white.50"
-        fontSize="0.8em"
-        fontWeight="100"
-        textAlign="center"
-      >
-        No counterparties have been discovered.
-      </Text>
-    )
-  } else {
-    panelBody = (
-      <>
-        {Object.values(counterparties).map((counterparty) => {
-          const port = counterparty.multiaddr.split("/")[4]
-          const ipAddr = counterparty.multiaddr.split("/")[6]
-          return (
-            <Flex
-              key={counterparty.peerId}
-              flexDirection="column"
-              gap="2px"
-              width="100%"
-              padding="4% 8% 4% 8%"
-              borderColor="white.20"
-            >
-              <Text color="white.80" fontSize="0.8em">
-                Peer ID: {counterparty.peerId.slice(-16)}
-              </Text>
-              <Text color="white.60" fontSize="0.2em">
-                {ipAddr}:{port}
-              </Text>
-            </Flex>
-          )
-        })}
-      </>
-    )
-  }
   return (
     <Flex
       position="relative"
@@ -258,7 +217,7 @@ function CounterpartiesPanel() {
       borderBottom="var(--border)"
     >
       <Text>Counterparties:&nbsp;</Text>
-      <Text>42</Text>
+      <Text>{Object.keys(counterparties).length}</Text>
     </Flex>
   )
 }
