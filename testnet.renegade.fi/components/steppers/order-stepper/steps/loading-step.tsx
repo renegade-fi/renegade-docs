@@ -1,15 +1,17 @@
 import { useEffect } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
-import { Step, useStepper } from "../order-stepper"
+import { useStepper } from "../order-stepper"
 
 export default function LoadingStep() {
-  const { setStep } = useStepper()
+  const { onNext } = useStepper()
+  const { taskState, taskType } = useRenegade()
   useEffect(() => {
-    setTimeout(() => {
-      setStep(Step.EXIT)
-    }, 2000)
-  }, [setStep])
+    if (taskType === TaskType.PlaceOrder && taskState === TaskState.Completed)
+      onNext()
+  }, [onNext, taskState, taskType])
 
   return (
     <>

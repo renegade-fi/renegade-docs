@@ -74,7 +74,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     const accountId = renegade.registerAccount(keychain)
     const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
     setTask(taskId, TaskType.InitializeAccount)
-    await taskJob.then(() => setTask(undefined))
+    await taskJob.then(() => setTask(undefined, undefined))
     setAccountId(accountId)
     refreshAccount(accountId)
     await renegade.registerAccountCallback(
@@ -87,6 +87,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const refreshAccount = (accountId?: AccountId) => {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
+    setOrders(renegade.getOrders(accountId))
   }
 
   React.useEffect(() => {
@@ -122,23 +123,9 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     setTaskId(newTaskId)
     setTaskType(taskType)
     setTaskState(TaskState.Proving)
-    // toast({
-    //   title: "New Task State",
-    //   description: "Proving",
-    //   status: "info",
-    //   duration: 5000,
-    //   isClosable: true,
-    // });
     await renegade.registerTaskCallback((message: string) => {
       const taskUpdate = JSON.parse(message).state
       setTaskState(taskUpdate.state as TaskState)
-      // toast({
-      //   title: "New Task State",
-      //   description: taskUpdate.state,
-      //   status: "info",
-      //   duration: 5000,
-      //   isClosable: true,
-      // });
     }, newTaskId)
   }
 
