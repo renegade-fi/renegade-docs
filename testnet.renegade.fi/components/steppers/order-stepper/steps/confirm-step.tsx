@@ -1,5 +1,7 @@
-import { useCallback } from "react"
+import { useEffect } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -23,10 +25,10 @@ export default function ConfirmStep() {
     midpointPrice,
     direction,
   } = useOrder()
-  const handleClick = useCallback(() => {
-    onPlaceOrder()
-    onNext()
-  }, [onNext, onPlaceOrder])
+  const { taskType } = useRenegade()
+  useEffect(() => {
+    if (taskType === TaskType.PlaceOrder) onNext()
+  }, [onNext, taskType])
 
   return (
     <>
@@ -94,7 +96,7 @@ export default function ConfirmStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={handleClick}
+          onClick={onPlaceOrder}
         >
           <HStack spacing="4px">
             <Text>{`${
