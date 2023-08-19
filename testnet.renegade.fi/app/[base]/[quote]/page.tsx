@@ -10,6 +10,15 @@ import RelayerStatusData from "@/components/banners/relayer-status-data"
 import AllTokensBanner from "@/components/banners/tokens-banner"
 import TradingBody from "@/components/trading-body"
 
+export function generateStaticParams() {
+  return DISPLAYED_TICKERS.map(([base, quote]) => {
+    return {
+      base,
+      quote,
+    }
+  })
+}
+
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   relayerHttpPort: 3000,
