@@ -5,12 +5,12 @@ import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { getHealthState } from "@/lib/getHealthState"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
-import AllTokensBanner from "@/components/banners/tokens-banner"
 import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
 import TradingBody from "@/components/trading-body"
 import WalletsPanel from "@/components/wallets-panel"
+import MedianBanner from "@/app/[base]/[quote]/median-banner"
+import TokensBanner from "@/app/[base]/[quote]/tokens-banner"
 
 export function generateStaticParams() {
   return DISPLAYED_TICKERS.map(([base, quote]) => {
@@ -61,7 +61,7 @@ export default async function Home({
     ...tokensBannerRes,
   ])
 
-  const initialAllTokens = tokensBannerHealthStates.map((healthState) => {
+  const initialTokenPrices = tokensBannerHealthStates.map((healthState) => {
     return (
       healthState.median.DataTooStale?.[0] ||
       healthState.median.Nominal ||
@@ -87,7 +87,6 @@ export default async function Home({
       healthStatesExchanges["UniswapV3"] &&
       healthStatesExchanges["UniswapV3"]["Nominal"],
   }
-
   const priceReporterHealthStates = {
     median: getHealthState(healthStates["median"]),
     binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
@@ -107,11 +106,9 @@ export default async function Home({
         backgroundSize: "cover",
       }}
     >
-      <ExchangeConnectionsBanner
+      <MedianBanner
         priceReport={initialActivePair}
         priceReporterHealthStates={priceReporterHealthStates}
-        activeBaseTicker={baseToken}
-        activeQuoteTicker={quoteToken}
       />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />
@@ -137,7 +134,7 @@ export default async function Home({
         </div>
         <OrdersAndCounterpartiesPanel />
       </div>
-      <AllTokensBanner priceReports={initialAllTokens} />
+      <TokensBanner initialTokenPrices={initialTokenPrices} />
     </div>
   )
 }
