@@ -1,9 +1,8 @@
 import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
-import { ExchangeReport, HealthStates } from "@/types"
-import { Renegade, Token } from "@renegade-fi/renegade-js"
+import { Renegade } from "@renegade-fi/renegade-js"
 
-import { getHealthState } from "@/lib/getHealthState"
+import { getExchangeBannerData } from "@/lib/priceHelpers"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import TradingBody from "@/components/trading-body"
@@ -32,65 +31,13 @@ export default async function Home({
 }: {
   params: { base: string; quote: string }
 }) {
-  // Exchange Banner Data
-  const activePairRes: Promise<HealthStates> =
-    renegade?.queryExchangeHealthStates(
-      new Token({ ticker: baseToken }),
-      new Token({ ticker: quoteToken })
-    )
-
-  // All Tokens Banner Data
-  const tokensBannerRes: Promise<HealthStates>[] = []
-  DISPLAYED_TICKERS.forEach(
-    async ([baseTicker, quoteTicker]: [string, string]) => {
-      tokensBannerRes.push(
-        renegade?.queryExchangeHealthStates(
-          new Token({ ticker: baseTicker }),
-          new Token({ ticker: quoteTicker })
-        )
-      )
-    }
+  const { report, exchangeHealthStates } = await getExchangeBannerData(
+    baseToken,
+    quoteToken,
+    renegade
   )
-
-  // Parallel Data Fetching
-  const [healthStates, ...tokensBannerHealthStates] = await Promise.all([
-    activePairRes,
-    ...tokensBannerRes,
-  ])
-
-  const initialTokenPrices = tokensBannerHealthStates.map((healthState) => {
-    return (
-      healthState.median.DataTooStale?.[0] ||
-      healthState.median.Nominal ||
-      healthState.median.TooMuchDeviation?.[0]
-    )
-  })
-
-  const healthStatesExchanges = healthStates["all_exchanges"]
-  const initialActivePair: ExchangeReport = {
-    median: healthStates["median"]["DataTooStale"]?.[0],
-    binance:
-      healthStatesExchanges["Binance"] &&
-      healthStatesExchanges["Binance"]["Nominal"],
-    coinbase:
-      healthStatesExchanges["Coinbase"] &&
-      healthStatesExchanges["Coinbase"]["Nominal"],
-    kraken:
-      healthStatesExchanges["Kraken"] &&
-      healthStatesExchanges["Kraken"]["Nominal"],
-    okx:
-      healthStatesExchanges["Okx"] && healthStatesExchanges["Okx"]["Nominal"],
-    uniswapv3:
-      healthStatesExchanges["UniswapV3"] &&
-      healthStatesExchanges["UniswapV3"]["Nominal"],
-  }
-  const priceReporterHealthStates = {
-    median: getHealthState(healthStates["median"]),
-    binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
-    coinbase: getHealthState(healthStates["all_exchanges"]["Coinbase"]),
-    kraken: getHealthState(healthStates["all_exchanges"]["Kraken"]),
-    okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
-    uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
+  if (!report || !exchangeHealthStates) {
+    throw new Error("Failed to fetch exchange banner data")
   }
 
   return (
@@ -104,8 +51,8 @@ export default async function Home({
       }}
     >
       <MedianBanner
-        priceReport={initialActivePair}
-        priceReporterHealthStates={priceReporterHealthStates}
+        priceReport={report}
+        priceReporterHealthStates={exchangeHealthStates}
       />
       <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
       <TradingBody />
