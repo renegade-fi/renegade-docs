@@ -12,6 +12,15 @@ import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
 import TradingBody from "@/components/trading-body"
 import WalletsPanel from "@/components/wallets-panel"
 
+export function generateStaticParams() {
+  return DISPLAYED_TICKERS.map(([base, quote]) => {
+    return {
+      base,
+      quote,
+    }
+  })
+}
+
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   relayerHttpPort: 3000,
