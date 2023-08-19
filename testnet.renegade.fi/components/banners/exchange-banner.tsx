@@ -39,7 +39,7 @@ interface ExchangeConnectionTripleProps {
   isMobile?: boolean
   priceReport?: PriceReport
 }
-function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
+export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   // Remap some tickers, as different exchanges use different names
   let renamedBaseTicker = props.activeBaseTicker
   let renamedQuoteTicker = props.activeQuoteTicker

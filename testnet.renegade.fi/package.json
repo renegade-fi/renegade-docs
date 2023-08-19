@@ -20,6 +20,7 @@
     "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@react-hook/window-size": "3.0.7",
     "@renegade-fi/renegade-js": "^0.3.2",
     "@t3-oss/env-nextjs": "^0.6.0",
     "connectkit": "^1.4.0",
@@ -27,9 +28,11 @@
     "ethers": "^6.6.4",
     "framer-motion": "^10.12.22",
     "next": "^13.4.10",
+    "normalize-wheel": "1.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
+    "react-use": "17.3.2",
     "viem": "^1.3.0",
     "wagmi": "^1.3.9",
     "zod": "^3.21.4"
@@ -37,6 +40,7 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
     "@types/node": "20.4.2",
+    "@types/normalize-wheel": "^1.0.1",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "@typescript-eslint/parser": "^5.61.0",

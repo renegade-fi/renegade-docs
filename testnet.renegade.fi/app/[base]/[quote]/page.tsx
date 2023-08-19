@@ -7,8 +7,9 @@ import { getHealthState } from "@/lib/getHealthState"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
-import AllTokensBanner from "@/components/banners/tokens-banner"
 import TradingBody from "@/components/trading-body"
+import MedianBanner from "@/app/[base]/[quote]/median-banner"
+import TokensBanner from "@/app/[base]/[quote]/tokens-banner"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -50,7 +51,7 @@ export default async function Home({
     ...tokensBannerRes,
   ])
 
-  const initialAllTokens = tokensBannerHealthStates.map((healthState) => {
+  const initialTokenPrices = tokensBannerHealthStates.map((healthState) => {
     return (
       healthState.median.DataTooStale?.[0] ||
       healthState.median.Nominal ||
@@ -76,7 +77,6 @@ export default async function Home({
       healthStatesExchanges["UniswapV3"] &&
       healthStatesExchanges["UniswapV3"]["Nominal"],
   }
-
   const priceReporterHealthStates = {
     median: getHealthState(healthStates["median"]),
     binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
@@ -96,15 +96,14 @@ export default async function Home({
         backgroundSize: "cover",
       }}
     >
-      <ExchangeConnectionsBanner
+      <MedianBanner
         priceReport={initialActivePair}
         priceReporterHealthStates={priceReporterHealthStates}
-        activeBaseTicker={baseToken}
-        activeQuoteTicker={quoteToken}
       />
+
       <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
       <TradingBody />
-      <AllTokensBanner priceReports={initialAllTokens} />
+      <TokensBanner initialTokenPrices={initialTokenPrices} />
     </div>
   )
 }
