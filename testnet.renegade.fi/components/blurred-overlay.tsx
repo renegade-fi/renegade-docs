@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import Link from "next/link"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import {
@@ -119,6 +120,7 @@ export default function BlurredOverlay({
   }
   function SingleBaseToken({ ticker }: SingleBaseTokenProps) {
     const [imageUrl, setImageUrl] = useState("")
+    const { quoteTicker } = useOrder()
     useEffect(() => {
       const getLogos = async () => {
         await TICKER_TO_LOGO_URL_HANDLE.then((TICKER_TO_LOGO_URL) =>
@@ -129,23 +131,25 @@ export default function BlurredOverlay({
     }, [ticker])
 
     return (
-      <HStack
-        as={Button}
-        margin="5px"
-        padding="8px"
-        color="border"
-        border="var(--border)"
-        borderRadius="5px"
-        onClick={() => {
-          onClose()
-          setBaseToken(ticker)
-        }}
-      >
-        <Image width="20px" height="20px" alt="Ticker" src={imageUrl} />
-        <Text color="white.90" fontSize="0.8em">
-          {ticker}
-        </Text>
-      </HStack>
+      <Link href={`/${ticker}/${quoteTicker}`} prefetch>
+        <HStack
+          as={Button}
+          margin="5px"
+          padding="8px"
+          color="border"
+          border="var(--border)"
+          borderRadius="5px"
+          onClick={() => {
+            onClose()
+            // setBaseToken(ticker)
+          }}
+        >
+          <Image width="20px" height="20px" alt="Ticker" src={imageUrl} />
+          <Text color="white.90" fontSize="0.8em">
+            {ticker}
+          </Text>
+        </HStack>
+      </Link>
     )
   }
 

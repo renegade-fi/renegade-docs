@@ -5,11 +5,18 @@ import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { getHealthState } from "@/lib/getHealthState"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import ExchangeConnectionsBanner from "@/components/banners/exchange-banner"
 import RelayerStatusData from "@/components/banners/relayer-status-data"
 import TradingBody from "@/components/trading-body"
 import MedianBanner from "@/app/[base]/[quote]/median-banner"
-import TokensBanner from "@/app/[base]/[quote]/tokens-banner"
+
+export function generateStaticParams() {
+  return DISPLAYED_TICKERS.map(([base, quote]) => {
+    return {
+      base,
+      quote,
+    }
+  })
+}
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -100,10 +107,8 @@ export default async function Home({
         priceReport={initialActivePair}
         priceReporterHealthStates={priceReporterHealthStates}
       />
-
       <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
       <TradingBody />
-      <TokensBanner initialTokenPrices={initialTokenPrices} />
     </div>
   )
 }

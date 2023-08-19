@@ -1,5 +1,6 @@
 "use client"
 
+import { Fragment } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { ExchangeReport, HealthState } from "@/types"
 import { Box, Flex, Spacer, Text } from "@chakra-ui/react"
@@ -60,7 +61,7 @@ export default function MedianBanner({
             .map((exchange) => {
               const e = exchange.toLowerCase()
               return (
-                <>
+                <Fragment key={exchange}>
                   <ExchangeConnectionTriple
                     activeBaseTicker={baseTicker}
                     activeQuoteTicker={quoteTicker}
@@ -69,7 +70,7 @@ export default function MedianBanner({
                     priceReport={priceReport[e as Exchange]}
                   />
                   <BannerSeparator flexGrow={4} />
-                </>
+                </Fragment>
               )
             })}
         </InteractiveMarquee>
