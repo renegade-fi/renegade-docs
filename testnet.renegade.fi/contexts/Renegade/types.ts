@@ -51,12 +51,11 @@ export interface RenegadeContextType {
   orderBook: Record<OrderId, CounterpartyOrder>
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
   setTask: (newTaskId: TaskId, taskType: TaskType) => Promise<void>
-  refreshAccount: (accountId: AccountId) => void
 }
 
 export enum TaskState {
   Completed = "Completed",
-  FindingMerkleOpening = "FindingMerkleOpening",
+  FindingOpening = "FindingOpening",
   Proving = "Proving",
   SubmittingTx = "SubmittingTx",
   UpdatingValidityProofs = "UpdatingValidityProofs",

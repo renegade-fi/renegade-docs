@@ -14,6 +14,7 @@ import { LivePrices } from "@/components/banners/live-price"
 
 import PlaceOrderModal from "./modals/place-order-modal"
 import SignInModal from "./modals/signin-modal"
+import OrderStepper from "./steppers/order-stepper/order-stepper"
 
 export default function PlaceOrderButton() {
   const { address } = useAccountWagmi()
@@ -83,21 +84,22 @@ export default function PlaceOrderButton() {
           if (!baseTokenAmount) {
             return
           }
-          if (!address) {
-            setOpen(true)
-            return
-          }
-          if (!isSignedIn) {
-            onOpenSignIn()
-            return
-          }
+          // if (!address) {
+          //   setOpen(true)
+          //   return
+          // }
+          // if (!isSignedIn) {
+          //   onOpenSignIn()
+          //   return
+          // }
           onOpenPlaceOrder()
         }}
       >
         {placeOrderButtonContent}
       </Button>
       <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
-      <PlaceOrderModal isOpen={placeOrderIsOpen} onClose={onClosePlaceOrder} />
+      {/* <PlaceOrderModal isOpen={placeOrderIsOpen} onClose={onClosePlaceOrder} /> */}
+      {placeOrderIsOpen && <OrderStepper onClose={onClosePlaceOrder} />}
     </>
   )
 }

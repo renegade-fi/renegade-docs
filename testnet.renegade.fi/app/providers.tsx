@@ -16,7 +16,8 @@ import {
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
-import { WagmiConfig, createConfig } from "wagmi"
+import { createPublicClient, http } from "viem"
+import { WagmiConfig, createConfig, mainnet } from "wagmi"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -60,12 +61,15 @@ const colors = {
   "white.80": "#cccccc",
   "white.70": "#b3b3b3",
   "white.60": "#999999",
-  "white.50": "#808080",
+  "white.50": "#94938d",
   "white.40": "#666666",
   "white.30": "#4d4d4d",
   "white.20": "#333333",
   "white.10": "#1a1a1a",
   "white.5": "#0d0d0d",
+  surfaces: {
+    1: "#1e1e1e",
+  },
 }
 
 const menuStyle = definePartsStyle({
@@ -132,6 +136,10 @@ const components = {
         writingMode: "vertical-rl",
         textOrientation: "sideways",
       },
+      blurred: {
+        filter: "blur(5px)",
+        transition: "filter 0.3s ease-in-out",
+      },
     },
   },
   Button: {
@@ -164,6 +172,11 @@ const wagmiConfig = createConfig(
     appName: "Renegade",
   })
 )
+
+export const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+})
 
 export const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
