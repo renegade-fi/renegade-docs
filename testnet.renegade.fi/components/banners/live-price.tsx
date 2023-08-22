@@ -1,7 +1,7 @@
 import React from "react"
 import { PriceReport } from "@/types"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { Box, Flex, Link, Text } from "@chakra-ui/react"
+import { Box, Flex, Text } from "@chakra-ui/react"
 import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
@@ -25,7 +25,6 @@ interface LivePricesProps {
   baseTicker: string
   quoteTicker: string
   exchange: Exchange
-  link?: string
   onlyShowPrice?: boolean
   withCommas?: boolean
   scaleBy?: number
@@ -270,7 +269,6 @@ export class LivePrices extends React.Component<
         <Flex
           className={priceStrClass}
           key={key + "_price"}
-          as={Link}
           sx={
             this.props.isMobile
               ? {
@@ -293,21 +291,16 @@ export class LivePrices extends React.Component<
               ? "rotate(180deg)"
               : undefined
           }
-          href={this.props.link}
-          isExternal
         >
           ${priceStr}
         </Flex>
         <Flex
-          as={Link}
           position="relative"
           alignItems="center"
           justifyContent="center"
           width={this.props.isMobile ? "100%" : undefined}
           height="100%"
           _hover={{ textDecoration: "none" }}
-          href={this.props.link}
-          isExternal
         >
           <Box position="absolute">
             <BannerSeparator />
