@@ -1,0 +1,24 @@
+:root {
+  --banner-height: 38px;
+  --border-color: #808080;
+  --border: 0.25px solid var(--border-color);
+}
+
+.scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px 10px transparent;
+  border: solid 3px transparent;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 10px 10px #888;
+  border: solid 3px transparent;
+  border-radius: 100px;
+}
+
+.scroll.hidden::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 10px 10px transparent;
+}
