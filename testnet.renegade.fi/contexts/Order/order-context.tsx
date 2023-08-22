@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 
 import { Direction, OrderContextValue } from "./types"
@@ -24,6 +24,17 @@ function OrderProvider({ children }: OrderProviderProps) {
     router.push(`/${baseTicker}/${token}`)
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
+  // TODO: sync order details with local storage
+
+  useEffect(() => {
+    if (!baseTicker || !quoteTicker) return
+    const regex = /[a-z]/
+    if (regex.test(baseTicker) || regex.test(quoteTicker)) {
+      router.replace(
+        `/${baseTicker.toUpperCase()}/${quoteTicker.toUpperCase()}`
+      )
+    }
+  }, [baseTicker, quoteTicker, router])
 
   return (
     <OrderStateContext.Provider
