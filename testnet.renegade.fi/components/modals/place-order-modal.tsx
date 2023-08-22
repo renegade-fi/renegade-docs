@@ -60,9 +60,8 @@ export default function PlaceOrderModal({
       baseToken: new Token({ ticker: baseTicker }),
       quoteToken: new Token({ ticker: quoteTicker }),
       side: direction,
-      type: "limit",
+      type: "midpoint",
       amount: BigInt(baseTokenAmount),
-      price: getLimitPrice(),
     })
     const [taskId] = await renegade.task.placeOrder(accountId, order)
     setTask(taskId, TaskType.PlaceOrder)

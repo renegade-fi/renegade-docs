@@ -124,15 +124,6 @@ export default async function Home({
             }}
           >
             <TradingBody />
-            <div
-              style={{
-                position: "absolute",
-                right: "0",
-                bottom: "0",
-              }}
-            >
-              {/* <TaskStatus /> */}
-            </div>
           </div>
         </div>
         <OrdersAndCounterpartiesPanel />
