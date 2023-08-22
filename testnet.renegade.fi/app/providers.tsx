@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { OrderProvider } from "@/contexts/Order/order-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
@@ -206,7 +207,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
               }}
             >
               <RenegadeProvider>
-                <OrderProvider>{children}</OrderProvider>
+                <ExchangeProvider>
+                  <OrderProvider>{children}</OrderProvider>
+                </ExchangeProvider>
               </RenegadeProvider>
             </ConnectKitProvider>
           </WagmiConfig>
