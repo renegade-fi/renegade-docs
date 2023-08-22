@@ -5,15 +5,16 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
+import { CounterpartyOrder, TaskType } from "@/contexts/Renegade/types"
+import { CallbackId, Order, OrderId, Token } from "@renegade-fi/renegade-js"
 
-import { renegade } from "../../app/providers"
-import { HealthStates } from "../../types"
+import { renegade } from "@/app/providers"
+
 import { useRenegade } from "../Renegade/renegade-context"
-import { CounterpartyOrder, TaskType } from "../Renegade/types"
 import { Direction, OrderContextValue } from "./types"
 
 type OrderProviderProps = { children: React.ReactNode }
@@ -52,46 +53,47 @@ function OrderProvider({ children }: OrderProviderProps) {
     }
   }, [baseTicker, quoteTicker, router])
 
-  const fetchPrice = useCallback(async () => {
-    if (!baseTicker || !quoteTicker) return
-    const { median }: HealthStates = await renegade.queryExchangeHealthStates(
-      new Token({ ticker: baseTicker }),
-      new Token({ ticker: quoteTicker })
-    )
-    const price =
-      median.Nominal?.midpointPrice ||
-      median.DataTooStale?.[0].midpointPrice ||
-      0
-    return price
-  }, [baseTicker, quoteTicker])
-
-  const handleOrderListener = useCallback(async () => {
-    await renegade.registerOrderBookCallback((message: string) => {
-      console.log("[Order Book]", message)
-      const orderBookEvent = JSON.parse(message)
-      const orderBookEventType = orderBookEvent.type
-      const orderBookEventOrder = orderBookEvent.order
-      if (
-        orderBookEventType === "NewOrder" ||
-        orderBookEventType === "OrderStateChange"
-      ) {
-        setOrderBook((orderBook) => {
-          const newOrderBook = { ...orderBook }
-          newOrderBook[orderBookEventOrder.id] = {
-            orderId: orderBookEventOrder.id,
-            publicShareNullifier: orderBookEventOrder.public_share_nullifier,
-            isLocal: orderBookEventOrder.local,
-            clusterId: orderBookEventOrder.cluster,
-            state: orderBookEventOrder.state,
-            timestamp: orderBookEventOrder.timestamp,
-            handshakeState: "not-matching",
-          } as CounterpartyOrder
-          return newOrderBook
+  const orderCallbackId = useRef<CallbackId>()
+  useEffect(() => {
+    if (orderCallbackId.current) return
+    const handleNetworkListener = async () => {
+      console.log("adding order listener")
+      await renegade
+        .registerOrderBookCallback((message: string) => {
+          console.log("[Order Book]", message)
+          const orderBookEvent = JSON.parse(message)
+          const orderBookEventType = orderBookEvent.type
+          const orderBookEventOrder = orderBookEvent.order
+          if (
+            orderBookEventType === "NewOrder" ||
+            orderBookEventType === "OrderStateChange"
+          ) {
+            setOrderBook((orderBook) => {
+              const newOrderBook = { ...orderBook }
+              newOrderBook[orderBookEventOrder.id] = {
+                orderId: orderBookEventOrder.id,
+                publicShareNullifier:
+                  orderBookEventOrder.public_share_nullifier,
+                isLocal: orderBookEventOrder.local,
+                clusterId: orderBookEventOrder.cluster,
+                state: orderBookEventOrder.state,
+                timestamp: orderBookEventOrder.timestamp,
+                handshakeState: "not-matching",
+              } as CounterpartyOrder
+              return newOrderBook
+            })
+          } else {
+            console.error("Unknown order book event type:", orderBookEventType)
+          }
         })
-      } else {
-        console.error("Unknown order book event type:", orderBookEventType)
+        .then((callbackId) => (orderCallbackId.current = callbackId))
+    }
+    handleNetworkListener()
+    return () => {
+      if (orderCallbackId.current) {
+        renegade.releaseCallback(orderCallbackId.current)
       }
-    })
+    }
   }, [])
 
   const handlePlaceOrder = useCallback(async () => {
@@ -107,24 +109,13 @@ function OrderProvider({ children }: OrderProviderProps) {
       baseToken: new Token({ ticker: baseTicker }),
       quoteToken: new Token({ ticker: quoteTicker }),
       side: direction,
-      type: "limit",
+      type: "midpoint",
       amount: BigInt(baseTokenAmount),
-      price: await fetchPrice(),
     })
     const [taskId, taskJob] = await renegade.task.placeOrder(accountId, order)
     setTask(taskId, TaskType.PlaceOrder)
     await taskJob.then(() => setTask(undefined, undefined))
-    handleOrderListener()
-  }, [
-    accountId,
-    baseTicker,
-    baseTokenAmount,
-    direction,
-    fetchPrice,
-    handleOrderListener,
-    quoteTicker,
-    setTask,
-  ])
+  }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
 
   return (
     <OrderStateContext.Provider
