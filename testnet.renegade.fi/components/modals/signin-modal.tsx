@@ -1,4 +1,3 @@
-import React from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Button,
@@ -15,13 +14,14 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
-import { verifyMessage } from "ethers"
 import { AiOutlineDisconnect } from "react-icons/ai"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
   useSignMessage as useSignMessageWagmi,
 } from "wagmi"
+
+import { client } from "@/app/providers"
 
 interface SignInButtonProps {
   isLoading: boolean
@@ -84,11 +84,19 @@ interface SignInModalProps {
   onClose: () => void
 }
 export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
+  const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
   const { isLoading, signMessage } = useSignMessageWagmi({
     message: "Unlock your Renegade account.\nTestnet v0",
     async onSuccess(data, variables) {
-      verifyMessage(variables.message, data) // TODO: Verify this output address.
+      const valid = await client.verifyMessage({
+        address: address ?? `0x`,
+        message: variables.message,
+        signature: data,
+      })
+      if (!valid) {
+        throw new Error("Invalid signature")
+      }
       setAccount(accountId, new Keychain({ seed: data }))
       onClose()
     },

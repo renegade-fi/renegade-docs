@@ -195,9 +195,9 @@ export default class RelayerStatusBanner extends React.Component<
               <Text>Protocol 0.02%</Text>
               <BannerSeparator flexGrow={3} />
               <Box
-                onClick={() =>
-                  value?.refreshAccount(value?.accountId as AccountId)
-                }
+              // onClick={() =>
+              //   value?.refreshAccount(value?.accountId as AccountId)
+              // }
               >
                 <Text>Refresh</Text>
               </Box>
