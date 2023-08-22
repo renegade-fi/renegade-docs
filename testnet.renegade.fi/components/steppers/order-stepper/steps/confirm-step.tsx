@@ -1,3 +1,4 @@
+import { useCallback } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
@@ -11,11 +12,22 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { Step, useStepper } from "../order-stepper"
+import { useStepper } from "../order-stepper"
 
-export default function DefaultStep() {
-  const { setStep } = useStepper()
-  const { baseTicker, baseTokenAmount } = useOrder()
+export default function ConfirmStep() {
+  const { onNext } = useStepper()
+  const {
+    onPlaceOrder,
+    baseTicker,
+    baseTokenAmount,
+    midpointPrice,
+    direction,
+  } = useOrder()
+  const handleClick = useCallback(() => {
+    onPlaceOrder()
+    onNext()
+  }, [onNext, onPlaceOrder])
+
   return (
     <>
       <ModalCloseButton />
@@ -32,7 +44,7 @@ export default function DefaultStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            You&apos;re buying
+            You&apos;re {direction === "buy" ? "buying" : "selling"}
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
             {`${baseTokenAmount} ${baseTicker}`}
@@ -56,8 +68,10 @@ export default function DefaultStep() {
               width="100%"
               fontFamily="Favorit"
             >
-              <Text color="white.50">Pay at most</Text>
-              <Text>???? USDC</Text>
+              <Text color="white.50">
+                {direction === "buy" ? "Pay at most" : "Receive at least"}
+              </Text>
+              <Text>{midpointPrice}&nbsp;USDC</Text>
             </Flex>
           </Flex>
         </Flex>
@@ -80,12 +94,12 @@ export default function DefaultStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={() => {
-            setStep(Step.LOADING)
-          }}
+          onClick={handleClick}
         >
           <HStack spacing="4px">
-            <Text>Buy {baseTicker}</Text>
+            <Text>{`${
+              direction === "buy" ? "Buy" : "Sell"
+            } ${baseTicker}`}</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>

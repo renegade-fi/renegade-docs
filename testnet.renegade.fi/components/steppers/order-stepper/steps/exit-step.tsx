@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
-import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
   Divider,
   Flex,
-  HStack,
   ModalBody,
   ModalCloseButton,
   ModalFooter,
@@ -14,8 +12,8 @@ import {
 
 import { useStepper } from "../order-stepper"
 
-export default function DefaultStep() {
-  const { baseTicker, baseTokenAmount } = useOrder()
+export default function ExitStep() {
+  const { baseTicker, baseTokenAmount, direction } = useOrder()
   const { onClose } = useStepper()
   const [isHovered, setIsHovered] = useState(true)
   useEffect(() => {
@@ -43,7 +41,7 @@ export default function DefaultStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            You bought
+            Order to {direction === "buy" ? "buy" : "sell"}
           </Text>
           <Text
             fontFamily="Aime"
@@ -54,6 +52,14 @@ export default function DefaultStep() {
             {`${baseTokenAmount} ${baseTicker}`}
           </Text>
           <Flex flexDirection="column" gap="12px" width="100%">
+            <Text
+              color="white.50"
+              fontFamily="Favorit Extended"
+              fontSize="1.3em"
+              fontWeight="200"
+            >
+              has been placed
+            </Text>
             <Divider />
             <Flex
               alignItems="center"
@@ -74,7 +80,9 @@ export default function DefaultStep() {
               width="100%"
               fontFamily="Favorit"
             >
-              <Text color="white.50">Pay at most</Text>
+              <Text color="white.50">
+                {direction === "buy" ? "Paid at most" : "Received at least"}
+              </Text>
               <Text variant={isHovered ? undefined : "blurred"}>???? USDC</Text>
             </Flex>
           </Flex>
@@ -102,10 +110,7 @@ export default function DefaultStep() {
             onClose()
           }}
         >
-          <HStack spacing="4px">
-            <Text>Close</Text>
-            <ArrowForwardIcon />
-          </HStack>
+          Close
         </Button>
       </ModalFooter>
     </>
