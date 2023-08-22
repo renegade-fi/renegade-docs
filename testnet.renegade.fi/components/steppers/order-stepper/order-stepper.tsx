@@ -20,13 +20,8 @@ const OrderStepperInner = () => {
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
       />
-      <ModalContent
-        // paddingTop="6"
-        // paddingBottom="4"
-        background="surfaces.1"
-        borderRadius="10px"
-      >
-        <Flex justifyContent="center" flexDirection="column" height="324px">
+      <ModalContent background="surfaces.1" borderRadius="10px">
+        <Flex justifyContent="center" flexDirection="column" height="348px">
           <Fade
             transition={{ enter: { duration: 1 } }}
             in={step === Step.DEFAULT}

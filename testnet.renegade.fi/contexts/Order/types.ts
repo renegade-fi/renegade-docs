@@ -12,4 +12,7 @@ export interface OrderContextValue {
   setQuoteToken: (token: string) => void
   baseTokenAmount: number
   setBaseTokenAmount: (amount: number) => void
+  setMidpointPrice: (price?: number) => void
+  onPlaceOrder: () => void
+  midpointPrice?: number
 }
