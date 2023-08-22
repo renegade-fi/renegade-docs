@@ -1,10 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { useToast } from "@chakra-ui/react"
 import {
   AccountId,
   Balance,
   BalanceId,
+  CallbackId,
   Fee,
   FeeId,
   Keychain,
@@ -53,6 +55,49 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     Record<OrderId, CounterpartyOrder>
   >({})
 
+  // TODO: Does not include existing peers
+  // Stream network, order book, and MPC events.
+  const networkCallbackId = React.useRef<CallbackId>()
+  React.useEffect(() => {
+    if (networkCallbackId.current) return
+    const handleNetworkListener = async () => {
+      console.log("adding listener")
+      await renegade
+        .registerNetworkCallback((message: string) => {
+          console.log("[Network]", message)
+          const networkEvent = JSON.parse(message)
+          const networkEventType = networkEvent.type
+          const networkEventPeer = networkEvent.peer
+          if (networkEventType === "NewPeer") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              newCounterparties[networkEventPeer.id] = {
+                peerId: networkEventPeer.id,
+                clusterId: networkEventPeer.cluster_id,
+                multiaddr: networkEventPeer.addr,
+              } as Counterparty
+              return newCounterparties
+            })
+          } else if (networkEventType === "PeerExpired") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              delete newCounterparties[networkEventPeer.id]
+              return newCounterparties
+            })
+          } else {
+            console.error("Unknown network event type:", networkEventType)
+          }
+        })
+        .then((callbackId) => (networkCallbackId.current = callbackId))
+    }
+    handleNetworkListener()
+    return () => {
+      if (networkCallbackId.current) {
+        renegade.releaseCallback(networkCallbackId.current)
+      }
+    }
+  }, [])
+
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -74,7 +119,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     const accountId = renegade.registerAccount(keychain)
     const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
     setTask(taskId, TaskType.InitializeAccount)
-    await taskJob.then(() => setTask(undefined))
+    await taskJob.then(() => setTask(undefined, undefined))
     setAccountId(accountId)
     refreshAccount(accountId)
     await renegade.registerAccountCallback(
@@ -87,6 +132,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const refreshAccount = (accountId?: AccountId) => {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
+    setOrders(renegade.getOrders(accountId))
   }
 
   // Define the setTask handler. Given a new task ID, this handler starts
@@ -104,23 +150,9 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     setTaskId(newTaskId)
     setTaskType(taskType)
     setTaskState(TaskState.Proving)
-    // toast({
-    //   title: "New Task State",
-    //   description: "Proving",
-    //   status: "info",
-    //   duration: 5000,
-    //   isClosable: true,
-    // });
     await renegade.registerTaskCallback((message: string) => {
       const taskUpdate = JSON.parse(message).state
       setTaskState(taskUpdate.state as TaskState)
-      // toast({
-      //   title: "New Task State",
-      //   description: taskUpdate.state,
-      //   status: "info",
-      //   duration: 5000,
-      //   isClosable: true,
-      // });
     }, newTaskId)
   }
 
