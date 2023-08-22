@@ -84,14 +84,14 @@ export default function PlaceOrderButton() {
           if (!baseTokenAmount) {
             return
           }
-          // if (!address) {
-          //   setOpen(true)
-          //   return
-          // }
-          // if (!isSignedIn) {
-          //   onOpenSignIn()
-          //   return
-          // }
+          if (!address) {
+            setOpen(true)
+            return
+          }
+          if (!isSignedIn) {
+            onOpenSignIn()
+            return
+          }
           onOpenPlaceOrder()
         }}
       >
