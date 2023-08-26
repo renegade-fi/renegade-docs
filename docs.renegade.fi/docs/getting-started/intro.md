@@ -83,7 +83,7 @@ information, see [What is MPC](/core-concepts/mpc-explainer).
 
 To understand how we integrate MPC matching with zero-knowledge settlement, see
 [The MPC-ZKP Architecture](/core-concepts/mpc-zkp) and check out [Lifecycle and
-Privacy](/core-concepts/privacy) to see how we this MPC-ZKP architecture
+Privacy](/core-concepts/privacy) to see how this MPC-ZKP architecture
 guarantees maximal privacy while trading.
 
 For more advanced concepts, including the ideas of Indications of Interest and
