@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useCallback } from "react"
 import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
@@ -26,6 +26,7 @@ import {
   callAfterTimeout,
   expandedPanelWidth,
 } from "@/components/panels"
+import TestnetStepper from "@/components/steppers/testnet-stepper/testnet-stepper"
 import { renegade } from "@/app/providers"
 
 import SignInModal from "./modals/signin-modal"
@@ -193,8 +194,29 @@ interface RenegadeWalletPanelProps {
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { balances, accountId } = useRenegade()
+  const {
+    isOpen: preloadIsOpen,
+    onClose: preloadOnClose,
+    onOpen: preloadOnOpen,
+  } = useDisclosure()
+  const { balances, accountId, setTask } = useRenegade()
   let panelBody: React.ReactElement
+
+  const handlePreload = useCallback(async () => {
+    const preloaded = localStorage.getItem(`${address}-preloaded`)
+    if (preloaded || !accountId || Object.keys(balances).length) return
+    if (!preloaded && accountId) {
+      preloadOnOpen()
+      localStorage.setItem(`${address}-preloaded`, "true")
+      const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
+        accountId,
+        new Token({ ticker: "WETH" }),
+        BigInt(10)
+      )
+      setTask(depositTaskId, TaskType.Deposit)
+      await depositTaskJob
+    }
+  }, [accountId, address, balances, preloadOnOpen, setTask])
 
   if (accountId) {
     const pkSettle =
@@ -204,16 +226,23 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     panelBody = (
       <>
         {Object.keys(balances).length === 0 && (
-          <Text
-            marginTop="20px"
-            padding="0 10% 0 10%"
-            color="white.50"
-            fontSize="0.8em"
-            fontWeight="100"
-            textAlign="center"
-          >
-            No tokens have been deposited into Renegade.
-          </Text>
+          <>
+            <Text
+              marginTop="20px"
+              padding="0 10% 0 10%"
+              color="white.50"
+              fontSize="0.8em"
+              fontWeight="100"
+              textAlign="center"
+            >
+              No tokens have been deposited into Renegade.
+            </Text>
+            <Flex alignItems="center" height="100%">
+              <Button onClick={handlePreload} variant="wallet-connect">
+                Airdrop
+              </Button>
+            </Flex>
+          </>
         )}
         {Object.values(balances).map((balance: Balance) =>
           balance.amount ? (
@@ -331,6 +360,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         {panelBody}
       </Flex>
       <SignInModal isOpen={isOpen} onClose={onClose} />
+      {preloadIsOpen && <TestnetStepper onClose={preloadOnClose} />}
     </>
   )
 }
