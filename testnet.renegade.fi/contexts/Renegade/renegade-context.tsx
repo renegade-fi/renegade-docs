@@ -89,24 +89,6 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     setBalances(renegade.getBalances(accountId))
   }
 
-  React.useEffect(() => {
-    const handlePreload = async () => {
-      const preloaded = localStorage.getItem(`${address}-preloaded`)
-      if (preloaded || !accountId || Object.keys(balances).length) {
-        return
-      }
-      localStorage.setItem(`${address}-preloaded`, "true")
-      const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
-        accountId,
-        new Token({ ticker: "WETH" }),
-        BigInt(10)
-      )
-      setTask(depositTaskId, TaskType.Deposit)
-      await depositTaskJob
-    }
-    handlePreload()
-  }, [accountId, address, balances])
-
   // Define the setTask handler. Given a new task ID, this handler starts
   // streaming task updates to the task state.
   async function setTask(newTaskId?: TaskId, taskType?: TaskType) {

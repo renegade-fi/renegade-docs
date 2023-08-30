@@ -5,14 +5,13 @@ import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import { Box, Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
+import { Box, Flex, HStack, Input, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 import { useAccount } from "wagmi"
 
 import { LivePrices } from "@/components/banners/live-price"
 import BlurredOverlay from "@/components/blurred-overlay"
 import PlaceOrderButton from "@/components/place-order-button"
-import TestnetStepper from "@/components/steppers/testnet-stepper/testnet-stepper"
 import { TaskStatus } from "@/components/task-status"
 
 interface SelectableProps {
@@ -56,9 +55,7 @@ export default function TradingBody() {
   const [activeModal, setActiveModal] = useState<
     "buy-sell" | "base-token" | "quote-token"
   >()
-  const { address } = useAccount()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const { accountId, balances, taskState, taskType } = useRenegade()
+  const { taskState, taskType } = useRenegade()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
   const baseTokenSelectableRef = createRef<HTMLDivElement>()
@@ -90,14 +87,6 @@ export default function TradingBody() {
 
     return () => {}
   }, [baseTokenAmount, buySellSelectableRef, quoteTokenSelectableRef])
-
-  useEffect(() => {
-    const preloaded = localStorage.getItem(`${address}-preloaded`)
-    if (preloaded || !accountId || Object.keys(balances).length) return
-    if (!preloaded && accountId) {
-      onOpen()
-    }
-  }, [accountId, address, balances, onOpen])
 
   return (
     <>
@@ -196,7 +185,6 @@ export default function TradingBody() {
           {taskState && taskType && <TaskStatus />}
         </Box>
       </Flex>
-      {isOpen && <TestnetStepper onClose={onClose} />}
     </>
   )
 }
