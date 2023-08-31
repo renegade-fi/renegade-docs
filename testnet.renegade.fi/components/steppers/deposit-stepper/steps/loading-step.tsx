@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
-import { findBalanceByTicker } from "@/lib/helpers"
+import { findBalanceByTicker } from "@/lib/utils"
 import { useDeposit } from "@/app/deposit/deposit-context"
 
 import { useStepper } from "../deposit-stepper"
