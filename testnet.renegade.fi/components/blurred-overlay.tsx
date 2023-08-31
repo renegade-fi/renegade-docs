@@ -1,20 +1,21 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Box,
-  Button,
   Flex,
-  HStack,
-  Image,
+  Grid,
+  GridItem,
   Input,
   Text,
+  VStack,
   keyframes,
 } from "@chakra-ui/react"
 
-import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
+import { DISPLAYED_TICKERS, TICKER_TO_ADDR } from "@/lib/tokens"
 
 function snapAnimation(translateY: number) {
   return keyframes`
@@ -38,8 +39,7 @@ function popAnimation(maxScale: number) {
     0% {
       transform: scale(0.95);
       opacity: 0;
-    }
-    75% {
+    } 75% {
       transform: scale(${maxScale});
     }
     100% {
@@ -114,78 +114,111 @@ export default function BlurredOverlay({
     )
   }
 
-  interface SingleBaseTokenProps {
-    ticker: string
-  }
-  function SingleBaseToken({ ticker }: SingleBaseTokenProps) {
-    const [imageUrl, setImageUrl] = useState("")
-    useEffect(() => {
-      const getLogos = async () => {
-        await TICKER_TO_LOGO_URL_HANDLE.then((TICKER_TO_LOGO_URL) =>
-          setImageUrl(TICKER_TO_LOGO_URL[ticker])
-        )
-      }
-      getLogos()
-    }, [ticker])
-
-    return (
-      <HStack
-        as={Button}
-        margin="5px"
-        padding="8px"
-        color="border"
-        border="var(--border)"
-        borderRadius="5px"
-        onClick={() => {
-          onClose()
-          setBaseToken(ticker)
-        }}
-      >
-        <Image width="20px" height="20px" alt="Ticker" src={imageUrl} />
-        <Text color="white.90" fontSize="0.8em">
-          {ticker}
-        </Text>
-      </HStack>
-    )
-  }
-
   function BaseTokenMenu() {
+    const { balances } = useRenegade()
+    const [height, setHeight] = useState("")
+    useEffect(() => {
+      if (height) return
+      setHeight(`${window.innerHeight * 0.5}px`)
+    }, [height])
+
     return (
       <Flex
-        alignItems="center"
+        className="scroll"
         flexDirection="column"
-        maxWidth="25%"
-        minHeight="75%"
-        padding="25px"
-        fontSize="1.5em"
+        overflowY="scroll"
+        maxHeight={height}
+        fontSize="1.2em"
         border="var(--border)"
         borderColor="white.30"
-        borderRadius="15px"
+        borderRadius="5px"
         animation={`${popAnimation(1.015)} 0.1s ease both`}
         backgroundColor="white.5"
+        css={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          "&::-webkit-scrollbar-track": {
+            display: "none",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            display: "none",
+          },
+        }}
         hidden={activeModal !== "base-token"}
         onClick={(e) => {
           e.stopPropagation()
         }}
       >
-        <Text width="100%" color="white.80" fontSize="0.8em" textAlign="left">
-          Select a Token
-        </Text>
-        <Input
-          width="100%"
-          margin="15px 10px 0 10px"
-          fontFamily="Favorit"
-          fontSize="0.8em"
-          borderRadius="10px"
-          placeholder="Search name or paste ERC-20 address"
-          type="text"
-        />
-        <Flex flexWrap="wrap" margin="15px 0 0 0">
-          {["WBTC", "WETH", "UNI", "CRV", "AAVE", "LDO"].map((ticker) => {
+        <VStack gap="2" margin="4">
+          <Text color="white.80" fontSize="1.2em" textAlign="center">
+            Select a Token
+          </Text>
+          <Input
+            fontFamily="Favorit"
+            borderRadius="10px"
+            placeholder="Search name or paste ERC-20 address"
+            type="text"
+          />
+        </VStack>
+        <Flex position="relative" flexDirection="column">
+          {DISPLAYED_TICKERS.map(([ticker], i) => {
+            const tickerAddress = TICKER_TO_ADDR[ticker]
+            const matchingBalance = Object.values(balances).find(
+              (balance) => `0x${balance.mint.address}` === tickerAddress
+            )
+            const balanceAmount = matchingBalance
+              ? matchingBalance.amount.toString()
+              : "0"
             return (
-              <Box key={ticker}>
-                <SingleBaseToken ticker={ticker} />
-              </Box>
+              <Grid
+                className="wrapper"
+                position="relative"
+                alignItems="center"
+                gridTemplateColumns="2fr 1fr 1fr"
+                overflow="hidden"
+                height="60px"
+                borderBottom={
+                  i === DISPLAYED_TICKERS.length - 1 ? "" : "var(--border)"
+                }
+                _hover={{
+                  transition: "0.3s cubic-bezier(0.215, 0.61, 0.355, 1)",
+                }}
+                cursor="pointer"
+                transition="0.1s"
+                onClick={() => setBaseToken(ticker)}
+                paddingX="4"
+              >
+                <Box
+                  position="absolute"
+                  zIndex={-1}
+                  bottom="-60px"
+                  width="100%"
+                  height="60px"
+                  background="white.10"
+                  transition="0.3s cubic-bezier(0.215, 0.61, 0.355, 1)"
+                  id="slide"
+                />
+                <GridItem>
+                  <Box key={ticker} paddingY="2">
+                    {ticker}
+                  </Box>
+                </GridItem>
+                <GridItem>
+                  <Box key={ticker} paddingLeft="4" paddingY="2">
+                    <Text color="white.50" fontFamily="Favorit Mono">
+                      {tickerAddress.slice(0, 6) + "..."}
+                    </Text>
+                  </Box>
+                </GridItem>
+                <GridItem>
+                  <Box key={ticker} textAlign="right" paddingY="2">
+                    <Text color="white.50" fontFamily="Favorit Mono">
+                      {balanceAmount}
+                    </Text>
+                  </Box>
+                </GridItem>
+              </Grid>
             )
           })}
         </Flex>
