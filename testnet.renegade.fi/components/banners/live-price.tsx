@@ -43,8 +43,6 @@ export const LivePrices = ({
   shouldRotate,
   price: priceProp,
 }: LivePricesProps) => {
-  const [fallbackPriceReport, setFallbackPriceReport] =
-    useState(DEFAULT_PRICE_REPORT)
   const [previousPriceReport, setPreviousPriceReport] =
     useState<PriceReport>(DEFAULT_PRICE_REPORT)
   const [currentPriceReport, setCurrentPriceReport] =
@@ -93,8 +91,6 @@ export const LivePrices = ({
     trailingDecimals,
   ])
 
-  let price = priceProp
-
   // Given the previous and current price reports, determine the displayed
   // price and red/green fade class
   let priceStrClass = ""
@@ -110,7 +106,11 @@ export const LivePrices = ({
     priceStrClass = "fade-red-to-white"
   }
 
-  price = price || 0
+  let price = currentPriceReport.midpointPrice
+    ? currentPriceReport.midpointPrice
+    : priceProp
+    ? priceProp
+    : 0
 
   // If the caller supplied a scaleBy prop, scale the price appropriately
   if (scaleBy !== undefined) {
@@ -118,7 +118,7 @@ export const LivePrices = ({
   }
 
   // Format the price as a string
-  let priceStr = price?.toFixed(trailingDecimals) || ""
+  let priceStr = price.toFixed(trailingDecimals)
   if (
     (currentPriceReport === DEFAULT_PRICE_REPORT || scaleBy === 0) &&
     baseDefaultDecimals > 0

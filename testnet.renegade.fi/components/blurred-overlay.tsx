@@ -173,6 +173,7 @@ export default function BlurredOverlay({
             return (
               <Grid
                 className="wrapper"
+                key={ticker}
                 position="relative"
                 alignItems="center"
                 gridTemplateColumns="2fr 1fr 1fr"
