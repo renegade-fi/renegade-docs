@@ -180,13 +180,12 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       <Text variant={props.isMobile ? "rotate-right" : undefined}>
         {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
       </Text>
-      <BannerSeparator flexGrow={1} link={link} />
+      <BannerSeparator flexGrow={1} />
       {showPrice && (
         <LivePrices
           baseTicker={props.activeBaseTicker}
           quoteTicker={props.activeQuoteTicker}
           exchange={props.exchange}
-          link={link}
           isMobile={props.isMobile}
           price={props.priceReport?.midpointPrice}
         />
