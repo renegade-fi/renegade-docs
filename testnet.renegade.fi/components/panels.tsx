@@ -4,10 +4,7 @@ import React from "react"
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
 
-import {
-  safeLocalStorageGetItem,
-  safeLocalStorageSetItem,
-} from "../lib/safeLocalStorage"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))"
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))"
