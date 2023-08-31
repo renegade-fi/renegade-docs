@@ -131,14 +131,24 @@ export default function BlurredOverlay({
         className="scroll"
         flexDirection="column"
         overflowY="scroll"
-        // maxWidth="50%"
-        maxHeight={window.innerHeight * 0.7}
+        maxHeight={window.innerHeight * 0.5}
         fontSize="1.2em"
         border="var(--border)"
         borderColor="white.30"
         borderRadius="5px"
         animation={`${popAnimation(1.015)} 0.1s ease both`}
         backgroundColor="white.5"
+        css={{
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          "&::-webkit-scrollbar-track": {
+            display: "none",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            display: "none",
+          },
+        }}
         hidden={activeModal !== "base-token"}
         onClick={(e) => {
           e.stopPropagation()
@@ -157,6 +167,13 @@ export default function BlurredOverlay({
         </VStack>
         <Flex position="relative" flexDirection="column">
           {DISPLAYED_TICKERS.map(([ticker], i) => {
+            const tickerAddress = TICKER_TO_ADDR[ticker]
+            const matchingBalance = Object.values(balances).find(
+              (balance) => `0x${balance.mint.address}` === tickerAddress
+            )
+            const balanceAmount = matchingBalance
+              ? matchingBalance.amount.toString()
+              : "0"
             return (
               <Grid
                 className="wrapper"
@@ -194,14 +211,14 @@ export default function BlurredOverlay({
                 <GridItem>
                   <Box key={ticker} paddingLeft="4" paddingY="2">
                     <Text color="white.50" fontFamily="Favorit Mono">
-                      {TICKER_TO_ADDR[ticker].slice(0, 6) + "..."}
+                      {tickerAddress.slice(0, 6) + "..."}
                     </Text>
                   </Box>
                 </GridItem>
                 <GridItem>
                   <Box key={ticker} textAlign="right" paddingY="2">
                     <Text color="white.50" fontFamily="Favorit Mono">
-                      0
+                      {balanceAmount}
                     </Text>
                   </Box>
                 </GridItem>
