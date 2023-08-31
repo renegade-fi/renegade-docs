@@ -56,7 +56,6 @@ function OrderProvider({ children }: OrderProviderProps) {
   useEffect(() => {
     if (orderCallbackId.current) return
     const handleNetworkListener = async () => {
-      console.log("adding order listener")
       await renegade
         .registerOrderBookCallback((message: string) => {
           console.log("[Order Book]", message)

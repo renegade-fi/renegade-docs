@@ -194,6 +194,7 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
         alignItems="baseline"
         justifyContent="center"
         direction={props.isMobile ? "column" : "row"}
+        whiteSpace="nowrap"
         spacing={props.isMobile ? "8px" : "1"}
       >
         <Text

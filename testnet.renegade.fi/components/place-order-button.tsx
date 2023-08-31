@@ -2,7 +2,6 @@
 
 import React from "react"
 import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Box, Button, HStack, Text, useDisclosure } from "@chakra-ui/react"
@@ -12,7 +11,6 @@ import { useAccount as useAccountWagmi } from "wagmi"
 
 import { LivePrices } from "@/components/banners/live-price"
 
-import PlaceOrderModal from "./modals/place-order-modal"
 import SignInModal from "./modals/signin-modal"
 import OrderStepper from "./steppers/order-stepper/order-stepper"
 
@@ -98,7 +96,6 @@ export default function PlaceOrderButton() {
         {placeOrderButtonContent}
       </Button>
       <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
-      {/* <PlaceOrderModal isOpen={placeOrderIsOpen} onClose={onClosePlaceOrder} /> */}
       {placeOrderIsOpen && <OrderStepper onClose={onClosePlaceOrder} />}
     </>
   )
