@@ -11,12 +11,15 @@ export default function LoadingStep() {
   const { onNext } = useStepper()
   const { balances } = useRenegade()
   const prevBalance = useRef(balances)
-  const { baseTicker } = useDeposit()
+  const { baseTicker, baseTokenAmount } = useDeposit()
 
   useEffect(() => {
     const oldBalance = findBalanceByTicker(prevBalance.current, baseTicker)
     const newBalance = findBalanceByTicker(balances, baseTicker)
-    if (oldBalance && newBalance && oldBalance.amount !== newBalance.amount) {
+    const isNewBalance = !oldBalance && newBalance?.amount
+    const isUpdatedBalance =
+      oldBalance && newBalance && oldBalance.amount !== newBalance.amount
+    if (isNewBalance || isUpdatedBalance) {
       onNext()
     }
   }, [balances, baseTicker, onNext])
