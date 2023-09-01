@@ -39,11 +39,7 @@ function SingleOrder(props: SingleOrderProps) {
     if (!accountId) return
     renegade.task
       .cancelOrder(accountId, props.order.orderId)
-      .then(async ([taskId, taskJob]) => {
-        setTask(taskId, TaskType.CancelOrder)
-        return taskJob
-      })
-      .then(() => setTask(undefined, undefined))
+      .then(([taskId]) => setTask(taskId, TaskType.CancelOrder))
   }
 
   return (

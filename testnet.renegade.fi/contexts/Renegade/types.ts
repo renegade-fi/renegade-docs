@@ -40,17 +40,17 @@ export interface PriceReport {
 }
 
 export interface RenegadeContextType {
-  balances: Record<BalanceId, Balance>
-  orders: Record<OrderId, Order>
-  fees: Record<FeeId, Fee>
   accountId: AccountId | undefined
-  taskId: TaskId | undefined
-  taskType: TaskType | undefined
-  taskState: TaskState | undefined
+  balances: Record<BalanceId, Balance>
   counterparties: Record<PeerId, Counterparty>
+  fees: Record<FeeId, Fee>
   orderBook: Record<OrderId, CounterpartyOrder>
+  orders: Record<OrderId, Order>
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
-  setTask: (newTaskId?: TaskId, taskType?: TaskType) => Promise<void>
+  setTask: (newTaskId: TaskId, taskType: TaskType) => Promise<void>
+  taskId: TaskId | undefined
+  taskState: TaskState | undefined
+  taskType: TaskType | undefined
 }
 
 export enum TaskState {

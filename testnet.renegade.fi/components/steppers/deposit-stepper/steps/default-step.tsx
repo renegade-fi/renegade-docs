@@ -25,13 +25,13 @@ export default function DefaultStep() {
   const handleDeposit = async () => {
     if (!accountId) return
     onNext()
-    const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
-      accountId,
-      new Token({ ticker: baseTicker }),
-      BigInt(baseTokenAmount)
-    )
-    setTask(depositTaskId, TaskType.Deposit)
-    await depositTaskJob
+    renegade.task
+      .deposit(
+        accountId,
+        new Token({ ticker: baseTicker }),
+        BigInt(baseTokenAmount)
+      )
+      .then(([taskId]) => setTask(taskId, TaskType.Deposit))
   }
 
   return (

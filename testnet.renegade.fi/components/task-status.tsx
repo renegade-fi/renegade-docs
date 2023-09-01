@@ -13,7 +13,9 @@ const TASK_TO_LATENCY = {
   [TaskType.InitializeAccount]: {
     [TaskState.Proving]: 2000,
     [TaskState.SubmittingTx]: 4000,
-    [TaskState.FindingOpening]: 1000,
+    // @ts-ignore
+    FindingMerkleOpening: 244000,
+    [TaskState.FindingOpening]: 244000,
     [TaskState.UpdatingValidityProofs]: 0,
     [TaskState.Completed]: 0,
   },
@@ -137,6 +139,8 @@ export const TaskStatus = () => {
     [TaskState.Proving]: "Generating ZK Proof",
     [TaskState.SubmittingTx]: "Submitting",
     [TaskState.FindingOpening]: "Finalizing",
+    // @ts-ignore
+    FindingMerkleOpening: "Finalizing",
     [TaskState.UpdatingValidityProofs]: "Finalizing",
     [TaskState.Completed]: "Completed",
   }[taskState || TaskState.Proving] // If taskState is undefined, we won't use this displayedTaskState anyway.
