@@ -37,7 +37,6 @@ function OrderProvider({ children }: OrderProviderProps) {
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
   const { accountId, setTask } = useRenegade()
-  const [midpointPrice, setMidpointPrice] = useState<number>()
 
   const [orderBook, setOrderBook] = useState<
     Record<OrderId, CounterpartyOrder>
@@ -120,17 +119,15 @@ function OrderProvider({ children }: OrderProviderProps) {
   return (
     <OrderStateContext.Provider
       value={{
-        direction,
-        setDirection,
         baseTicker,
-        setBaseToken: handleSetBaseToken,
-        quoteTicker,
-        setQuoteToken: handleSetQuoteToken,
         baseTokenAmount,
-        setBaseTokenAmount,
-        setMidpointPrice,
+        direction,
         onPlaceOrder: handlePlaceOrder,
-        midpointPrice,
+        quoteTicker,
+        setBaseToken: handleSetBaseToken,
+        setBaseTokenAmount,
+        setDirection,
+        setQuoteToken: handleSetQuoteToken,
       }}
     >
       {children}

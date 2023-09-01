@@ -1,7 +1,8 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
+import { PriceReport, TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -13,19 +14,25 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
+import { Exchange } from "@renegade-fi/renegade-js"
 
 import { useStepper } from "../order-stepper"
 
 export default function ConfirmStep() {
-  const { onNext } = useStepper()
-  const {
-    onPlaceOrder,
-    baseTicker,
-    baseTokenAmount,
-    midpointPrice,
-    direction,
-  } = useOrder()
+  const { setMidpoint, onNext } = useStepper()
+  const { getPriceData } = useExchange()
+  const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
+    useOrder()
   const { taskType } = useRenegade()
+  const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
+
+  const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
+
+  useEffect(() => {
+    if (!priceReport || currentPriceReport?.midpointPrice) return
+    setCurrentPriceReport(priceReport)
+  }, [currentPriceReport?.midpointPrice, priceReport])
+
   useEffect(() => {
     if (taskType === TaskType.PlaceOrder) onNext()
   }, [onNext, taskType])
@@ -73,7 +80,9 @@ export default function ConfirmStep() {
               <Text color="white.50">
                 {direction === "buy" ? "Pay at most" : "Receive at least"}
               </Text>
-              <Text>{midpointPrice}&nbsp;USDC</Text>
+              <Text>
+                {currentPriceReport?.midpointPrice.toFixed(2)}&nbsp;USDC
+              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -96,7 +105,13 @@ export default function ConfirmStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={onPlaceOrder}
+          onClick={() => {
+            if (!currentPriceReport) {
+              throw new Error("No current price report")
+            }
+            setMidpoint(currentPriceReport?.midpointPrice)
+            onPlaceOrder()
+          }}
         >
           <HStack spacing="4px">
             <Text>{`${
