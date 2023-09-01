@@ -93,27 +93,23 @@ export const LivePrices = ({
     trailingDecimals,
   ])
 
+  let price = priceProp
+
   // Given the previous and current price reports, determine the displayed
   // price and red/green fade class
-  let price = priceProp
   let priceStrClass = ""
-  if (currentPriceReport === DEFAULT_PRICE_REPORT) {
-    if (fallbackPriceReport !== DEFAULT_PRICE_REPORT) {
-      price = fallbackPriceReport.midpointPrice
-    } else if (baseTicker === "USDC" || baseTicker === "USDT") {
-      price = 1
-    } else {
-      price = 0
-    }
-  } else if (previousPriceReport === DEFAULT_PRICE_REPORT) {
-    price = currentPriceReport.midpointPrice
-  } else {
-    price = currentPriceReport.midpointPrice
-    priceStrClass =
-      currentPriceReport.midpointPrice > previousPriceReport.midpointPrice
-        ? "fade-green-to-white"
-        : "fade-red-to-white"
+  if (
+    previousPriceReport.midpointPrice &&
+    currentPriceReport.midpointPrice > previousPriceReport.midpointPrice
+  ) {
+    priceStrClass = "fade-green-to-white"
+  } else if (
+    previousPriceReport.midpointPrice &&
+    currentPriceReport.midpointPrice < previousPriceReport.midpointPrice
+  ) {
+    priceStrClass = "fade-red-to-white"
   }
+
   price = price || 0
 
   // If the caller supplied a scaleBy prop, scale the price appropriately
