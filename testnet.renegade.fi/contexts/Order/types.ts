@@ -4,15 +4,13 @@ export enum Direction {
 }
 
 export interface OrderContextValue {
-  direction: Direction
-  setDirection: (direction: Direction) => void
   baseTicker: string
+  baseTokenAmount: number
+  direction: Direction
+  onPlaceOrder: () => void
   quoteTicker: string
   setBaseToken: (token: string) => void
-  setQuoteToken: (token: string) => void
-  baseTokenAmount: number
   setBaseTokenAmount: (amount: number) => void
-  setMidpointPrice: (price?: number) => void
-  onPlaceOrder: () => void
-  midpointPrice?: number
+  setDirection: (direction: Direction) => void
+  setQuoteToken: (token: string) => void
 }

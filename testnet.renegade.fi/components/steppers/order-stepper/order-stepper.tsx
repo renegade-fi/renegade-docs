@@ -58,19 +58,23 @@ export enum Step {
 }
 
 interface StepperContextType {
-  onNext: () => void
+  midpoint: number
   onBack: () => void
-  step: Step
-  setStep: (step: Step) => void
   onClose: () => void
+  onNext: () => void
+  setMidpoint: (midpoint: number) => void
+  setStep: (step: Step) => void
+  step: Step
 }
 
 const StepperContext = createContext<StepperContextType>({
-  onNext: () => {},
+  midpoint: 0,
   onBack: () => {},
-  step: Step.DEFAULT,
-  setStep: () => {},
   onClose: () => {},
+  onNext: () => {},
+  setMidpoint: () => {},
+  setStep: () => {},
+  step: Step.DEFAULT,
 })
 
 export const useStepper = () => useContext(StepperContext)
@@ -83,6 +87,7 @@ const StepperProvider = ({
   onClose: () => void
 }) => {
   const [step, setStep] = useState(Step.DEFAULT)
+  const [midpoint, setMidpoint] = useState(0)
 
   const handleNext = () => {
     setStep(step + 1)
@@ -94,7 +99,15 @@ const StepperProvider = ({
 
   return (
     <StepperContext.Provider
-      value={{ onNext: handleNext, onBack: handleBack, step, setStep, onClose }}
+      value={{
+        midpoint,
+        onBack: handleBack,
+        onClose,
+        onNext: handleNext,
+        setMidpoint,
+        setStep,
+        step,
+      }}
     >
       {children}
     </StepperContext.Provider>

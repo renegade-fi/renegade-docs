@@ -14,7 +14,7 @@ import { useStepper } from "../order-stepper"
 
 export default function ExitStep() {
   const { baseTicker, baseTokenAmount, direction } = useOrder()
-  const { onClose } = useStepper()
+  const { midpoint, onClose } = useStepper()
   const [isHovered, setIsHovered] = useState(true)
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -83,7 +83,9 @@ export default function ExitStep() {
               <Text color="white.50">
                 {direction === "buy" ? "Paid at most" : "Received at least"}
               </Text>
-              <Text variant={isHovered ? undefined : "blurred"}>???? USDC</Text>
+              <Text variant={isHovered ? undefined : "blurred"}>
+                {midpoint.toFixed(2)}&nbsp;USDC
+              </Text>
             </Flex>
           </Flex>
         </Flex>
