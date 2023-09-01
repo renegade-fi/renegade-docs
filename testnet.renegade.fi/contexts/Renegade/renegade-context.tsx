@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useToast } from "@chakra-ui/react"
 import {
   AccountId,
   Balance,
@@ -13,9 +12,7 @@ import {
   Order,
   OrderId,
   TaskId,
-  Token,
 } from "@renegade-fi/renegade-js"
-import { useAccount } from "wagmi"
 
 import { renegade } from "@/app/providers"
 
@@ -35,12 +32,11 @@ const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
 )
 
 function RenegadeProvider({ children }: RenegadeProviderProps) {
-  const { address } = useAccount()
   // Create balance, order, fee, an account states.
-  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
-  const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
-  const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
   const [accountId, setAccountId] = React.useState<AccountId>()
+  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
+  const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
+  const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -55,12 +51,49 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     Record<OrderId, CounterpartyOrder>
   >({})
 
+  const taskCallbackId = React.useRef<CallbackId>()
+  React.useEffect(() => {
+    if (taskCallbackId.current || !taskId) return
+    const handleTaskListener = async () => {
+      await renegade
+        .registerTaskCallback((message: string) => {
+          const taskUpdate = JSON.parse(message).state
+          setTaskState(taskUpdate as TaskState)
+        }, taskId)
+        .then((callbackId) => (taskCallbackId.current = callbackId))
+    }
+    handleTaskListener()
+
+    return () => {
+      // should cleanup when taskId updates
+      if (!taskCallbackId.current) return
+      renegade.releaseCallback(taskCallbackId.current)
+      taskCallbackId.current = undefined
+    }
+  }, [taskId])
+
+  const accountCallbackId = React.useRef<CallbackId>()
+  React.useEffect(() => {
+    if (accountCallbackId.current || !accountId) return
+    const handleAccountListener = async () => {
+      await renegade
+        .registerAccountCallback(() => {
+          refreshAccount(accountId)
+        }, accountId)
+        .then((callbackId) => (accountCallbackId.current = callbackId))
+    }
+    handleAccountListener()
+
+    return () => {
+      if (!accountCallbackId.current) return
+      renegade.releaseCallback(accountCallbackId.current)
+      accountCallbackId.current = undefined
+    }
+  }, [accountId])
+
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
-  //
-  // Once the new initializeAccount task has completed, we register a callback
-  // to stream all account events.
   async function setAccount(
     oldAccountId?: AccountId,
     keychain?: Keychain
@@ -74,16 +107,11 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
-    const [taskId, taskJob] = await renegade.task.initializeAccount(accountId)
-    setTask(taskId, TaskType.InitializeAccount)
-    await taskJob.then(() => setTask(undefined, undefined))
+    await renegade.task
+      .initializeAccount(accountId)
+      .then(([taskId]) => setTask(taskId, TaskType.InitializeAccount))
     setAccountId(accountId)
     refreshAccount(accountId)
-    await renegade.registerAccountCallback(
-      () => refreshAccount(accountId),
-      accountId,
-      -1
-    )
   }
 
   const refreshAccount = (accountId?: AccountId) => {
@@ -92,41 +120,29 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     setOrders(renegade.getOrders(accountId))
   }
 
-  // Define the setTask handler. Given a new task ID, this handler starts
-  // streaming task updates to the task state.
-  async function setTask(newTaskId?: TaskId, taskType?: TaskType) {
+  async function setTask(newTaskId: TaskId, taskType: TaskType) {
     if (newTaskId === "DONE") {
-      return
-    }
-    if (!newTaskId) {
-      setTaskId(undefined)
-      setTaskType(undefined)
-      setTaskState(undefined)
       return
     }
     setTaskId(newTaskId)
     setTaskType(taskType)
     setTaskState(TaskState.Proving)
-    await renegade.registerTaskCallback((message: string) => {
-      const taskUpdate = JSON.parse(message).state
-      setTaskState(taskUpdate.state as TaskState)
-    }, newTaskId)
   }
 
   return (
     <RenegadeContext.Provider
       value={{
-        balances,
-        orders,
-        fees,
         accountId,
-        taskId,
-        taskType,
-        taskState,
+        balances,
         counterparties,
+        fees,
         orderBook,
+        orders,
         setAccount,
         setTask,
+        taskId,
+        taskState,
+        taskType,
       }}
     >
       {children}

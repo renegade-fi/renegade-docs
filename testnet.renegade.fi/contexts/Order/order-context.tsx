@@ -112,9 +112,9 @@ function OrderProvider({ children }: OrderProviderProps) {
       type: "midpoint",
       amount: BigInt(baseTokenAmount),
     })
-    const [taskId, taskJob] = await renegade.task.placeOrder(accountId, order)
-    setTask(taskId, TaskType.PlaceOrder)
-    await taskJob.then(() => setTask(undefined, undefined))
+    renegade.task
+      .placeOrder(accountId, order)
+      .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
   }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
 
   return (
