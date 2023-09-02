@@ -86,6 +86,48 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     )
   }
 
+  // TODO: Does not include existing peers
+  // Stream network, order book, and MPC events.
+  const networkCallbackId = React.useRef<CallbackId>()
+  React.useEffect(() => {
+    if (networkCallbackId.current) return
+    const handleNetworkListener = async () => {
+      await renegade
+        .registerNetworkCallback((message: string) => {
+          console.log("[Network]", message)
+          const networkEvent = JSON.parse(message)
+          const networkEventType = networkEvent.type
+          const networkEventPeer = networkEvent.peer
+          if (networkEventType === "NewPeer") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              newCounterparties[networkEventPeer.id] = {
+                peerId: networkEventPeer.id,
+                clusterId: networkEventPeer.cluster_id,
+                multiaddr: networkEventPeer.addr,
+              } as Counterparty
+              return newCounterparties
+            })
+          } else if (networkEventType === "PeerExpired") {
+            setCounterparties((counterparties) => {
+              const newCounterparties = { ...counterparties }
+              delete newCounterparties[networkEventPeer.id]
+              return newCounterparties
+            })
+          } else {
+            console.error("Unknown network event type:", networkEventType)
+          }
+        })
+        .then((callbackId) => (networkCallbackId.current = callbackId))
+    }
+    handleNetworkListener()
+    return () => {
+      if (!networkCallbackId.current) return
+      renegade.releaseCallback(networkCallbackId.current)
+      networkCallbackId.current = undefined
+    }
+  }, [])
+
   const refreshAccount = (accountId?: AccountId) => {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))

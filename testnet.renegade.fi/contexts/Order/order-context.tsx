@@ -90,9 +90,9 @@ function OrderProvider({ children }: OrderProviderProps) {
     }
     handleNetworkListener()
     return () => {
-      if (orderCallbackId.current) {
-        renegade.releaseCallback(orderCallbackId.current)
-      }
+      if (!orderCallbackId.current) return
+      renegade.releaseCallback(orderCallbackId.current)
+      orderCallbackId.current = undefined
     }
   }, [])
 
