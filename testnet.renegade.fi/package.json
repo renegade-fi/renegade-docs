@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "preinstall": "npx only-allow yarn",
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -21,6 +21,7 @@
     "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@next/bundle-analyzer": "^13.4.19",
     "@react-hook/window-size": "3.0.7",
     "@renegade-fi/renegade-js": "^0.3.4",
     "@t3-oss/env-nextjs": "^0.6.0",
@@ -43,10 +44,10 @@
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "@typescript-eslint/parser": "^5.61.0",
-    "eslint-plugin-chakra-ui": "^0.9.1",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-chakra-ui": "^0.9.1",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8",
     "typescript": "5.1.6"

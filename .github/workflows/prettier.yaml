@@ -1,8 +1,9 @@
-name: Prettier
+name: Renegade + Docs
 on: [push]
 jobs:
   prettier:
     runs-on: ubuntu-latest
+    name: Format
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
@@ -18,13 +19,3 @@ jobs:
         run: |
           npm ci
           npx prettier --check src/ --config ./.prettierrc
-      - name: Install yarn (testnet.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: install
-          dir: "testnet.renegade.fi"
-      - name: Prettier Check (testnet.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: format:check
-          dir: "testnet.renegade.fi"
