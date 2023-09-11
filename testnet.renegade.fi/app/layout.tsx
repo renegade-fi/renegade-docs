@@ -4,9 +4,9 @@ import { env } from "@/env.mjs"
 import { Renegade } from "@renegade-fi/renegade-js"
 
 import { getTokenBannerData } from "@/lib/utils"
-import Footer from "@/components/footer"
-import MainNav from "@/components/main-nav"
-import TokensBanner from "@/app/[base]/[quote]/tokens-banner"
+import { TokensBanner } from "@/components/banners/tokens-banner"
+import { Footer } from "@/components/footer"
+import { MainNav } from "@/components/main-nav"
 import { Providers } from "@/app/providers"
 
 import "./animations.css"
@@ -58,7 +58,7 @@ export default async function RootLayout({
           >
             <MainNav />
             {children}
-            <TokensBanner initialTokenPrices={prices} />
+            <TokensBanner prices={prices} />
             <Footer />
           </div>
         </Providers>

@@ -12,7 +12,7 @@ import {
 
 import { useStepper } from "../order-stepper"
 
-export default function ExitStep() {
+export function ExitStep() {
   const { baseTicker, baseTokenAmount, direction } = useOrder()
   const { midpoint, onClose } = useStepper()
   const [isHovered, setIsHovered] = useState(true)

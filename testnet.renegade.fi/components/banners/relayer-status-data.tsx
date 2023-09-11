@@ -1,7 +1,7 @@
 import { env } from "@/env.mjs"
 import { Renegade } from "@renegade-fi/renegade-js"
 
-import RelayerStatusBanner from "./relayer-banner"
+import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -12,7 +12,7 @@ const renegade = new Renegade({
   verbose: false,
 })
 
-async function RelayerStatusData({
+export async function RelayerStatusData({
   baseToken,
   quoteToken,
 }: {
@@ -32,5 +32,3 @@ async function RelayerStatusData({
     />
   )
 }
-
-export default RelayerStatusData

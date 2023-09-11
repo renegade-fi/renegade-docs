@@ -5,7 +5,7 @@ import { motion, useSpring } from "framer-motion"
 import normalizeWheel from "normalize-wheel"
 import { useRafLoop } from "react-use"
 
-import { MarqueeItem } from "@/app/[base]/[quote]/marquee-item"
+import { MarqueeItem } from "@/components/banners/marquee-item"
 
 const _ = {
   userSelect: "none",

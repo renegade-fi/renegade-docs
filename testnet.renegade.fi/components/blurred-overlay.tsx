@@ -55,7 +55,7 @@ interface BlurredOverlayProps {
   buySellSelectableCoords: [number, number]
   quoteTokenSelectableCoords: [number, number]
 }
-export default function BlurredOverlay({
+export function BlurredOverlay({
   activeModal,
   buySellSelectableCoords,
   onClose,
@@ -179,9 +179,7 @@ export default function BlurredOverlay({
                 gridTemplateColumns="2fr 1fr 1fr"
                 overflow="hidden"
                 height="60px"
-                borderBottom={
-                  i === DISPLAYED_TICKERS.length - 1 ? "" : "var(--border)"
-                }
+                borderTop="var(--border)"
                 _hover={{
                   transition: "0.3s cubic-bezier(0.215, 0.61, 0.355, 1)",
                 }}

@@ -6,11 +6,15 @@ import {
   useRef,
   useState,
 } from "react"
-import { CallbackId, Exchange, Token } from "@renegade-fi/renegade-js"
+import {
+  CallbackId,
+  Exchange,
+  PriceReport,
+  Token,
+} from "@renegade-fi/renegade-js"
 
 import { renegade } from "@/app/providers"
 
-import { PriceReport } from "../Renegade/types"
 import { ExchangeContextValue } from "./types"
 
 type ExchangeProviderProps = { children: React.ReactNode }
@@ -61,8 +65,8 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
             setPriceReport((prev) => {
               if (
                 !prev[key] ||
-                prev[key].midpointPrice.toFixed(decimals || 2) !==
-                  priceReport.midpointPrice.toFixed(decimals || 2)
+                prev[key].midpointPrice?.toFixed(decimals || 2) !==
+                  priceReport.midpointPrice?.toFixed(decimals || 2)
               ) {
                 return {
                   ...prev,
@@ -108,7 +112,7 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
           exchange: Exchange,
           baseTicker: string,
           quoteTicker: string
-        ): PriceReport | undefined => {
+        ): PriceReport => {
           const key = getKey(exchange, baseTicker, quoteTicker)
           return priceReport[key]
         },

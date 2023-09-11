@@ -1,3 +1,4 @@
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
@@ -12,12 +13,11 @@ import {
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
 
-import { useDeposit } from "@/app/deposit/deposit-context"
 import { renegade } from "@/app/providers"
 
 import { useStepper } from "../deposit-stepper"
 
-export default function DefaultStep() {
+export function DefaultStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
   const { setTask, accountId } = useRenegade()
   const { onNext } = useStepper()

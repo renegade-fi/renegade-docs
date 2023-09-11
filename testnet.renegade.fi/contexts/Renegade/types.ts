@@ -28,17 +28,6 @@ export interface CounterpartyOrder {
 
 export type PeerId = string
 
-export interface PriceReport {
-  type: string
-  topic: string
-  baseToken: { [addr: string]: string }
-  quoteToken: { [addr: string]: string }
-  exchange: string
-  midpointPrice: number
-  localTimestamp: number
-  reportedTimestamp: number
-}
-
 export interface RenegadeContextType {
   accountId: AccountId | undefined
   balances: Record<BalanceId, Balance>

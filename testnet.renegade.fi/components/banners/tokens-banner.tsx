@@ -1,19 +1,18 @@
 "use client"
 
 import Link from "next/link"
-import { PriceReport } from "@/types"
 import { Stack, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { LivePrices } from "@/components/banners/live-price"
 
 import { InteractiveMarquee } from "./marquee"
 
-export default function TokensBanner({
-  initialTokenPrices,
+export function TokensBanner({
+  prices,
 }: {
-  initialTokenPrices: (PriceReport | undefined)[]
+  prices: (PriceReport | undefined)[]
 }) {
   return (
     <div
@@ -37,7 +36,7 @@ export default function TokensBanner({
                   baseTicker={baseTicker}
                   quoteTicker={quoteTicker}
                   exchange={Exchange.Median}
-                  price={initialTokenPrices[i]?.midpointPrice}
+                  price={prices[i]?.midpointPrice}
                 />
               </Stack>
             </Link>

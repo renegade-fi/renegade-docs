@@ -4,7 +4,7 @@ import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
 import { useStepper } from "../testnet-stepper"
 
-export default function DefaultStep() {
+export function DefaultStep() {
   const { onNext } = useStepper()
   const { balances } = useRenegade()
 

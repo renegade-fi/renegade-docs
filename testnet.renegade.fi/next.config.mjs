@@ -1,4 +1,5 @@
 import "./env.mjs"
+import analyzer from "@next/bundle-analyzer"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -11,4 +12,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default analyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig)

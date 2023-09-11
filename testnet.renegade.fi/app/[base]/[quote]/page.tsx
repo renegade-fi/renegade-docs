@@ -1,14 +1,13 @@
 import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
-import { Renegade } from "@renegade-fi/renegade-js"
+import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import { getExchangeBannerData } from "@/lib/utils"
-import RelayerStatusData from "@/components/banners/relayer-status-data"
-import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
-import TradingBody from "@/components/trading-body"
-import WalletsPanel from "@/components/wallets-panel"
-import MedianBanner from "@/app/[base]/[quote]/median-banner"
+import { MedianBanner } from "@/components/banners/median-banner"
+import { RelayerStatusData } from "@/components/banners/relayer-status-data"
+import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
+import { WalletsPanel } from "@/components/panels/wallets-panel"
+import { TradingBody } from "@/app/[base]/[quote]/body"
 
 export function generateStaticParams() {
   return DISPLAYED_TICKERS.map(([base, quote]) => {
@@ -29,19 +28,14 @@ const renegade = new Renegade({
 })
 
 export default async function Home({
-  params: { base: baseToken, quote: quoteToken },
+  params: { base, quote },
 }: {
   params: { base: string; quote: string }
 }) {
-  const { report, exchangeHealthStates } = await getExchangeBannerData(
-    baseToken,
-    quoteToken,
-    renegade
+  const report = await renegade.queryExchangeHealthStates(
+    new Token({ ticker: base }),
+    new Token({ ticker: quote })
   )
-  if (!report || !exchangeHealthStates) {
-    throw new Error("Failed to fetch exchange banner data")
-  }
-
   return (
     <div
       style={{
@@ -52,10 +46,7 @@ export default async function Home({
         backgroundSize: "cover",
       }}
     >
-      <MedianBanner
-        priceReport={report}
-        priceReporterHealthStates={exchangeHealthStates}
-      />
+      <MedianBanner report={report} />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />
         <div
@@ -66,7 +57,7 @@ export default async function Home({
             overflowX: "hidden",
           }}
         >
-          <RelayerStatusData baseToken={baseToken} quoteToken={quoteToken} />
+          <RelayerStatusData baseToken={base} quoteToken={quote} />
           <div
             style={{
               display: "flex",

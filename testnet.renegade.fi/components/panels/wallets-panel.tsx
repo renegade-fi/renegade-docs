@@ -21,15 +21,14 @@ import {
 
 import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
 import { LivePrices } from "@/components/banners/live-price"
+import { SignInModal } from "@/components/modals/signin-modal"
 import {
   Panel,
   callAfterTimeout,
   expandedPanelWidth,
-} from "@/components/panels"
-import TestnetStepper from "@/components/steppers/testnet-stepper/testnet-stepper"
+} from "@/components/panels/panels"
+import { TestnetStepper } from "@/components/steppers/testnet-stepper/testnet-stepper"
 import { renegade } from "@/app/providers"
-
-import SignInModal from "./modals/signin-modal"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -388,7 +387,7 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
   )
 }
 
-export default function WalletsPanel() {
+export function WalletsPanel() {
   const { open } = useModalConnectKit()
   return (
     <Panel

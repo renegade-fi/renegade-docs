@@ -13,7 +13,7 @@ import {
   Panel,
   callAfterTimeout,
   expandedPanelWidth,
-} from "@/components/panels"
+} from "@/components/panels/panels"
 import { renegade } from "@/app/providers"
 
 interface SingleOrderProps {
@@ -245,7 +245,7 @@ function OrdersAndCounterpartiesPanelExpanded(
   )
 }
 
-export default function OrdersAndCounterpartiesPanel() {
+export function OrdersAndCounterpartiesPanel() {
   const { open } = useModalConnectKit()
   return (
     <Panel

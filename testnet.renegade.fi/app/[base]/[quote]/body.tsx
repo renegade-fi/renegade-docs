@@ -7,11 +7,10 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Box, Flex, HStack, Input, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
-import { useAccount } from "wagmi"
 
 import { LivePrices } from "@/components/banners/live-price"
-import BlurredOverlay from "@/components/blurred-overlay"
-import PlaceOrderButton from "@/components/place-order-button"
+import { BlurredOverlay } from "@/components/blurred-overlay"
+import { PlaceOrderButton } from "@/components/place-order-button"
 import { TaskStatus } from "@/components/task-status"
 
 interface SelectableProps {
@@ -44,7 +43,7 @@ const Selectable = React.forwardRef(
 )
 Selectable.displayName = "selectable"
 
-export default function TradingBody() {
+export function TradingBody() {
   const {
     direction,
     baseTicker,

@@ -1,31 +1,23 @@
 "use client"
 
 import { useOrder } from "@/contexts/Order/order-context"
-import { ExchangeReport, HealthState, PriceReport } from "@/types"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import {
+  Exchange,
+  ExchangeHealthState,
+  HealthState,
+  PriceReport,
+} from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_ADDR } from "@/lib/tokens"
 import { BannerSeparator } from "@/components/banners/banner-separator"
 import { LivePrices } from "@/components/banners/live-price"
+import { InteractiveMarquee } from "@/components/banners/marquee"
 import { PulsingConnection } from "@/components/banners/pulsing-connection-indicator"
-import { InteractiveMarquee } from "@/app/[base]/[quote]/marquee"
 
-export default function MedianBanner({
-  priceReport,
-  priceReporterHealthStates,
-}: {
-  priceReport: ExchangeReport
-  priceReporterHealthStates: {
-    median: HealthState
-    binance: HealthState
-    coinbase: HealthState
-    kraken: HealthState
-    okx: HealthState
-    uniswapv3: HealthState
-  }
-}) {
+export function MedianBanner({ report }: { report: ExchangeHealthState }) {
   const { baseTicker, quoteTicker } = useOrder()
+
   return (
     <Flex
       alignItems="center"
@@ -47,8 +39,9 @@ export default function MedianBanner({
           activeBaseTicker={baseTicker}
           activeQuoteTicker={quoteTicker}
           exchange={Exchange.Median}
-          healthState={priceReporterHealthStates.median}
-          priceReport={priceReport.median}
+          priceReport={
+            report.Median || { healthState: HealthState.enum.NoDataReported }
+          }
         />
         <BannerSeparator flexGrow={4} />
       </Flex>
@@ -62,18 +55,16 @@ export default function MedianBanner({
           background={`linear-gradient(${"90deg"}, rgba(0,0,0,1), rgba(0,0,0,0))`}
         />
         <InteractiveMarquee>
-          {Object.keys(Exchange)
-            .filter((e) => e !== "Median")
-            .map((exchange) => {
-              const e = exchange.toLowerCase()
+          {Object.entries(report)
+            .filter(([exchange]) => exchange !== "Median")
+            .map(([exchange, p]) => {
               return (
                 <Flex key={exchange} alignItems="center" gap="4" marginLeft="4">
                   <ExchangeConnectionTriple
                     activeBaseTicker={baseTicker}
                     activeQuoteTicker={quoteTicker}
                     exchange={exchange.toLowerCase() as Exchange}
-                    healthState={priceReporterHealthStates[e as Exchange]}
-                    priceReport={priceReport[e as Exchange]}
+                    priceReport={p}
                   />
                   <BannerSeparator flexGrow={4} />
                 </Flex>
@@ -89,9 +80,8 @@ interface ExchangeConnectionTripleProps {
   activeBaseTicker: string
   activeQuoteTicker: string
   exchange: Exchange
-  healthState: HealthState
   isMobile?: boolean
-  priceReport?: PriceReport
+  priceReport: PriceReport
 }
 export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   // Remap some tickers, as different exchanges use different names
@@ -123,41 +113,42 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     }`,
     median: "",
   }[props.exchange]
+  const healthState = props.priceReport?.healthState
 
   let showPrice: boolean
   let connectionText: string
   let textVariant: string
   // TODO: update state to reflect cache behavior
-  if (props.healthState === "connecting") {
+  if (healthState === HealthState.enum.Connecting) {
     showPrice = true
     connectionText = "LIVE"
     textVariant = "status-green"
-  } else if (props.healthState === "unsupported") {
+  } else if (healthState === HealthState.enum.Unsupported) {
     showPrice = false
     connectionText = "UNSUPPORTED"
     textVariant = "status-gray"
-  } else if (props.healthState === "live") {
+  } else if (healthState === HealthState.enum.Live) {
     showPrice = true
     connectionText = "LIVE"
     textVariant = "status-green"
-  } else if (props.healthState === "no-data") {
+  } else if (healthState === HealthState.enum.NoDataReported) {
     showPrice = false
     connectionText = "NO DATA"
     textVariant = "status-gray"
-  } else if (props.healthState === "too-stale") {
+  } else if (healthState === HealthState.enum.TooStale) {
     showPrice = false
     connectionText = "TOO STALE"
     textVariant = "status-red"
-  } else if (props.healthState === "not-enough-data") {
+  } else if (healthState === HealthState.enum.NotEnoughData) {
     showPrice = false
     connectionText = "NOT ENOUGH DATA"
     textVariant = "status-gray"
-  } else if (props.healthState === "too-much-deviation") {
+  } else if (healthState === HealthState.enum.TooMuchDeviation) {
     showPrice = false
     connectionText = "TOO MUCH DEVIATION"
     textVariant = "status-red"
   } else {
-    throw new Error("Invalid health state: " + props.healthState)
+    throw new Error("Invalid health state: " + healthState)
   }
 
   const pulseState = {

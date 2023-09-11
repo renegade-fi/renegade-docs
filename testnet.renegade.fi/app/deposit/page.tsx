@@ -1,10 +1,9 @@
+import { DepositProvider } from "@/contexts/Deposit/deposit-context"
 import backgroundPattern from "@/icons/background_pattern.png"
 
-import OrdersAndCounterpartiesPanel from "@/components/orders-panel"
-import WalletsPanel from "@/components/wallets-panel"
-
-import DepositBody from "../../components/deposit-body"
-import { DepositProvider } from "./deposit-context"
+import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
+import { WalletsPanel } from "@/components/panels/wallets-panel"
+import { DepositBody } from "@/app/deposit/body"
 
 export default async function Home() {
   return (

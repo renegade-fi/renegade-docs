@@ -2,6 +2,7 @@
 
 import React, { createRef, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
@@ -16,10 +17,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 
-import { useDeposit } from "../app/deposit/deposit-context"
-import { TICKER_TO_LOGO_URL_HANDLE } from "../lib/tokens"
-import SignInModal from "./modals/signin-modal"
-import DepositStepper from "./steppers/deposit-stepper/deposit-stepper"
+import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
+import { SignInModal } from "@/components/modals/signin-modal"
+import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 
 interface SingleBaseTokenProps {
   ticker: string
@@ -55,7 +55,7 @@ const Selectable = React.forwardRef(
 )
 Selectable.displayName = "selectable"
 
-export default function DepositBody() {
+export function DepositBody() {
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const {

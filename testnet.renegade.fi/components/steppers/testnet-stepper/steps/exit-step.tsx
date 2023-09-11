@@ -14,7 +14,7 @@ import { findBalanceByTicker } from "@/lib/utils"
 
 import { useStepper } from "../testnet-stepper"
 
-export default function ExitStep() {
+export function ExitStep() {
   const { onClose } = useStepper()
   const { balances } = useRenegade()
   const balance = findBalanceByTicker(balances, "WETH")?.amount.toString()
