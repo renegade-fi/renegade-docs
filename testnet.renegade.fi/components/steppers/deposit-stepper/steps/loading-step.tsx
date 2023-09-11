@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react"
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
 import { findBalanceByTicker } from "@/lib/utils"
-import { useDeposit } from "@/app/deposit/deposit-context"
 
 import { useStepper } from "../deposit-stepper"
 
-export default function LoadingStep() {
+export function LoadingStep() {
   const { onNext } = useStepper()
   const { balances } = useRenegade()
   const prevBalance = useRef(balances)

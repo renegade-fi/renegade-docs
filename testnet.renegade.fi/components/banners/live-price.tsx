@@ -2,11 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { Box, Flex, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 
-import { PriceReport } from "../../types"
 import { BannerSeparator } from "./banner-separator"
 
 const DEFAULT_PRICE_REPORT = {
@@ -96,11 +95,13 @@ export const LivePrices = ({
   let priceStrClass = ""
   if (
     previousPriceReport.midpointPrice &&
+    currentPriceReport.midpointPrice &&
     currentPriceReport.midpointPrice > previousPriceReport.midpointPrice
   ) {
     priceStrClass = "fade-green-to-white"
   } else if (
     previousPriceReport.midpointPrice &&
+    currentPriceReport.midpointPrice &&
     currentPriceReport.midpointPrice < previousPriceReport.midpointPrice
   ) {
     priceStrClass = "fade-red-to-white"

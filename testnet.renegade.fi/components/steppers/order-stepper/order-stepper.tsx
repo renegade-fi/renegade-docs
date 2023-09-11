@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from "react"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
-import DefaultStep from "./steps/confirm-step"
-import ExitStep from "./steps/exit-step"
-import LoadingStep from "./steps/loading-step"
+import { ConfirmStep } from "./steps/confirm-step"
+import { ExitStep } from "./steps/exit-step"
+import { LoadingStep } from "./steps/loading-step"
 
 const OrderStepperInner = () => {
   const { step, onClose } = useStepper()
@@ -26,7 +26,7 @@ const OrderStepperInner = () => {
             transition={{ enter: { duration: 1 } }}
             in={step === Step.DEFAULT}
           >
-            {step === Step.DEFAULT && <DefaultStep />}
+            {step === Step.DEFAULT && <ConfirmStep />}
           </Fade>
           <Fade
             transition={{ enter: { duration: 1 } }}
@@ -43,7 +43,7 @@ const OrderStepperInner = () => {
   )
 }
 
-export default function OrderStepper({ onClose }: { onClose: () => void }) {
+export function OrderStepper({ onClose }: { onClose: () => void }) {
   return (
     <StepperProvider onClose={onClose}>
       <OrderStepperInner />

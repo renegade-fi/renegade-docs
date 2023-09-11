@@ -53,6 +53,7 @@ const PulsingConnectionUnmemoized = (props: PulsingConnectionProps) => {
             : ""
         }
         backgroundColor="black"
+        suppressHydrationWarning
       />
       <Box
         position="absolute"

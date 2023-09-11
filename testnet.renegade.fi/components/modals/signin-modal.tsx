@@ -83,7 +83,7 @@ interface SignInModalProps {
   isOpen: boolean
   onClose: () => void
 }
-export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
+export function SignInModal({ isOpen, onClose }: SignInModalProps) {
   const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
   const { isLoading, signMessage } = useSignMessageWagmi({

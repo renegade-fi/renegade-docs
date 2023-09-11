@@ -21,7 +21,7 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi"
 
-import SignInModal from "./modals/signin-modal"
+import { SignInModal } from "@/components/modals/signin-modal"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -221,7 +221,7 @@ function DisconnectWalletButton() {
   )
 }
 
-export default function MainNav() {
+export function MainNav() {
   const [showDownloadPrompt, setshowDownloadPrompt] = useState(false)
   const glyphRef = createRef<HTMLDivElement>()
 

@@ -1,5 +1,4 @@
-import { PriceReport } from "@/types"
-import { CallbackId, Exchange } from "@renegade-fi/renegade-js"
+import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
 export interface ExchangeContextValue {
   onRegisterPriceListener: (
@@ -8,9 +7,5 @@ export interface ExchangeContextValue {
     quote: string,
     decimals?: number
   ) => Promise<CallbackId | undefined>
-  getPriceData: (
-    exchange: Exchange,
-    base: string,
-    quote: string
-  ) => PriceReport | undefined
+  getPriceData: (exchange: Exchange, base: string, quote: string) => PriceReport
 }

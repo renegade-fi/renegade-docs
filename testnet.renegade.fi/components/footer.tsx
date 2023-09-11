@@ -9,7 +9,7 @@ interface FooterState {
   logoRef: React.RefObject<HTMLDivElement>
   showDownloadPrompt: boolean
 }
-export default class Footer extends React.Component<
+export class Footer extends React.Component<
   Record<string, never>,
   FooterState
 > {

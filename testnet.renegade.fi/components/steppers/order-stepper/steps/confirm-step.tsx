@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { PriceReport, TaskType } from "@/contexts/Renegade/types"
+import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -14,11 +14,11 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
 import { useStepper } from "../order-stepper"
 
-export default function ConfirmStep() {
+export function ConfirmStep() {
   const { setMidpoint, onNext } = useStepper()
   const { getPriceData } = useExchange()
   const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
@@ -81,7 +81,7 @@ export default function ConfirmStep() {
                 {direction === "buy" ? "Pay at most" : "Receive at least"}
               </Text>
               <Text>
-                {currentPriceReport?.midpointPrice.toFixed(2)}&nbsp;USDC
+                {currentPriceReport?.midpointPrice?.toFixed(2)}&nbsp;USDC
               </Text>
             </Flex>
           </Flex>
@@ -109,7 +109,7 @@ export default function ConfirmStep() {
             if (!currentPriceReport) {
               throw new Error("No current price report")
             }
-            setMidpoint(currentPriceReport?.midpointPrice)
+            setMidpoint(currentPriceReport.midpointPrice || 0)
             onPlaceOrder()
           }}
         >

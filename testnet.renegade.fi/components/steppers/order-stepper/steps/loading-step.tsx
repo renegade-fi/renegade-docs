@@ -5,7 +5,7 @@ import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
 import { useStepper } from "../order-stepper"
 
-export default function LoadingStep() {
+export function LoadingStep() {
   const { onNext } = useStepper()
   const { taskState, taskType } = useRenegade()
   useEffect(() => {

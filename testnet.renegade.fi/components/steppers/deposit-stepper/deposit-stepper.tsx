@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from "react"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
-import DefaultStep from "./steps/default-step"
-import ExitStep from "./steps/exit-step"
-import LoadingStep from "./steps/loading-step"
+import { DefaultStep } from "./steps/default-step"
+import { ExitStep } from "./steps/exit-step"
+import { LoadingStep } from "./steps/loading-step"
 
 const DepositStepperInner = () => {
   const { step, onClose } = useStepper()
@@ -43,7 +43,7 @@ const DepositStepperInner = () => {
   )
 }
 
-export default function DepositStepper({ onClose }: { onClose: () => void }) {
+export function DepositStepper({ onClose }: { onClose: () => void }) {
   return (
     <StepperProvider onClose={onClose}>
       <DepositStepperInner />

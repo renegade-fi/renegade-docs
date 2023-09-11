@@ -10,11 +10,10 @@ import { useModal as useModalConnectKit } from "connectkit"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { LivePrices } from "@/components/banners/live-price"
+import { SignInModal } from "@/components/modals/signin-modal"
+import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 
-import SignInModal from "./modals/signin-modal"
-import OrderStepper from "./steppers/order-stepper/order-stepper"
-
-export default function PlaceOrderButton() {
+export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
   const {
     isOpen: placeOrderIsOpen,

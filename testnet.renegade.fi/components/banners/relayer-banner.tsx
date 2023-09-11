@@ -21,7 +21,7 @@ interface RelayerStatusBannerState {
   isHovered: boolean
   isClicked: boolean
 }
-export default class RelayerStatusBanner extends React.Component<
+export class RelayerStatusBanner extends React.Component<
   RelayerStatusBannerProps,
   RelayerStatusBannerState
 > {

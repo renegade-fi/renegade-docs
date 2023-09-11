@@ -1,4 +1,5 @@
 import { useRouter } from "next/navigation"
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
@@ -13,11 +14,10 @@ import {
 } from "@chakra-ui/react"
 
 import { findBalanceByTicker } from "@/lib/utils"
-import { useDeposit } from "@/app/deposit/deposit-context"
 
 import { useStepper } from "../deposit-stepper"
 
-export default function DefaultStep() {
+export function ExitStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
   const { onClose } = useStepper()
   const { balances } = useRenegade()
