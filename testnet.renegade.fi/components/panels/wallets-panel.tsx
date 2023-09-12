@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useCallback } from "react"
-import NextLink from "next/link"
+import React from "react"
 import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
+import { TaskType, ViewEnum } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -37,7 +36,7 @@ interface TokenBalanceProps {
 }
 function TokenBalance(props: TokenBalanceProps) {
   const { accountId, setTask } = useRenegade()
-  const [logoUrl, setLogoUrl] = React.useState("DEFAULT.png")
+  const [logoUrl, setLogoUrl] = React.useState("")
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
       setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[props.tokenAddr]])
@@ -140,8 +139,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { accountId, setTask } = useRenegade()
-  const router = useRouter()
+  const { accountId, setTask, setView } = useRenegade()
   return (
     <Flex
       flexDirection="row"
@@ -153,7 +151,6 @@ function DepositWithdrawButtons() {
       cursor="pointer"
     >
       <Flex
-        as={NextLink}
         alignItems="center"
         justifyContent="center"
         flexGrow="1"
@@ -161,7 +158,7 @@ function DepositWithdrawButtons() {
         borderColor="border"
         borderRight="var(--border)"
         cursor="pointer"
-        href="/deposit"
+        onClick={() => setView(ViewEnum.DEPOSIT)}
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />
@@ -198,24 +195,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     onClose: preloadOnClose,
     onOpen: preloadOnOpen,
   } = useDisclosure()
-  const { balances, accountId, setTask } = useRenegade()
-  let panelBody: React.ReactElement
+  const { balances, accountId, setTask, setView } = useRenegade()
+  const router = useRouter()
 
-  const handlePreload = useCallback(async () => {
-    const preloaded = localStorage.getItem(`${address}-preloaded`)
-    if (preloaded || !accountId || Object.keys(balances).length) return
-    if (!preloaded && accountId) {
-      preloadOnOpen()
-      localStorage.setItem(`${address}-preloaded`, "true")
-      const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
-        accountId,
-        new Token({ ticker: "WETH" }),
-        BigInt(10)
-      )
-      setTask(depositTaskId, TaskType.Deposit)
-      await depositTaskJob
-    }
-  }, [accountId, address, balances, preloadOnOpen, setTask])
+  let panelBody: React.ReactElement
 
   if (accountId) {
     const pkSettle =
@@ -234,11 +217,14 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               fontWeight="100"
               textAlign="center"
             >
-              No tokens have been deposited into Renegade.
+              Deposit tokens into your Renegade account to get started.
             </Text>
             <Flex alignItems="center" height="100%">
-              <Button onClick={handlePreload} variant="wallet-connect">
-                Airdrop
+              <Button
+                onClick={() => setView(ViewEnum.DEPOSIT)}
+                variant="wallet-connect"
+              >
+                Deposit
               </Button>
             </Flex>
           </>

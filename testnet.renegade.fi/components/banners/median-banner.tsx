@@ -16,8 +16,6 @@ import { InteractiveMarquee } from "@/components/banners/marquee"
 import { PulsingConnection } from "@/components/banners/pulsing-connection-indicator"
 
 export function MedianBanner({ report }: { report: ExchangeHealthState }) {
-  const { baseTicker, quoteTicker } = useOrder()
-
   return (
     <Flex
       alignItems="center"
@@ -36,8 +34,6 @@ export function MedianBanner({ report }: { report: ExchangeHealthState }) {
         <Text whiteSpace="nowrap">NBBO Feed</Text>
         <BannerSeparator flexGrow={4} />
         <ExchangeConnectionTriple
-          activeBaseTicker={baseTicker}
-          activeQuoteTicker={quoteTicker}
           exchange={Exchange.Median}
           priceReport={
             report.Median || { healthState: HealthState.enum.NoDataReported }
@@ -61,8 +57,6 @@ export function MedianBanner({ report }: { report: ExchangeHealthState }) {
               return (
                 <Flex key={exchange} alignItems="center" gap="4" marginLeft="4">
                   <ExchangeConnectionTriple
-                    activeBaseTicker={baseTicker}
-                    activeQuoteTicker={quoteTicker}
                     exchange={exchange.toLowerCase() as Exchange}
                     priceReport={p}
                   />
@@ -77,16 +71,15 @@ export function MedianBanner({ report }: { report: ExchangeHealthState }) {
 }
 
 interface ExchangeConnectionTripleProps {
-  activeBaseTicker: string
-  activeQuoteTicker: string
   exchange: Exchange
   isMobile?: boolean
   priceReport: PriceReport
 }
 export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
+  const { baseTicker, quoteTicker } = useOrder()
   // Remap some tickers, as different exchanges use different names
-  let renamedBaseTicker = props.activeBaseTicker
-  let renamedQuoteTicker = props.activeQuoteTicker
+  let renamedBaseTicker = baseTicker
+  let renamedQuoteTicker = quoteTicker
   if (renamedBaseTicker === "WBTC") {
     renamedBaseTicker = "BTC"
   }
@@ -108,9 +101,7 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     coinbase: `https://www.coinbase.com/advanced-trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     kraken: `https://pro.kraken.com/app/trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     okx: `https://www.okx.com/trade-swap/${renamedBaseTicker}-${renamedQuoteTicker}-swap`,
-    uniswapv3: `https://info.uniswap.org/#/tokens/${
-      TICKER_TO_ADDR[props.activeBaseTicker]
-    }`,
+    uniswapv3: `https://info.uniswap.org/#/tokens/${TICKER_TO_ADDR[baseTicker]}`,
     median: "",
   }[props.exchange]
   const healthState = props.priceReport?.healthState
@@ -174,8 +165,8 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       <BannerSeparator flexGrow={1} />
       {showPrice && (
         <LivePrices
-          baseTicker={props.activeBaseTicker}
-          quoteTicker={props.activeQuoteTicker}
+          baseTicker={baseTicker}
+          quoteTicker={quoteTicker}
           exchange={props.exchange}
           isMobile={props.isMobile}
           price={props.priceReport?.midpointPrice}

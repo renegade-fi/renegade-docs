@@ -23,6 +23,7 @@ import {
   RenegadeContextType,
   TaskState,
   TaskType,
+  ViewEnum,
 } from "./types"
 
 type RenegadeProviderProps = { children: React.ReactNode }
@@ -50,6 +51,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [orderBook, setOrderBook] = React.useState<
     Record<OrderId, CounterpartyOrder>
   >({})
+  const [view, setView] = React.useState<ViewEnum>(ViewEnum.TRADING)
 
   const taskCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
@@ -182,9 +184,11 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
         orders,
         setAccount,
         setTask,
+        setView,
         taskId,
         taskState,
         taskType,
+        view,
       }}
     >
       {children}
