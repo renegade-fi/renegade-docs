@@ -141,7 +141,6 @@ function TokenBalance(props: TokenBalanceProps) {
 
 function DepositWithdrawButtons() {
   const { accountId, setTask } = useRenegade()
-  const router = useRouter()
   return (
     <Flex
       flexDirection="row"
@@ -199,6 +198,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     onOpen: preloadOnOpen,
   } = useDisclosure()
   const { balances, accountId, setTask } = useRenegade()
+  const router = useRouter()
+
   let panelBody: React.ReactElement
 
   const handlePreload = useCallback(async () => {
@@ -230,11 +231,14 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               fontWeight="100"
               textAlign="center"
             >
-              No tokens have been deposited into Renegade.
+              Deposit tokens into your Renegade account to get started.
             </Text>
             <Flex alignItems="center" height="100%">
-              <Button onClick={handlePreload} variant="wallet-connect">
-                Airdrop
+              <Button
+                onClick={() => router.push(`/deposit`)}
+                variant="wallet-connect"
+              >
+                Deposit
               </Button>
             </Flex>
           </>

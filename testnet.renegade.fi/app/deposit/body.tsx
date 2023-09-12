@@ -42,6 +42,7 @@ export function DepositBody() {
     useDeposit()
   const { setOpen } = useModalConnectKit()
   const { accountId, taskState, taskType } = useRenegade()
+  console.log("🚀 ~ DepositBody ~ accountId:", accountId)
   const router = useRouter()
 
   const buttonText = !address
