@@ -5,18 +5,19 @@ import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import { Box, Flex, HStack, Input, Text } from "@chakra-ui/react"
+import { Box, Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 
 import { LivePrices } from "@/components/banners/live-price"
 import { BlurredOverlay } from "@/components/blurred-overlay"
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
 import { TaskStatus } from "@/components/task-status"
 
 interface SelectableProps {
   text: string
   onClick: () => void
-  activeModal?: "buy-sell" | "base-token" | "quote-token"
+  activeModal?: "buy-sell" | "quote-token"
 }
 const Selectable = React.forwardRef(
   (props: SelectableProps, ref: React.Ref<HTMLDivElement>) => {
@@ -45,15 +46,19 @@ Selectable.displayName = "selectable"
 
 export function TradingBody() {
   const {
-    direction,
+    isOpen: tokenMenuIsOpen,
+    onOpen: onOpenTokenMenu,
+    onClose: onCloseTokenMenu,
+  } = useDisclosure()
+  const {
     baseTicker,
-    quoteTicker,
     baseTokenAmount,
+    direction,
+    quoteTicker,
+    setBaseToken,
     setBaseTokenAmount,
   } = useOrder()
-  const [activeModal, setActiveModal] = useState<
-    "buy-sell" | "base-token" | "quote-token"
-  >()
+  const [activeModal, setActiveModal] = useState<"buy-sell" | "quote-token">()
   const { taskState, taskType } = useRenegade()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
@@ -130,12 +135,20 @@ export function TradingBody() {
               type="number"
               value={baseTokenAmount || ""}
             />
-            <Selectable
-              text={baseTicker}
-              onClick={() => setActiveModal("base-token")}
-              activeModal={activeModal}
-              ref={baseTokenSelectableRef}
-            />
+            <HStack
+              userSelect="none"
+              cursor="pointer"
+              onClick={onOpenTokenMenu}
+            >
+              <Text cursor="pointer" variant="trading-body-button">
+                {baseTicker}
+              </Text>
+              <ChevronDownIcon
+                boxSize="20px"
+                viewBox="6 6 12 12"
+                color="white.100"
+              />
+            </HStack>
             <Text
               color="white.50"
               fontFamily="Favorit"
@@ -184,6 +197,11 @@ export function TradingBody() {
           {taskState && taskType && <TaskStatus />}
         </Box>
       </Flex>
+      <TokenSelectModal
+        isOpen={tokenMenuIsOpen}
+        onClose={onCloseTokenMenu}
+        setToken={setBaseToken}
+      />
     </>
   )
 }

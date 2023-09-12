@@ -27,7 +27,7 @@ const renegade = new Renegade({
   verbose: false,
 })
 
-export default async function Home({
+export default async function Page({
   params: { base, quote },
 }: {
   params: { base: string; quote: string }

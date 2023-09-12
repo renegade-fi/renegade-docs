@@ -37,7 +37,7 @@ interface TokenBalanceProps {
 }
 function TokenBalance(props: TokenBalanceProps) {
   const { accountId, setTask } = useRenegade()
-  const [logoUrl, setLogoUrl] = React.useState("DEFAULT.png")
+  const [logoUrl, setLogoUrl] = React.useState("")
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
       setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[props.tokenAddr]])
@@ -206,14 +206,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     if (preloaded || !accountId || Object.keys(balances).length) return
     if (!preloaded && accountId) {
       preloadOnOpen()
-      localStorage.setItem(`${address}-preloaded`, "true")
-      const [depositTaskId, depositTaskJob] = await renegade.task.deposit(
-        accountId,
-        new Token({ ticker: "WETH" }),
-        BigInt(10)
-      )
-      setTask(depositTaskId, TaskType.Deposit)
-      await depositTaskJob
+      await renegade.task
+        .deposit(accountId, new Token({ ticker: "WETH" }), BigInt(10))
+        .then(([taskId]) => setTask(taskId, TaskType.Deposit))
+        .then(() => localStorage.setItem(`${address}-preloaded`, "true"))
     }
   }, [accountId, address, balances, preloadOnOpen, setTask])
 

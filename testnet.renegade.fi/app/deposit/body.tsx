@@ -1,6 +1,5 @@
 "use client"
 
-import React, { createRef, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
@@ -10,54 +9,30 @@ import {
   Button,
   Flex,
   HStack,
-  Image,
   Input,
   Text,
-  keyframes,
   useDisclosure,
 } from "@chakra-ui/react"
+import { useModal as useModalConnectKit } from "connectkit"
+import { useAccount as useAccountWagmi } from "wagmi"
 
-import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
 import { SignInModal } from "@/components/modals/signin-modal"
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
-
-interface SingleBaseTokenProps {
-  ticker: string
-}
-
-interface SelectableProps {
-  text: string
-  onClick: () => void
-  activeModal?: "buy-sell" | "base-token" | "quote-token"
-}
-const Selectable = React.forwardRef(
-  (props: SelectableProps, ref: React.Ref<HTMLDivElement>) => {
-    return (
-      <HStack
-        ref={ref}
-        userSelect="none"
-        cursor="pointer"
-        onClick={props.onClick}
-      >
-        <Text
-          variant={
-            props.activeModal
-              ? "trading-body-button-blurred"
-              : "trading-body-button"
-          }
-        >
-          {props.text}
-        </Text>
-        <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" color="white.100" />
-      </HStack>
-    )
-  }
-)
-Selectable.displayName = "selectable"
+import { TaskStatus } from "@/components/task-status"
 
 export function DepositBody() {
-  const router = useRouter()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { address } = useAccountWagmi()
+  const {
+    isOpen: tokenMenuIsOpen,
+    onOpen: onOpenTokenMenu,
+    onClose: onCloseTokenMenu,
+  } = useDisclosure()
+  const {
+    isOpen: stepperIsOpen,
+    onOpen: onOpenStepper,
+    onClose: onCloseStepper,
+  } = useDisclosure()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -65,110 +40,22 @@ export function DepositBody() {
   } = useDisclosure()
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
-  const { accountId } = useRenegade()
-  const [activeModal, setActiveModal] = useState<
-    "buy-sell" | "base-token" | "quote-token"
-  >()
+  const { setOpen } = useModalConnectKit()
+  const { accountId, taskState, taskType } = useRenegade()
+  const router = useRouter()
 
-  const baseTokenSelectableRef = createRef<HTMLDivElement>()
-
-  function SingleBaseToken({ ticker }: SingleBaseTokenProps) {
-    const [imageUrl, setImageUrl] = useState("")
-    useEffect(() => {
-      const getLogos = async () => {
-        await TICKER_TO_LOGO_URL_HANDLE.then((TICKER_TO_LOGO_URL) =>
-          setImageUrl(TICKER_TO_LOGO_URL[ticker])
-        )
-      }
-      getLogos()
-    }, [ticker])
-
-    return (
-      <HStack
-        as={Button}
-        margin="5px"
-        padding="8px"
-        color="border"
-        border="var(--border)"
-        borderRadius="5px"
-        onClick={() => {
-          setActiveModal(undefined)
-          setBaseTicker(ticker)
-        }}
-      >
-        <Image width="20px" height="20px" alt="Ticker" src={imageUrl} />
-        <Text color="white.90" fontSize="0.8em">
-          {ticker}
-        </Text>
-      </HStack>
-    )
-  }
-
-  function BaseTokenMenu() {
-    return (
-      <Flex
-        position="absolute"
-        top="0"
-        right="0"
-        bottom="0"
-        left="0"
-        alignItems="center"
-        justifyContent="center"
-        userSelect="none"
-        pointerEvents={activeModal ? "auto" : "none"}
-        transition="0.1s"
-        backdropFilter={activeModal ? "blur(8px)" : ""}
-        onClick={() => setActiveModal(undefined)}
-      >
-        <Flex
-          alignItems="center"
-          flexDirection="column"
-          maxWidth="25%"
-          minHeight="75%"
-          padding="25px"
-          fontSize="1.5em"
-          border="var(--border)"
-          borderColor="white.30"
-          borderRadius="15px"
-          animation={`${popAnimation(1.015)} 0.1s ease both`}
-          backgroundColor="white.5"
-          hidden={activeModal !== "base-token"}
-          onClick={(e) => {
-            e.stopPropagation()
-          }}
-        >
-          <Text width="100%" color="white.80" fontSize="0.8em" textAlign="left">
-            Select a Token
-          </Text>
-          <Input
-            width="100%"
-            margin="15px 10px 0 10px"
-            fontFamily="Favorit"
-            fontSize="0.8em"
-            borderRadius="10px"
-            placeholder="Search name or paste ERC-20 address"
-            type="text"
-          />
-          <Flex flexWrap="wrap" margin="15px 0 0 0">
-            {["WBTC", "WETH", "UNI", "CRV", "AAVE", "LDO"].map((ticker) => {
-              return (
-                <Box key={ticker}>
-                  <SingleBaseToken ticker={ticker} />
-                </Box>
-              )
-            })}
-          </Flex>
-        </Flex>
-      </Flex>
-    )
-  }
-
-  const buttonText = !!accountId ? "Preview Deposit" : "Sign in to Deposit"
+  const buttonText = !address
+    ? "Connect Wallet to Deposit"
+    : !accountId
+    ? "Sign in to Deposit"
+    : "Preview Deposit"
   const handleClick = () => {
-    if (accountId) {
-      onOpen()
-    } else {
+    if (!address) {
+      setOpen(true)
+    } else if (!accountId) {
       onOpenSignIn()
+    } else {
+      onOpenStepper()
     }
   }
 
@@ -222,12 +109,20 @@ export function DepositBody() {
               type="number"
               value={baseTokenAmount || ""}
             />
-            <Selectable
-              text={baseTicker}
-              onClick={() => setActiveModal("base-token")}
-              activeModal={activeModal}
-              ref={baseTokenSelectableRef}
-            />
+            <HStack
+              userSelect="none"
+              cursor="pointer"
+              onClick={onOpenTokenMenu}
+            >
+              <Text cursor="pointer" variant="trading-body-button">
+                {baseTicker}
+              </Text>
+              <ChevronDownIcon
+                boxSize="20px"
+                viewBox="6 6 12 12"
+                color="white.100"
+              />
+            </HStack>
           </HStack>
         </Box>
         <Button
@@ -255,25 +150,17 @@ export function DepositBody() {
         >
           {buttonText}
         </Button>
+        <Box position="absolute" right="0" bottom="0">
+          {taskState && taskType && <TaskStatus />}
+        </Box>
       </Flex>
-      {activeModal === "base-token" && <BaseTokenMenu />}
-      {isOpen && <DepositStepper onClose={onClose} />}
+      {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
       <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
+      <TokenSelectModal
+        isOpen={tokenMenuIsOpen}
+        onClose={onCloseTokenMenu}
+        setToken={setBaseTicker}
+      />
     </>
   )
-}
-function popAnimation(maxScale: number) {
-  return keyframes`
-    0% {
-      transform: scale(0.95);
-      opacity: 0;
-    }
-    75% {
-      transform: scale(${maxScale});
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  `
 }
