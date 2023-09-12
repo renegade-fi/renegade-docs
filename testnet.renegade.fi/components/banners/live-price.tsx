@@ -8,44 +8,33 @@ import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 
 import { BannerSeparator } from "./banner-separator"
 
-const DEFAULT_PRICE_REPORT = {
-  type: "pricereportmedian",
-  topic: "",
-  baseToken: { addr: "" },
-  quoteToken: { addr: "" },
-  exchange: "",
-  midpointPrice: 0,
-  localTimestamp: 0,
-  reportedTimestamp: 0,
-}
-
 interface LivePricesProps {
   baseTicker: string
-  quoteTicker: string
   exchange: Exchange
-  onlyShowPrice?: boolean
-  withCommas?: boolean
-  scaleBy?: number
+  quoteTicker: string
   isMobile?: boolean
-  shouldRotate?: boolean
+  onlyShowPrice?: boolean
   price?: number
+  scaleBy?: number
+  shouldRotate?: boolean
+  withCommas?: boolean
 }
 
 export const LivePrices = ({
   baseTicker,
-  quoteTicker,
   exchange,
-  onlyShowPrice,
-  withCommas,
-  scaleBy,
+  quoteTicker,
   isMobile,
-  shouldRotate,
+  onlyShowPrice,
   price: priceProp,
+  scaleBy,
+  shouldRotate,
+  withCommas,
 }: LivePricesProps) => {
-  const [previousPriceReport, setPreviousPriceReport] =
-    useState<PriceReport>(DEFAULT_PRICE_REPORT)
-  const [currentPriceReport, setCurrentPriceReport] =
-    useState<PriceReport>(DEFAULT_PRICE_REPORT)
+  const [previousPriceReport, setPreviousPriceReport] = useState<PriceReport>(
+    {}
+  )
+  const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>({})
 
   const { getPriceData, onRegisterPriceListener } = useExchange()
   const priceReport = getPriceData(exchange, baseTicker, quoteTicker)
@@ -121,7 +110,7 @@ export const LivePrices = ({
   // Format the price as a string
   let priceStr = price.toFixed(trailingDecimals)
   if (
-    (currentPriceReport === DEFAULT_PRICE_REPORT || scaleBy === 0) &&
+    (!Object.keys(currentPriceReport).length || scaleBy === 0) &&
     baseDefaultDecimals > 0
   ) {
     const leadingDecimals = priceStr.split(".")[0].length

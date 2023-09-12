@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { DepositProvider } from "@/contexts/Deposit/deposit-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { OrderProvider } from "@/contexts/Order/order-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
@@ -208,7 +209,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
             >
               <RenegadeProvider>
                 <ExchangeProvider>
-                  <OrderProvider>{children}</OrderProvider>
+                  <OrderProvider>
+                    <DepositProvider>{children}</DepositProvider>
+                  </OrderProvider>
                 </ExchangeProvider>
               </RenegadeProvider>
             </ConnectKitProvider>
