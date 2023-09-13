@@ -1,8 +1,9 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { ViewEnum } from "@/contexts/Renegade/types"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -41,7 +42,8 @@ export function DepositBody() {
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
   const { setOpen } = useModalConnectKit()
-  const { accountId, taskState, taskType } = useRenegade()
+  const pathname = usePathname()
+  const { accountId, setView, taskState, taskType } = useRenegade()
   console.log("🚀 ~ DepositBody ~ accountId:", accountId)
   const router = useRouter()
 
@@ -78,7 +80,15 @@ export function DepositBody() {
               <Button
                 position="absolute"
                 top="-24px"
-                onClick={() => router.push(`/${baseTicker}/USDC`)}
+                onClick={() => {
+                  const replace = `/${
+                    baseTicker === "USDC" ? "WETH" : baseTicker
+                  }/USDC`
+                  if (pathname !== replace) {
+                    router.replace(replace)
+                  }
+                  setView(ViewEnum.TRADING)
+                }}
                 variant="link"
               >
                 <ChevronLeftIcon />

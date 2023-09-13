@@ -1,13 +1,14 @@
 "use client"
 
 import { createContext, useContext, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
 
 type DepositProviderProps = { children: React.ReactNode }
 
 export interface DepositContextValue {
   baseTicker: string
-  setBaseTicker: (ticker: string) => void
   baseTokenAmount: number
+  setBaseTicker: (ticker: string) => void
   setBaseTokenAmount: (amount: number) => void
 }
 
@@ -16,15 +17,21 @@ const DepositStateContext = createContext<DepositContextValue | undefined>(
 )
 
 function DepositProvider({ children }: DepositProviderProps) {
-  const [baseTicker, setBaseTicker] = useState("WETH")
+  const params = useParams()
+  const router = useRouter()
+  const baseTicker = params.base?.toString()
+  const handleSetBaseToken = (token: string) => {
+    router.push(`/${token}/${quoteTicker}`)
+  }
+  const quoteTicker = params.quote?.toString()
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
 
   return (
     <DepositStateContext.Provider
       value={{
         baseTicker,
-        setBaseTicker: setBaseTicker,
         baseTokenAmount,
+        setBaseTicker: handleSetBaseToken,
         setBaseTokenAmount,
       }}
     >

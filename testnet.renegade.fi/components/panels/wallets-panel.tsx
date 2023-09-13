@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useCallback } from "react"
-import NextLink from "next/link"
+import React from "react"
 import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
+import { TaskType, ViewEnum } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -140,7 +139,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { accountId, setTask } = useRenegade()
+  const { accountId, setTask, setView } = useRenegade()
   return (
     <Flex
       flexDirection="row"
@@ -152,7 +151,6 @@ function DepositWithdrawButtons() {
       cursor="pointer"
     >
       <Flex
-        as={NextLink}
         alignItems="center"
         justifyContent="center"
         flexGrow="1"
@@ -160,7 +158,7 @@ function DepositWithdrawButtons() {
         borderColor="border"
         borderRight="var(--border)"
         cursor="pointer"
-        href="/deposit"
+        onClick={() => setView(ViewEnum.DEPOSIT)}
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />
@@ -197,22 +195,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     onClose: preloadOnClose,
     onOpen: preloadOnOpen,
   } = useDisclosure()
-  const { balances, accountId, setTask } = useRenegade()
+  const { balances, accountId, setTask, setView } = useRenegade()
   const router = useRouter()
 
   let panelBody: React.ReactElement
-
-  const handlePreload = useCallback(async () => {
-    const preloaded = localStorage.getItem(`${address}-preloaded`)
-    if (preloaded || !accountId || Object.keys(balances).length) return
-    if (!preloaded && accountId) {
-      preloadOnOpen()
-      await renegade.task
-        .deposit(accountId, new Token({ ticker: "WETH" }), BigInt(10))
-        .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-        .then(() => localStorage.setItem(`${address}-preloaded`, "true"))
-    }
-  }, [accountId, address, balances, preloadOnOpen, setTask])
 
   if (accountId) {
     const pkSettle =
@@ -235,7 +221,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             </Text>
             <Flex alignItems="center" height="100%">
               <Button
-                onClick={() => router.push(`/deposit`)}
+                onClick={() => setView(ViewEnum.DEPOSIT)}
                 variant="wallet-connect"
               >
                 Deposit

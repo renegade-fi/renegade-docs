@@ -7,7 +7,7 @@ import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { TradingBody } from "@/app/[base]/[quote]/body"
+import { Main } from "@/app/[base]/[quote]/main"
 
 export function generateStaticParams() {
   return DISPLAYED_TICKERS.map(([base, quote]) => {
@@ -66,7 +66,7 @@ export default async function Page({
               position: "relative",
             }}
           >
-            <TradingBody />
+            <Main />
           </div>
         </div>
         <OrdersAndCounterpartiesPanel />

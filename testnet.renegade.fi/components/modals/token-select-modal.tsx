@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Box,
