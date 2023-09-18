@@ -3,7 +3,6 @@
 import React from "react"
 import { RenegadeContext } from "@/contexts/Renegade/renegade-context"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
-import { AccountId } from "@renegade-fi/renegade-js"
 
 import { BannerSeparator } from "./banner-separator"
 import { PulsingConnection } from "./pulsing-connection-indicator"
@@ -195,9 +194,8 @@ export class RelayerStatusBanner extends React.Component<
               <Text>Protocol 0.02%</Text>
               <BannerSeparator flexGrow={3} />
               <Box
-              // onClick={() =>
-              //   value?.refreshAccount(value?.accountId as AccountId)
-              // }
+                cursor="pointer"
+                onClick={() => value?.refreshAccount(value.accountId)}
               >
                 <Text>Refresh</Text>
               </Box>

@@ -1,10 +1,4 @@
-import {
-  Balance,
-  BalanceId,
-  ExchangeHealthState,
-  Renegade,
-  Token,
-} from "@renegade-fi/renegade-js"
+import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
@@ -41,5 +35,6 @@ export function findBalanceByTicker(
     .map(([, balance]) => balance)
     .find((balance) => balance.mint.address === addressToFind)
 
+  // TODO: Return 0 balance instead of undefined
   return foundBalance
 }

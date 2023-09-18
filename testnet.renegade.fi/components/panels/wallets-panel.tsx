@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType, ViewEnum } from "@/contexts/Renegade/types"
 import {
@@ -26,7 +25,6 @@ import {
   callAfterTimeout,
   expandedPanelWidth,
 } from "@/components/panels/panels"
-import { TestnetStepper } from "@/components/steppers/testnet-stepper/testnet-stepper"
 import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
@@ -190,13 +188,7 @@ interface RenegadeWalletPanelProps {
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const {
-    isOpen: preloadIsOpen,
-    onClose: preloadOnClose,
-    onOpen: preloadOnOpen,
-  } = useDisclosure()
-  const { balances, accountId, setTask, setView } = useRenegade()
-  const router = useRouter()
+  const { balances, accountId, setView } = useRenegade()
 
   let panelBody: React.ReactElement
 
@@ -345,7 +337,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         {panelBody}
       </Flex>
       <SignInModal isOpen={isOpen} onClose={onClose} />
-      {preloadIsOpen && <TestnetStepper onClose={preloadOnClose} />}
     </>
   )
 }
