@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState } from "react"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
-import { DefaultStep } from "./steps/default-step"
-import { ExitStep } from "./steps/exit-step"
+import { DefaultStep } from "@/components/steppers/testnet-stepper/steps/default-step"
+import { ExitStep } from "@/components/steppers/testnet-stepper/steps/exit-step"
+import { LoadingStep } from "@/components/steppers/testnet-stepper/steps/loading-step"
 
 const TestnetStepperInner = () => {
   const { step, onClose } = useStepper()
@@ -27,6 +28,12 @@ const TestnetStepperInner = () => {
           >
             {step === Step.DEFAULT && <DefaultStep />}
           </Fade>
+          <Fade
+            transition={{ enter: { duration: 1 } }}
+            in={step === Step.LOADING}
+          >
+            {step === Step.LOADING && <LoadingStep />}
+          </Fade>
           <Fade transition={{ enter: { duration: 1 } }} in={step === Step.EXIT}>
             {step === Step.EXIT && <ExitStep />}
           </Fade>
@@ -36,33 +43,28 @@ const TestnetStepperInner = () => {
   )
 }
 
-export function TestnetStepper({ onClose }: { onClose: () => void }) {
-  return (
-    <StepperProvider onClose={onClose}>
-      <TestnetStepperInner />
-    </StepperProvider>
-  )
-}
-
 export enum Step {
   DEFAULT,
+  LOADING,
   EXIT,
 }
 
-interface StepperContextType {
-  onNext: () => void
+const StepperContext = createContext<{
   onBack: () => void
-  step: Step
-  setStep: (step: Step) => void
   onClose: () => void
-}
-
-const StepperContext = createContext<StepperContextType>({
-  onNext: () => {},
+  onNext: () => void
+  setStep: (step: Step) => void
+  setTicker: React.Dispatch<React.SetStateAction<string>>
+  step: Step
+  ticker: string
+}>({
   onBack: () => {},
-  step: Step.DEFAULT,
-  setStep: () => {},
   onClose: () => {},
+  onNext: () => {},
+  setStep: () => {},
+  setTicker: () => {},
+  step: Step.DEFAULT,
+  ticker: "WETH",
 })
 
 export const useStepper = () => useContext(StepperContext)
@@ -75,6 +77,10 @@ const StepperProvider = ({
   onClose: () => void
 }) => {
   const [step, setStep] = useState(Step.DEFAULT)
+  const [ticker, setTicker] = useState(() => {
+    const random = Math.random()
+    return random > 0.5 ? "USDC" : "WETH"
+  })
 
   const handleNext = () => {
     setStep(step + 1)
@@ -86,9 +92,25 @@ const StepperProvider = ({
 
   return (
     <StepperContext.Provider
-      value={{ onNext: handleNext, onBack: handleBack, step, setStep, onClose }}
+      value={{
+        onBack: handleBack,
+        onClose,
+        onNext: handleNext,
+        setStep,
+        setTicker,
+        step,
+        ticker,
+      }}
     >
       {children}
     </StepperContext.Provider>
+  )
+}
+
+export function TestnetStepper({ onClose }: { onClose: () => void }) {
+  return (
+    <StepperProvider onClose={onClose}>
+      <TestnetStepperInner />
+    </StepperProvider>
   )
 }

@@ -1,4 +1,3 @@
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -10,14 +9,10 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { findBalanceByTicker } from "@/lib/utils"
-
 import { useStepper } from "../testnet-stepper"
 
 export function ExitStep() {
-  const { onClose } = useStepper()
-  const { balances } = useRenegade()
-  const balance = findBalanceByTicker(balances, "WETH")?.amount.toString()
+  const { onClose, ticker } = useStepper()
   return (
     <>
       <ModalCloseButton />
@@ -34,10 +29,10 @@ export function ExitStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Your account has been preloaded with
+            Your account has been funded with
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-            {`${balance} WETH`}
+            {`1000 ${ticker}`}
           </Text>
         </Flex>
       </ModalBody>

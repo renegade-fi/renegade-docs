@@ -36,7 +36,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   // Create balance, order, fee, an account states.
   const [accountId, setAccountId] = React.useState<AccountId>()
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
-  const [fees, setFees] = React.useState<Record<FeeId, Fee>>({})
+  const [fees] = React.useState<Record<FeeId, Fee>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
@@ -48,9 +48,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   const [counterparties, setCounterparties] = React.useState<
     Record<PeerId, Counterparty>
   >({})
-  const [orderBook, setOrderBook] = React.useState<
-    Record<OrderId, CounterpartyOrder>
-  >({})
+  const [orderBook] = React.useState<Record<OrderId, CounterpartyOrder>>({})
   const [view, setView] = React.useState<ViewEnum>(ViewEnum.TRADING)
 
   const taskCallbackId = React.useRef<CallbackId>()
@@ -111,9 +109,14 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     const accountId = renegade.registerAccount(keychain)
     await renegade.task
       .initializeAccount(accountId)
-      .then(([taskId]) => setTask(taskId, TaskType.InitializeAccount))
-    setAccountId(accountId)
-    refreshAccount(accountId)
+      .then(([taskId, taskJob]) => {
+        setTask(taskId, TaskType.InitializeAccount)
+        return taskJob
+      })
+      .then(() => {
+        setAccountId(accountId)
+        refreshAccount(accountId)
+      })
   }
 
   // TODO: Does not include existing peers
@@ -158,6 +161,14 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     }
   }, [])
 
+  React.useEffect(() => {
+    if (taskState === TaskState.Completed) {
+      setTaskId(undefined)
+      setTaskType(undefined)
+      setTaskState(undefined)
+    }
+  }, [taskState])
+
   const refreshAccount = (accountId?: AccountId) => {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
@@ -182,6 +193,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
         fees,
         orderBook,
         orders,
+        refreshAccount,
         setAccount,
         setTask,
         setView,

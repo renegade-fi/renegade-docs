@@ -1,18 +1,15 @@
-import Link from "next/link"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Box,
   Flex,
   Grid,
   GridItem,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
   Text,
-  keyframes,
 } from "@chakra-ui/react"
 
 import { DISPLAYED_TICKERS, TICKER_TO_ADDR } from "@/lib/tokens"
@@ -124,19 +121,4 @@ export function TokenSelectModal({
       </ModalContent>
     </Modal>
   )
-}
-
-function popAnimation(maxScale: number) {
-  return keyframes`
-    0% {
-      transform: scale(0.95);
-      opacity: 0;
-    } 75% {
-      transform: scale(${maxScale});
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  `
 }

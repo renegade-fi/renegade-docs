@@ -38,9 +38,7 @@ function OrderProvider({ children }: OrderProviderProps) {
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
   const { accountId, setTask } = useRenegade()
 
-  const [orderBook, setOrderBook] = useState<
-    Record<OrderId, CounterpartyOrder>
-  >({})
+  const [_, setOrderBook] = useState<Record<OrderId, CounterpartyOrder>>({})
 
   useEffect(() => {
     if (!baseTicker || !quoteTicker) return

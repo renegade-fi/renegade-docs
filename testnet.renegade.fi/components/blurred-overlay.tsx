@@ -16,7 +16,7 @@ export function BlurredOverlay({
   onClose,
   quoteTokenSelectableCoords,
 }: BlurredOverlayProps) {
-  const { setDirection, setBaseToken, setQuoteToken } = useOrder()
+  const { setDirection, setQuoteToken } = useOrder()
   function OrText() {
     return (
       <Text
