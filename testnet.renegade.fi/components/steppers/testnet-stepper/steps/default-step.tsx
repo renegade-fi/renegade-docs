@@ -20,11 +20,12 @@ export function DefaultStep() {
   const { accountId, setTask } = useRenegade()
   const { onNext, setTicker, ticker } = useStepper()
 
+  const amount = ticker === "USDC" ? "1000" : "10"
   const handleDeposit = async () => {
     if (!accountId) return
     onNext()
     renegade.task
-      .deposit(accountId, new Token({ ticker }), BigInt(1000))
+      .deposit(accountId, new Token({ ticker }), BigInt(amount))
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
       .then(() => onNext())
   }
@@ -57,7 +58,7 @@ export function DefaultStep() {
             onClick={() => setTicker((t) => (t === "USDC" ? "WETH" : "USDC"))}
           >
             <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-              {`1000 ${ticker}`}
+              {`${amount} ${ticker}`}
             </Text>
             <Icon as={LuRepeat2} boxSize={6} />
           </HStack>
