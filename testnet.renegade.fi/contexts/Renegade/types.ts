@@ -31,6 +31,11 @@ export type PeerId = string
 export interface RenegadeContextType {
   accountId: AccountId | undefined
   balances: Record<BalanceId, Balance>
+  clientWithSentry: (
+    taskType: TaskType,
+    task: (...args: any[]) => Promise<[TaskId, Promise<void>]>,
+    ...args: any[]
+  ) => Promise<void>
   counterparties: Record<PeerId, Counterparty>
   fees: Record<FeeId, Fee>
   orderBook: Record<OrderId, CounterpartyOrder>

@@ -13,6 +13,7 @@ import {
   OrderId,
   TaskId,
 } from "@renegade-fi/renegade-js"
+import * as Sentry from "@sentry/nextjs"
 
 import { renegade } from "@/app/providers"
 
@@ -107,16 +108,37 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
-    await renegade.task
-      .initializeAccount(accountId)
-      .then(([taskId, taskJob]) => {
-        setTask(taskId, TaskType.InitializeAccount)
-        return taskJob
-      })
-      .then(() => {
-        setAccountId(accountId)
-        refreshAccount(accountId)
-      })
+
+    await clientWithSentry(
+      TaskType.InitializeAccount,
+      renegade.task.initializeAccount,
+      accountId
+    ).then(() => {
+      setAccountId(accountId)
+      refreshAccount(accountId)
+    })
+  }
+
+  async function clientWithSentry(
+    taskType: TaskType,
+    task: (...args: any[]) => Promise<[TaskId, Promise<void>]>,
+    ...args: any[]
+  ) {
+    const result = Sentry.startSpan(
+      {
+        name: `Task: ${taskType.toString()}, Args: ${JSON.stringify(args)}`,
+      },
+      () =>
+        task(...args)
+          .then(([taskId, taskJob]) => {
+            setTask(taskId, taskType)
+            return taskJob
+          })
+          .catch((e) => {
+            throw new Error("Client error: ", e)
+          })
+    )
+    return result
   }
 
   // TODO: Does not include existing peers
@@ -189,6 +211,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
       value={{
         accountId,
         balances,
+        clientWithSentry,
         counterparties,
         fees,
         orderBook,
