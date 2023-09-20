@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   HStack,
-  Icon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,7 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
-import { AiOutlineDisconnect } from "react-icons/ai"
+import { Unplug } from "lucide-react"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
@@ -70,10 +69,11 @@ function DisconnectWalletButton(props: { onClose: () => void }) {
       }}
       variant="transparent"
     >
-      <HStack spacing="0px">
-        <Icon as={AiOutlineDisconnect} marginRight="5px" />
-        <Text>Disconnect L1 address 0x</Text>
-        <Text>{address ? address.slice(2, 6) : "????"}..</Text>
+      <HStack spacing="4px">
+        <Unplug size={18} />
+        <Text>
+          Disconnect L1 address 0x{address ? address.slice(2, 6) : "????"}..
+        </Text>
       </HStack>
     </Button>
   )
