@@ -17,13 +17,14 @@ import { renegade } from "@/app/providers"
 import { useStepper } from "../testnet-stepper"
 
 export function DefaultStep() {
-  const { accountId, setTask } = useRenegade()
+  const { accountId, clientWithSentry, setTask } = useRenegade()
   const { onNext, setTicker, ticker } = useStepper()
 
   const amount = ticker === "USDC" ? "1000" : "10"
   const handleDeposit = async () => {
     if (!accountId) return
     onNext()
+    // TODO: Use Sentry
     renegade.task
       .deposit(accountId, new Token({ ticker }), BigInt(amount))
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))

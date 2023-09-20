@@ -1,6 +1,5 @@
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -11,27 +10,18 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-
-import { renegade } from "@/app/providers"
 
 import { useStepper } from "../deposit-stepper"
 
 export function DefaultStep() {
-  const { baseTicker, baseTokenAmount } = useDeposit()
-  const { setTask, accountId } = useRenegade()
+  const { baseTicker, baseTokenAmount, onDeposit } = useDeposit()
+  const { accountId } = useRenegade()
   const { onNext } = useStepper()
 
   const handleDeposit = async () => {
     if (!accountId) return
     onNext()
-    renegade.task
-      .deposit(
-        accountId,
-        new Token({ ticker: baseTicker }),
-        BigInt(baseTokenAmount)
-      )
-      .then(([taskId]) => setTask(taskId, TaskType.Deposit))
+    onDeposit()
   }
 
   return (

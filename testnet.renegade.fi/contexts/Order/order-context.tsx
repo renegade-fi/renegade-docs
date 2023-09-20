@@ -36,7 +36,7 @@ function OrderProvider({ children }: OrderProviderProps) {
     router.push(`/${baseTicker}/${token}`)
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
-  const { accountId, setTask } = useRenegade()
+  const { accountId, clientWithSentry, setTask } = useRenegade()
 
   const [_, setOrderBook] = useState<Record<OrderId, CounterpartyOrder>>({})
 
@@ -56,7 +56,6 @@ function OrderProvider({ children }: OrderProviderProps) {
     const handleNetworkListener = async () => {
       await renegade
         .registerOrderBookCallback((message: string) => {
-          console.log("[Order Book]", message)
           const orderBookEvent = JSON.parse(message)
           const orderBookEventType = orderBookEvent.type
           const orderBookEventOrder = orderBookEvent.order
@@ -108,10 +107,20 @@ function OrderProvider({ children }: OrderProviderProps) {
       type: "midpoint",
       amount: BigInt(baseTokenAmount),
     })
-    renegade.task
-      .placeOrder(accountId, order)
-      .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
-  }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
+    return clientWithSentry(
+      TaskType.PlaceOrder,
+      renegade.task.placeOrder,
+      accountId,
+      order
+    )
+  }, [
+    accountId,
+    baseTicker,
+    baseTokenAmount,
+    clientWithSentry,
+    direction,
+    quoteTicker,
+  ])
 
   return (
     <OrderStateContext.Provider

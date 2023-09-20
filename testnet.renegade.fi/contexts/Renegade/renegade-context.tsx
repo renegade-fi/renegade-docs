@@ -126,10 +126,20 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
   ) {
     const result = Sentry.startSpan(
       {
-        name: `Task: ${taskType.toString()}, Args: ${JSON.stringify(args)}`,
+        name: `Task: ${taskType.toString()}, Args: ${JSON.stringify(
+          args.map((arg) => {
+            if (!!arg.orderId) return arg.orderId
+          })
+        )}`,
       },
-      () =>
-        task(...args)
+      () => {
+        console.log(
+          "Sentry: ",
+          `Task: ${taskType.toString()}, Args: ${JSON.stringify(
+            args.map((arg) => arg.toString())
+          )}`
+        )
+        return task(...args)
           .then(([taskId, taskJob]) => {
             setTask(taskId, taskType)
             return taskJob
@@ -137,6 +147,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
           .catch((e) => {
             throw new Error("Client error: ", e)
           })
+      }
     )
     return result
   }
@@ -149,7 +160,6 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     const handleNetworkListener = async () => {
       await renegade
         .registerNetworkCallback((message: string) => {
-          console.log("[Network]", message)
           const networkEvent = JSON.parse(message)
           const networkEventType = networkEvent.type
           const networkEventPeer = networkEvent.peer
