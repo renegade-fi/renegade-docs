@@ -4,13 +4,12 @@ import {
   Button,
   Flex,
   HStack,
-  Icon,
   ModalBody,
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
-import { LuRepeat2 } from "react-icons/lu"
+import { Repeat2 } from "lucide-react"
 
 import { renegade } from "@/app/providers"
 
@@ -59,7 +58,7 @@ export function DefaultStep() {
             <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
               {`1000 ${ticker}`}
             </Text>
-            <Icon as={LuRepeat2} boxSize={6} />
+            <Repeat2 size={24} />
           </HStack>
         </Flex>
       </ModalBody>
