@@ -7,5 +7,9 @@ export interface ExchangeContextValue {
     quote: string,
     decimals?: number
   ) => Promise<CallbackId | undefined>
-  getPriceData: (exchange: Exchange, base: string, quote: string) => PriceReport
+  getPriceData: (
+    exchange: Exchange,
+    base: string,
+    quote: string
+  ) => PriceReport | undefined
 }

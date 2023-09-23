@@ -23,18 +23,21 @@ const OrderStepperInner = () => {
       <ModalContent background="surfaces.1" borderRadius="10px">
         <Flex justifyContent="center" flexDirection="column" height="348px">
           <Fade
-            transition={{ enter: { duration: 1 } }}
+            transition={{ enter: { duration: 0.25 } }}
             in={step === Step.DEFAULT}
           >
             {step === Step.DEFAULT && <ConfirmStep />}
           </Fade>
           <Fade
-            transition={{ enter: { duration: 1 } }}
+            transition={{ enter: { duration: 0.25 } }}
             in={step === Step.LOADING}
           >
             {step === Step.LOADING && <LoadingStep />}
           </Fade>
-          <Fade transition={{ enter: { duration: 1 } }} in={step === Step.EXIT}>
+          <Fade
+            transition={{ enter: { duration: 0.25 } }}
+            in={step === Step.EXIT}
+          >
             {step === Step.EXIT && <ExitStep />}
           </Fade>
         </Flex>

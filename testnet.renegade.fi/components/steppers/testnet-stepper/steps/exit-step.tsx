@@ -1,3 +1,5 @@
+import { useOrder } from "@/contexts/Order/order-context"
+import { Direction } from "@/contexts/Order/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -12,6 +14,7 @@ import {
 import { useStepper } from "../testnet-stepper"
 
 export function ExitStep() {
+  const { setDirection } = useOrder()
   const { onClose, ticker } = useStepper()
   return (
     <>
@@ -32,7 +35,7 @@ export function ExitStep() {
             Your account has been funded with
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-            {`1000 ${ticker}`}
+            {`${ticker === "USDC" ? "10000" : "10"} ${ticker}`}
           </Text>
         </Flex>
       </ModalBody>
@@ -55,7 +58,10 @@ export function ExitStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={onClose}
+          onClick={() => {
+            setDirection(ticker === "USDC" ? Direction.BUY : Direction.SELL)
+            onClose()
+          }}
         >
           <HStack spacing="4px">
             <Text>Trade</Text>

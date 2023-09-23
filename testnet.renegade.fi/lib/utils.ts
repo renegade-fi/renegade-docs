@@ -29,12 +29,12 @@ export async function getTokenBannerData(renegade: Renegade) {
 export function findBalanceByTicker(
   balances: Record<BalanceId, Balance>,
   ticker: string
-): Balance | undefined {
+) {
   const addressToFind = new Token({ ticker }).address
-  const foundBalance = Object.entries(balances)
-    .map(([, balance]) => balance)
-    .find((balance) => balance.mint.address === addressToFind)
-
-  // TODO: Return 0 balance instead of undefined
+  const foundBalance =
+    Object.entries(balances)
+      .map(([, balance]) => balance)
+      .find((balance) => balance.mint.address === addressToFind) ??
+    new Balance({ mint: new Token({ ticker }), amount: BigInt(0) })
   return foundBalance
 }

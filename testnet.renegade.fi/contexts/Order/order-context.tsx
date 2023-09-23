@@ -12,6 +12,7 @@ import { useParams, useRouter } from "next/navigation"
 import { CounterpartyOrder, TaskType } from "@/contexts/Renegade/types"
 import { CallbackId, Order, OrderId, Token } from "@renegade-fi/renegade-js"
 
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { useRenegade } from "../Renegade/renegade-context"
@@ -26,7 +27,11 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 function OrderProvider({ children }: OrderProviderProps) {
   const params = useParams()
   const router = useRouter()
-  const [direction, setDirection] = useState<Direction>(Direction.BUY)
+  const [direction, setDirection] = useState<Direction>(
+    safeLocalStorageGetItem("direction") === "buy"
+      ? Direction.BUY
+      : Direction.SELL
+  )
   const baseTicker = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}/${quoteTicker}`)
@@ -113,6 +118,11 @@ function OrderProvider({ children }: OrderProviderProps) {
       .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
   }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
 
+  const handleSetDirection = useCallback((direction: Direction) => {
+    setDirection(direction)
+    safeLocalStorageSetItem("direction", direction)
+  }, [])
+
   return (
     <OrderStateContext.Provider
       value={{
@@ -123,7 +133,7 @@ function OrderProvider({ children }: OrderProviderProps) {
         quoteTicker,
         setBaseToken: handleSetBaseToken,
         setBaseTokenAmount,
-        setDirection,
+        setDirection: handleSetDirection,
         setQuoteToken: handleSetQuoteToken,
       }}
     >

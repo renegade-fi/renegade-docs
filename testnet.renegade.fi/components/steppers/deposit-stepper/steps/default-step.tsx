@@ -24,7 +24,6 @@ export function DefaultStep() {
 
   const handleDeposit = async () => {
     if (!accountId) return
-    onNext()
     renegade.task
       .deposit(
         accountId,
@@ -32,6 +31,7 @@ export function DefaultStep() {
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
+      .then(() => onNext())
   }
 
   return (
