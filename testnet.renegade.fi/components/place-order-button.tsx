@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
+import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
+import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Box, Button, HStack, Text, useDisclosure } from "@chakra-ui/react"
@@ -9,6 +11,7 @@ import { Exchange } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import { useAccount as useAccountWagmi } from "wagmi"
 
+import { findBalanceByTicker } from "@/lib/utils"
 import { LivePrices } from "@/components/banners/live-price"
 import { SignInModal } from "@/components/modals/signin-modal"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
@@ -26,8 +29,21 @@ export function PlaceOrderButton() {
     onClose: onCloseSignIn,
   } = useDisclosure()
   const { setOpen } = useModalConnectKit()
-  const { accountId } = useRenegade()
-  const { baseTicker, quoteTicker, baseTokenAmount } = useOrder()
+  const { accountId, balances } = useRenegade()
+  const { baseTicker, quoteTicker, baseTokenAmount, direction } = useOrder()
+  const { getPriceData } = useExchange()
+
+  const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
+
+  const hasInsufficientBalance =
+    (direction === Direction.SELL &&
+      findBalanceByTicker(balances, baseTicker).amount < baseTokenAmount) ||
+    !!(
+      priceReport?.midpointPrice &&
+      direction === Direction.BUY &&
+      findBalanceByTicker(balances, quoteTicker).amount <
+        priceReport.midpointPrice
+    )
 
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: React.ReactElement
@@ -35,6 +51,10 @@ export function PlaceOrderButton() {
     placeOrderButtonContent = <Text>Connect Wallet to Place Orders</Text>
   } else if (!isSignedIn) {
     placeOrderButtonContent = <Text>Sign in to Place Orders</Text>
+  } else if (!priceReport?.midpointPrice) {
+    placeOrderButtonContent = <Text>No Exchange Data</Text>
+  } else if (hasInsufficientBalance) {
+    placeOrderButtonContent = <Text>Insufficient Balance</Text>
   } else {
     placeOrderButtonContent = (
       <HStack spacing="4px">
@@ -78,7 +98,7 @@ export function PlaceOrderButton() {
         transition="0.15s"
         backgroundColor="transparent"
         onClick={() => {
-          if (!baseTokenAmount) {
+          if (!baseTokenAmount || hasInsufficientBalance) {
             return
           }
           if (!address) {

@@ -109,7 +109,6 @@ export function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   let showPrice: boolean
   let connectionText: string
   let textVariant: string
-  // TODO: update state to reflect cache behavior
   if (healthState === HealthState.enum.Connecting) {
     showPrice = true
     connectionText = "LIVE"

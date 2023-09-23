@@ -112,7 +112,7 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
           exchange: Exchange,
           baseTicker: string,
           quoteTicker: string
-        ): PriceReport => {
+        ): PriceReport | undefined => {
           const key = getKey(exchange, baseTicker, quoteTicker)
           return priceReport[key]
         },

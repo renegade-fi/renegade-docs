@@ -21,7 +21,7 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi"
 
-import { SignInModal } from "@/components/modals/signin-modal"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -167,10 +167,12 @@ function SignInButton() {
   }
 
   return (
-    <Button onClick={onOpen} variant="wallet-connect">
-      {buttonContent}
-      <SignInModal isOpen={isOpen} onClose={onClose} />
-    </Button>
+    <>
+      <Button onClick={onOpen} variant="wallet-connect">
+        {buttonContent}
+      </Button>
+      {isOpen && <CreateStepper onClose={onClose} />}
+    </>
   )
 }
 

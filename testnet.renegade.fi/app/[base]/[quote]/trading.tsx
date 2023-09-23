@@ -5,7 +5,15 @@ import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import { Box, Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
+import {
+  Box,
+  Flex,
+  HStack,
+  Input,
+  Portal,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 
 import { LivePrices } from "@/components/banners/live-price"
@@ -192,9 +200,11 @@ export function TradingBody() {
           buySellSelectableCoords={buySellSelectableCoords.current}
           quoteTokenSelectableCoords={quoteTokenSelectableCoords.current}
         />
-        <Box position="absolute" right="0" bottom="0">
-          {taskState && taskType && <TaskStatus />}
-        </Box>
+        <Portal>
+          <Box position="absolute" zIndex={1500} right="0" bottom="0">
+            {taskState && taskType && <TaskStatus />}
+          </Box>
+        </Portal>
       </Flex>
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}

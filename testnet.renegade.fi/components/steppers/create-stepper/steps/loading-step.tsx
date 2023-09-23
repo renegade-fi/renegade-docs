@@ -2,23 +2,21 @@ import { useEffect } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
-import { useAccount } from "wagmi"
 
-import { safeLocalStorageSetItem } from "@/lib/utils"
-
-import { useStepper } from "../testnet-stepper"
+import { useStepper } from "../create-stepper"
 
 export function LoadingStep() {
   const { onNext } = useStepper()
   const { taskType, taskState } = useRenegade()
-  const { address } = useAccount()
 
   useEffect(() => {
-    if (taskType === TaskType.Deposit && taskState === TaskState.Completed) {
-      safeLocalStorageSetItem(`${address}-preloaded`, "true")
+    if (
+      taskType === TaskType.InitializeAccount &&
+      taskState === TaskState.Completed
+    ) {
       onNext()
     }
-  }, [address, onNext, taskState, taskType])
+  }, [onNext, taskState, taskType])
 
   return (
     <>
@@ -29,6 +27,7 @@ export function LoadingStep() {
           flexDirection="column"
           gap="48px"
           textAlign="center"
+          marginY="12"
         >
           <Text
             color="white.50"
@@ -36,7 +35,7 @@ export function LoadingStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Deposit in progress...
+            Creating your account...
           </Text>
           <Spinner />
         </Flex>

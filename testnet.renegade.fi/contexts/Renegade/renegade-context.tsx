@@ -161,14 +161,6 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     }
   }, [])
 
-  React.useEffect(() => {
-    if (taskState === TaskState.Completed) {
-      setTaskId(undefined)
-      setTaskType(undefined)
-      setTaskState(undefined)
-    }
-  }, [taskState])
-
   const refreshAccount = (accountId?: AccountId) => {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
