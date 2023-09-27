@@ -24,8 +24,6 @@ export function ExitStep() {
   const router = useRouter()
   const balance =
     findBalanceByTicker(balances, baseTicker)?.amount.toString() ?? "0"
-  // TODO: Temp fix because balances are not updated
-  const newBalance = (Number(balance) + Number(baseTokenAmount)).toString()
   return (
     <>
       <ModalCloseButton />
@@ -69,7 +67,7 @@ export function ExitStep() {
               Your new balance is&nbsp;
             </Text>
             <Text fontFamily="Aime" fontSize="1.3em" fontWeight="700">
-              {`${newBalance} ${baseTicker}`}
+              {`${balance} ${baseTicker}`}
             </Text>
           </Flex>
         </Flex>

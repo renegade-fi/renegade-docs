@@ -35,7 +35,7 @@ export function ExitStep() {
             Your account has been funded with
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-            {`${ticker === "USDC" ? "10000" : "10"} ${ticker}`}
+            {`${ticker === "USDC" ? "10,000" : "10"} ${ticker}`}
           </Text>
         </Flex>
       </ModalBody>

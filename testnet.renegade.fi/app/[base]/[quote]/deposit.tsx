@@ -20,7 +20,6 @@ import { useAccount as useAccountWagmi } from "wagmi"
 import { SignInModal } from "@/components/modals/signin-modal"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
-import { TaskStatus } from "@/components/task-status"
 
 export function DepositBody() {
   const { address } = useAccountWagmi()
@@ -43,8 +42,7 @@ export function DepositBody() {
     useDeposit()
   const { setOpen } = useModalConnectKit()
   const pathname = usePathname()
-  const { accountId, setView, taskState, taskType } = useRenegade()
-  console.log("🚀 ~ DepositBody ~ accountId:", accountId)
+  const { accountId, setView } = useRenegade()
   const router = useRouter()
 
   const buttonText = !address
@@ -161,9 +159,6 @@ export function DepositBody() {
         >
           {buttonText}
         </Button>
-        <Box position="absolute" right="0" bottom="0">
-          {taskState && taskType && <TaskStatus />}
-        </Box>
       </Flex>
       {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
       <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
