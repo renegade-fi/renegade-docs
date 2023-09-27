@@ -57,7 +57,7 @@ export function DefaultStep() {
             onClick={() => setTicker((t) => (t === "USDC" ? "WETH" : "USDC"))}
           >
             <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-              {`${amount} ${ticker}`}
+              {`${amount === 10000 ? "10,000" : "10"} ${ticker}`}
             </Text>
             <Repeat2 size={24} />
           </HStack>

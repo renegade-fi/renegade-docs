@@ -185,7 +185,7 @@ export const renegade = new Renegade({
   relayerHttpPort: 3000,
   relayerWsPort: 4000,
   useInsecureTransport:
-    env.NEXT_PUBLIC_NODE_ENV === "development" ? true : false,
+    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
   verbose: false,
 })
 

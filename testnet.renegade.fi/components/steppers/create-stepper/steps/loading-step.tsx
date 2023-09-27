@@ -6,7 +6,7 @@ import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 import { useStepper } from "../create-stepper"
 
 export function LoadingStep() {
-  const { onNext } = useStepper()
+  const { onClose } = useStepper()
   const { taskType, taskState } = useRenegade()
 
   useEffect(() => {
@@ -14,9 +14,9 @@ export function LoadingStep() {
       taskType === TaskType.InitializeAccount &&
       taskState === TaskState.Completed
     ) {
-      onNext()
+      onClose()
     }
-  }, [onNext, taskState, taskType])
+  }, [onClose, taskState, taskType])
 
   return (
     <>

@@ -1551,10 +1551,10 @@
     "@react-hook/event" "^1.2.1"
     "@react-hook/throttle" "^2.2.0"
 
-"@renegade-fi/renegade-js@^0.3.6":
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.3.6.tgz#607687f7d3c6c2c36515669ba895cc190de89c7a"
-  integrity sha512-MWf3myYJiRSQW1qFC/dYYSBOr0j0LJpfimfzj+X5ccK8YOv1iy34tNlVHJT/zkm4U18pAP5EvIBi4ys2AMdQeQ==
+"@renegade-fi/renegade-js@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.3.7.tgz#ad3a06ffaf3d99deb019e282678078bead14c9f5"
+  integrity sha512-BK9gjFOwf47CzZGN2f0wC4SXYWD9nFiPMhWKzb2SGFRSv/EhmCWD2wpwvvVWIi95WQLj7eJ0gX5fTHiodbqM3g==
   dependencies:
     "@noble/ed25519" "https://github.com/renegade-fi/noble-ed25519#prehashed-context"
     "@noble/hashes" "^1.3.0"
