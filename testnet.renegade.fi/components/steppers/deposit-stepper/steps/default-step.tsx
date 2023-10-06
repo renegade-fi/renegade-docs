@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
 
+import { getNetwork } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { useStepper } from "../deposit-stepper"
@@ -27,7 +28,7 @@ export function DefaultStep() {
     renegade.task
       .deposit(
         accountId,
-        new Token({ ticker: baseTicker }),
+        new Token({ ticker: baseTicker, network: getNetwork() }),
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))

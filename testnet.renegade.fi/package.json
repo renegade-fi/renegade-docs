@@ -22,7 +22,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@react-hook/window-size": "3.0.7",
-    "@renegade-fi/renegade-js": "^0.3.7",
+    "@renegade-fi/renegade-js": "^0.3.8",
     "@t3-oss/env-nextjs": "^0.6.0",
     "connectkit": "^1.4.0",
     "framer-motion": "^10.12.22",
