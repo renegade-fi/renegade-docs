@@ -17,7 +17,12 @@ import {
   useBalance as useBalanceWagmi,
 } from "wagmi"
 
-import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
+import {
+  ADDR_TO_TICKER,
+  KATANA_TOKEN_REMAP,
+  TICKER_TO_LOGO_URL_HANDLE,
+} from "@/lib/tokens"
+import { getNetwork } from "@/lib/utils"
 import { LivePrices } from "@/components/banners/live-price"
 import { SignInModal } from "@/components/modals/signin-modal"
 import {
@@ -35,9 +40,13 @@ interface TokenBalanceProps {
 function TokenBalance(props: TokenBalanceProps) {
   const { accountId, setTask } = useRenegade()
   const [logoUrl, setLogoUrl] = React.useState("")
+  const addr =
+    getNetwork() === "katana"
+      ? KATANA_TOKEN_REMAP[props.tokenAddr]
+      : props.tokenAddr
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[props.tokenAddr]])
+      setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[addr]])
     })
   })
   const { data } = useBalanceWagmi({
@@ -80,11 +89,11 @@ function TokenBalance(props: TokenBalanceProps) {
         fontFamily="Favorit"
       >
         <Text fontSize="1.1em" lineHeight="1">
-          {amount.slice(0, 6)} {ADDR_TO_TICKER[props.tokenAddr]}
+          {amount.slice(0, 6)} {ADDR_TO_TICKER[addr]}
         </Text>
         <Box color="white.40" fontSize="0.8em" lineHeight="1">
           <LivePrices
-            baseTicker={ADDR_TO_TICKER[props.tokenAddr]}
+            baseTicker={ADDR_TO_TICKER[addr]}
             quoteTicker={"USDC"}
             exchange={Exchange.Median}
             onlyShowPrice
@@ -169,7 +178,11 @@ function DepositWithdrawButtons() {
         onClick={() => {
           if (accountId) {
             renegade.task
-              .withdraw(accountId, new Token({ ticker: "USDC" }), BigInt(1))
+              .withdraw(
+                accountId,
+                new Token({ ticker: "USDC", network: getNetwork() }),
+                BigInt(1)
+              )
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
           }
         }}

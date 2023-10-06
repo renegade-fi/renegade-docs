@@ -8,7 +8,12 @@ import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { Order } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 
-import { ADDR_TO_TICKER, TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
+import {
+  ADDR_TO_TICKER,
+  KATANA_TOKEN_REMAP,
+  TICKER_TO_LOGO_URL_HANDLE,
+} from "@/lib/tokens"
+import { getNetwork } from "@/lib/utils"
 import {
   Panel,
   callAfterTimeout,
@@ -23,15 +28,20 @@ function SingleOrder(props: SingleOrderProps) {
   const { accountId, setTask } = useRenegade()
   const [baseLogoUrl, setBaseLogoUrl] = React.useState("")
   const [quoteLogoUrl, setQuoteLogoUrl] = React.useState("")
+  const baseAddr =
+    getNetwork() === "katana"
+      ? KATANA_TOKEN_REMAP["0x" + props.order.baseToken.address]
+      : "0x" + props.order.baseToken.address
+
+  const quoteAddr =
+    getNetwork() === "katana"
+      ? KATANA_TOKEN_REMAP["0x" + props.order.quoteToken.address]
+      : "0x" + props.order.quoteToken.address
 
   useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setBaseLogoUrl(
-        tickerToLogoUrl[ADDR_TO_TICKER["0x" + props.order.baseToken.address]]
-      )
-      setQuoteLogoUrl(
-        tickerToLogoUrl[ADDR_TO_TICKER["0x" + props.order.quoteToken.address]]
-      )
+      setBaseLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[baseAddr]])
+      setQuoteLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[quoteAddr]])
     })
   })
 

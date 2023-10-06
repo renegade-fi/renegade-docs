@@ -167,7 +167,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     setOrders(renegade.getOrders(accountId))
   }
 
-  async function setTask(newTaskId: TaskId, taskType: TaskType) {
+  async function setTask(newTaskId?: TaskId, taskType?: TaskType) {
     if (newTaskId === "DONE") {
       return
     }

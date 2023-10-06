@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
 import { ConfirmStep } from "./steps/confirm-step"
@@ -91,6 +92,7 @@ const StepperProvider = ({
 }) => {
   const [step, setStep] = useState(Step.DEFAULT)
   const [midpoint, setMidpoint] = useState(0)
+  const { setTask } = useRenegade()
 
   const handleNext = () => {
     setStep(step + 1)
@@ -100,12 +102,18 @@ const StepperProvider = ({
     setStep(step - 1)
   }
 
+  const handleClose = () => {
+    setTask(undefined, undefined)
+    setStep(Step.DEFAULT)
+    onClose()
+  }
+
   return (
     <StepperContext.Provider
       value={{
         midpoint,
         onBack: handleBack,
-        onClose,
+        onClose: handleClose,
         onNext: handleNext,
         setMidpoint,
         setStep,

@@ -7,7 +7,7 @@ export interface OrderContextValue {
   baseTicker: string
   baseTokenAmount: number
   direction: Direction
-  onPlaceOrder: () => void
+  onPlaceOrder: () => Promise<void>
   quoteTicker: string
   setBaseToken: (token: string) => void
   setBaseTokenAmount: (amount: number) => void

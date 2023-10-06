@@ -108,9 +108,7 @@ export function ExitStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={() => {
-            onClose()
-          }}
+          onClick={onClose}
         >
           Close
         </Button>
