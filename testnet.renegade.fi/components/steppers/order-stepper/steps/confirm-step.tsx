@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -23,7 +21,6 @@ export function ConfirmStep() {
   const { getPriceData } = useExchange()
   const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
     useOrder()
-  const { taskType } = useRenegade()
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
@@ -32,10 +29,6 @@ export function ConfirmStep() {
     if (!priceReport || currentPriceReport?.midpointPrice) return
     setCurrentPriceReport(priceReport)
   }, [currentPriceReport?.midpointPrice, priceReport])
-
-  useEffect(() => {
-    if (taskType === TaskType.PlaceOrder) onNext()
-  }, [onNext, taskType])
 
   return (
     <>
@@ -110,7 +103,7 @@ export function ConfirmStep() {
               throw new Error("No current price report")
             }
             setMidpoint(currentPriceReport.midpointPrice || 0)
-            onPlaceOrder()
+            onPlaceOrder().then(() => onNext())
           }}
         >
           <HStack spacing="4px">

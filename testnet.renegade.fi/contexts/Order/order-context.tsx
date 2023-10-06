@@ -12,7 +12,11 @@ import { useParams, useRouter } from "next/navigation"
 import { CounterpartyOrder, TaskType } from "@/contexts/Renegade/types"
 import { CallbackId, Order, OrderId, Token } from "@renegade-fi/renegade-js"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import {
+  getNetwork,
+  safeLocalStorageGetItem,
+  safeLocalStorageSetItem,
+} from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { useRenegade } from "../Renegade/renegade-context"
@@ -107,8 +111,8 @@ function OrderProvider({ children }: OrderProviderProps) {
     )
       return
     const order = new Order({
-      baseToken: new Token({ ticker: baseTicker }),
-      quoteToken: new Token({ ticker: quoteTicker }),
+      baseToken: new Token({ ticker: baseTicker, network: getNetwork() }),
+      quoteToken: new Token({ ticker: quoteTicker, network: getNetwork() }),
       side: direction,
       type: "midpoint",
       amount: BigInt(baseTokenAmount),

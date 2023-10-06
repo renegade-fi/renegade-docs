@@ -49,12 +49,16 @@ export function DepositBody() {
     ? "Connect Wallet to Deposit"
     : !accountId
     ? "Sign in to Deposit"
+    : baseTokenAmount > 10_000
+    ? "Try a smaller amount"
     : "Preview Deposit"
   const handleClick = () => {
     if (!address) {
       setOpen(true)
     } else if (!accountId) {
       onOpenSignIn()
+    } else if (baseTokenAmount > 10_000) {
+      return
     } else {
       onOpenStepper()
     }
@@ -155,6 +159,7 @@ export function DepositBody() {
           cursor={baseTokenAmount ? "pointer" : "default"}
           transition="0.15s"
           backgroundColor="transparent"
+          disabled={baseTokenAmount > 10_000}
           onClick={handleClick}
         >
           {buttonText}

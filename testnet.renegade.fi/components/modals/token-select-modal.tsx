@@ -12,7 +12,12 @@ import {
   Text,
 } from "@chakra-ui/react"
 
-import { DISPLAYED_TICKERS, TICKER_TO_ADDR } from "@/lib/tokens"
+import {
+  DISPLAYED_TICKERS,
+  KATANA_TICKER_TO_ADDR,
+  TICKER_TO_ADDR,
+} from "@/lib/tokens"
+import { getNetwork } from "@/lib/utils"
 
 interface TokenSelectModalProps {
   isOpen: boolean
@@ -56,7 +61,10 @@ export function TokenSelectModal({
           </Box> */}
           <Flex position="relative" flexDirection="column">
             {DISPLAYED_TICKERS.concat([["USDC", "USDC"]]).map(([ticker]) => {
-              const tickerAddress = TICKER_TO_ADDR[ticker]
+              const tickerAddress =
+                getNetwork() === "katana"
+                  ? KATANA_TICKER_TO_ADDR[ticker]
+                  : TICKER_TO_ADDR[ticker]
               const matchingBalance = Object.values(balances).find(
                 (balance) => `0x${balance.mint.address}` === tickerAddress
               )
