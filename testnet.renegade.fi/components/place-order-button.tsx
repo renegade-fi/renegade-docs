@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
@@ -35,15 +35,24 @@ export function PlaceOrderButton() {
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
 
-  const hasInsufficientBalance =
-    (direction === Direction.SELL &&
-      findBalanceByTicker(balances, baseTicker).amount < baseTokenAmount) ||
-    !!(
-      priceReport?.midpointPrice &&
-      direction === Direction.BUY &&
-      findBalanceByTicker(balances, quoteTicker).amount <
-        priceReport.midpointPrice
-    )
+  const hasInsufficientBalance = useMemo(() => {
+    if (!accountId) return false
+    const baseBalance = findBalanceByTicker(balances, baseTicker)
+    const quoteBalance = findBalanceByTicker(balances, quoteTicker)
+    if (direction === Direction.SELL) {
+      return baseBalance.amount <= baseTokenAmount
+    }
+    if (!priceReport?.midpointPrice) return false
+    return quoteBalance.amount <= priceReport?.midpointPrice
+  }, [
+    accountId,
+    balances,
+    baseTicker,
+    baseTokenAmount,
+    direction,
+    priceReport?.midpointPrice,
+    quoteTicker,
+  ])
 
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: React.ReactElement

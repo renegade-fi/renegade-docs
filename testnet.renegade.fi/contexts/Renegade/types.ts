@@ -37,7 +37,7 @@ export interface RenegadeContextType {
   orders: Record<OrderId, Order>
   refreshAccount: (accountId?: AccountId) => void
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
-  setTask: (newTaskId: TaskId, taskType: TaskType) => Promise<void>
+  setTask: (newTaskId?: TaskId, taskType?: TaskType) => Promise<void>
   setView: (view: ViewEnum) => void
   taskId: TaskId | undefined
   taskState: TaskState | undefined
