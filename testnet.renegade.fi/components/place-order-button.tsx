@@ -40,10 +40,10 @@ export function PlaceOrderButton() {
     const baseBalance = findBalanceByTicker(balances, baseTicker)
     const quoteBalance = findBalanceByTicker(balances, quoteTicker)
     if (direction === Direction.SELL) {
-      return baseBalance.amount <= baseTokenAmount
+      return baseBalance.amount < baseTokenAmount
     }
     if (!priceReport?.midpointPrice) return false
-    return quoteBalance.amount <= priceReport?.midpointPrice
+    return quoteBalance.amount < priceReport?.midpointPrice
   }, [
     accountId,
     balances,
