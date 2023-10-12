@@ -9,6 +9,8 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import { useOrders } from "@/hooks/use-orders"
+
 const TASK_TO_LATENCY = {
   [TaskType.InitializeAccount]: {
     [TaskState.Proving]: 2000,
@@ -78,7 +80,8 @@ const TASK_TO_LATENCY = {
 }
 
 export const TaskStatus = () => {
-  const { orders, taskType, taskState } = useRenegade()
+  const { taskType, taskState } = useRenegade()
+  const orders = useOrders()
   const prevTaskType = useRef<TaskType | undefined>()
   const prevTaskState = useRef<TaskState | undefined>()
   const [taskStartTime, setTaskStartTime] = useState<number | undefined>()

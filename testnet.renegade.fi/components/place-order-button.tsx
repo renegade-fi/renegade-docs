@@ -12,6 +12,7 @@ import { useModal as useModalConnectKit } from "connectkit"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { findBalanceByTicker } from "@/lib/utils"
+import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
 import { SignInModal } from "@/components/modals/signin-modal"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
@@ -29,7 +30,8 @@ export function PlaceOrderButton() {
     onClose: onCloseSignIn,
   } = useDisclosure()
   const { setOpen } = useModalConnectKit()
-  const { accountId, balances } = useRenegade()
+  const { accountId } = useRenegade()
+  const balances = useBalance()
   const { baseTicker, quoteTicker, baseTokenAmount, direction } = useOrder()
   const { getPriceData } = useExchange()
 
@@ -40,10 +42,10 @@ export function PlaceOrderButton() {
     const baseBalance = findBalanceByTicker(balances, baseTicker)
     const quoteBalance = findBalanceByTicker(balances, quoteTicker)
     if (direction === Direction.SELL) {
-      return baseBalance.amount <= baseTokenAmount
+      return baseBalance.amount < baseTokenAmount
     }
     if (!priceReport?.midpointPrice) return false
-    return quoteBalance.amount <= priceReport?.midpointPrice
+    return quoteBalance.amount < priceReport?.midpointPrice
   }, [
     accountId,
     balances,

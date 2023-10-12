@@ -9,7 +9,10 @@ export function LoadingStep() {
   const { onNext } = useStepper()
   const { taskState, taskType } = useRenegade()
   useEffect(() => {
-    if (taskType === TaskType.PlaceOrder && taskState === TaskState.Completed) {
+    if (
+      taskType === TaskType.PlaceOrder &&
+      taskState === TaskState.UpdatingValidityProofs
+    ) {
       onNext()
     }
   }, [onNext, taskState, taskType])

@@ -211,12 +211,17 @@ export const KATANA_TOKEN_REMAP: { [key in string]: string } = {
   "0x8e3feea13add88dce4439bc1d02a662ab4c4cb6dca4639dccba89b4e594680":
     TICKER_TO_ADDR["USDC"],
 }
-
 export const KATANA_TICKER_TO_ADDR: { [key in string]: string } = {
   ...TICKER_TO_ADDR,
 }
 for (const addr in KATANA_TOKEN_REMAP) {
   KATANA_TICKER_TO_ADDR[ADDR_TO_TICKER[KATANA_TOKEN_REMAP[addr]]] = addr
+}
+export const KATANA_ADDRESS_TO_TICKER: { [key in string]: string } = {
+  ...ADDR_TO_TICKER,
+}
+for (const addr in KATANA_TOKEN_REMAP) {
+  KATANA_ADDRESS_TO_TICKER[addr] = ADDR_TO_TICKER[KATANA_TOKEN_REMAP[addr]]
 }
 
 export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL)
