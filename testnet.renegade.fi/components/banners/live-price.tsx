@@ -100,6 +100,8 @@ export const LivePrices = ({
     ? currentPriceReport.midpointPrice
     : priceProp
     ? priceProp
+    : baseTicker === "USDC"
+    ? 1
     : 0
 
   // If the caller supplied a scaleBy prop, scale the price appropriately

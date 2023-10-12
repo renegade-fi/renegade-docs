@@ -35,9 +35,9 @@ const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
 function RenegadeProvider({ children }: RenegadeProviderProps) {
   // Create balance, order, fee, an account states.
   const [accountId, setAccountId] = React.useState<AccountId>()
-  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
+  const [, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [fees] = React.useState<Record<FeeId, Fee>>({})
-  const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
+  const [, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -180,11 +180,9 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     <RenegadeContext.Provider
       value={{
         accountId,
-        balances,
         counterparties,
         fees,
         orderBook,
-        orders,
         refreshAccount,
         setAccount,
         setTask,

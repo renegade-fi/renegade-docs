@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -14,14 +15,17 @@ import {
 } from "@chakra-ui/react"
 
 import { findBalanceByTicker } from "@/lib/utils"
+import { useBalance } from "@/hooks/use-balance"
 
 import { useStepper } from "../deposit-stepper"
 
 export function ExitStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const { onClose } = useStepper()
-  const { balances } = useRenegade()
+  const balances = useBalance()
+  const { setView } = useRenegade()
   const router = useRouter()
+  const { onClose } = useStepper()
+
   const balance =
     findBalanceByTicker(balances, baseTicker)?.amount.toString() ?? "0"
   return (
@@ -92,6 +96,7 @@ export function ExitStep() {
           backgroundColor="transparent"
           onClick={() => {
             router.push(`/${baseTicker}/USDC`)
+            setView(ViewEnum.TRADING)
             onClose()
           }}
         >

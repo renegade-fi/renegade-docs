@@ -17,6 +17,7 @@ import { renegade } from "@/app/providers"
 
 import { ExchangeContextValue } from "./types"
 
+const UPDATE_THRESHOLD_MS = 1000
 type ExchangeProviderProps = { children: React.ReactNode }
 
 const ExchangeContext = createContext<ExchangeContextValue | undefined>(
@@ -28,8 +29,6 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
   const [priceReport, setPriceReport] = useState<{
     [key: string]: PriceReport
   }>({})
-  // Queue is used to prevent multiple successive calls
-  const queue = useRef<Set<string>>(new Set())
 
   const handlePriceListener = useCallback(
     async (
@@ -39,18 +38,12 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
       decimals?: number
     ) => {
       const key = getKey(exchange, base, quote)
-
       if (callbackIdRefs.current[key]) {
         return
       }
-      if (queue.current.has(key)) {
-        return
-      }
-      queue.current.add(key)
 
       let lastUpdate = 0
 
-      const UPDATE_THRESHOLD_MS = 50
       const callbackId = await renegade
         .registerPriceReportCallback(
           (message: string) => {
@@ -89,7 +82,6 @@ function ExchangeProvider({ children }: ExchangeProviderProps) {
         .catch(() => {
           return undefined
         })
-      queue.current.delete(key)
       return callbackId
     },
     []
