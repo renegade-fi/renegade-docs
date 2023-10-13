@@ -106,9 +106,7 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
       return
     }
     // Register and initialize the new account.
-    const accountId = renegade.registerAccount(
-      new Keychain({ seed: "random12345678910111213" })
-    )
+    const accountId = renegade.registerAccount(keychain)
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
