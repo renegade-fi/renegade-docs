@@ -1,25 +1,32 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { Order } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 
 import {
   ADDR_TO_TICKER,
+  KATANA_ADDRESS_TO_TICKER,
   KATANA_TOKEN_REMAP,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { getNetwork } from "@/lib/utils"
+import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-orders"
 import {
   Panel,
   callAfterTimeout,
   expandedPanelWidth,
 } from "@/components/panels/panels"
 import { renegade } from "@/app/providers"
+
+dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
   order: Order
@@ -120,7 +127,8 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const { orders, accountId } = useRenegade()
+  const { accountId } = useRenegade()
+  const orders = useOrders()
   const filteredOrders = Object.values(orders).filter(
     (order) => order.amount > 0
   )
@@ -209,6 +217,140 @@ function OrdersPanel(props: OrdersPanelProps) {
   )
 }
 
+function OrderBookPanel() {
+  const globalOrders = useGlobalOrders()
+  const orders = useOrders()
+  const [isHovering, setIsHovering] = useState(false)
+  console.log("🚀 ~ OrderBookPanel ~ orders:", orders)
+  let panelBody: React.ReactElement
+
+  if (Object.keys(globalOrders).length === 0) {
+    panelBody = (
+      <Text
+        marginTop="120px"
+        padding="0 10% 0 10%"
+        color="white.50"
+        fontSize="0.8em"
+        fontWeight="100"
+        textAlign="center"
+      >
+        No counterparty orders have been received.
+      </Text>
+    )
+  } else {
+    panelBody = (
+      <>
+        {Object.values(globalOrders).map((counterpartyOrder) => {
+          const isActive = Object.keys(orders).includes(counterpartyOrder.id)
+          const ago = orders[counterpartyOrder.id]
+            ? dayjs(orders[counterpartyOrder.id].timestamp).fromNow()
+            : ""
+          const nullifier = counterpartyOrder.id.split("-")[0] // TODO: Incorrect.
+          const title =
+            isHovering && orders[counterpartyOrder.id]
+              ? `${
+                  orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
+                } ${orders[counterpartyOrder.id].amount} ${
+                  KATANA_ADDRESS_TO_TICKER[
+                    "0x" + orders[counterpartyOrder.id].baseToken.address
+                  ]
+                } with ${
+                  KATANA_ADDRESS_TO_TICKER[
+                    "0x" + orders[counterpartyOrder.id].quoteToken.address
+                  ]
+                }`
+              : `ID: ${nullifier.toString()}`
+          const status = isActive
+            ? "ACTIVE"
+            : counterpartyOrder.state.toUpperCase()
+          const textColor = isActive
+            ? "green"
+            : status === "CANCELLED"
+            ? "red"
+            : "white.60"
+          return (
+            <Flex
+              key={counterpartyOrder.id}
+              flexDirection="row"
+              width="100%"
+              padding="4% 8% 4% 8%"
+              borderColor="white.20"
+              borderBottom="var(--border)"
+              userSelect="none"
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
+              <Flex flexDirection="column">
+                <Text color="white.80" fontSize="1.1em">
+                  {title}
+                </Text>
+                <Flex>
+                  <Text
+                    color={textColor}
+                    fontFamily="Favorit Expanded"
+                    fontSize="0.6em"
+                    fontWeight="500"
+                  >
+                    {status}&nbsp;
+                  </Text>
+                  <Text
+                    color="white.60"
+                    fontFamily="Favorit Expanded"
+                    fontSize="0.6em"
+                    fontWeight="500"
+                  >
+                    {isHovering
+                      ? ago
+                      : `on cluster ${
+                          counterpartyOrder.cluster.slice(0, 6) + "..."
+                        }`}
+                  </Text>
+                </Flex>
+              </Flex>
+            </Flex>
+          )
+        })}
+      </>
+    )
+  }
+  return (
+    <>
+      <Flex
+        position="relative"
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        height="var(--banner-height)"
+        borderColor="border"
+        borderTop="var(--border)"
+        borderBottom="var(--border)"
+      >
+        <Text>Order Book</Text>
+      </Flex>
+      <Flex
+        className="scroll scroll-order-book hidden"
+        alignItems="center"
+        flexDirection="column"
+        flexGrow="1"
+        overflow="overlay"
+        width="100%"
+        maxHeight="30vh"
+        onWheel={() => {
+          const query = document.querySelector(".scroll-order-book")
+          if (query) {
+            query.classList.remove("hidden")
+            callAfterTimeout(() => {
+              query.classList.add("hidden")
+            }, 400)()
+          }
+        }}
+      >
+        {panelBody}
+      </Flex>
+    </>
+  )
+}
+
 function CounterpartiesPanel() {
   const { counterparties } = useRenegade()
   return (
@@ -249,7 +391,7 @@ function OrdersAndCounterpartiesPanelExpanded(
         isLocked={props.isLocked}
         toggleIsLocked={props.toggleIsLocked}
       />
-      {/* <OrderBookPanel /> */}
+      <OrderBookPanel />
       <CounterpartiesPanel />
     </Flex>
   )
