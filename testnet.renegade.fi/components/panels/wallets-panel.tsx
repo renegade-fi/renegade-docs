@@ -23,6 +23,7 @@ import {
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { getNetwork } from "@/lib/utils"
+import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
 import { SignInModal } from "@/components/modals/signin-modal"
 import {
@@ -200,8 +201,9 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
+  const balances = useBalance()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { balances, accountId, setView } = useRenegade()
+  const { accountId, setView } = useRenegade()
 
   let panelBody: React.ReactElement
 
