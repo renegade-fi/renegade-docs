@@ -105,7 +105,6 @@ function OrderProvider({ children }: OrderProviderProps) {
 
   const mpcCallbackId = useRef<CallbackId>()
   const toast = useToast()
-
   useEffect(() => {
     if (mpcCallbackId.current) return
     const handleMpcCallback = async () => {
@@ -153,6 +152,11 @@ function OrderProvider({ children }: OrderProviderProps) {
         .then((callbackId) => (mpcCallbackId.current = callbackId))
     }
     handleMpcCallback()
+    return () => {
+      if (!mpcCallbackId.current) return
+      renegade.releaseCallback(mpcCallbackId.current)
+      mpcCallbackId.current = undefined
+    }
   }, [orderBook, toast])
 
   const handlePlaceOrder = useCallback(async () => {
