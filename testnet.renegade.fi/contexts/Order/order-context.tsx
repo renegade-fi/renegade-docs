@@ -10,6 +10,7 @@ import {
 } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { CounterpartyOrder, TaskType } from "@/contexts/Renegade/types"
+import { useToast } from "@chakra-ui/react"
 import { CallbackId, Order, OrderId, Token } from "@renegade-fi/renegade-js"
 
 import {
@@ -47,7 +48,9 @@ function OrderProvider({ children }: OrderProviderProps) {
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
   const { accountId, setTask } = useRenegade()
 
-  const [_, setOrderBook] = useState<Record<OrderId, CounterpartyOrder>>({})
+  const [orderBook, setOrderBook] = useState<
+    Record<OrderId, CounterpartyOrder>
+  >({})
 
   useEffect(() => {
     if (!baseTicker || !quoteTicker) return
@@ -65,7 +68,6 @@ function OrderProvider({ children }: OrderProviderProps) {
     const handleNetworkListener = async () => {
       await renegade
         .registerOrderBookCallback((message: string) => {
-          console.log("[Order Book]", message)
           const orderBookEvent = JSON.parse(message)
           const orderBookEventType = orderBookEvent.type
           const orderBookEventOrder = orderBookEvent.order
@@ -100,6 +102,58 @@ function OrderProvider({ children }: OrderProviderProps) {
       orderCallbackId.current = undefined
     }
   }, [])
+
+  const mpcCallbackId = useRef<CallbackId>()
+  const toast = useToast()
+
+  useEffect(() => {
+    if (mpcCallbackId.current) return
+    const handleMpcCallback = async () => {
+      await renegade
+        .registerMpcCallback((message: string) => {
+          let lastToastTime = 0
+          console.log("[MPC]", message)
+          const mpcEvent = JSON.parse(message)
+          const mpcEventOrderId = mpcEvent.local_order_id
+          if (Date.now() - lastToastTime < 500) {
+            return
+          } else {
+            lastToastTime = Date.now()
+          }
+          const toastId =
+            mpcEvent.type === "HandshakeCompleted"
+              ? "handshake-completed"
+              : "handshake-started"
+          if (!toast.isActive(toastId)) {
+            toast({
+              id: toastId,
+              title: `MPC ${
+                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+              }`,
+              description: `A handshake with a counterparty has ${
+                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+              }.`,
+              status: "info",
+              duration: 5000,
+              isClosable: true,
+            })
+          }
+          if (orderBook[mpcEventOrderId]) {
+            const handshakeState =
+              mpcEvent.type === "HandshakeCompleted"
+                ? "completed"
+                : "in-progress"
+            setOrderBook((orderBook) => {
+              const newOrderBook = { ...orderBook }
+              newOrderBook[mpcEventOrderId].handshakeState = handshakeState
+              return newOrderBook
+            })
+          }
+        })
+        .then((callbackId) => (mpcCallbackId.current = callbackId))
+    }
+    handleMpcCallback()
+  }, [orderBook, toast])
 
   const handlePlaceOrder = useCallback(async () => {
     if (
