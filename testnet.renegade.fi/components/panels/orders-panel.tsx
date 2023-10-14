@@ -5,7 +5,7 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { Order } from "@renegade-fi/renegade-js"
+import { Order, OrderId } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -16,7 +16,7 @@ import {
   KATANA_TOKEN_REMAP,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
-import { getNetwork } from "@/lib/utils"
+import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
 import { useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-orders"
 import {
@@ -220,8 +220,16 @@ function OrdersPanel(props: OrdersPanelProps) {
 function OrderBookPanel() {
   const globalOrders = useGlobalOrders()
   const orders = useOrders()
+  const { accountId } = useRenegade()
   const [isHovering, setIsHovering] = useState(false)
-  console.log("🚀 ~ OrderBookPanel ~ orders:", orders)
+  const [savedOrders, setSavedOrders] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!accountId) return
+    const o = safeLocalStorageGetItem(`orders-${accountId}`)
+    setSavedOrders(o ? o.split(",") : [])
+  }, [accountId, orders])
+
   let panelBody: React.ReactElement
 
   if (Object.keys(globalOrders).length === 0) {
@@ -241,11 +249,9 @@ function OrderBookPanel() {
     panelBody = (
       <>
         {Object.values(globalOrders).map((counterpartyOrder) => {
-          const isActive = Object.keys(orders).includes(counterpartyOrder.id)
           const ago = orders[counterpartyOrder.id]
             ? dayjs(orders[counterpartyOrder.id].timestamp).fromNow()
             : ""
-          const nullifier = counterpartyOrder.id.split("-")[0] // TODO: Incorrect.
           const title =
             isHovering && orders[counterpartyOrder.id]
               ? `${
@@ -259,15 +265,27 @@ function OrderBookPanel() {
                     "0x" + orders[counterpartyOrder.id].quoteToken.address
                   ]
                 }`
-              : `ID: ${nullifier.toString()}`
-          const status = isActive
-            ? "ACTIVE"
-            : counterpartyOrder.state.toUpperCase()
-          const textColor = isActive
-            ? "green"
-            : status === "CANCELLED"
-            ? "red"
-            : "white.60"
+              : `ID: ${counterpartyOrder.id.split("-")[0].toString()}`
+          const secondaryText =
+            isHovering && ago
+              ? ago
+              : `on cluster ${counterpartyOrder.cluster.slice(0, 6) + "..."}`
+
+          const status =
+            counterpartyOrder.id in orders
+              ? "ACTIVE"
+              : counterpartyOrder.state === "Cancelled" &&
+                !(counterpartyOrder.id in orders) &&
+                savedOrders.includes(counterpartyOrder.id) &&
+                counterpartyOrder.id in globalOrders
+              ? "MATCHED"
+              : counterpartyOrder.state.toUpperCase()
+          const textColor =
+            status === "ACTIVE" || status === "MATCHED"
+              ? "green"
+              : status === "CANCELLED"
+              ? "red"
+              : "white.60"
           return (
             <Flex
               key={counterpartyOrder.id}
@@ -299,11 +317,7 @@ function OrderBookPanel() {
                     fontSize="0.6em"
                     fontWeight="500"
                   >
-                    {isHovering
-                      ? ago
-                      : `on cluster ${
-                          counterpartyOrder.cluster.slice(0, 6) + "..."
-                        }`}
+                    {secondaryText}
                   </Text>
                 </Flex>
               </Flex>

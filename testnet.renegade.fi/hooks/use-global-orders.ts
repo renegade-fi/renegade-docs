@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Order, OrderId } from "@renegade-fi/renegade-js"
+import { OrderId } from "@renegade-fi/renegade-js"
 
 import { renegade } from "@/app/providers"
 
@@ -10,7 +10,6 @@ export const useGlobalOrders = () => {
     const interval = setInterval(async () => {
       const fetchedOrders = (await renegade.queryOrders())
         .orders as GlobalOrder[]
-      console.log("🚀 ~ interval ~ fetchedOrders:", fetchedOrders.length)
       setOrders((prev) => {
         const newOrders = { ...prev }
         fetchedOrders.forEach((order) => {
@@ -30,7 +29,7 @@ export const useGlobalOrders = () => {
 
 interface GlobalOrder {
   id: OrderId
-  public_share_nullifier: Array<any> // You may want to specify a more specific type than `any`.
+  public_share_nullifier: Array<any>
   local: boolean
   cluster: string
   state: string
