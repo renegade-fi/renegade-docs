@@ -19,7 +19,7 @@ import {
 
 import {
   ADDR_TO_TICKER,
-  KATANA_TOKEN_REMAP,
+  KATANA_ADDRESS_TO_TICKER,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { getNetwork } from "@/lib/utils"
@@ -41,15 +41,15 @@ interface TokenBalanceProps {
 function TokenBalance(props: TokenBalanceProps) {
   const { accountId, setTask } = useRenegade()
   const [logoUrl, setLogoUrl] = React.useState("")
-  const addr =
+  const ticker =
     getNetwork() === "katana"
-      ? KATANA_TOKEN_REMAP[props.tokenAddr]
-      : props.tokenAddr
+      ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
+      : ADDR_TO_TICKER[props.tokenAddr]
   React.useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[addr]])
+      setLogoUrl(tickerToLogoUrl[ticker])
     })
-  })
+  }, [ticker])
   const { data } = useBalanceWagmi({
     address: props.userAddr as `0x${string}`,
     token: props.tokenAddr as `0x${string}`,
@@ -90,11 +90,11 @@ function TokenBalance(props: TokenBalanceProps) {
         fontFamily="Favorit"
       >
         <Text fontSize="1.1em" lineHeight="1">
-          {amount.slice(0, 6)} {ADDR_TO_TICKER[addr]}
+          {amount.slice(0, 6)} {ticker}
         </Text>
         <Box color="white.40" fontSize="0.8em" lineHeight="1">
           <LivePrices
-            baseTicker={ADDR_TO_TICKER[addr]}
+            baseTicker={ticker}
             quoteTicker={"USDC"}
             exchange={Exchange.Median}
             onlyShowPrice

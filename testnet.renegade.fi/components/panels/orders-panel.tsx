@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -35,22 +35,21 @@ function SingleOrder(props: SingleOrderProps) {
   const { accountId, setTask } = useRenegade()
   const [baseLogoUrl, setBaseLogoUrl] = React.useState("")
   const [quoteLogoUrl, setQuoteLogoUrl] = React.useState("")
-  const baseAddr =
+  const base =
     getNetwork() === "katana"
-      ? KATANA_TOKEN_REMAP["0x" + props.order.baseToken.address]
-      : "0x" + props.order.baseToken.address
+      ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.baseToken.address]
+      : ADDR_TO_TICKER["0x" + props.order.baseToken.address]
 
-  const quoteAddr =
+  const quote =
     getNetwork() === "katana"
-      ? KATANA_TOKEN_REMAP["0x" + props.order.quoteToken.address]
-      : "0x" + props.order.quoteToken.address
-
+      ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.quoteToken.address]
+      : ADDR_TO_TICKER["0x" + props.order.quoteToken.address]
   useEffect(() => {
     TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setBaseLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[baseAddr]])
-      setQuoteLogoUrl(tickerToLogoUrl[ADDR_TO_TICKER[quoteAddr]])
+      setBaseLogoUrl(tickerToLogoUrl[base])
+      setQuoteLogoUrl(tickerToLogoUrl[quote])
     })
-  })
+  }, [base, quote])
 
   const handleCancel = () => {
     if (!accountId) return
