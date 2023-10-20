@@ -14,10 +14,10 @@ import {
 } from "@chakra-ui/react"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
-import { useStepper } from "../order-stepper"
+import { ErrorType, useStepper } from "../order-stepper"
 
 export function ConfirmStep() {
-  const { setMidpoint, onNext } = useStepper()
+  const { setMidpoint, onNext, setError } = useStepper()
   const { getPriceData } = useExchange()
   const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
     useOrder()
@@ -103,7 +103,21 @@ export function ConfirmStep() {
               throw new Error("No current price report")
             }
             setMidpoint(currentPriceReport.midpointPrice || 0)
-            onPlaceOrder().then(() => onNext())
+            onPlaceOrder()
+              .then(() => onNext())
+              .catch((e) => {
+                if (
+                  e.message ===
+                  "RenegadeError: The maximum number of active, unmatched orders has been reached."
+                ) {
+                  setError(ErrorType.ORDERBOOK_FULL)
+                } else if (
+                  e.message ===
+                  "RenegadeError: The relayer returned a non-200 response. wallet update already in progress"
+                ) {
+                  setError(ErrorType.WALLET_LOCKED)
+                }
+              })
           }}
         >
           <HStack spacing="4px">

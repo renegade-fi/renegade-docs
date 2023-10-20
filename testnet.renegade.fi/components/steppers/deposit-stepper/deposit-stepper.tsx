@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+
+import { ErrorStep } from "@/components/steppers/deposit-stepper/steps/error-step"
 
 import { DefaultStep } from "./steps/default-step"
 import { ExitStep } from "./steps/exit-step"
@@ -40,6 +42,12 @@ const DepositStepperInner = () => {
           >
             {step === Step.EXIT && <ExitStep />}
           </Fade>
+          <Fade
+            transition={{ enter: { duration: 0.25 } }}
+            in={step === Step.ERROR}
+          >
+            {step === Step.ERROR && <ErrorStep />}
+          </Fade>
         </Flex>
       </ModalContent>
     </Modal>
@@ -54,26 +62,34 @@ export function DepositStepper({ onClose }: { onClose: () => void }) {
   )
 }
 
+export enum ErrorType {
+  WALLET_LOCKED = "WALLET_LOCKED",
+}
+
 export enum Step {
   DEFAULT,
   LOADING,
   EXIT,
+  ERROR,
 }
 
 interface StepperContextType {
-  onNext: () => void
+  error?: ErrorType
   onBack: () => void
-  step: Step
-  setStep: (step: Step) => void
   onClose: () => void
+  onNext: () => void
+  setError: (error: ErrorType) => void
+  setStep: (step: Step) => void
+  step: Step
 }
 
 const StepperContext = createContext<StepperContextType>({
-  onNext: () => {},
   onBack: () => {},
-  step: Step.DEFAULT,
-  setStep: () => {},
   onClose: () => {},
+  onNext: () => {},
+  setError: () => {},
+  setStep: () => {},
+  step: Step.DEFAULT,
 })
 
 export const useStepper = () => useContext(StepperContext)
@@ -86,6 +102,7 @@ const StepperProvider = ({
   onClose: () => void
 }) => {
   const [step, setStep] = useState(Step.DEFAULT)
+  const [error, setError] = useState<ErrorType>()
 
   const handleNext = () => {
     setStep(step + 1)
@@ -95,9 +112,21 @@ const StepperProvider = ({
     setStep(step - 1)
   }
 
+  useEffect(() => {
+    if (error) setStep(Step.ERROR)
+  }, [error])
+
   return (
     <StepperContext.Provider
-      value={{ onNext: handleNext, onBack: handleBack, step, setStep, onClose }}
+      value={{
+        error,
+        onBack: handleBack,
+        onClose,
+        onNext: handleNext,
+        setError,
+        setStep,
+        step,
+      }}
     >
       {children}
     </StepperContext.Provider>
