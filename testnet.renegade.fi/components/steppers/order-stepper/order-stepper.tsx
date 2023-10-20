@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+
+import { ErrorStep } from "@/components/steppers/order-stepper/steps/error-step"
 
 import { ConfirmStep } from "./steps/confirm-step"
 import { ExitStep } from "./steps/exit-step"
@@ -41,6 +43,12 @@ const OrderStepperInner = () => {
           >
             {step === Step.EXIT && <ExitStep />}
           </Fade>
+          <Fade
+            transition={{ enter: { duration: 0.25 } }}
+            in={step === Step.ERROR}
+          >
+            {step === Step.ERROR && <ErrorStep />}
+          </Fade>
         </Flex>
       </ModalContent>
     </Modal>
@@ -59,13 +67,21 @@ export enum Step {
   DEFAULT,
   LOADING,
   EXIT,
+  ERROR,
+}
+
+export enum ErrorType {
+  ORDERBOOK_FULL = "ORDERBOOK_FULL",
+  WALLET_LOCKED = "WALLET_LOCKED",
 }
 
 interface StepperContextType {
+  error?: ErrorType
   midpoint: number
   onBack: () => void
   onClose: () => void
   onNext: () => void
+  setError: (error: ErrorType) => void
   setMidpoint: (midpoint: number) => void
   setStep: (step: Step) => void
   step: Step
@@ -76,6 +92,7 @@ const StepperContext = createContext<StepperContextType>({
   onBack: () => {},
   onClose: () => {},
   onNext: () => {},
+  setError: () => {},
   setMidpoint: () => {},
   setStep: () => {},
   step: Step.DEFAULT,
@@ -93,6 +110,7 @@ const StepperProvider = ({
   const [step, setStep] = useState(Step.DEFAULT)
   const [midpoint, setMidpoint] = useState(0)
   const { setTask } = useRenegade()
+  const [error, setError] = useState<ErrorType>()
 
   const handleNext = () => {
     setStep(step + 1)
@@ -108,13 +126,19 @@ const StepperProvider = ({
     onClose()
   }
 
+  useEffect(() => {
+    if (error) setStep(Step.ERROR)
+  }, [error])
+
   return (
     <StepperContext.Provider
       value={{
+        error,
         midpoint,
         onBack: handleBack,
         onClose: handleClose,
         onNext: handleNext,
+        setError,
         setMidpoint,
         setStep,
         step,
