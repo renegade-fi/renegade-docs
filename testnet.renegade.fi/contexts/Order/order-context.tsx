@@ -175,9 +175,13 @@ function OrderProvider({ children }: OrderProviderProps) {
       type: "midpoint",
       amount: BigInt(baseTokenAmount),
     })
-    renegade.task
-      .placeOrder(accountId, order)
+    return renegade.task
+      .modifyOrPlaceOrder(accountId, order)
       .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
+      .catch((e) => {
+        console.log("🚀 ~ handlePlaceOrder ~ e:", e.message)
+        throw new Error(e)
+      })
   }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
 
   const handleSetDirection = useCallback((direction: Direction) => {

@@ -16,12 +16,12 @@ import { Token } from "@renegade-fi/renegade-js"
 import { getNetwork } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
-import { useStepper } from "../deposit-stepper"
+import { ErrorType, useStepper } from "../deposit-stepper"
 
 export function DefaultStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
   const { setTask, accountId } = useRenegade()
-  const { onNext } = useStepper()
+  const { onNext, setError } = useStepper()
 
   const handleDeposit = async () => {
     if (!accountId) return
@@ -33,6 +33,14 @@ export function DefaultStep() {
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
       .then(() => onNext())
+      .catch((e) => {
+        if (
+          e.message ===
+          "The relayer returned a non-200 response. wallet update already in progress"
+        ) {
+          setError(ErrorType.WALLET_LOCKED)
+        }
+      })
   }
 
   return (
