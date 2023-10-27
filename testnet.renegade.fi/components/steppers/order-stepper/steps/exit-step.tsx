@@ -81,7 +81,7 @@ export function ExitStep() {
               fontFamily="Favorit"
             >
               <Text color="white.50">
-                {direction === "buy" ? "Paid at most" : "Received at least"}
+                {direction === "buy" ? "Pay at most" : "Receive at least"}
               </Text>
               <Text variant={isHovered ? undefined : "blurred"}>
                 {midpoint.toFixed(2)}&nbsp;USDC

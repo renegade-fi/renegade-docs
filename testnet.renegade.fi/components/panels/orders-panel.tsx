@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -16,7 +16,7 @@ import {
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
-import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-orders"
 import {
   Panel,
@@ -222,6 +222,18 @@ function OrderBookPanel() {
   const [isHovering, setIsHovering] = useState(false)
   const [savedOrders, setSavedOrders] = useState<string[]>([])
 
+  const globalOrdersSorted = useMemo(() => {
+    const res: GlobalOrder[] = []
+    Object.entries(globalOrders).forEach(([orderId, order]) => {
+      if (orderId in globalOrders || savedOrders.includes(orderId)) {
+        res.unshift(order)
+      } else {
+        res.push(order)
+      }
+    })
+    return res
+  }, [globalOrders, savedOrders])
+
   useEffect(() => {
     if (!accountId) return
     const o = safeLocalStorageGetItem(`orders-${accountId}`)
@@ -230,7 +242,7 @@ function OrderBookPanel() {
 
   let panelBody: React.ReactElement
 
-  if (Object.keys(globalOrders).length === 0) {
+  if (globalOrdersSorted.length === 0) {
     panelBody = (
       <Text
         marginTop="120px"
@@ -246,7 +258,7 @@ function OrderBookPanel() {
   } else {
     panelBody = (
       <>
-        {Object.values(globalOrders).map((counterpartyOrder) => {
+        {globalOrdersSorted.map((counterpartyOrder) => {
           const ago = orders[counterpartyOrder.id]
             ? dayjs(orders[counterpartyOrder.id].timestamp).fromNow()
             : ""
@@ -377,7 +389,7 @@ function CounterpartiesPanel() {
       borderBottom="var(--border)"
     >
       <Text>Counterparties:&nbsp;</Text>
-      <Text>{Object.keys(counterparties).length}</Text>
+      <Text>{Object.keys(counterparties).length + 1}</Text>
     </Flex>
   )
 }
