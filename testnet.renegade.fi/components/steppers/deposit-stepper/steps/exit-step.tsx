@@ -95,6 +95,7 @@ export function ExitStep() {
           transition="0.15s"
           backgroundColor="transparent"
           onClick={() => {
+            router.prefetch(`/${baseTicker}/USDC`)
             router.push(`/${baseTicker}/USDC`)
             setView(ViewEnum.TRADING)
             onClose()

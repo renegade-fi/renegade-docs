@@ -27,7 +27,7 @@ export const useGlobalOrders = () => {
   return orders
 }
 
-interface GlobalOrder {
+export interface GlobalOrder {
   id: OrderId
   public_share_nullifier: Array<any>
   local: boolean
