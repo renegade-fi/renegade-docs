@@ -270,7 +270,9 @@ function OrderBookPanel() {
                   KATANA_ADDRESS_TO_TICKER[
                     "0x" + orders[counterpartyOrder.id].baseToken.address
                   ]
-                } with ${
+                } ${
+                  orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
+                } ${
                   KATANA_ADDRESS_TO_TICKER[
                     "0x" + orders[counterpartyOrder.id].quoteToken.address
                   ]

@@ -2,15 +2,10 @@
 
 import React from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType, ViewEnum } from "@/contexts/Renegade/types"
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  LockIcon,
-  UnlockIcon,
-} from "@chakra-ui/icons"
+import { ViewEnum } from "@/contexts/Renegade/types"
+import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Image, Text, useDisclosure } from "@chakra-ui/react"
-import { Balance, Exchange, Token } from "@renegade-fi/renegade-js"
+import { Balance, Exchange } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import {
   useAccount as useAccountWagmi,
@@ -39,7 +34,6 @@ interface TokenBalanceProps {
   amount?: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
-  const { accountId, setTask } = useRenegade()
   const [logoUrl, setLogoUrl] = React.useState("")
   const ticker =
     getNetwork() === "katana"
@@ -102,7 +96,7 @@ function TokenBalance(props: TokenBalanceProps) {
           />
         </Box>
       </Flex>
-      <ArrowDownIcon
+      {/* <ArrowDownIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
@@ -141,13 +135,13 @@ function TokenBalance(props: TokenBalanceProps) {
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
           }
         }}
-      />
+      /> */}
     </Flex>
   )
 }
 
 function DepositWithdrawButtons() {
-  const { accountId, setTask, setView } = useRenegade()
+  const { setView } = useRenegade()
   return (
     <Flex
       flexDirection="row"
@@ -163,15 +157,19 @@ function DepositWithdrawButtons() {
         justifyContent="center"
         flexGrow="1"
         gap="5px"
+        color="white.60"
         borderColor="border"
         borderRight="var(--border)"
+        _hover={{
+          color: "white.90",
+        }}
         cursor="pointer"
         onClick={() => setView(ViewEnum.DEPOSIT)}
       >
         <Text>Deposit</Text>
         <ArrowDownIcon />
       </Flex>
-      <Flex
+      {/* <Flex
         alignItems="center"
         justifyContent="center"
         flexGrow="1"
@@ -190,7 +188,7 @@ function DepositWithdrawButtons() {
       >
         <Text>Withdraw</Text>
         <ArrowUpIcon />
-      </Flex>
+      </Flex> */}
     </Flex>
   )
 }
