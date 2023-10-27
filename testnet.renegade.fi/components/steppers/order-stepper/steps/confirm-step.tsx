@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
@@ -29,6 +29,13 @@ export function ConfirmStep() {
     if (!priceReport || currentPriceReport?.midpointPrice) return
     setCurrentPriceReport(priceReport)
   }, [currentPriceReport?.midpointPrice, priceReport])
+
+  const limit = useMemo(() => {
+    if (!currentPriceReport || !currentPriceReport.midpointPrice) return 0
+    return direction === "buy"
+      ? currentPriceReport.midpointPrice * 1.2
+      : currentPriceReport.midpointPrice * 0.8
+  }, [currentPriceReport, direction])
 
   return (
     <>
@@ -73,9 +80,7 @@ export function ConfirmStep() {
               <Text color="white.50">
                 {direction === "buy" ? "Pay at most" : "Receive at least"}
               </Text>
-              <Text>
-                {currentPriceReport?.midpointPrice?.toFixed(2)}&nbsp;USDC
-              </Text>
+              <Text>{limit.toFixed(2)}&nbsp;USDC</Text>
             </Flex>
           </Flex>
         </Flex>
