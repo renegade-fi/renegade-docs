@@ -10,6 +10,16 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding")
     return config
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "assets-cdn.trustwallet.com",
+        port: "",
+        pathname: "/blockchains/ethereum/assets/**",
+      },
+    ],
+  },
 }
 
 export default analyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig)

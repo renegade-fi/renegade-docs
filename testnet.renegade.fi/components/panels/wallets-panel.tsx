@@ -1,10 +1,11 @@
 "use client"
 
 import React from "react"
+import Image from "next/image"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
-import { Box, Button, Flex, Image, Text, useDisclosure } from "@chakra-ui/react"
+import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
 import { Balance, Exchange } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import {
@@ -18,7 +19,6 @@ import {
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { getNetwork } from "@/lib/utils"
-import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
 import { SignInModal } from "@/components/modals/signin-modal"
 import {
@@ -74,7 +74,7 @@ function TokenBalance(props: TokenBalanceProps) {
       transition="filter 0.1s"
       filter="grayscale(1)"
     >
-      <Image width="25px" height="25px" alt="Logo" src={logoUrl} />
+      <Image width="25" height="25" alt="Logo" src={logoUrl} />
       <Flex
         alignItems="flex-start"
         flexDirection="column"
@@ -157,11 +157,11 @@ function DepositWithdrawButtons() {
         justifyContent="center"
         flexGrow="1"
         gap="5px"
-        color="white.60"
+        color="white.90"
         borderColor="border"
         borderRight="var(--border)"
         _hover={{
-          color: "white.90",
+          color: "white.60",
         }}
         cursor="pointer"
         onClick={() => setView(ViewEnum.DEPOSIT)}
@@ -199,9 +199,8 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
-  const balances = useBalance()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { accountId, setView } = useRenegade()
+  const { accountId, balances, setView } = useRenegade()
 
   let panelBody: React.ReactElement
 

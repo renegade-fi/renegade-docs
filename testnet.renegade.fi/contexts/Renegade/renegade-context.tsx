@@ -14,6 +14,7 @@ import {
   TaskId,
 } from "@renegade-fi/renegade-js"
 
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import {
@@ -35,9 +36,9 @@ const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
 function RenegadeProvider({ children }: RenegadeProviderProps) {
   // Create balance, order, fee, an account states.
   const [accountId, setAccountId] = React.useState<AccountId>()
-  const [, setBalances] = React.useState<Record<BalanceId, Balance>>({})
+  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [fees] = React.useState<Record<FeeId, Fee>>({})
-  const [, setOrders] = React.useState<Record<OrderId, Order>>({})
+  const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -88,6 +89,49 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
       if (!accountCallbackId.current) return
       renegade.releaseCallback(accountCallbackId.current)
       accountCallbackId.current = undefined
+    }
+  }, [accountId])
+
+  React.useEffect(() => {
+    if (!accountId) return
+    const interval = setInterval(async () => {
+      const fetchedBalances = await renegade
+        .queryWallet(accountId)
+        .then(() => renegade.getBalances(accountId))
+      setBalances(fetchedBalances)
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [accountId])
+
+  React.useEffect(() => {
+    if (!accountId) return
+    const interval = setInterval(async () => {
+      const existingOrders = safeLocalStorageGetItem(`orders-${accountId}`)
+      const existingOrdersArray = existingOrders
+        ? existingOrders.split(",")
+        : []
+
+      const fetchedOrders = await renegade
+        .queryWallet(accountId)
+        .then(() => renegade.getOrders(accountId))
+
+      setOrders(fetchedOrders)
+
+      const uniqueNewOrderIds = Object.keys(fetchedOrders).filter(
+        (orderId) => !existingOrdersArray.includes(orderId)
+      )
+
+      existingOrdersArray.push(...uniqueNewOrderIds)
+      const updatedOrders = existingOrdersArray.join(",")
+
+      safeLocalStorageSetItem(`orders-${accountId}`, updatedOrders)
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
     }
   }, [accountId])
 
@@ -180,9 +224,11 @@ function RenegadeProvider({ children }: RenegadeProviderProps) {
     <RenegadeContext.Provider
       value={{
         accountId,
+        balances,
         counterparties,
         fees,
         orderBook,
+        orders,
         refreshAccount,
         setAccount,
         setTask,

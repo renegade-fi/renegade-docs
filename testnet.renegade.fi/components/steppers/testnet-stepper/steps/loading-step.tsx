@@ -4,8 +4,6 @@ import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 import { useAccount } from "wagmi"
 
-import { safeLocalStorageSetItem } from "@/lib/utils"
-
 import { useStepper } from "../testnet-stepper"
 
 export function LoadingStep() {
@@ -15,7 +13,6 @@ export function LoadingStep() {
 
   useEffect(() => {
     if (taskType === TaskType.Deposit && taskState === TaskState.Completed) {
-      safeLocalStorageSetItem(`${address}-preloaded`, "true")
       onNext()
     }
   }, [address, onNext, taskState, taskType])
