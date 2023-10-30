@@ -17,7 +17,6 @@ import {
 } from "@/lib/tokens"
 import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-orders"
 import {
   Panel,
   callAfterTimeout,
@@ -125,8 +124,7 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const { accountId } = useRenegade()
-  const orders = useOrders()
+  const { accountId, orders } = useRenegade()
   const filteredOrders = Object.values(orders).filter(
     (order) => order.amount > 0
   )
@@ -217,22 +215,21 @@ function OrdersPanel(props: OrdersPanelProps) {
 
 function OrderBookPanel() {
   const globalOrders = useGlobalOrders()
-  const orders = useOrders()
-  const { accountId } = useRenegade()
+  const { accountId, orders } = useRenegade()
   const [isHovering, setIsHovering] = useState(false)
   const [savedOrders, setSavedOrders] = useState<string[]>([])
 
   const globalOrdersSorted = useMemo(() => {
     const res: GlobalOrder[] = []
     Object.entries(globalOrders).forEach(([orderId, order]) => {
-      if (orderId in globalOrders || savedOrders.includes(orderId)) {
+      if (orderId in orders || savedOrders.includes(orderId)) {
         res.unshift(order)
       } else {
         res.push(order)
       }
     })
     return res
-  }, [globalOrders, savedOrders])
+  }, [globalOrders, orders, savedOrders])
 
   useEffect(() => {
     if (!accountId) return

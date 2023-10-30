@@ -1,8 +1,11 @@
 import {
   AccountId,
+  Balance,
+  BalanceId,
   Fee,
   FeeId,
   Keychain,
+  Order,
   OrderId,
   TaskId,
 } from "@renegade-fi/renegade-js"
@@ -27,9 +30,11 @@ export type PeerId = string
 
 export interface RenegadeContextType {
   accountId: AccountId | undefined
+  balances: Record<BalanceId, Balance>
   counterparties: Record<PeerId, Counterparty>
   fees: Record<FeeId, Fee>
   orderBook: Record<OrderId, CounterpartyOrder>
+  orders: Record<OrderId, Order>
   refreshAccount: (accountId?: AccountId) => void
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
   setTask: (newTaskId?: TaskId, taskType?: TaskType) => Promise<void>

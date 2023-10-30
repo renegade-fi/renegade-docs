@@ -15,14 +15,12 @@ import {
 } from "@chakra-ui/react"
 
 import { findBalanceByTicker } from "@/lib/utils"
-import { useBalance } from "@/hooks/use-balance"
 
 import { useStepper } from "../deposit-stepper"
 
 export function ExitStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const balances = useBalance()
-  const { setView } = useRenegade()
+  const { balances, setView } = useRenegade()
   const router = useRouter()
   const { onClose } = useStepper()
 

@@ -1,3 +1,4 @@
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Box,
   Flex,
@@ -17,7 +18,6 @@ import {
   TICKER_TO_ADDR,
 } from "@/lib/tokens"
 import { getNetwork } from "@/lib/utils"
-import { useBalance } from "@/hooks/use-balance"
 
 interface TokenSelectModalProps {
   isOpen: boolean
@@ -29,7 +29,7 @@ export function TokenSelectModal({
   onClose,
   setToken,
 }: TokenSelectModalProps) {
-  const balances = useBalance()
+  const { balances } = useRenegade()
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay

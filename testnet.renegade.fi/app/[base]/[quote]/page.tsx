@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
@@ -42,10 +43,18 @@ export default async function Page({
         display: "flex",
         flexDirection: "column",
         flexGrow: "1",
-        backgroundImage: `url(${backgroundPattern.src})`,
-        backgroundSize: "cover",
+        position: "relative",
       }}
     >
+      <Image
+        alt="bg"
+        fill
+        objectFit="cover"
+        objectPosition="center"
+        priority
+        src={backgroundPattern}
+        style={{ zIndex: -1 }}
+      />
       <MedianBanner report={report} />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />

@@ -179,7 +179,7 @@ function OrderProvider({ children }: OrderProviderProps) {
       .modifyOrPlaceOrder(accountId, order)
       .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
       .catch((e) => {
-        console.log("🚀 ~ handlePlaceOrder ~ e:", e.message)
+        console.log("Order Placement Error: ", e)
         throw new Error(e)
       })
   }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
