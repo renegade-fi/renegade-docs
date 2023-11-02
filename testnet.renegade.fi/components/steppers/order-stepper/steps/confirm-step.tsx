@@ -32,10 +32,12 @@ export function ConfirmStep() {
 
   const limit = useMemo(() => {
     if (!currentPriceReport || !currentPriceReport.midpointPrice) return 0
-    return direction === "buy"
-      ? currentPriceReport.midpointPrice * 1.2
-      : currentPriceReport.midpointPrice * 0.8
-  }, [currentPriceReport, direction])
+    const unit =
+      direction === "buy"
+        ? currentPriceReport.midpointPrice * 1.2
+        : currentPriceReport.midpointPrice * 0.8
+    return unit * baseTokenAmount
+  }, [baseTokenAmount, currentPriceReport, direction])
 
   return (
     <>

@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
+import { verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
@@ -25,11 +26,24 @@ export function DefaultStep() {
   const { isLoading, signMessage } = useSignMessageWagmi({
     message: "Unlock your Renegade account.\nTestnet v0",
     async onSuccess(data, variables) {
-      const valid = await client.verifyMessage({
-        address: address ?? `0x`,
-        message: variables.message,
-        signature: data,
-      })
+      // If Cloudflare is down, Smart Contract accounts cannot be verified
+      // EOA accounts can be verified using verifyMessage util
+      const valid = await client
+        .verifyMessage({
+          address: address ?? `0x`,
+          message: variables.message,
+          signature: data,
+        })
+        .then((res) => {
+          if (!res) {
+            return verifyMessage({
+              address: address ?? `0x`,
+              message: variables.message,
+              signature: data,
+            })
+          }
+          return res
+        })
       if (!valid) {
         throw new Error("Invalid signature")
       }

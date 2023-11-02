@@ -49,11 +49,9 @@ export default async function Page({
       <Image
         alt="bg"
         fill
-        objectFit="cover"
-        objectPosition="center"
         priority
         src={backgroundPattern}
-        style={{ zIndex: -1 }}
+        style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
       />
       <MedianBanner report={report} />
       <div style={{ flexGrow: 1, display: "flex" }}>
