@@ -17,6 +17,7 @@ import {
 } from "@/lib/tokens"
 import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
 import {
   Panel,
   callAfterTimeout,
@@ -124,7 +125,8 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const { accountId, orders } = useRenegade()
+  const orders = useOrders()
+  const { accountId } = useRenegade()
   const filteredOrders = Object.values(orders).filter(
     (order) => order.amount > 0
   )
@@ -215,7 +217,8 @@ function OrdersPanel(props: OrdersPanelProps) {
 
 function OrderBookPanel() {
   const globalOrders = useGlobalOrders()
-  const { accountId, orders } = useRenegade()
+  const orders = useOrders()
+  const { accountId } = useRenegade()
   const [isHovering, setIsHovering] = useState(false)
   const [savedOrders, setSavedOrders] = useState<string[]>([])
 

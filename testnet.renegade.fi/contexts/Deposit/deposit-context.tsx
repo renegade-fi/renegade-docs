@@ -1,9 +1,7 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { PropsWithChildren, createContext, useContext, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-
-type DepositProviderProps = { children: React.ReactNode }
 
 export interface DepositContextValue {
   baseTicker: string
@@ -16,7 +14,7 @@ const DepositStateContext = createContext<DepositContextValue | undefined>(
   undefined
 )
 
-function DepositProvider({ children }: DepositProviderProps) {
+function DepositProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
   const baseTicker = params.base?.toString()
