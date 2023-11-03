@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  PropsWithChildren,
   createContext,
   useCallback,
   useContext,
@@ -23,13 +24,11 @@ import { renegade } from "@/app/providers"
 import { useRenegade } from "../Renegade/renegade-context"
 import { Direction, OrderContextValue } from "./types"
 
-type OrderProviderProps = { children: React.ReactNode }
-
 const OrderStateContext = createContext<OrderContextValue | undefined>(
   undefined
 )
 
-function OrderProvider({ children }: OrderProviderProps) {
+function OrderProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
   const [direction, setDirection] = useState<Direction>(

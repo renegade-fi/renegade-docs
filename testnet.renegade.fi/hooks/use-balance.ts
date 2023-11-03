@@ -1,0 +1,24 @@
+import { useEffect, useState } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { Balance, BalanceId } from "@renegade-fi/renegade-js"
+
+import { renegade } from "@/app/providers"
+
+export const useBalance = () => {
+  const [balances, setBalances] = useState<Record<BalanceId, Balance>>({})
+  const { accountId } = useRenegade()
+
+  useEffect(() => {
+    if (!accountId) return
+    const interval = setInterval(async () => {
+      const fetchedBalances = renegade.getBalances(accountId)
+      setBalances(fetchedBalances)
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [accountId])
+
+  return balances
+}

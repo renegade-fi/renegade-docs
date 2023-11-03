@@ -1,18 +1,29 @@
-import React, { createContext, useContext, useState } from "react"
-import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+import React, { createContext, useContext, useEffect, useState } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import {
+  Fade,
+  Flex,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  useDisclosure,
+} from "@chakra-ui/react"
+import { useAccount } from "wagmi"
 
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { useBalance } from "@/hooks/use-balance"
 import { DefaultStep } from "@/components/steppers/testnet-stepper/steps/default-step"
 import { ExitStep } from "@/components/steppers/testnet-stepper/steps/exit-step"
 import { LoadingStep } from "@/components/steppers/testnet-stepper/steps/loading-step"
 
-const TestnetStepperInner = () => {
+const TestnetStepperInner = ({ isOpen }: { isOpen: boolean }) => {
   const { step, onClose } = useStepper()
 
   return (
     <Modal
       closeOnOverlayClick={false}
       isCentered
-      isOpen
+      isOpen={isOpen}
       onClose={onClose}
       size="sm"
     >
@@ -110,10 +121,27 @@ const StepperProvider = ({
   )
 }
 
-export function TestnetStepper({ onClose }: { onClose: () => void }) {
+export function TestnetStepper() {
+  const { address } = useAccount()
+  const balances = useBalance()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { accountId } = useRenegade()
+
+  useEffect(() => {
+    const preloaded = safeLocalStorageGetItem(`preloaded-${address}`)
+    if (address && !preloaded && accountId && !Object.keys(balances).length) {
+      onOpen()
+    }
+  }, [accountId, address, balances, onOpen])
+
   return (
-    <StepperProvider onClose={onClose}>
-      <TestnetStepperInner />
+    <StepperProvider
+      onClose={() => {
+        safeLocalStorageSetItem(`preloaded-${address}`, "true")
+        onClose()
+      }}
+    >
+      <TestnetStepperInner isOpen={isOpen} />
     </StepperProvider>
   )
 }

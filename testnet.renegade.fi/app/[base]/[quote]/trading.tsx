@@ -3,7 +3,6 @@
 import React, { createRef, useEffect, useRef, useState } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -67,7 +66,7 @@ export function TradingBody() {
     setBaseTokenAmount,
   } = useOrder()
   const [activeModal, setActiveModal] = useState<"buy-sell" | "quote-token">()
-  const { taskState, taskType } = useRenegade()
+  // const { taskState, taskType } = useRenegade()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
   const quoteTokenSelectableRef = createRef<HTMLDivElement>()
@@ -202,7 +201,7 @@ export function TradingBody() {
         />
         <Portal>
           <Box position="absolute" zIndex={1500} right="0" bottom="0">
-            {taskState && taskType && <TaskStatus />}
+            <TaskStatus />
           </Box>
         </Portal>
       </Flex>

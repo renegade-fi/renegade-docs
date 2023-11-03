@@ -1,4 +1,5 @@
 import {
+  PropsWithChildren,
   createContext,
   useCallback,
   useContext,
@@ -18,13 +19,12 @@ import { renegade } from "@/app/providers"
 import { ExchangeContextValue } from "./types"
 
 const UPDATE_THRESHOLD_MS = 1000
-type ExchangeProviderProps = { children: React.ReactNode }
 
 const ExchangeContext = createContext<ExchangeContextValue | undefined>(
   undefined
 )
 
-function ExchangeProvider({ children }: ExchangeProviderProps) {
+function ExchangeProvider({ children }: PropsWithChildren) {
   const callbackIdRefs = useRef<{ [key: string]: CallbackId }>({})
   const [priceReport, setPriceReport] = useState<{
     [key: string]: PriceReport
