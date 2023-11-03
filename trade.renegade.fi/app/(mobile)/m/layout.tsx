@@ -7,14 +7,14 @@ import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
 import "@/styles/index.css"
+import { SHORT_DESCRIPTION, TRADE_TITLE } from "../../../../seo"
 
 export const metadata: Metadata = {
   title: {
-    default: "Trade - Renegade Testnet",
-    template: `%s - Renegade Testnet`,
+    default: TRADE_TITLE,
+    template: `%s - ${TRADE_TITLE}`,
   },
-  description:
-    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
+  description: SHORT_DESCRIPTION,
 }
 
 export default async function RootLayout({

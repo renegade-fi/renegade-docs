@@ -14,14 +14,28 @@ import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
 import "@/styles/index.css"
+import {
+  BASE_URL,
+  DESCRIPTION,
+  SHORT_DESCRIPTION,
+  SHORT_NAME,
+  TRADE_TITLE,
+} from "../../../seo"
 
 export const metadata: Metadata = {
   title: {
-    default: "Trade - Renegade Testnet",
-    template: `%s - Renegade Testnet`,
+    default: TRADE_TITLE,
+    template: `%s - ${TRADE_TITLE}`,
   },
-  description:
-    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: TRADE_TITLE,
+    description: SHORT_DESCRIPTION,
+    url: BASE_URL,
+    siteName: SHORT_NAME,
+    locale: "en_US",
+    type: "website",
+  },
 }
 
 const renegade = new Renegade({
