@@ -1,4 +1,3 @@
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Box,
   Flex,

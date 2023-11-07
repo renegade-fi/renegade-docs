@@ -14,7 +14,6 @@ import {
   TaskId,
 } from "@renegade-fi/renegade-js"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import {

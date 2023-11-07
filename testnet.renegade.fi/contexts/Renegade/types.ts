@@ -1,7 +1,5 @@
 import {
   AccountId,
-  Balance,
-  BalanceId,
   Fee,
   FeeId,
   Keychain,

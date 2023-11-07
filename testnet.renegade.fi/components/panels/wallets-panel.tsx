@@ -350,7 +350,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       >
         {panelBody}
       </Flex>
-      {/* <SignInModal isOpen={isOpen} onClose={onClose} /> */}
       {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )
