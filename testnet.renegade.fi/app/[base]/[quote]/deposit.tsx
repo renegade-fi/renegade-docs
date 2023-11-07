@@ -17,8 +17,8 @@ import {
 import { useModal as useModalConnectKit } from "connectkit"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { SignInModal } from "@/components/modals/signin-modal"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 
 export function DepositBody() {
@@ -166,7 +166,7 @@ export function DepositBody() {
         </Button>
       </Flex>
       {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
-      <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
+      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
         onClose={onCloseTokenMenu}

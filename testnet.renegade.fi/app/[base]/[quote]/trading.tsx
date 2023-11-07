@@ -66,7 +66,6 @@ export function TradingBody() {
     setBaseTokenAmount,
   } = useOrder()
   const [activeModal, setActiveModal] = useState<"buy-sell" | "quote-token">()
-  // const { taskState, taskType } = useRenegade()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
   const quoteTokenSelectableRef = createRef<HTMLDivElement>()

@@ -14,7 +14,7 @@ import { useAccount as useAccountWagmi } from "wagmi"
 import { findBalanceByTicker } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
-import { SignInModal } from "@/components/modals/signin-modal"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 
 export function PlaceOrderButton() {
@@ -125,7 +125,7 @@ export function PlaceOrderButton() {
       >
         {placeOrderButtonContent}
       </Button>
-      <SignInModal isOpen={signInIsOpen} onClose={onCloseSignIn} />
+      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
       {placeOrderIsOpen && <OrderStepper onClose={onClosePlaceOrder} />}
     </>
   )

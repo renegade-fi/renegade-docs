@@ -21,12 +21,12 @@ import {
 import { getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
-import { SignInModal } from "@/components/modals/signin-modal"
 import {
   Panel,
   callAfterTimeout,
   expandedPanelWidth,
 } from "@/components/panels/panels"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
@@ -350,7 +350,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       >
         {panelBody}
       </Flex>
-      <SignInModal isOpen={isOpen} onClose={onClose} />
+      {/* <SignInModal isOpen={isOpen} onClose={onClose} /> */}
+      {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )
 }
