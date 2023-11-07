@@ -36,5 +36,5 @@ For public-key cryptography (used to encrypt matching outputs and to encrypt
 plaintext wallets to store them on-chain), we use
 [ElGamal](https://wwwmayr.in.tum.de/konferenzen/Jass05/courses/1/papers/meier_paper.pdf),
 usually combined with Poseidon hashes to turn asymmetric schemes into faster
-symmetric ones. ElGamal also has the benefit of being *key-private*, so that
+symmetric ones. ElGamal also has the benefit of being _key-private_, so that
 third-party observers cannot determine the destination address of any tokens.

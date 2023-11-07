@@ -12,7 +12,7 @@ import SuperRelayerDark from '@site/static/img/super_relayer_dark.svg'
 ## Key Hierarchy
 
 All trades within Renegade originate from two relayers running a MPC with each
-other, so every trader must *delegate* their wallet to some relayer to match on
+other, so every trader must _delegate_ their wallet to some relayer to match on
 their behalf. Note that there is a semi-trusted relationship between the user
 and their relayer(s); since relayers have the ability to match and settle
 outstanding orders in a wallet, they must be able to view the wallet in order
@@ -35,6 +35,7 @@ derive the settle secret key; but if someone only knows the view secret key,
 they cannot derive any of the other secret keys.
 
 More specifically, each keypair has the following authority:
+
 - The **root keypair** has full authority of a user's wallet; knowing the root
   secret key lets you arbitrarily deposit, withdraw, update, and cancel orders.
 - The **match keypair** can match outstanding orders in the wallet by
@@ -49,7 +50,7 @@ each key has, see the [Whitepaper](/getting-started/whitepaper).
 
 ## Keypair Delegation
 
-*Delegating* a wallet to a relayer means revealing one of the secret
+_Delegating_ a wallet to a relayer means revealing one of the secret
 keys in the key hierarchy to the relayer. There are two different options for
 delegation trust relationships:
 

@@ -87,7 +87,7 @@ Privacy](/core-concepts/privacy) to see how we this MPC-ZKP architecture
 guarantees maximal privacy while trading.
 
 For more advanced concepts, including the ideas of Indications of Interest and
-Super Relayers, see the [Advanced Concepts](/advanced-concepts/ioi).  And
+Super Relayers, see the [Advanced Concepts](/advanced-concepts/ioi). And
 finally, for the most precise description of the protocol, see the detailed
 [Whitepaper](/getting-started/whitepaper).
 
@@ -99,6 +99,7 @@ over time: [Sign up here](https://renegadefi.typeform.com/access) for priority
 access.
 
 Otherwise, feel free to contact us with any questions or feedback:
+
 - [@renegade_fi](https://twitter.com/renegade_fi) on Twitter.
 - [chris@renegade.fi](mailto:chris@renegade.fi) via email.
 - [Discord](https://discord.gg/renegade-fi) for quick questions.

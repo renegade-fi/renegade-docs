@@ -35,7 +35,7 @@ parties.
   widthMobile="90%"
 />
 
-Note that the important property here is that the trusted evaluator *only*
+Note that the important property here is that the trusted evaluator _only_
 sends the output to each party, and is trusted to forget all the private
 inputs. This allows for computation of a function without needing to reveal the
 inputs to everyone.
@@ -46,7 +46,7 @@ who has the larger input (this is [Yao's Millionaire's
 Problem](https://en.wikipedia.org/wiki/Yao%27s_Millionaires%27_problem)).
 
 The core idea of a MPC protocol is that it lets you implement the above
-functionality *without needing to trust a central party*. That is, MPC allows
+functionality _without needing to trust a central party_. That is, MPC allows
 for multiple mutually-distrusting parties to compute a function output on
 secret input data.
 
@@ -88,7 +88,7 @@ on the pairs of order books.
   width="100%"
 />
 
-Importantly, note that by using MPC, two traders can *anonymously match* their
+Importantly, note that by using MPC, two traders can _anonymously match_ their
 orders. Traders never need to reveal orders in-the-clear, and if there is no
 match between two traders' order books, then no information is leaked (other
 than the fact that there was no valid counter-order). It's full dark pool

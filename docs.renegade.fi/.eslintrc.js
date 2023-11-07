@@ -4,17 +4,13 @@ module.exports = {
     node: true,
     es2021: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:md/recommended",
-    "prettier",
-  ],
+  extends: ["eslint:recommended", "plugin:md/recommended", "prettier"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 12,
-    sourceType: "module"
+    sourceType: "module",
   },
-  plugins: [ "@typescript-eslint", "prettier" ],
+  plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "no-use-before-define": "off",
     "list-item-spacing": "off",
@@ -26,7 +22,7 @@ module.exports = {
       rules: {
         "md/remark:list-item-spacing": "off",
         "list-item-spacing": "off",
-      }
-    }
-  ]
+      },
+    },
+  ],
 }

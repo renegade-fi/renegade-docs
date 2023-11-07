@@ -16,17 +16,18 @@ import ValidMatchMpcDark from '@site/static/img/valid_match_mpc_dark.png'
 # The MPC-ZKP Architecture
 
 The core difference between Renegade and all other exchanges (both centralized
-and decentralized) is that *state is kept locally*. Instead of balances and
+and decentralized) is that _state is kept locally_. Instead of balances and
 orders being maintained by a centralized server (e.g. Binance) or on many
 thousands of distributed servers (e.g. Uniswap), all Renegade state is
 maintained by individual traders.
 
 Some terminology:
+
 - A **wallet** is a list of orders and balances for a trader. Each trader's
   wallet is kept private to each trader, and only wallet hashes (technically,
   "hiding and binding commitments") are posted on-chain.
 - A **relayer** is a node in the Renegade network. Each individual relayer
-  *manages* one or more wallets (meaning they can view the unencrypted wallet)
+  _manages_ one or more wallets (meaning they can view the unencrypted wallet)
   and are responsible for performing MPC computations with other relayers.
 - A **cluster** (also called a "relay cluster") is a logical group of relayers
   that all manage the same wallets. Clusters are fault-tolerant replicated
@@ -43,6 +44,7 @@ the underlying wallet data.
 When a trader wants to perform an operation on their wallet (depositing tokens,
 settling a match, etc.), they must know their old and new wallets and send
 three pieces of information to the smart contract:
+
 - The commitment to the new wallet.
 - Two "nullifiers" of their old wallet, which serve to prevent double-spends of
   the old wallet.
@@ -90,12 +92,12 @@ nodes, but is a relay cluster just like the rest (i.e., it has no special
 permissions).
 
 When a new order is entered into a wallet managed by one of the clusters, the
-cluster will propagate a *handshake tuple*, which is a tuple of commitments to
+cluster will propagate a _handshake tuple_, which is a tuple of commitments to
 the order data, alongside a zero-knowledge proof that the order is valid. All
 other relayers monitor for new handshake tuples, and if a new tuple has been
 detected, will contact the origination cluster and proceed with an MPC.
 
-The MPC computes *matching engine execution*. That is, given the two orders
+The MPC computes _matching engine execution_. That is, given the two orders
 (each held privately by different relayers), the two parties will compute a MPC
 that implements matching engine execution on those two orders. This allows for
 full anonymity, as no information whatsoever is leaked about the order in
