@@ -19,34 +19,38 @@ const sidebars = {
   // But you can create a sidebar manually
   tutorialSidebar: [
     {
-      type: 'category',
-      label: 'Getting Started',
-      collapsed: false,
-      items: ['getting-started/intro', 'getting-started/whitepaper', 'getting-started/faq']
-    },
-    {
-      type: 'category',
-      label: 'Core Concepts',
+      type: "category",
+      label: "Getting Started",
       collapsed: false,
       items: [
-        'core-concepts/dark-pool-explainer',
-        'core-concepts/mpc-explainer',
-        'core-concepts/mpc-zkp',
-        'core-concepts/privacy',
-        'core-concepts/fees-and-governance'
-      ]
+        "getting-started/intro",
+        "getting-started/whitepaper",
+        "getting-started/faq",
+      ],
     },
     {
-      type: 'category',
-      label: 'Advanced Concepts',
+      type: "category",
+      label: "Core Concepts",
       collapsed: false,
       items: [
-        'advanced-concepts/ioi',
-        'advanced-concepts/super-relayers',
-        'advanced-concepts/crypto-stack'
-      ]
-    }
-  ]
+        "core-concepts/dark-pool-explainer",
+        "core-concepts/mpc-explainer",
+        "core-concepts/mpc-zkp",
+        "core-concepts/privacy",
+        "core-concepts/fees-and-governance",
+      ],
+    },
+    {
+      type: "category",
+      label: "Advanced Concepts",
+      collapsed: false,
+      items: [
+        "advanced-concepts/ioi",
+        "advanced-concepts/super-relayers",
+        "advanced-concepts/crypto-stack",
+      ],
+    },
+  ],
 }
 
 module.exports = sidebars

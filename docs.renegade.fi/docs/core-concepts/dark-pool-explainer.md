@@ -23,7 +23,7 @@ matched with other traders.
 
 However, there is one core difference between lit and dark trading: **In a dark
 pool, the order book is not publicly visible**, meaning that individual traders
-*only* know their own orders (and matches on those orders).  Traders in a dark
+_only_ know their own orders (and matches on those orders). Traders in a dark
 pool can never see the outstanding orders of others.
 
 <Figure
@@ -96,7 +96,7 @@ zero-knowledge proofs (ZKP) to settle matched orders, Renegade maintains
 end-to-end privacy, both before an order is filled and after it is settled
 on-chain.
 
-To understand how we use the idea of *local private state* combined with the
+To understand how we use the idea of _local private state_ combined with the
 building blocks of MPC and ZKPs to guarantee complete privacy, see [What is
 MPC](/core-concepts/mpc-explainer) and [The MPC-ZKP
 Architecture](/core-concepts/mpc-zkp), and to see precisely is meant by

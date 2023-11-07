@@ -1,31 +1,31 @@
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import { useColorMode } from "@docusaurus/theme-common";
-import PropTypes from "prop-types";
-import React from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly"
+import { useColorMode } from "@docusaurus/theme-common"
+import PropTypes from "prop-types"
+import React from "react"
 
 const ImageSwitcher = ({ LightImage, DarkImage, isSvg, linkTo }) => {
-  const { colorMode } = useColorMode();
-  let image;
+  const { colorMode } = useColorMode()
+  let image
   if (isSvg) {
     image =
       colorMode === "dark" ? (
         <DarkImage width="100%" height="100%" />
       ) : (
         <LightImage width="100%" height="100%" />
-      );
+      )
   } else {
-    image = <img src={colorMode === "dark" ? DarkImage : LightImage} />;
+    image = <img src={colorMode === "dark" ? DarkImage : LightImage} />
   }
   if (linkTo) {
     return (
       <a href={linkTo} target="_blank" rel="noopener noreferrer">
         {image}
       </a>
-    );
+    )
   } else {
-    return image;
+    return image
   }
-};
+}
 
 const Figure = ({
   LightImage,
@@ -44,9 +44,9 @@ const Figure = ({
   return (
     <BrowserOnly>
       {() => {
-        const isMobile = window.matchMedia("(max-width: 800px)").matches;
+        const isMobile = window.matchMedia("(max-width: 800px)").matches
         if (isMobile && suppressOnMobile) {
-          return null;
+          return null
         }
         return (
           <div>
@@ -81,18 +81,18 @@ const Figure = ({
             </div>
             <div style={{ height: paddingBottom || "20px" }} />
           </div>
-        );
+        )
       }}
     </BrowserOnly>
-  );
-};
+  )
+}
 
 ImageSwitcher.propTypes = {
   LightImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   DarkImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
   isSvg: PropTypes.bool,
   linkTo: PropTypes.string,
-};
+}
 
 Figure.propTypes = {
   LightImage: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
@@ -107,6 +107,6 @@ Figure.propTypes = {
   paddingTop: PropTypes.string,
   paddingBottom: PropTypes.string,
   suppressOnMobile: PropTypes.bool,
-};
+}
 
-export default Figure;
+export default Figure

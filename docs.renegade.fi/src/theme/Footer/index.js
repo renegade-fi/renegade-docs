@@ -1,12 +1,12 @@
-import { useColorMode } from "@docusaurus/theme-common";
-import LogoDark from "@site/static/img/logo_dark.svg";
-import LogoLight from "@site/static/img/logo_light.svg";
-import React from "react";
+import { useColorMode } from "@docusaurus/theme-common"
+import LogoDark from "@site/static/img/logo_dark.svg"
+import LogoLight from "@site/static/img/logo_light.svg"
+import React from "react"
 
-import styles from "./styles.module.css";
+import styles from "./styles.module.css"
 
 function Footer() {
-  const { colorMode } = useColorMode();
+  const { colorMode } = useColorMode()
   return (
     <div className={styles.footer}>
       <div className={styles.footerTextWrapper}>
@@ -47,6 +47,6 @@ function Footer() {
         )}
       </div>
     </div>
-  );
+  )
 }
-export default React.memo(Footer);
+export default React.memo(Footer)
