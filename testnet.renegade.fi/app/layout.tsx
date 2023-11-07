@@ -17,10 +17,20 @@ import "./index.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Renegade Testnet",
+    default: "Trade - Renegade",
     template: `%s - Renegade Testnet`,
   },
-  description: "An on-chain dark pool.",
+  description:
+    "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage trades via anonymous crosses at midpoint prices.",
+  openGraph: {
+    title: "Trade - Renegade",
+    description:
+      "On-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
+    url: "https://renegade.fi",
+    siteName: "Renegade",
+    locale: "en_US",
+    type: "website",
+  },
 }
 
 const renegade = new Renegade({
