@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+import {
+  Fade,
+  Flex,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+} from "@chakra-ui/react"
 
 import { ErrorStep } from "@/components/steppers/deposit-stepper/steps/error-step"
 
@@ -11,18 +18,13 @@ const DepositStepperInner = () => {
   const { step, onClose } = useStepper()
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen
-      onClose={onClose}
-      size="sm"
-    >
+    <Modal isCentered isOpen onClose={onClose} size="sm">
       <ModalOverlay
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
       />
       <ModalContent background="surfaces.1" borderRadius="10px" paddingY="6">
+        <ModalCloseButton />
         <Flex justifyContent="center" flexDirection="column" height="288px">
           <Fade
             transition={{ enter: { duration: 0.25 } }}
