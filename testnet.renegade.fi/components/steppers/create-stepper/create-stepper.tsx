@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from "react"
 import {
   Fade,
   Modal,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
@@ -14,13 +15,7 @@ const CreateStepperInner = () => {
   const { step, onClose } = useStepper()
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen
-      onClose={onClose}
-      size="sm"
-    >
+    <Modal isCentered isOpen onClose={onClose} size="sm">
       <ModalOverlay
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
@@ -29,6 +24,7 @@ const CreateStepperInner = () => {
         {step === Step.DEFAULT && (
           <ModalHeader paddingBottom="0">Unlock your Wallet</ModalHeader>
         )}
+        <ModalCloseButton />
         <Fade
           transition={{ enter: { duration: 0.25 } }}
           in={step === Step.DEFAULT}

@@ -69,17 +69,9 @@ export function PlaceOrderButton() {
   } else {
     placeOrderButtonContent = (
       <HStack spacing="4px">
-        <Text>Place Order for</Text>
-        <Box fontFamily="Favorit Mono">
-          <LivePrices
-            baseTicker={baseTicker}
-            quoteTicker={quoteTicker}
-            exchange={Exchange.Median}
-            onlyShowPrice
-            withCommas
-            scaleBy={baseTokenAmount}
-          />
-        </Box>
+        <Text>
+          Place Order for {baseTokenAmount} {baseTicker}
+        </Text>
         <ArrowForwardIcon />
       </HStack>
     )

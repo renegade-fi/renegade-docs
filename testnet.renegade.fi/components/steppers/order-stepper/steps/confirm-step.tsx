@@ -17,7 +17,7 @@ import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 import { ErrorType, useStepper } from "../order-stepper"
 
 export function ConfirmStep() {
-  const { setMidpoint, onNext, setError } = useStepper()
+  const { onClose, setMidpoint, setError } = useStepper()
   const { getPriceData } = useExchange()
   const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
     useOrder()
@@ -111,7 +111,7 @@ export function ConfirmStep() {
             }
             setMidpoint(currentPriceReport.midpointPrice || 0)
             onPlaceOrder()
-              .then(() => onNext())
+              .then(() => onClose())
               .catch((e) => {
                 if (
                   e.message ===

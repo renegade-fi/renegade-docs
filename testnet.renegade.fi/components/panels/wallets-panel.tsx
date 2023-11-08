@@ -1,12 +1,13 @@
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
-import { Balance, Exchange } from "@renegade-fi/renegade-js"
+import { Exchange, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import {
   useAccount as useAccountWagmi,
@@ -15,10 +16,11 @@ import {
 
 import {
   ADDR_TO_TICKER,
+  DISPLAYED_TICKERS,
   KATANA_ADDRESS_TO_TICKER,
   TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
-import { getNetwork } from "@/lib/utils"
+import { findBalanceByTicker, getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
 import {
@@ -35,6 +37,8 @@ interface TokenBalanceProps {
   amount?: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
+  const { setView } = useRenegade()
+  const router = useRouter()
   const [logoUrl, setLogoUrl] = React.useState("")
   const ticker =
     getNetwork() === "katana"
@@ -97,27 +101,16 @@ function TokenBalance(props: TokenBalanceProps) {
           />
         </Box>
       </Flex>
-      {/* <ArrowDownIcon
+      <ArrowDownIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
-        borderRadius="100px"
         cursor="pointer"
-        _hover={{
-          background: "white.10",
-        }}
         onClick={() => {
-          if (accountId) {
-            renegade.task
-              .deposit(
-                accountId,
-                new Token({ address: props.tokenAddr }),
-                BigInt(1)
-              )
-              .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-          }
+          router.replace(`/${ticker}/USDC`)
+          setView(ViewEnum.DEPOSIT)
         }}
       />
-      <ArrowUpIcon
+      {/* <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
@@ -158,11 +151,11 @@ function DepositWithdrawButtons() {
         justifyContent="center"
         flexGrow="1"
         gap="5px"
-        color="white.90"
+        color="white.60"
         borderColor="border"
         borderRight="var(--border)"
         _hover={{
-          color: "white.60",
+          color: "white.90",
         }}
         cursor="pointer"
         onClick={() => setView(ViewEnum.DEPOSIT)}
@@ -202,101 +195,113 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const balances = useBalance()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const { accountId, setView } = useRenegade()
+  const { accountId } = useRenegade()
 
-  let panelBody: React.ReactElement
+  const placeholderBalances = useMemo(() => {
+    const result: [string, bigint][] = []
+    for (const [base] of DISPLAYED_TICKERS) {
+      const bal = findBalanceByTicker(balances, base)
+      const address = new Token({ ticker: base, network: getNetwork() }).address
+      result.push([address, bal.amount])
+    }
+    result.sort((a, b) => {
+      if (a[1] === BigInt(0) && b[1] !== BigInt(0)) {
+        return 1
+      } else if (a[1] !== BigInt(0) && b[1] === BigInt(0)) {
+        return -1
+      } else {
+        return 0
+      }
+    })
+    return result
+  }, [balances])
 
-  if (accountId) {
+  const pkSettleHex = useMemo(() => {
+    if (!accountId) return ""
     const pkSettle =
       renegade.getKeychain(accountId).keyHierarchy.settle.publicKey
     // Serialize pkSettle from Uint8Array to hex string
-    const pkSettleHex = Buffer.from(pkSettle).toString("hex")
-    panelBody = (
-      <>
-        {Object.keys(balances).length === 0 && (
-          <>
-            <Text
-              marginTop="20px"
-              padding="0 10% 0 10%"
-              color="white.50"
-              fontSize="0.8em"
-              fontWeight="100"
-              textAlign="center"
-            >
-              Deposit tokens into your Renegade account to get started.
-            </Text>
-            <Flex alignItems="center" height="100%">
-              <Button
-                onClick={() => setView(ViewEnum.DEPOSIT)}
-                variant="wallet-connect"
-              >
-                Deposit
-              </Button>
-            </Flex>
-          </>
-        )}
-        {Object.values(balances).map((balance: Balance) =>
-          balance.amount ? (
-            <Box key={balance.mint.address} width="100%">
-              <TokenBalance
-                tokenAddr={"0x" + balance.mint.address}
-                amount={balance.amount}
-              />
-            </Box>
-          ) : null
-        )}
-        <Text
-          marginTop="auto"
-          padding="10%"
-          color="white.40"
-          fontSize="0.5em"
-          fontWeight="100"
-          textAlign="start"
-          overflowWrap="anywhere"
-        >
-          Settle Key: 0x{pkSettleHex}
-        </Text>
-      </>
-    )
-  } else {
-    panelBody = (
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        flexGrow="1"
-      >
-        <Button
-          padding="0 15% 0 15%"
-          opacity={address ? 1 : 0.4}
-          _hover={address ? undefined : {}}
-          cursor={address ? "pointer" : "inherit"}
-          transition="0.2s"
-          onClick={() => {
-            if (!address) {
-              return
+    return Buffer.from(pkSettle).toString("hex")
+  }, [accountId])
+
+  const Content = useMemo(() => {
+    if (accountId) {
+      return (
+        <Flex
+          className="scroll scroll-renegade-wallet hidden"
+          alignItems="center"
+          flexDirection="column"
+          flexGrow="1"
+          overflow="overlay"
+          width="100%"
+          onWheel={() => {
+            const query = document.querySelector(".scroll-renegade-wallet")
+            if (query) {
+              query.classList.remove("hidden")
+              callAfterTimeout(() => {
+                query.classList.add("hidden")
+              }, 400)()
             }
-            onOpen()
           }}
-          variant="wallet-connect"
         >
-          Sign In
-        </Button>
-        <Text
-          marginTop="10px"
-          padding="0 10% 0 10%"
-          color={address ? "white.50" : "white.40"}
-          fontSize="0.8em"
-          fontWeight="100"
-          textAlign="center"
+          {placeholderBalances.map(([address, amount]) => (
+            <Box key={address} width="100%">
+              <TokenBalance tokenAddr={"0x" + address} amount={amount} />
+            </Box>
+          ))}
+          <Text
+            marginTop="auto"
+            padding="10%"
+            color="white.40"
+            fontSize="0.5em"
+            fontWeight="100"
+            textAlign="start"
+            overflowWrap="anywhere"
+          >
+            Settle Key: 0x{pkSettleHex}
+          </Text>
+        </Flex>
+      )
+    } else {
+      return (
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          flexGrow="1"
         >
-          {address
-            ? "Sign in to create a Renegade account and view your balances."
-            : "Connect your Ethereum wallet before signing in."}
-        </Text>
-      </Flex>
-    )
-  }
+          <Button
+            padding="0 15% 0 15%"
+            opacity={address ? 1 : 0.4}
+            _hover={address ? undefined : {}}
+            cursor={address ? "pointer" : "inherit"}
+            transition="0.2s"
+            onClick={() => {
+              if (!address) {
+                return
+              }
+              onOpen()
+            }}
+            variant="wallet-connect"
+          >
+            Sign in
+          </Button>
+          <Text
+            marginTop="10px"
+            padding="0 10% 0 10%"
+            color={address ? "white.50" : "white.40"}
+            fontSize="0.8em"
+            fontWeight="100"
+            textAlign="center"
+          >
+            {address
+              ? "Sign in to create a Renegade account and view your balances."
+              : "Connect your Ethereum wallet before signing in."}
+          </Text>
+        </Flex>
+      )
+    }
+  }, [accountId, address, onOpen, pkSettleHex, placeholderBalances])
 
   return (
     <>
@@ -331,25 +336,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           )}
         </Flex>
       </Flex>
-      <Flex
-        className="scroll scroll-renegade-wallet hidden"
-        alignItems="center"
-        flexDirection="column"
-        flexGrow="1"
-        overflow="overlay"
-        width="100%"
-        onWheel={() => {
-          const query = document.querySelector(".scroll-renegade-wallet")
-          if (query) {
-            query.classList.remove("hidden")
-            callAfterTimeout(() => {
-              query.classList.add("hidden")
-            }, 400)()
-          }
-        }}
-      >
-        {panelBody}
-      </Flex>
+      {Content}
       {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )

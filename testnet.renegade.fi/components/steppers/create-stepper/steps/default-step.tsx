@@ -20,7 +20,7 @@ import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { client } from "@/app/providers"
 
 export function DefaultStep() {
-  const { onClose, onNext } = useStepper()
+  const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
   const { isLoading, signMessage } = useSignMessageWagmi({
@@ -48,7 +48,7 @@ export function DefaultStep() {
         throw new Error("Invalid signature")
       }
       setAccount(accountId, new Keychain({ seed: data }))
-      onNext()
+      onClose()
     },
   })
   const { disconnect } = useDisconnectWagmi()
