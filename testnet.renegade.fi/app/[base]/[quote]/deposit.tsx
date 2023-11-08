@@ -82,6 +82,9 @@ export function DepositBody() {
               <Button
                 position="absolute"
                 top="-24px"
+                left="-16px"
+                fontFamily="Favorit"
+                fontWeight="400"
                 onClick={() => {
                   const replace = `/${
                     baseTicker === "USDC" ? "WETH" : baseTicker
