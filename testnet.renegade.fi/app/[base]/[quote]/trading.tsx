@@ -4,22 +4,13 @@ import React, { createRef, useEffect, useRef, useState } from "react"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import {
-  Box,
-  Flex,
-  HStack,
-  Input,
-  Portal,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react"
+import { Box, Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 
 import { LivePrices } from "@/components/banners/live-price"
 import { BlurredOverlay } from "@/components/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
-import { TaskStatus } from "@/components/task-status"
 
 interface SelectableProps {
   text: string
@@ -198,11 +189,6 @@ export function TradingBody() {
           buySellSelectableCoords={buySellSelectableCoords.current}
           quoteTokenSelectableCoords={quoteTokenSelectableCoords.current}
         />
-        <Portal>
-          <Box position="absolute" zIndex={1500} right="0" bottom="0">
-            <TaskStatus />
-          </Box>
-        </Portal>
       </Flex>
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
