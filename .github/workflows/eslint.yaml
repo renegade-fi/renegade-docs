@@ -14,14 +14,10 @@ jobs:
           npm ci
           npx eslint src/ --ext .tsx --config ./.eslintrc.js
       - name: Eslint Check (docs.renegade.fi)
-        working-directory: ./docs.renegade.fi
-        run: |
-          npm ci
-          npx eslint src/ --ext .js --config ./.eslintrc.js
-      - uses: borales/actions-yarn@v4.2.0
+        uses: borales/actions-yarn@v4.2.0
         with:
-          cmd: install
-          dir: "testnet.renegade.fi"
+          cmd: lint
+          dir: "docs.renegade.fi"
       - name: Eslint Check (testnet.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:

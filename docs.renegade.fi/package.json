@@ -15,7 +15,7 @@
     "prettier": "prettier --write \"**/*.{ts,tsx,css,json}\" --cache",
     "eslint:js": "npx eslint docusaurus.config.js sidebars.js src/**/*.js --fix --config ./.eslintrc.js",
     "eslint:md": "npx eslint docs/ --ext .md --fix --config ./.eslintrc.js",
-    "lint": "npm run eslint:js && npm run eslint:md && npm run prettier",
+    "lint": "yarn run eslint:js && yarn run eslint:md",
     "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
     "deploy:prod": "npm run build && bash ./scripts/deploy.sh --prod",
     "deploy:all": "npm run build && bash ./scripts/deploy.sh --dev && bash ./scripts/deploy.sh --prod"
