@@ -21,7 +21,7 @@ import { ErrorType, useStepper } from "../deposit-stepper"
 export function DefaultStep() {
   const { baseTicker, baseTokenAmount } = useDeposit()
   const { setTask, accountId } = useRenegade()
-  const { onNext, setError } = useStepper()
+  const { onClose, setError } = useStepper()
 
   const handleDeposit = async () => {
     if (!accountId) return
@@ -32,7 +32,7 @@ export function DefaultStep() {
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-      .then(() => onNext())
+      .then(() => onClose())
       .catch((e) => {
         if (
           e.message ===

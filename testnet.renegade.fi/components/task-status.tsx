@@ -13,11 +13,11 @@ import { useOrders } from "@/hooks/use-order"
 
 const TASK_TO_LATENCY = {
   [TaskType.InitializeAccount]: {
-    [TaskState.Proving]: 2000,
+    [TaskState.Proving]: 41000,
     [TaskState.SubmittingTx]: 4000,
     // @ts-ignore
-    FindingMerkleOpening: 244000,
-    [TaskState.FindingOpening]: 244000,
+    FindingMerkleOpening: 4000,
+    [TaskState.FindingOpening]: 4000,
     [TaskState.UpdatingValidityProofs]: 0,
     [TaskState.Completed]: 0,
   },

@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
+import {
+  Fade,
+  Flex,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+} from "@chakra-ui/react"
 
 import { ErrorStep } from "@/components/steppers/order-stepper/steps/error-step"
 
@@ -24,6 +31,7 @@ const OrderStepperInner = () => {
         backdropFilter="blur(8px)"
       />
       <ModalContent background="surfaces.1" borderRadius="10px">
+        <ModalCloseButton />
         <Flex justifyContent="center" flexDirection="column" height="348px">
           <Fade
             transition={{ enter: { duration: 0.25 } }}
