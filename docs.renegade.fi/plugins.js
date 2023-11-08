@@ -149,6 +149,31 @@ module.exports = async (context, opts) => {
               content: "https://docs.renegade.fi/img/opengraph_docs.png",
             },
           },
+          {
+            tagName: "script",
+            attributes: {
+              type: "application/ld+json",
+            },
+            innerHTML: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Renegade Finance",
+              alternateName: "Renegade",
+              url: "https://renegade.fi/",
+            }),
+          },
+          {
+            tagName: "script",
+            attributes: {
+              type: "application/ld+json",
+            },
+            innerHTML: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              url: "https://renegade.fi/",
+              logo: "https://s3.us-east-2.amazonaws.com/renegade.fi/logos/glyph_light.svg",
+            }),
+          },
         ],
       }
     },

@@ -13,11 +13,16 @@ jobs:
         run: |
           npm ci
           npx prettier --check src/ --config ./.prettierrc
+      - name: Install yarn (docs.renegade.fi)
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: install
+          dir: "docs.renegade.fi"
       - name: Prettier Check (docs.renegade.fi)
-        working-directory: ./docs.renegade.fi
-        run: |
-          npm ci
-          npx prettier --check src/ --config ./.prettierrc
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: prettier
+          dir: "docs.renegade.fi"
       - name: Install yarn (testnet.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:

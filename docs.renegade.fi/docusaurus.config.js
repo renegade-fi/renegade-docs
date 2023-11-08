@@ -26,7 +26,7 @@ const config = {
 
   presets: [
     [
-      "classic",
+      "@docusaurus/preset-classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       {
         docs: {
@@ -40,6 +40,7 @@ const config = {
             require.resolve("./src/css/fonts.css"),
           ],
         },
+        blog: false,
       },
     ],
   ],
