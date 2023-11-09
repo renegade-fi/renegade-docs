@@ -53,7 +53,11 @@ export default async function Page({
         src={backgroundPattern}
         style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
       />
-      <MedianBanner report={report} />
+      <MedianBanner
+        report={report}
+        activeBaseTicker={base}
+        activeQuoteTicker={quote}
+      />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />
         <div

@@ -176,7 +176,11 @@ function OrderProvider({ children }: PropsWithChildren) {
     })
     return renegade.task
       .modifyOrPlaceOrder(accountId, order)
-      .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
+      .then(([taskId, taskJob]) => {
+        console.log("🚀 ~ .then ~ taskId:", taskId)
+        setTask(taskId, TaskType.PlaceOrder)
+        return taskJob
+      })
       .catch((e) => {
         console.log("Order Placement Error: ", e)
         throw new Error(e)
