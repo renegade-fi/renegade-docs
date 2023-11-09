@@ -8,15 +8,13 @@ interface BlurredOverlayProps {
   activeModal?: "buy-sell" | "base-token" | "quote-token"
   onClose: () => void
   buySellSelectableCoords: [number, number]
-  quoteTokenSelectableCoords: [number, number]
 }
 export function BlurredOverlay({
   activeModal,
   buySellSelectableCoords,
   onClose,
-  quoteTokenSelectableCoords,
 }: BlurredOverlayProps) {
-  const { setDirection, setQuoteToken } = useOrder()
+  const { setDirection } = useOrder()
   function OrText() {
     return (
       <Text
@@ -69,47 +67,6 @@ export function BlurredOverlay({
     )
   }
 
-  function QuoteTokenMenu() {
-    return (
-      <Flex
-        position="absolute"
-        top={quoteTokenSelectableCoords[1]}
-        left={quoteTokenSelectableCoords[0]}
-        alignItems="center"
-        flexDirection="column"
-        fontSize="1.9em"
-        transform="translate(-50%, -50%) translateX(-20px)"
-        hidden={activeModal !== "quote-token"}
-      >
-        <Text
-          margin="-5px 0 -5px 0"
-          animation={`${snapAnimation(70)} 0.15s ease both`}
-          cursor="pointer"
-          onClick={() => {
-            onClose()
-            setQuoteToken("USDC")
-          }}
-          variant="trading-body-button"
-        >
-          USDC
-        </Text>
-        <OrText />
-        <Text
-          margin="-5px 0 -5px 0"
-          animation={`${snapAnimation(-70)} 0.15s ease both`}
-          cursor="pointer"
-          onClick={() => {
-            onClose()
-            setQuoteToken("USDT")
-          }}
-          variant="trading-body-button"
-        >
-          USDT
-        </Text>
-      </Flex>
-    )
-  }
-
   return (
     <Flex
       position="absolute"
@@ -128,7 +85,6 @@ export function BlurredOverlay({
       }}
     >
       <BuySellMenu />
-      <QuoteTokenMenu />
     </Flex>
   )
 }
