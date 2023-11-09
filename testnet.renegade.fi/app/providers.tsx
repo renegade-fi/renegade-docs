@@ -1,6 +1,7 @@
 "use client"
 
-import React from "react"
+import React, { PropsWithChildren } from "react"
+import { AppProvider } from "@/contexts/App/app-context"
 import { DepositProvider } from "@/contexts/Deposit/deposit-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { OrderProvider } from "@/contexts/Order/order-context"
@@ -189,7 +190,12 @@ export const renegade = new Renegade({
   verbose: false,
 })
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  icons,
+}: PropsWithChildren & {
+  icons: Record<string, string>
+}) {
   return (
     <>
       <CacheProvider>
@@ -210,7 +216,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <RenegadeProvider>
                 <ExchangeProvider>
                   <OrderProvider>
-                    <DepositProvider>{children}</DepositProvider>
+                    <DepositProvider>
+                      <AppProvider tokenIcons={icons}>{children}</AppProvider>
+                    </DepositProvider>
                   </OrderProvider>
                 </ExchangeProvider>
               </RenegadeProvider>
