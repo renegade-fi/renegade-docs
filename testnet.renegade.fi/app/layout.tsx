@@ -17,10 +17,11 @@ import "./index.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Renegade Testnet",
+    default: "Trade - Renegade Testnet",
     template: `%s - Renegade Testnet`,
   },
-  description: "An on-chain dark pool.",
+  description:
+    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
 }
 
 const renegade = new Renegade({

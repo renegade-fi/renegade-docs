@@ -157,6 +157,7 @@ export function TradingBody() {
             color="white.50"
             fontFamily="Favorit Extended"
             fontWeight="100"
+            userSelect="all"
             spacing="0"
           >
             <Text marginRight="4px">

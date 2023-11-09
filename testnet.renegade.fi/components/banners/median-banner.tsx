@@ -120,7 +120,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
         </Text>
       </LinkWrapper>
-      {/* TODO: Add Link */}
       <BannerSeparator flexGrow={1} />
       {showPrice && (
         <LivePrices
@@ -384,7 +383,6 @@ export class MedianBanner extends React.Component<
   }
 
   render() {
-    console.log(this.props)
     return (
       <Stack
         alignItems="center"
