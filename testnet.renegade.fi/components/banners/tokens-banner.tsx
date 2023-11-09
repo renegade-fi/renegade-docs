@@ -69,7 +69,7 @@ interface AllTokensBannerState {
   isHovered: boolean
   isClicked: boolean
 }
-export default class AllTokensBanner extends React.Component<
+export class TokensBanner extends React.Component<
   AllTokensBannerProps,
   AllTokensBannerState
 > {
