@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -22,7 +21,7 @@ import { useStepper } from "../deposit-stepper"
 export function ExitStep() {
   const balances = useBalance()
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const { setView } = useRenegade()
+  const { setView } = useApp()
   const router = useRouter()
   const { onClose } = useStepper()
 

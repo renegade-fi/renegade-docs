@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { env } from "@/env.mjs"
 import { Renegade } from "@renegade-fi/renegade-js"
 
+import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
 import { getTokenBannerData } from "@/lib/utils"
 import { TokensBanner } from "@/components/banners/tokens-banner"
 import { Footer } from "@/components/footer"
@@ -11,16 +12,16 @@ import { Providers } from "@/app/providers"
 
 import "./animations.css"
 import "./fonts.css"
-// TODO: merge globals.css and index.css
 import "./globals.css"
 import "./index.css"
 
 export const metadata: Metadata = {
   title: {
-    default: "Renegade Testnet",
+    default: "Trade - Renegade Testnet",
     template: `%s - Renegade Testnet`,
   },
-  description: "An on-chain dark pool.",
+  description:
+    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
 }
 
 const renegade = new Renegade({
@@ -37,6 +38,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const icons = await TICKER_TO_LOGO_URL_HANDLE
   const prices = await getTokenBannerData(renegade)
 
   if (!prices.length) {
@@ -46,7 +48,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
+        <Providers icons={icons}>
           <div
             style={{
               flexDirection: "column",

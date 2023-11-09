@@ -23,7 +23,6 @@ import {
   RenegadeContextType,
   TaskState,
   TaskType,
-  ViewEnum,
 } from "./types"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
@@ -47,7 +46,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     Record<PeerId, Counterparty>
   >({})
   const [orderBook] = React.useState<Record<OrderId, CounterpartyOrder>>({})
-  const [view, setView] = React.useState<ViewEnum>(ViewEnum.TRADING)
 
   const taskCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
@@ -184,11 +182,9 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         refreshAccount,
         setAccount,
         setTask,
-        setView,
         taskId,
         taskState,
         taskType,
-        view,
       }}
     >
       {children}

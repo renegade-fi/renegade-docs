@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Token } from "@renegade-fi/renegade-js"
@@ -18,7 +18,6 @@ import {
   ADDR_TO_TICKER,
   DISPLAYED_TICKERS,
   KATANA_ADDRESS_TO_TICKER,
-  TICKER_TO_LOGO_URL_HANDLE,
 } from "@/lib/tokens"
 import { findBalanceByTicker, getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
@@ -37,22 +36,19 @@ interface TokenBalanceProps {
   amount?: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
-  const { setView } = useRenegade()
-  const router = useRouter()
-  const [logoUrl, setLogoUrl] = React.useState("")
-  const ticker =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
-      : ADDR_TO_TICKER[props.tokenAddr]
-  React.useEffect(() => {
-    TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setLogoUrl(tickerToLogoUrl[ticker])
-    })
-  }, [ticker])
+  const { tokenIcons } = useApp()
   const { data } = useBalanceWagmi({
     address: props.userAddr as `0x${string}`,
     token: props.tokenAddr as `0x${string}`,
   })
+  const { setView } = useApp()
+  const router = useRouter()
+
+  const ticker =
+    getNetwork() === "katana"
+      ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
+      : ADDR_TO_TICKER[props.tokenAddr]
+
   let amount = ""
   if (props.userAddr && data && data.value !== BigInt(0)) {
     amount = data.formatted
@@ -79,7 +75,7 @@ function TokenBalance(props: TokenBalanceProps) {
       transition="filter 0.1s"
       filter="grayscale(1)"
     >
-      <Image width="25" height="25" alt="Logo" src={logoUrl} />
+      <Image width="25" height="25" alt="Logo" src={tokenIcons[ticker]} />
       <Flex
         alignItems="flex-start"
         flexDirection="column"
@@ -135,7 +131,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { setView } = useRenegade()
+  const { setView } = useApp()
   return (
     <Flex
       flexDirection="row"
