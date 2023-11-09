@@ -1,7 +1,6 @@
 "use client"
 
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ViewEnum } from "@/contexts/Renegade/types"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Box } from "@chakra-ui/react"
 
 import { TaskStatus } from "@/components/task-status"
@@ -9,7 +8,7 @@ import { DepositBody } from "@/app/[base]/[quote]/deposit"
 import { TradingBody } from "@/app/[base]/[quote]/trading"
 
 export function Main() {
-  const { view } = useRenegade()
+  const { view } = useApp()
   const CurrentView = {
     [ViewEnum.TRADING]: TradingBody,
     [ViewEnum.DEPOSIT]: DepositBody,

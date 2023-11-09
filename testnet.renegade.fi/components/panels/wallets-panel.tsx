@@ -3,9 +3,8 @@
 import { useMemo } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useApp } from "@/contexts/App/app-context"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ViewEnum } from "@/contexts/Renegade/types"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Token } from "@renegade-fi/renegade-js"
@@ -42,7 +41,7 @@ function TokenBalance(props: TokenBalanceProps) {
     address: props.userAddr as `0x${string}`,
     token: props.tokenAddr as `0x${string}`,
   })
-  const { setView } = useRenegade()
+  const { setView } = useApp()
   const router = useRouter()
 
   const ticker =
@@ -132,7 +131,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { setView } = useRenegade()
+  const { setView } = useApp()
   return (
     <Flex
       flexDirection="row"

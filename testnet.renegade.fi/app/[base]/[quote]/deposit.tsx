@@ -1,9 +1,9 @@
 "use client"
 
 import { usePathname, useRouter } from "next/navigation"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ViewEnum } from "@/contexts/Renegade/types"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -22,6 +22,7 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 
 export function DepositBody() {
+  const { setView } = useApp()
   const { address } = useAccountWagmi()
   const {
     isOpen: tokenMenuIsOpen,
@@ -42,7 +43,7 @@ export function DepositBody() {
     useDeposit()
   const { setOpen } = useModalConnectKit()
   const pathname = usePathname()
-  const { accountId, setView } = useRenegade()
+  const { accountId } = useRenegade()
   const router = useRouter()
 
   const buttonText = !address
