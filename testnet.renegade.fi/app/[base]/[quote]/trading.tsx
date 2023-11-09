@@ -59,9 +59,7 @@ export function TradingBody() {
   const [activeModal, setActiveModal] = useState<"buy-sell" | "quote-token">()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
-  const quoteTokenSelectableRef = createRef<HTMLDivElement>()
   const buySellSelectableCoords = useRef<[number, number]>([0, 0])
-  const quoteTokenSelectableCoords = useRef<[number, number]>([0, 0])
 
   useEffect(() => {
     function getRefCoords(
@@ -83,10 +81,9 @@ export function TradingBody() {
       ]
     }
     buySellSelectableCoords.current = getRefCoords(buySellSelectableRef)
-    quoteTokenSelectableCoords.current = getRefCoords(quoteTokenSelectableRef)
 
     return () => {}
-  }, [baseTokenAmount, buySellSelectableRef, quoteTokenSelectableRef])
+  }, [baseTokenAmount, buySellSelectableRef])
 
   return (
     <>
@@ -153,18 +150,14 @@ export function TradingBody() {
             >
               {direction === Direction.BUY ? "with" : "for"}
             </Text>
-            <Selectable
-              text={quoteTicker}
-              onClick={() => setActiveModal("quote-token")}
-              activeModal={activeModal}
-              ref={quoteTokenSelectableRef}
-            />
+            <Text variant="trading-body-button">{quoteTicker}</Text>
           </HStack>
           <HStack
             marginTop="5px"
             color="white.50"
             fontFamily="Favorit Extended"
             fontWeight="100"
+            userSelect="all"
             spacing="0"
           >
             <Text marginRight="4px">
@@ -187,7 +180,6 @@ export function TradingBody() {
           activeModal={activeModal}
           onClose={() => setActiveModal(undefined)}
           buySellSelectableCoords={buySellSelectableCoords.current}
-          quoteTokenSelectableCoords={quoteTokenSelectableCoords.current}
         />
       </Flex>
       <TokenSelectModal

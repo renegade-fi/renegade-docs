@@ -1,6 +1,7 @@
 "use client"
 
-import React from "react"
+import { PropsWithChildren } from "react"
+import { AppProvider } from "@/contexts/App/app-context"
 import { DepositProvider } from "@/contexts/Deposit/deposit-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { OrderProvider } from "@/contexts/Order/order-context"
@@ -18,6 +19,7 @@ import {
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
+import { IntercomProvider } from "react-use-intercom"
 import { createPublicClient, http } from "viem"
 import { WagmiConfig, createConfig, mainnet } from "wagmi"
 
@@ -189,35 +191,44 @@ export const renegade = new Renegade({
   verbose: false,
 })
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  icons,
+}: PropsWithChildren & {
+  icons: Record<string, string>
+}) {
   return (
     <>
-      <CacheProvider>
-        <ChakraProvider theme={theme}>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-          <WagmiConfig config={wagmiConfig}>
-            <ConnectKitProvider
-              customTheme={{
-                "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
-                "--ck-overlay-backdrop-filter": "blur(8px)",
-                "--ck-font-family": "Favorit Extended",
-                "--ck-border-radius": "10px",
-                "--ck-body-background": "#1e1e1e",
-                "--ck-body-background-secondary": "#1e1e1e",
-                "--ck-focus-color": "#ffffff",
-              }}
-            >
-              <RenegadeProvider>
-                <ExchangeProvider>
-                  <OrderProvider>
-                    <DepositProvider>{children}</DepositProvider>
-                  </OrderProvider>
-                </ExchangeProvider>
-              </RenegadeProvider>
-            </ConnectKitProvider>
-          </WagmiConfig>
-        </ChakraProvider>
-      </CacheProvider>
+      <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
+        <CacheProvider>
+          <ChakraProvider theme={theme}>
+            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+            <WagmiConfig config={wagmiConfig}>
+              <ConnectKitProvider
+                customTheme={{
+                  "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+                  "--ck-overlay-backdrop-filter": "blur(8px)",
+                  "--ck-font-family": "Favorit Extended",
+                  "--ck-border-radius": "10px",
+                  "--ck-body-background": "#1e1e1e",
+                  "--ck-body-background-secondary": "#1e1e1e",
+                  "--ck-focus-color": "#ffffff",
+                }}
+              >
+                <RenegadeProvider>
+                  <ExchangeProvider>
+                    <OrderProvider>
+                      <DepositProvider>
+                        <AppProvider tokenIcons={icons}>{children}</AppProvider>
+                      </DepositProvider>
+                    </OrderProvider>
+                  </ExchangeProvider>
+                </RenegadeProvider>
+              </ConnectKitProvider>
+            </WagmiConfig>
+          </ChakraProvider>
+        </CacheProvider>
+      </IntercomProvider>
     </>
   )
 }

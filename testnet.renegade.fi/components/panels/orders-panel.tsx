@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
+import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -10,11 +11,7 @@ import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 
-import {
-  ADDR_TO_TICKER,
-  KATANA_ADDRESS_TO_TICKER,
-  TICKER_TO_LOGO_URL_HANDLE,
-} from "@/lib/tokens"
+import { ADDR_TO_TICKER, KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
 import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
@@ -31,9 +28,9 @@ interface SingleOrderProps {
   order: Order
 }
 function SingleOrder(props: SingleOrderProps) {
+  const { tokenIcons } = useApp()
   const { accountId, setTask } = useRenegade()
-  const [baseLogoUrl, setBaseLogoUrl] = React.useState("")
-  const [quoteLogoUrl, setQuoteLogoUrl] = React.useState("")
+
   const base =
     getNetwork() === "katana"
       ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.baseToken.address]
@@ -43,12 +40,6 @@ function SingleOrder(props: SingleOrderProps) {
     getNetwork() === "katana"
       ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.quoteToken.address]
       : ADDR_TO_TICKER["0x" + props.order.quoteToken.address]
-  useEffect(() => {
-    TICKER_TO_LOGO_URL_HANDLE.then((tickerToLogoUrl) => {
-      setBaseLogoUrl(tickerToLogoUrl[base])
-      setQuoteLogoUrl(tickerToLogoUrl[quote])
-    })
-  }, [base, quote])
 
   const handleCancel = () => {
     if (!accountId) return
@@ -76,7 +67,12 @@ function SingleOrder(props: SingleOrderProps) {
     >
       <Text fontFamily="Favorit">Open</Text>
       <Box position="relative" width="45px" height="40px">
-        <Image width="25px" height="25px" alt="Quote logo" src={quoteLogoUrl} />
+        <Image
+          width="25px"
+          height="25px"
+          alt="Quote logo"
+          src={tokenIcons[quote]}
+        />
         <Image
           position="absolute"
           right="1"
@@ -84,7 +80,7 @@ function SingleOrder(props: SingleOrderProps) {
           width="25px"
           height="25px"
           alt="Base logo"
-          src={baseLogoUrl}
+          src={tokenIcons[base]}
         />
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
