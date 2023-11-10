@@ -200,6 +200,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       const address = new Token({ ticker: base, network: getNetwork() }).address
       result.push([address, bal.amount])
     }
+    result.push([
+      new Token({ ticker: "USDC", network: getNetwork() }).address,
+      findBalanceByTicker(balances, "USDC").amount,
+    ])
     result.sort((a, b) => {
       if (a[1] === BigInt(0) && b[1] !== BigInt(0)) {
         return 1
