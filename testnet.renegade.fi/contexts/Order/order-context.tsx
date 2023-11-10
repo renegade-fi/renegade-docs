@@ -10,18 +10,13 @@ import {
   useState,
 } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { CounterpartyOrder, TaskType } from "@/contexts/Renegade/types"
+import { CounterpartyOrder } from "@/contexts/Renegade/types"
 import { useToast } from "@chakra-ui/react"
-import { CallbackId, Order, OrderId, Token } from "@renegade-fi/renegade-js"
+import { CallbackId, OrderId } from "@renegade-fi/renegade-js"
 
-import {
-  getNetwork,
-  safeLocalStorageGetItem,
-  safeLocalStorageSetItem,
-} from "@/lib/utils"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
-import { useRenegade } from "../Renegade/renegade-context"
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -45,7 +40,6 @@ function OrderProvider({ children }: PropsWithChildren) {
     router.push(`/${baseTicker}/${token}`)
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
-  const { accountId, setTask } = useRenegade()
 
   const [orderBook, setOrderBook] = useState<
     Record<OrderId, CounterpartyOrder>
@@ -158,35 +152,6 @@ function OrderProvider({ children }: PropsWithChildren) {
     }
   }, [orderBook, toast])
 
-  const handlePlaceOrder = useCallback(async () => {
-    if (
-      !accountId ||
-      !baseTicker ||
-      !quoteTicker ||
-      !baseTokenAmount ||
-      !direction
-    )
-      return
-    const order = new Order({
-      baseToken: new Token({ ticker: baseTicker, network: getNetwork() }),
-      quoteToken: new Token({ ticker: quoteTicker, network: getNetwork() }),
-      side: direction,
-      type: "midpoint",
-      amount: BigInt(baseTokenAmount),
-    })
-    return renegade.task
-      .modifyOrPlaceOrder(accountId, order)
-      .then(([taskId, taskJob]) => {
-        console.log("🚀 ~ .then ~ taskId:", taskId)
-        setTask(taskId, TaskType.PlaceOrder)
-        return taskJob
-      })
-      .catch((e) => {
-        console.log("Order Placement Error: ", e)
-        throw new Error(e)
-      })
-  }, [accountId, baseTicker, baseTokenAmount, direction, quoteTicker, setTask])
-
   const handleSetDirection = useCallback((direction: Direction) => {
     setDirection(direction)
     safeLocalStorageSetItem("direction", direction)
@@ -198,7 +163,6 @@ function OrderProvider({ children }: PropsWithChildren) {
         baseTicker,
         baseTokenAmount,
         direction,
-        onPlaceOrder: handlePlaceOrder,
         quoteTicker,
         setBaseToken: handleSetBaseToken,
         setBaseTokenAmount,
