@@ -32,7 +32,7 @@ export interface RenegadeContextType {
   orderBook: Record<OrderId, CounterpartyOrder>
   refreshAccount: (accountId?: AccountId) => void
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
-  setTask: (newTaskId?: TaskId, taskType?: TaskType) => Promise<void>
+  setTask: (newTaskId?: TaskId, taskType?: TaskType) => void
   taskId: TaskId | undefined
   taskState: TaskState | undefined
   taskType: TaskType | undefined

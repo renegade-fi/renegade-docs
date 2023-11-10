@@ -384,7 +384,6 @@ export class MedianBanner extends React.Component<
   }
 
   render() {
-    console.log(this.props)
     return (
       <Stack
         alignItems="center"

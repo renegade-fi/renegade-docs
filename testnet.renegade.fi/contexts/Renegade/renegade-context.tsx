@@ -38,11 +38,8 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
-  console.log("🚀 ~ RenegadeProvider ~ taskId:", taskId)
   const [taskType, setTaskType] = React.useState<TaskType>()
-  console.log("🚀 ~ RenegadeProvider ~ taskType:", taskType)
   const [taskState, setTaskState] = React.useState<TaskState>()
-  console.log("🚀 ~ RenegadeProvider ~ taskState:", taskState)
 
   // Create network (counterparties) and order book states.
   const [counterparties, setCounterparties] = React.useState<
@@ -52,16 +49,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
 
   const taskCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
-    console.log("🚀 ~ React.useEffect ~ taskId:", taskId)
-    if (taskCallbackId.current || !taskId) {
-      console.log(
-        "not adding callback because taskCallbackId.current:",
-        taskCallbackId.current,
-        "taskId:",
-        taskId
-      )
-      return
-    }
+    if (taskCallbackId.current || !taskId) return
     const handleTaskListener = async () => {
       await renegade
         .registerTaskCallback((message: string) => {
@@ -175,7 +163,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     setOrders(renegade.getOrders(accountId))
   }
 
-  async function setTask(newTaskId?: TaskId, taskType?: TaskType) {
+  function setTask(newTaskId?: TaskId, taskType?: TaskType) {
     if (newTaskId === "DONE") {
       return
     }

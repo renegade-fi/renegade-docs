@@ -205,14 +205,13 @@ export function Providers({
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
             <WagmiConfig config={wagmiConfig}>
               <ConnectKitProvider
+                mode="dark"
                 customTheme={{
                   "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
                   "--ck-overlay-backdrop-filter": "blur(8px)",
                   "--ck-font-family": "Favorit Extended",
                   "--ck-border-radius": "10px",
                   "--ck-body-background": "#1e1e1e",
-                  "--ck-body-background-secondary": "#1e1e1e",
-                  "--ck-focus-color": "#ffffff",
                 }}
               >
                 <RenegadeProvider>
