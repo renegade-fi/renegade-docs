@@ -4,8 +4,8 @@ import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Box } from "@chakra-ui/react"
 
 import { TaskStatus } from "@/components/task-status"
-import { DepositBody } from "@/app/[base]/[quote]/deposit"
-import { TradingBody } from "@/app/[base]/[quote]/trading"
+import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
+import { TradingBody } from "@/app/(desktop)/[base]/[quote]/trading"
 
 export function Main() {
   const { view } = useApp()

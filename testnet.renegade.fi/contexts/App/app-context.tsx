@@ -18,12 +18,12 @@ const AppStateContext = createContext<AppContextValue | undefined>(undefined)
 function AppProvider({
   children,
   tokenIcons,
-}: PropsWithChildren & { tokenIcons: Record<string, string> }) {
+}: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
   return (
     <AppStateContext.Provider
       value={{
-        tokenIcons,
+        tokenIcons: tokenIcons || {},
         setView,
         view,
       }}

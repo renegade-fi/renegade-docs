@@ -195,7 +195,7 @@ export function Providers({
   children,
   icons,
 }: PropsWithChildren & {
-  icons: Record<string, string>
+  icons?: Record<string, string>
 }) {
   return (
     <>
