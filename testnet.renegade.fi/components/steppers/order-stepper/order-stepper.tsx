@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Fade,
   Flex,
@@ -19,13 +18,7 @@ const OrderStepperInner = () => {
   const { step, onClose } = useStepper()
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen
-      onClose={onClose}
-      size="sm"
-    >
+    <Modal isCentered isOpen onClose={onClose} size="sm">
       <ModalOverlay
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
@@ -117,7 +110,6 @@ const StepperProvider = ({
 }) => {
   const [step, setStep] = useState(Step.DEFAULT)
   const [midpoint, setMidpoint] = useState(0)
-  const { setTask } = useRenegade()
   const [error, setError] = useState<ErrorType>()
 
   const handleNext = () => {
@@ -126,12 +118,6 @@ const StepperProvider = ({
 
   const handleBack = () => {
     setStep(step - 1)
-  }
-
-  const handleClose = () => {
-    setTask(undefined, undefined)
-    setStep(Step.DEFAULT)
-    onClose()
   }
 
   useEffect(() => {
@@ -144,7 +130,7 @@ const StepperProvider = ({
         error,
         midpoint,
         onBack: handleBack,
-        onClose: handleClose,
+        onClose,
         onNext: handleNext,
         setError,
         setMidpoint,

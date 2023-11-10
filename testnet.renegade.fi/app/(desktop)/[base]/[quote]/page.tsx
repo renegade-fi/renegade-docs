@@ -30,12 +30,9 @@ const renegade = new Renegade({
 
 export default async function Page({
   params: { base, quote },
-  searchParams,
 }: {
   params: { base: string; quote: string }
-  searchParams: { [key: string]: string | string[] | undefined }
 }) {
-  console.log("🚀 ~ searchParams:", searchParams)
   const report = await renegade.queryExchangeHealthStates(
     new Token({ ticker: base }),
     new Token({ ticker: quote })

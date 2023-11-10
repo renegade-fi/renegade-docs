@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { Order } from "@renegade-fi/renegade-js"
+import { OrderId } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -20,31 +20,44 @@ import {
   callAfterTimeout,
   expandedPanelWidth,
 } from "@/components/panels/panels"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
 import { renegade } from "@/app/providers"
 
 dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
-  order: Order
+  amount: string
+  baseAddr: string
+  id: OrderId
+  quoteAddr: string
+  side: string
+  matched?: boolean
 }
-function SingleOrder(props: SingleOrderProps) {
+function SingleOrder({
+  amount,
+  baseAddr,
+  id,
+  quoteAddr,
+  side,
+  matched,
+}: SingleOrderProps) {
   const { tokenIcons } = useApp()
   const { accountId, setTask } = useRenegade()
 
   const base =
     getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.baseToken.address]
-      : ADDR_TO_TICKER["0x" + props.order.baseToken.address]
+      ? KATANA_ADDRESS_TO_TICKER["0x" + baseAddr]
+      : ADDR_TO_TICKER["0x" + baseAddr]
 
   const quote =
     getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + props.order.quoteToken.address]
-      : ADDR_TO_TICKER["0x" + props.order.quoteToken.address]
+      ? KATANA_ADDRESS_TO_TICKER["0x" + quoteAddr]
+      : ADDR_TO_TICKER["0x" + quoteAddr]
 
   const handleCancel = () => {
     if (!accountId) return
     renegade.task
-      .cancelOrder(accountId, props.order.orderId)
+      .cancelOrder(accountId, id)
       .then(([taskId]) => setTask(taskId, TaskType.CancelOrder))
   }
 
@@ -65,7 +78,7 @@ function SingleOrder(props: SingleOrderProps) {
       filter="grayscale(1)"
       paddingY="10px"
     >
-      <Text fontFamily="Favorit">Open</Text>
+      <Text fontFamily="Favorit">{matched ? "Matched" : "Open"}</Text>
       <Box position="relative" width="45px" height="40px">
         <Image
           width="25px"
@@ -85,11 +98,10 @@ function SingleOrder(props: SingleOrderProps) {
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
         <Text fontSize="1.1em" lineHeight="1">
-          {props.order.amount.toString()}{" "}
-          {ADDR_TO_TICKER["0x" + props.order.baseToken.address]}
+          {amount} {base}
         </Text>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
-          {props.order.side.toUpperCase()}
+          {side.toUpperCase()}
         </Text>
       </Flex>
       {/* <EditIcon
@@ -102,16 +114,18 @@ function SingleOrder(props: SingleOrderProps) {
           background: "white.10",
         }}
       /> */}
-      <SmallCloseIcon
-        width="calc(0.5 * var(--banner-height))"
-        height="calc(0.5 * var(--banner-height))"
-        borderRadius="100px"
-        cursor="pointer"
-        _hover={{
-          background: "white.10",
-        }}
-        onClick={handleCancel}
-      />
+      {!matched ? (
+        <SmallCloseIcon
+          width="calc(0.5 * var(--banner-height))"
+          height="calc(0.5 * var(--banner-height))"
+          borderRadius="100px"
+          cursor="pointer"
+          _hover={{
+            background: "white.10",
+          }}
+          onClick={handleCancel}
+        />
+      ) : null}
     </Flex>
   )
 }
@@ -121,14 +135,32 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
+  const globalOrders = useGlobalOrders()
   const orders = useOrders()
   const { accountId } = useRenegade()
-  const filteredOrders = Object.values(orders).filter(
-    (order) => order.amount > 0
-  )
   let panelBody: React.ReactElement
 
-  if (!accountId || !orders || filteredOrders.length === 0) {
+  const [filteredOrders, filteredMatchedOrders] = useMemo(() => {
+    const matchedOrders = safeLocalStorageGetItem(`order-details-${accountId}`)
+    const parsedMatchedOrders: LocalOrder[] = matchedOrders
+      ? JSON.parse(matchedOrders)
+      : []
+    const filteredMatchedOrders = parsedMatchedOrders.filter(
+      (order) =>
+        order.id in globalOrders && globalOrders[order.id].state === "Cancelled"
+    )
+    const filteredOrders = Object.values(orders).filter(
+      ({ amount, orderId }) =>
+        amount > 0 && !filteredMatchedOrders.some(({ id }) => id === orderId)
+    )
+    return [filteredOrders, filteredMatchedOrders]
+  }, [accountId, globalOrders, orders])
+
+  if (
+    !accountId ||
+    !orders ||
+    (filteredOrders.length === 0 && filteredMatchedOrders.length === 0)
+  ) {
     panelBody = (
       <Text
         margin="auto"
@@ -146,11 +178,31 @@ function OrdersPanel(props: OrdersPanelProps) {
   } else {
     panelBody = (
       <>
-        {filteredOrders.map((order) => (
-          <Box key={order.orderId} width="100%">
-            <SingleOrder order={order} />
+        {filteredMatchedOrders.map((order) => (
+          <Box key={order.id} width="100%">
+            <SingleOrder
+              amount={order.amount}
+              baseAddr={order.base}
+              id={order.id as OrderId}
+              quoteAddr={order.quote}
+              side={order.side}
+              matched
+            />
           </Box>
         ))}
+        {filteredOrders.map(
+          ({ amount, baseToken, orderId, quoteToken, side }) => (
+            <Box key={orderId} width="100%">
+              <SingleOrder
+                amount={amount.toString()}
+                baseAddr={baseToken.address}
+                id={orderId}
+                quoteAddr={quoteToken.address}
+                side={side}
+              />
+            </Box>
+          )
+        )}
       </>
     )
   }
@@ -215,26 +267,26 @@ function OrderBookPanel() {
   const globalOrders = useGlobalOrders()
   const orders = useOrders()
   const { accountId } = useRenegade()
-  const [isHovering, setIsHovering] = useState(false)
-  const [savedOrders, setSavedOrders] = useState<string[]>([])
+
+  const savedOrders: LocalOrder[] = useMemo(() => {
+    const matchedOrders = safeLocalStorageGetItem(`order-details-${accountId}`)
+    const parsed = matchedOrders ? JSON.parse(matchedOrders) : []
+    return parsed
+  }, [accountId])
+
+  const seen = savedOrders.some(({ id }) => id in orders)
 
   const globalOrdersSorted = useMemo(() => {
     const res: GlobalOrder[] = []
     Object.entries(globalOrders).forEach(([orderId, order]) => {
-      if (orderId in orders || savedOrders.includes(orderId)) {
+      if (orderId in orders || seen) {
         res.unshift(order)
       } else {
         res.push(order)
       }
     })
     return res
-  }, [globalOrders, orders, savedOrders])
-
-  useEffect(() => {
-    if (!accountId) return
-    const o = safeLocalStorageGetItem(`orders-${accountId}`)
-    setSavedOrders(o ? o.split(",") : [])
-  }, [accountId, orders])
+  }, [globalOrders, orders, seen])
 
   let panelBody: React.ReactElement
 
@@ -255,45 +307,51 @@ function OrderBookPanel() {
     panelBody = (
       <>
         {globalOrdersSorted.map((counterpartyOrder) => {
-          const ago = orders[counterpartyOrder.id]
-            ? dayjs(orders[counterpartyOrder.id].timestamp).fromNow()
-            : ""
-          const title =
-            isHovering && orders[counterpartyOrder.id]
-              ? `${
-                  orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-                } ${orders[counterpartyOrder.id].amount} ${
-                  KATANA_ADDRESS_TO_TICKER[
-                    "0x" + orders[counterpartyOrder.id].baseToken.address
-                  ]
-                } ${
-                  orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-                } ${
-                  KATANA_ADDRESS_TO_TICKER[
-                    "0x" + orders[counterpartyOrder.id].quoteToken.address
-                  ]
-                }`
-              : `ID: ${counterpartyOrder.id.split("-")[0].toString()}`
-          const secondaryText =
-            isHovering && ago
-              ? ago
-              : `on cluster ${counterpartyOrder.cluster.slice(0, 6) + "..."}`
+          const title = orders[counterpartyOrder.id]
+            ? `${
+                orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
+              } ${orders[counterpartyOrder.id].amount} ${
+                // TODO: Should use helper function to get ticker
+                KATANA_ADDRESS_TO_TICKER[
+                  "0x" + orders[counterpartyOrder.id].baseToken.address
+                ]
+              } ${
+                orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
+              } ${
+                KATANA_ADDRESS_TO_TICKER[
+                  "0x" + orders[counterpartyOrder.id].quoteToken.address
+                ]
+              }`
+            : `Unknown order hash: ${counterpartyOrder.id
+                .split("-")[0]
+                .toString()}`
 
           const status =
             counterpartyOrder.id in orders
               ? "ACTIVE"
               : counterpartyOrder.state === "Cancelled" &&
                 !(counterpartyOrder.id in orders) &&
-                savedOrders.includes(counterpartyOrder.id) &&
-                counterpartyOrder.id in globalOrders
+                savedOrders.some(({ id }) => id === counterpartyOrder.id)
               ? "MATCHED"
+              : counterpartyOrder.state === "Cancelled"
+              ? "PENDING"
               : counterpartyOrder.state.toUpperCase()
+
+          const ago = dayjs(
+            counterpartyOrder.id in orders
+              ? orders[counterpartyOrder.id].timestamp ||
+                  savedOrders.find(({ id }) => id === counterpartyOrder.id)
+                    ?.timestamp
+              : counterpartyOrder.timestamp
+          ).fromNow()
+
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
               ? "red"
               : "white.60"
+
           return (
             <Flex
               key={counterpartyOrder.id}
@@ -303,18 +361,12 @@ function OrderBookPanel() {
               borderColor="white.20"
               borderBottom="var(--border)"
               userSelect="none"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
             >
               <Flex flexDirection="column">
-                <Text color="white.80" fontSize="1.1em">
-                  {title}
-                </Text>
-                <Flex>
+                <Flex alignItems="center">
                   <Text
                     color={textColor}
                     fontFamily="Favorit Expanded"
-                    fontSize="0.6em"
                     fontWeight="500"
                   >
                     {status}&nbsp;
@@ -322,12 +374,15 @@ function OrderBookPanel() {
                   <Text
                     color="white.60"
                     fontFamily="Favorit Expanded"
-                    fontSize="0.6em"
+                    fontSize="0.7em"
                     fontWeight="500"
                   >
-                    {secondaryText}
+                    {ago}
                   </Text>
                 </Flex>
+                <Text color="white.80" fontSize="0.8em">
+                  {title}
+                </Text>
               </Flex>
             </Flex>
           )
@@ -335,6 +390,7 @@ function OrderBookPanel() {
       </>
     )
   }
+
   return (
     <>
       <Flex

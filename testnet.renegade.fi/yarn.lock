@@ -1478,9 +1478,9 @@
   dependencies:
     "@noble/hashes" "1.3.2"
 
-"@noble/ed25519@git+https://github.com/renegade-fi/noble-ed25519.git#prehashed-context":
+"@noble/ed25519@https://github.com/renegade-fi/noble-ed25519#prehashed-context":
   version "1.7.1"
-  resolved "git+https://github.com/renegade-fi/noble-ed25519.git#dcd9e5541c527e23b07f09db09d3a2c32ff61b2c"
+  resolved "https://github.com/renegade-fi/noble-ed25519#dcd9e5541c527e23b07f09db09d3a2c32ff61b2c"
 
 "@noble/hashes@1.3.2", "@noble/hashes@^1.3.0", "@noble/hashes@^1.3.1", "@noble/hashes@~1.3.0", "@noble/hashes@~1.3.2":
   version "1.3.2"
@@ -1953,6 +1953,11 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.4.tgz#2b38784cd16957d3782e8e2b31c03bc1d13b4d65"
   integrity sha512-IDaobHimLQhjwsQ/NMwRVfa/yL7L/wriQPMhw1ZJall0KX6E1oxk29XMDeilW5qTIg5aoiqf5Udy8U/51aNoQQ==
+
+"@types/uuid@^9.0.7":
+  version "9.0.7"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.7.tgz#b14cebc75455eeeb160d5fe23c2fcc0c64f724d8"
+  integrity sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==
 
 "@types/ws@^7.4.4":
   version "7.4.7"
@@ -5954,7 +5959,7 @@ uuid@^8.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-uuid@^9.0.0:
+uuid@^9.0.0, uuid@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
   integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==

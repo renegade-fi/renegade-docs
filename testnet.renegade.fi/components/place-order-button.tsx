@@ -5,7 +5,6 @@ import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, HStack, Text, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
@@ -71,7 +70,6 @@ export function PlaceOrderButton() {
         <Text>
           Place Order for {baseTokenAmount} {baseTicker}
         </Text>
-        <ArrowForwardIcon />
       </HStack>
     )
   }

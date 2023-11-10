@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -12,15 +14,38 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import {
+  Exchange,
+  Order,
+  OrderId,
+  PriceReport,
+  Token,
+} from "@renegade-fi/renegade-js"
+import { v4 as uuidv4 } from "uuid"
+
+import {
+  getNetwork,
+  safeLocalStorageGetItem,
+  safeLocalStorageSetItem,
+} from "@/lib/utils"
+import { renegade } from "@/app/providers"
 
 import { ErrorType, useStepper } from "../order-stepper"
+
+export interface LocalOrder {
+  id: string
+  base: string
+  quote: string
+  side: string
+  amount: string
+  timestamp: number
+}
 
 export function ConfirmStep() {
   const { onClose, setMidpoint, setError } = useStepper()
   const { getPriceData } = useExchange()
-  const { baseTicker, baseTokenAmount, direction, onPlaceOrder, quoteTicker } =
-    useOrder()
+  const { baseTicker, baseTokenAmount, direction, quoteTicker } = useOrder()
+  const { setTask, accountId } = useRenegade()
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
@@ -29,6 +54,63 @@ export function ConfirmStep() {
     if (!priceReport || currentPriceReport?.midpointPrice) return
     setCurrentPriceReport(priceReport)
   }, [currentPriceReport?.midpointPrice, priceReport])
+
+  const timestampMap = useMemo(() => {
+    const o = safeLocalStorageGetItem("timestampMap")
+    const parsed = o ? JSON.parse(o) : {}
+    return parsed
+  }, [])
+
+  const handlePlaceOrder = async () => {
+    if (!accountId) return
+    const id = uuidv4() as OrderId
+    const order = new Order({
+      id,
+      baseToken: new Token({ ticker: baseTicker, network: getNetwork() }),
+      quoteToken: new Token({ ticker: quoteTicker, network: getNetwork() }),
+      side: direction,
+      type: "midpoint",
+      amount: BigInt(baseTokenAmount),
+    })
+    renegade.task
+      .modifyOrPlaceOrder(accountId, order)
+      .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
+      .then(() => {
+        const o = safeLocalStorageGetItem(`order-details-${accountId}`)
+        const parseO: LocalOrder[] = o ? JSON.parse(o) : []
+        const newO = [
+          ...parseO,
+          {
+            id,
+            base: order.baseToken.address,
+            quote: order.quoteToken.address,
+            side: direction,
+            amount: baseTokenAmount,
+          },
+        ]
+        safeLocalStorageSetItem(
+          `order-details-${accountId}`,
+          JSON.stringify(newO)
+        )
+        timestampMap[id] = order.timestamp
+        safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
+      })
+      .then(() => onClose())
+      .catch((e) => {
+        if (
+          e.message ===
+          "RenegadeError: The maximum number of active, unmatched orders has been reached."
+        ) {
+          setError(ErrorType.ORDERBOOK_FULL)
+        } else if (
+          e.message ===
+          "RenegadeError: The relayer returned a non-200 response. wallet update already in progress"
+        ) {
+          setError(ErrorType.WALLET_LOCKED)
+        }
+        // TODO: If error, should remove from local storage order details
+      })
+  }
 
   const limit = useMemo(() => {
     if (!currentPriceReport || !currentPriceReport.midpointPrice) return 0
@@ -110,21 +192,7 @@ export function ConfirmStep() {
               throw new Error("No current price report")
             }
             setMidpoint(currentPriceReport.midpointPrice || 0)
-            onPlaceOrder()
-              .then(() => onClose())
-              .catch((e) => {
-                if (
-                  e.message ===
-                  "RenegadeError: The maximum number of active, unmatched orders has been reached."
-                ) {
-                  setError(ErrorType.ORDERBOOK_FULL)
-                } else if (
-                  e.message ===
-                  "RenegadeError: The relayer returned a non-200 response. wallet update already in progress"
-                ) {
-                  setError(ErrorType.WALLET_LOCKED)
-                }
-              })
+            handlePlaceOrder()
           }}
         >
           <HStack spacing="4px">

@@ -130,17 +130,17 @@ export const TaskStatus = () => {
     [TaskType.InitializeAccount]: "Creating a New Account",
     [TaskType.Deposit]: "Depositing Tokens",
     [TaskType.Withdrawal]: "Withdrawing Tokens",
-    [TaskType.PlaceOrder]: "Placing an Order",
-    [TaskType.ModifyOrder]: "Modifying an Order",
-    [TaskType.CancelOrder]: "Cancelling an Order",
-    [TaskType.ApproveFee]: "Approving a Fee",
-    [TaskType.ModifyFee]: "Modifying a Fee",
-    [TaskType.RevokeFee]: "Revoking a Fee",
+    [TaskType.PlaceOrder]: "Placing Order",
+    [TaskType.ModifyOrder]: "Modifying Order",
+    [TaskType.CancelOrder]: "Cancelling Order",
+    [TaskType.ApproveFee]: "Approving Fee",
+    [TaskType.ModifyFee]: "Modifying Fee",
+    [TaskType.RevokeFee]: "Revoking Fee",
   }[taskType || TaskType.InitializeAccount] // If taskType is undefined, we won't use this displayedTaskType anyway.
 
   const displayedTaskState = {
     [TaskState.Proving]: "Generating ZK Proof",
-    [TaskState.SubmittingTx]: "Submitting",
+    [TaskState.SubmittingTx]: "Submitting Transaction",
     [TaskState.FindingOpening]: "Finalizing",
     // @ts-ignore
     FindingMerkleOpening: "Finalizing",
@@ -179,10 +179,10 @@ export const TaskStatus = () => {
       </CircularProgress>
       <Box alignItems="start" justifyContent="center" flexDirection="column">
         <Text fontFamily="Favorit Expanded" fontSize="1.1em">
-          {displayedTaskState}
+          {displayedTaskType}
         </Text>
         <Text color="white.60" fontSize="0.9em">
-          {displayedTaskType}
+          {displayedTaskState}
         </Text>
       </Box>
     </Flex>
