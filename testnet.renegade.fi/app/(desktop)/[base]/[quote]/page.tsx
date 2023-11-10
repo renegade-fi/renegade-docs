@@ -8,7 +8,7 @@ import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { Main } from "@/app/[base]/[quote]/main"
+import { Main } from "@/app/(desktop)/[base]/[quote]/main"
 
 export function generateStaticParams() {
   return DISPLAYED_TICKERS.map(([base, quote]) => {
@@ -30,9 +30,12 @@ const renegade = new Renegade({
 
 export default async function Page({
   params: { base, quote },
+  searchParams,
 }: {
   params: { base: string; quote: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }) {
+  console.log("🚀 ~ searchParams:", searchParams)
   const report = await renegade.queryExchangeHealthStates(
     new Token({ ticker: base }),
     new Token({ ticker: quote })

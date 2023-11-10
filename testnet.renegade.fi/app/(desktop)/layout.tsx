@@ -10,10 +10,10 @@ import { Footer } from "@/components/footer"
 import { MainNav } from "@/components/main-nav"
 import { Providers } from "@/app/providers"
 
-import "./animations.css"
-import "./fonts.css"
-import "./globals.css"
-import "./index.css"
+import "@/styles/animations.css"
+import "@/styles/fonts.css"
+import "@/styles/globals.css"
+import "@/styles/index.css"
 
 export const metadata: Metadata = {
   title: {
@@ -40,11 +40,6 @@ export default async function RootLayout({
 }) {
   const icons = await TICKER_TO_LOGO_URL_HANDLE
   const prices = await getTokenBannerData(renegade)
-
-  if (!prices.length) {
-    throw new Error("Failed to fetch token banner data")
-  }
-
   return (
     <html lang="en">
       <body>

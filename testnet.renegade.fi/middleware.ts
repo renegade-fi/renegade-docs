@@ -1,6 +1,15 @@
-import { NextResponse, type NextRequest } from "next/server"
+import { NextResponse, userAgent, type NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
+  const { device } = userAgent(request)
+  if (device.type === "mobile") {
+    if (request.nextUrl.pathname !== "/m") {
+      request.nextUrl.pathname = "/m"
+      return NextResponse.rewrite(request.nextUrl)
+    }
+    return
+  }
+
   const pathname = request.nextUrl.pathname
   const url = request.nextUrl.clone()
   if (pathname === "/") {
