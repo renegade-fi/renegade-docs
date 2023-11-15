@@ -1,7 +1,7 @@
 export const NAME = "Renegade.fi";
 export const SHORT_NAME = "Renegade";
 export const DESCRIPTION =
-  "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage trades via anonymous crosses at midpoint prices.";
+  "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.";
 export const TITLE = `${SHORT_NAME} | On-Chain Dark Pool`;
 export const BASE_URL = "https://renegade.fi";
 export const SHORT_DESCRIPTION =

@@ -1,0 +1,58 @@
+@font-face {
+  font-family: "Favorit Extended";
+  src: url("../fonts/ABCFavoritExtendedVariable.woff2")
+      format("woff2 supports variations"),
+    url("../fonts/ABCFavoritExtendedVariable.woff2") format("woff2-variations");
+  font-weight: 300 700;
+}
+
+@font-face {
+  font-family: "Aime";
+  font-style: "normal";
+  font-weight: 400;
+  font-display: block;
+  src: url("../fonts/FAMAime-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Aime";
+  font-style: "normal";
+  font-weight: 700;
+  font-display: block;
+  src: url("../fonts/FAMAime-Bold.woff2") format("woff2");
+}
+
+/* Favorit Expanded Normal */
+@font-face {
+  font-family: "Favorit Expanded";
+  font-style: "normal";
+  font-weight: 400;
+  font-display: block;
+  src: url(../fonts/ABCFavoritExpanded-Regular-Named.ttf) format("truetype");
+}
+
+/* Favorit Mono */
+@font-face {
+  font-family: "Favorit Mono";
+  font-style: "normal";
+  font-weight: 400;
+  font-display: block;
+  src: url(../fonts/ABCFavoritMono-Regular.ttf) format("truetype");
+}
+
+/* Favorit Normal */
+@font-face {
+  font-family: "Favorit";
+  font-style: "normal";
+  font-weight: 300;
+  font-display: block;
+  src: url(../fonts/ABCFavorit-Light-Named.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Favorit";
+  font-style: "normal";
+  font-weight: 400;
+  font-display: block;
+  src: url(../fonts/ABCFavorit-Regular-Named.ttf) format("truetype");
+}

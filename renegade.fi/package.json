@@ -2,69 +2,41 @@
   "name": "renegade.fi",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@chakra-ui/icons": "^2.0.13",
-    "@chakra-ui/react": "^2.3.4",
-    "mixpanel-browser": "^2.45.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-intersection-observer": "^9.4.1",
-    "react-router-dom": "^6.4.4",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
   "scripts": {
-    "start": "npx parcel serve src/index.html --no-cache --open",
-    "build": "rm -r dist/; npx parcel build src/index.html --no-cache",
-    "prettier": "npx prettier --write src/ --config ./.prettierrc",
-    "eslint": "npx eslint src/ --ext .tsx --fix --config ./.eslintrc.js",
-    "lint": "npm run prettier && npm run eslint",
-    "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
-    "deploy:prod": "npm run build && bash ./scripts/deploy.sh --prod",
-    "deploy:all": "npm run build && bash ./scripts/deploy.sh --dev && bash ./scripts/deploy.sh --prod"
+    "preinstall": "npx only-allow yarn",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "preview": "next build && next start",
+    "typecheck": "tsc --noEmit",
+    "format:write": "prettier --write \"**/*.{ts,tsx,css,json}\" --cache",
+    "format:check": "prettier --check \"**/*.{ts,tsx,css,json}\" --cache"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "framer-motion": "^10.16.5",
+    "next": "14.0.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-intersection-observer": "^9.5.3"
   },
   "devDependencies": {
-    "@parcel/config-default": "^2.8.0",
-    "@parcel/packager-raw-url": "^2.8.0",
-    "@parcel/transformer-raw": "^2.8.0",
-    "@parcel/transformer-webmanifest": "^2.8.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
-    "@types/mixpanel-browser": "^2.38.1",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@typescript-eslint/eslint-plugin": "^5.10.2",
-    "@typescript-eslint/parser": "^5.10.2",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-promise": "^5.2.0",
-    "eslint-plugin-react": "^7.28.0",
-    "parcel": "^2.8.0",
-    "parcel-reporter-static-files-copy": "^1.3.4",
-    "parcel-transformer-bypass": "^1.0.0",
-    "path-browserify": "^1.0.1",
-    "prettier": "^2.8.1",
-    "process": "^0.11.10"
+    "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.2",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-chakra-ui": "^0.10.1",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^2.8.8",
+    "typescript": "^5"
   }
 }

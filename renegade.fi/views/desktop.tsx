@@ -1,32 +1,40 @@
-import { Box, Button, Flex, HStack, Image, Link, Text } from "@chakra-ui/react";
-import React from "react";
-
-import backgroundPattern from "../icons/background_pattern.svg";
-import dragonflyLogo from "../icons/dragonfly_logo.svg";
-import logoDarkVertical from "../icons/logo_dark_vertical.svg";
+import React from "react"
+import Image from "next/image"
+import backgroundPattern from "@/icons/background_pattern.svg"
+import dragonflyLogo from "@/icons/dragonfly_logo.svg"
+import logoDarkVertical from "@/icons/logo_dark_vertical.svg"
+import {
+  Box,
+  Button,
+  Image as ChakraImage,
+  Flex,
+  HStack,
+  Link,
+  Text,
+} from "@chakra-ui/react"
 
 function FancyUnderline(props: {
-  padding?: string;
-  children: React.ReactElement;
+  padding?: string
+  children: React.ReactElement
 }) {
-  const [isHovering, setIsHovering] = React.useState(false);
-  const [isCompleted, setIsCompleted] = React.useState(false);
-  const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null);
+  const [isHovering, setIsHovering] = React.useState(false)
+  const [isCompleted, setIsCompleted] = React.useState(false)
+  const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null)
   return (
     <Flex
       alignItems="center"
       justifyContent="center"
       padding={props.padding}
       onMouseEnter={() => {
-        setIsHovering(true);
-        setIsCompleted(false);
-        if (delay) clearTimeout(delay);
-        setDelay(setTimeout(() => setIsCompleted(true), 250));
+        setIsHovering(true)
+        setIsCompleted(false)
+        if (delay) clearTimeout(delay)
+        setDelay(setTimeout(() => setIsCompleted(true), 250))
       }}
       onMouseLeave={() => {
-        setIsHovering(false);
-        if (delay) clearTimeout(delay);
-        setDelay(setTimeout(() => setIsCompleted(false), 250));
+        setIsHovering(false)
+        if (delay) clearTimeout(delay)
+        setDelay(setTimeout(() => setIsCompleted(false), 250))
       }}
     >
       <Box position="relative">
@@ -37,57 +45,57 @@ function FancyUnderline(props: {
           },
         })}
         <Box
-          opacity={isCompleted ? "0" : "1"}
           position="absolute"
-          height="1.5px"
-          width="100%"
           bottom="2px"
           left="0"
+          width="100%"
+          height="1.5px"
+          opacity={isCompleted ? "0" : "1"}
           transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
           transformOrigin="left"
-          backgroundColor={props.children.props.color || "#ccc"}
           transition="transform 0.25s"
+          backgroundColor={props.children.props.color || "#ccc"}
         />
         <Box
-          opacity={isCompleted ? "1" : "0"}
           position="absolute"
-          height="1.5px"
-          width="100%"
-          bottom="2px"
           right="0"
+          bottom="2px"
+          width="100%"
+          height="1.5px"
+          opacity={isCompleted ? "1" : "0"}
           transform={isHovering ? "scaleX(1)" : "scaleX(0)"}
           transformOrigin="right"
-          backgroundColor={props.children.props.color || "#ccc"}
           transition="transform 0.25s"
+          backgroundColor={props.children.props.color || "#ccc"}
         />
       </Box>
     </Flex>
-  );
+  )
 }
 
 function AllLinks() {
   return (
     <Flex
-      flexDirection="column"
-      justifyContent="space-between"
       alignItems="end"
+      justifyContent="space-between"
+      flexDirection="column"
       lineHeight="115%"
     >
       <Flex
         className="fade-in-left"
-        flexDirection="column"
         alignItems="end"
-        fontWeight="300"
-        fontSize="0.9em"
+        flexDirection="column"
         color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
         <FancyUnderline>
           <Link
+            color="white"
+            fontSize="1.2em"
+            fontWeight="700"
             href="https://renegadefi.typeform.com/access"
             isExternal
-            fontWeight="700"
-            fontSize="1.2em"
-            color="white"
           >
             Get Network Access
           </Link>
@@ -110,31 +118,31 @@ function AllLinks() {
       </Flex>
       <Flex
         className="fade-in-left"
-        flexDirection="column"
-        alignItems="end"
-        fontWeight="300"
-        fontSize="0.9em"
-        color="#ccc"
         sx={{ animationDelay: "0.15s" }}
+        alignItems="end"
+        flexDirection="column"
+        color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
-        <Text fontWeight="700" fontSize="1.2em" color="white">
+        <Text color="white" fontSize="1.2em" fontWeight="700">
           Our Investors
         </Text>
         <Flex
-          flexDirection="column"
           alignItems="end"
-          lineHeight="125%"
+          flexDirection="column"
           fontSize="0.9em"
+          lineHeight="125%"
         >
           <FancyUnderline>
             <Link href="https://twitter.com/dragonfly_xyz" isExternal>
               <HStack spacing="5px">
                 <Text>Dragonfly</Text>
                 <Image
-                  paddingTop="3px"
+                  alt="Dragonfly Logo"
                   src={dragonflyLogo}
-                  height="16px"
-                  opacity="80%"
+                  height={13}
+                  style={{ paddingTop: "1px", opacity: "80%" }}
                 />
               </HStack>
             </Link>
@@ -158,21 +166,21 @@ function AllLinks() {
       </Flex>
       <Flex
         className="fade-in-left"
-        flexDirection="column"
-        alignItems="end"
-        fontWeight="300"
-        fontSize="0.9em"
-        color="#ccc"
-        marginBottom="8px"
         sx={{ animationDelay: "0.3s" }}
+        alignItems="end"
+        flexDirection="column"
+        marginBottom="8px"
+        color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
         <FancyUnderline>
           <Link
+            color="white"
+            fontSize="1.2em"
+            fontWeight="700"
             href="https://twitter.com/renegade_fi"
             isExternal
-            fontWeight="700"
-            fontSize="1.2em"
-            color="white"
           >
             Follow on Twitter
           </Link>
@@ -194,59 +202,62 @@ function AllLinks() {
         </FancyUnderline>
       </Flex>
     </Flex>
-  );
+  )
 }
 
 interface VerticalLogoProps {
-  clickX: number;
-  clickY: number;
-  showMenu: boolean;
-  setShowMenu: (showMenu: boolean) => void;
-  logoRef: React.RefObject<HTMLDivElement>;
+  clickX: number
+  clickY: number
+  showMenu: boolean
+  setShowMenu: (showMenu: boolean) => void
+  logoRef: React.RefObject<HTMLDivElement>
 }
 function VerticalLogo(props: VerticalLogoProps) {
   return (
-    <Box h="100%" marginRight="50px" position="relative" ref={props.logoRef}>
-      <Image
-        src={logoDarkVertical}
+    <Box
+      ref={props.logoRef}
+      position="relative"
+      height="100%"
+      marginRight="50px"
+    >
+      <ChakraImage
+        minWidth={111}
+        height="100%"
         alt="Renegade Logo"
-        w="auto"
-        h="100%"
-        htmlWidth="385"
-        htmlHeight="2467"
+        src={logoDarkVertical.src}
       />
       <Box
+        className="translate-up"
         position="absolute"
         top="0"
         left="0"
-        w="100%"
-        h="96.9%"
-        bg="black"
-        className="translate-up"
+        width="100%"
+        height="96.9%"
+        background="black"
       />
       <Button
-        opacity={props.showMenu ? 1 : 0}
-        cursor={props.showMenu ? "pointer" : "default"}
-        transition="opacity 0.2s ease"
         position="fixed"
         zIndex="2"
-        bg="black"
-        padding="0"
-        left={props.clickX + 2}
         top={props.clickY - 20}
+        left={props.clickX + 2}
+        padding="0"
+        fontSize="0.7em"
+        background="black"
+        opacity={props.showMenu ? 1 : 0}
         border="1px"
         borderColor="#aaa"
         borderRadius="0px"
-        fontSize="0.7em"
-        onClick={() => {
-          if (!props.showMenu) {
-            return;
-          }
-          props.setShowMenu(false);
-          window.open("/logos.zip", "_blank");
-        }}
         _hover={{
           backgroundColor: "black",
+        }}
+        cursor={props.showMenu ? "pointer" : "default"}
+        transition="opacity 0.2s ease"
+        onClick={() => {
+          if (!props.showMenu) {
+            return
+          }
+          props.setShowMenu(false)
+          window.open("/logos.zip", "_blank")
         }}
       >
         <FancyUnderline padding="10px">
@@ -254,86 +265,87 @@ function VerticalLogo(props: VerticalLogoProps) {
         </FancyUnderline>
       </Button>
     </Box>
-  );
+  )
 }
 
 interface OverlayProps {
-  showMenu: boolean;
-  setShowMenu: (showMenu: boolean) => void;
+  showMenu: boolean
+  setShowMenu: (showMenu: boolean) => void
 }
 function Overlay(props: OverlayProps) {
   return (
     <Box
       position="absolute"
-      left="0"
-      right="0"
       top="0"
+      right="0"
       bottom="0"
-      backdropFilter={props.showMenu ? "brightness(50%)" : "brightness(100%)"}
-      transition="0.3s ease"
+      left="0"
       userSelect="none"
-      onClick={() => {
-        props.setShowMenu(false);
-      }}
       pointerEvents={props.showMenu ? "auto" : "none"}
+      transition="0.3s ease"
+      backdropFilter={props.showMenu ? "brightness(50%)" : "brightness(100%)"}
+      onClick={() => {
+        props.setShowMenu(false)
+      }}
     />
-  );
+  )
 }
 
 interface LandingPageDesktopState {
-  clickX: number;
-  clickY: number;
-  showMenu: boolean;
-  logoRef: React.RefObject<HTMLDivElement>;
+  clickX: number
+  clickY: number
+  showMenu: boolean
+  logoRef: React.RefObject<HTMLDivElement>
 }
 export default class LandingPageDesktop extends React.Component<
   Record<string, never>,
   LandingPageDesktopState
 > {
   constructor(props: Record<string, never>) {
-    super(props);
+    super(props)
     this.state = {
       clickX: 0,
       clickY: 0,
       showMenu: false,
       logoRef: React.createRef(),
-    };
-    this.handleContextMenu = this.handleContextMenu.bind(this);
-    this.setShowMenu = this.setShowMenu.bind(this);
+    }
+    this.handleContextMenu = this.handleContextMenu.bind(this)
+    this.setShowMenu = this.setShowMenu.bind(this)
   }
 
   componentDidMount() {
-    document.addEventListener("contextmenu", this.handleContextMenu);
+    document.addEventListener("contextmenu", this.handleContextMenu)
   }
 
   componentWillUnmount() {
-    document.removeEventListener("contextmenu", this.handleContextMenu);
+    document.removeEventListener("contextmenu", this.handleContextMenu)
   }
 
+  // @ts-ignore
   handleContextMenu(e) {
     if (!this.state.logoRef.current) {
-      return;
+      return
     }
     // If the context menu click does not intersect the logo, ignore.
-    const boundingBox = this.state.logoRef.current.getBoundingClientRect();
+    const boundingBox = this.state.logoRef.current.getBoundingClientRect()
     if (
       boundingBox.left > e.pageX ||
       boundingBox.right < e.pageX ||
       boundingBox.top > e.pageY ||
       boundingBox.bottom < e.pageY
     ) {
-      return;
+      return
     }
-    e.preventDefault();
+    e.preventDefault()
     this.setState({
       clickX: e.pageX,
       clickY: e.pageY,
       showMenu: true,
-    });
+    })
   }
 
   setShowMenu(showMenu: boolean) {
-    this.setState({ showMenu });
+    this.setState({ showMenu })
   }
 
   render() {
@@ -342,8 +354,8 @@ export default class LandingPageDesktop extends React.Component<
         width="100vw"
         maxWidth="100%"
         height="100vh"
-        backgroundColor="black"
         padding="60px"
+        backgroundColor="black"
         onClick={() => this.setState({ showMenu: false })}
       >
         <VerticalLogo
@@ -355,34 +367,34 @@ export default class LandingPageDesktop extends React.Component<
         />
         <Box flexGrow="1">
           <Flex
+            position="relative"
+            flexGrow="1"
+            overflow="clip"
             width="100%"
             height="100%"
-            flexGrow="1"
-            position="relative"
-            border="7px solid"
-            overflow="clip"
-            backgroundImage={backgroundPattern}
+            backgroundImage={backgroundPattern.src}
             backgroundSize="cover"
             backgroundPosition="center"
             backgroundRepeat="no-repeat"
+            border="7px solid"
           >
             <Box
+              className="fade-out"
               position="absolute"
               width="100%"
               height="100%"
-              bg="black"
-              className="fade-out"
+              background="black"
             />
             <Box margin="auto">
-              <Flex flexDirection="row" justifyContent="space-between">
+              <Flex justifyContent="space-between" flexDirection="row">
                 <Box
-                  fontFamily="Aime"
-                  fontWeight="700"
-                  fontStyle="normal"
-                  fontSize="calc(2vw + 70px)" /* 6vw */
-                  letterSpacing="-1px"
-                  lineHeight="90%"
                   className="fade-in-right"
+                  fontFamily="Aime"
+                  fontSize="calc(2vw + 70px)"
+                  fontWeight="700" /* 6vw */
+                  lineHeight="90%"
+                  letterSpacing="-1px"
+                  fontStyle="normal"
                 >
                   <Text className="fade-in-right">On.</Text>
                   <Text
@@ -407,13 +419,13 @@ export default class LandingPageDesktop extends React.Component<
                 <AllLinks />
               </Flex>
               <Box
-                fontWeight="300"
-                fontSize="calc(0.13 * (2vw + 70px))" /* 0.8vw */
-                letterSpacing="calc(0.2 * (2vw + 70px))" /* 1.2vw */
-                marginLeft="calc(0.05 * (2vw + 70px))"
-                marginRight="calc(-0.2 * (2vw + 70px))" /* -1.2vw */
-                paddingTop="15px"
                 className="fade-in-compress"
+                marginRight="calc(-0.2 * (2vw + 70px))" /* 0.8vw */
+                marginLeft="calc(0.05 * (2vw + 70px))" /* 1.2vw */
+                paddingTop="15px"
+                fontSize="calc(0.13 * (2vw + 70px))" /* -1.2vw */
+                fontWeight="300"
+                letterSpacing="calc(0.2 * (2vw + 70px))"
               >
                 EVERYWHERE NOWHERE
               </Box>
@@ -425,6 +437,6 @@ export default class LandingPageDesktop extends React.Component<
           setShowMenu={this.setShowMenu}
         />
       </Flex>
-    );
+    )
   }
 }
