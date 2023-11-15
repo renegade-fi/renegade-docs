@@ -1,33 +1,34 @@
 module.exports = {
+  root: true,
   env: {
-    browser: true,
-    es2021: true,
+    es2020: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 12,
-    sourceType: "module",
-  },
-  plugins: ["react", "@typescript-eslint", "prettier"],
+  extends: ["next/core-web-vitals", "prettier"],
   rules: {
-    "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"],
-    "node/no-callback-literal": "off",
-    "no-unmodified-loop-condition": "off",
-    "react/no-unescaped-entities": "off",
+    "@next/next/no-html-link-for-pages": "off",
+    "react/jsx-key": "off",
+    "chakra-ui/props-order": "error",
+    "chakra-ui/props-shorthand": [
+      "error",
+      {
+        noShorthand: true,
+      },
+    ],
   },
   settings: {
-    react: {
-      version: "detect",
+    next: {
+      rootDir: ["./"],
     },
   },
-};
+  overrides: [
+    {
+      files: ["*.ts", "*.tsx"],
+      parser: "@typescript-eslint/parser",
+      plugins: ["chakra-ui"],
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
+  ],
+}

@@ -8,16 +8,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Prettier Check (renegade.fi)
-        working-directory: ./renegade.fi
-        run: |
-          npm ci
-          npx prettier --check src/ --config ./.prettierrc
-      - name: Install yarn (docs.renegade.fi)
+      - name: Install yarn (renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
-          dir: "docs.renegade.fi"
+          dir: "renegade.fi"
+      - name: Prettier Check (renegade.fi)
+        uses: borales/actions-yarn@v4.2.0
+        with:
+          cmd: format:check
+          dir: "renegade.fi"
       - name: Prettier Check (docs.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:

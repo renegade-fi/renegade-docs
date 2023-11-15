@@ -1,63 +1,67 @@
-import { ArrowDownIcon } from "@chakra-ui/icons";
-import { Box, Flex, HStack, Image, Link, Text } from "@chakra-ui/react";
-import React from "react";
-import { useInView } from "react-intersection-observer";
-
-import backgroundPatternVertical from "../icons/background_pattern_vertical.svg";
-import dragonflyLogo from "../icons/dragonfly_logo.svg";
-import logoDark from "../icons/logo_dark.svg";
+import React from "react"
+import backgroundPatternVertical from "@/icons/background_pattern_vertical.svg"
+import dragonflyLogo from "@/icons/dragonfly_logo.svg"
+import logoDark from "@/icons/logo_dark.svg"
+import { ArrowDownIcon } from "@chakra-ui/icons"
+import { Box, Flex, HStack, Image, Link, Text } from "@chakra-ui/react"
+import { useInView } from "react-intersection-observer"
 
 export default function LandingPageMobile() {
   const useInViewOptions = {
     threshold: 0.5,
     triggerOnce: true,
-  };
-  const [refIcon, inViewIcon] = useInView({ initialInView: true });
-  const [refLinksFirst, inViewLinksFirst] = useInView(useInViewOptions);
-  const [refLinksSecond, inViewLinksSecond] = useInView(useInViewOptions);
-  const [refLinksThird, inViewLinksThird] = useInView(useInViewOptions);
+  }
+  const [refIcon, inViewIcon] = useInView({ initialInView: true })
+  const [refLinksFirst, inViewLinksFirst] = useInView(useInViewOptions)
+  const [refLinksSecond, inViewLinksSecond] = useInView(useInViewOptions)
+  const [refLinksThird, inViewLinksThird] = useInView(useInViewOptions)
 
   return (
     <Flex
-      w="100vw"
-      maxW="100%"
-      minH="100vh"
+      alignItems="center"
+      flexDirection="column"
       overflowX="hidden"
       overflowY="scroll"
-      bg="black"
-      backgroundImage={backgroundPatternVertical}
+      width="100vw"
+      maxWidth="100%"
+      minHeight="100vh"
+      paddingBottom="200px"
+      fontSize="5vw"
+      background="black"
+      backgroundImage={backgroundPatternVertical.src}
       backgroundSize="cover"
       backgroundPosition="top"
       backgroundRepeat="no-repeat"
-      flexDirection="column"
-      alignItems="center"
-      paddingBottom="200px"
-      fontSize="5vw"
     >
-      <Box w="100%" h="0px" ref={refIcon} display={inViewIcon ? "" : "none"} />
+      <Box
+        ref={refIcon}
+        display={inViewIcon ? "" : "none"}
+        width="100%"
+        height="0px"
+      />
       <Flex
-        height="150vw"
-        flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        flexDirection="column"
+        height="150vw"
       >
         <Image
-          src={logoDark}
-          alt="Renegade Logo"
-          padding="0 50px 0 50px"
-          w="100%"
-          maxW="400px"
-          h="auto"
-          htmlWidth="2467"
-          htmlHeight="385"
           className="fade-in-right"
+          width="100%"
+          maxWidth="400px"
+          height="auto"
+          padding="0 50px 0 50px"
+          alt="Renegade Logo"
+          htmlHeight="385"
+          htmlWidth="2467"
+          src={logoDark.src}
         />
         <Box
+          className="fade-in-left"
           paddingTop="10px"
           fontFamily="Aime"
           fontSize="6vw"
           fontWeight="400"
-          className="fade-in-left"
         >
           On-Chain Dark Pool
         </Box>
@@ -68,23 +72,23 @@ export default function LandingPageMobile() {
         </Box>
       </Box>
       <Flex
-        paddingTop="80px"
-        flexDirection="column"
-        alignItems="flex-start"
-        alignSelf="flex-start"
-        paddingLeft="10%"
-        fontWeight="300"
-        fontSize="0.9em"
-        color="#ccc"
         className={inViewLinksFirst ? "fade-in-right" : "pre-animation"}
         ref={refLinksFirst}
+        alignItems="flex-start"
+        flexDirection="column"
+        alignSelf="flex-start"
+        paddingTop="80px"
+        paddingLeft="10%"
+        color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
         <Link
+          color="white"
+          fontSize="1.3em"
+          fontWeight="700"
           href="https://renegadefi.typeform.com/access"
           isExternal
-          fontWeight="700"
-          fontSize="1.3em"
-          color="white"
         >
           Get Network Access
         </Link>
@@ -99,24 +103,24 @@ export default function LandingPageMobile() {
         </Link>
       </Flex>
       <Flex
-        paddingTop="80px"
-        flexDirection="column"
-        alignItems="flex-end"
-        alignSelf="flex-end"
-        paddingRight="10%"
-        fontWeight="300"
-        fontSize="0.9em"
-        color="#ccc"
         className={inViewLinksThird ? "fade-in-left" : "pre-animation"}
         ref={refLinksThird}
         sx={{ animationDelay: "0.3s" }}
+        alignItems="flex-end"
+        flexDirection="column"
+        alignSelf="flex-end"
+        paddingTop="80px"
+        paddingRight="10%"
+        color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
         <Link
+          color="white"
+          fontSize="1.3em"
+          fontWeight="700"
           href="https://twitter.com/renegade_fi"
           isExternal
-          fontWeight="700"
-          fontSize="1.3em"
-          color="white"
         >
           Follow on Twitter
         </Link>
@@ -131,30 +135,30 @@ export default function LandingPageMobile() {
         </Link>
       </Flex>
       <Flex
-        paddingTop="80px"
-        flexDirection="column"
-        alignItems="flex-start"
-        alignSelf="flex-start"
-        paddingLeft="10%"
-        fontWeight="300"
-        fontSize="0.9em"
-        color="#ccc"
         className={inViewLinksSecond ? "fade-in-right" : "pre-animation"}
         ref={refLinksSecond}
         sx={{ animationDelay: "0.15s" }}
+        alignItems="flex-start"
+        flexDirection="column"
+        alignSelf="flex-start"
+        paddingTop="80px"
+        paddingLeft="10%"
+        color="#ccc"
+        fontSize="0.9em"
+        fontWeight="300"
       >
-        <Text fontWeight="700" fontSize="1.3em" color="white">
+        <Text color="white" fontSize="1.3em" fontWeight="700">
           Proudly Backed By
         </Text>
-        <Flex flexDirection="column" alignItems="flex-start">
+        <Flex alignItems="flex-start" flexDirection="column">
           <Link href="https://twitter.com/dragonfly_xyz" isExternal>
             <HStack spacing="5px">
               <Text>Dragonfly</Text>
               <Image
-                paddingTop="3px"
-                src={dragonflyLogo}
                 height="16px"
+                paddingTop="3px"
                 opacity="80%"
+                src={dragonflyLogo.src}
               />
             </HStack>
           </Link>
@@ -170,5 +174,5 @@ export default function LandingPageMobile() {
         </Flex>
       </Flex>
     </Flex>
-  );
+  )
 }
