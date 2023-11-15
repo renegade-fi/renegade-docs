@@ -141,10 +141,10 @@ export const TaskStatus = () => {
   const displayedTaskState = {
     [TaskState.Proving]: "Generating ZK Proof",
     [TaskState.SubmittingTx]: "Submitting Transaction",
-    [TaskState.FindingOpening]: "Finalizing",
+    [TaskState.FindingOpening]: "Verifying ZK Proof",
     // @ts-ignore
-    FindingMerkleOpening: "Finalizing",
-    [TaskState.UpdatingValidityProofs]: "Finalizing",
+    [TaskState.FindingOpening]: "Verifying ZK Proof",
+    [TaskState.UpdatingValidityProofs]: "Verifying ZK Proof",
     [TaskState.Completed]: "Completed",
   }[taskState || TaskState.Proving] // If taskState is undefined, we won't use this displayedTaskState anyway.
 

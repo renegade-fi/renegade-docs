@@ -8,8 +8,10 @@ export enum ViewEnum {
 }
 
 export interface AppContextValue {
-  tokenIcons: Record<string, string>
+  isOnboarding: boolean
+  setIsOnboarding: (isOnboarding: boolean) => void
   setView: (view: ViewEnum) => void
+  tokenIcons: Record<string, string>
   view: ViewEnum
 }
 
@@ -20,11 +22,14 @@ function AppProvider({
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
   return (
     <AppStateContext.Provider
       value={{
-        tokenIcons: tokenIcons || {},
+        isOnboarding,
+        setIsOnboarding,
         setView,
+        tokenIcons: tokenIcons || {},
         view,
       }}
     >
