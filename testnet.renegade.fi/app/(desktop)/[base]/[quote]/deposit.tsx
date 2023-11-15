@@ -4,7 +4,11 @@ import { usePathname, useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
+import {
+  ArrowForwardIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+} from "@chakra-ui/icons"
 import {
   Box,
   Button,
@@ -52,7 +56,7 @@ export function DepositBody() {
     ? "Sign in to Deposit"
     : baseTokenAmount > 10_000
     ? "Try a smaller amount"
-    : "Preview Deposit"
+    : `Deposit ${baseTokenAmount} ${baseTicker}`
   const handleClick = () => {
     if (!address) {
       setOpen(true)
@@ -166,7 +170,10 @@ export function DepositBody() {
           disabled={baseTokenAmount > 10_000}
           onClick={handleClick}
         >
-          {buttonText}
+          <HStack spacing="4px">
+            <Text>{buttonText}</Text>
+            <ArrowForwardIcon />
+          </HStack>
         </Button>
       </Flex>
       {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}

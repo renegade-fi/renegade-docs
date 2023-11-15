@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
+import { useApp } from "@/contexts/App/app-context"
 import {
   Fade,
   Modal,
@@ -12,7 +13,13 @@ import { DefaultStep } from "@/components/steppers/create-stepper/steps/default-
 import { LoadingStep } from "@/components/steppers/create-stepper/steps/loading-step"
 
 const CreateStepperInner = () => {
+  const { setIsOnboarding } = useApp()
   const { step, onClose } = useStepper()
+
+  useEffect(() => {
+    setIsOnboarding(true)
+    return () => setIsOnboarding(false)
+  }, [setIsOnboarding])
 
   return (
     <Modal isCentered isOpen onClose={onClose} size="sm">

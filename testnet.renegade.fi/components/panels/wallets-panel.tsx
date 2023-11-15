@@ -68,8 +68,8 @@ function TokenBalance(props: TokenBalanceProps) {
       borderColor="white.20"
       borderBottom="var(--border)"
       _hover={{
-        filter: "inherit",
-        color: "white.90",
+        filter: Number(amount) > 0 ? "inherit" : undefined,
+        color: Number(amount) > 0 ? "white.90" : "white.70",
       }}
       cursor="pointer"
       transition="filter 0.1s"

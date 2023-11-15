@@ -17,13 +17,11 @@ export const useGlobalOrders = () => {
 
       fetchedOrders.forEach((order) => {
         if (!timestampMap[order.id]) {
-          console.log("adding timestamp for order", order.id)
           timestampMap[order.id] = timestampFromId(order.id)
         }
       })
 
       if (Object.keys(timestampMap).length) {
-        console.log("setting timestampmap")
         safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
       }
 
