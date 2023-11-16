@@ -10,6 +10,19 @@ import WhitepaperTeaserDark from '@site/static/img/whitepaper_teaser_dark.svg'
 import WhitepaperTeaserMobileLight from '@site/static/img/whitepaper_teaser_mobile_light.svg'
 import WhitepaperTeaserMobileDark from '@site/static/img/whitepaper_teaser_mobile_dark.svg'
 
+<head>
+  <script type="application/ld+json">
+    {JSON.stringify({
+      '@context': 'https://schema.org/',
+      '@type': 'Organization',
+      name: 'Renegade',
+      url: 'https://renegade.fi/',
+      logo: 'https://s3.us-east-2.amazonaws.com/renegade.fi/logos/glyph_light.svg',
+      sameAs: ["https://twitter.com/renegade_fi"],
+    })}
+  </script>
+</head>
+
 # Whitepaper
 
 The [whitepaper](https://whitepaper.renegade.fi) is the best resource to learn
