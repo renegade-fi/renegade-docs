@@ -10,6 +10,19 @@ import Figure from '../../src/figure.js'
 import LogoLight from '@site/static/img/logo_light.svg'
 import LogoDark from '@site/static/img/logo_dark.svg'
 
+<head>
+  <script type="application/ld+json">
+    {JSON.stringify({
+      '@context': 'https://schema.org/',
+      '@type': 'Organization',
+      name: 'Renegade',
+      url: 'https://renegade.fi/',
+      logo: 'https://s3.us-east-2.amazonaws.com/renegade.fi/logos/glyph_light.svg',
+      sameAs: ["https://twitter.com/renegade_fi"],
+    })}
+  </script>
+</head>
+
 <div style={{ minHeight: "70px"}}>
   <Figure
     LightImage={LogoLight}

@@ -2,13 +2,23 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const { themes } = require("prism-react-renderer")
+const {
+  DESCRIPTION,
+  SHORT_DESCRIPTION,
+  DOCS_TITLE,
+  DOCS_OPENGRAPH,
+  DOCS_BASE_URL,
+  TWITTER_HANDLE,
+  SHORT_NAME,
+  ORGANIZATION_JSONLD,
+} = require("../seo")
 const lightCodeTheme = themes.github
 const darkCodeTheme = themes.dracula
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Renegade",
-  url: "https://docs.renegade.fi",
+  title: SHORT_NAME,
+  url: DOCS_BASE_URL,
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -23,7 +33,6 @@ const config = {
     defaultLocale: "en",
     locales: ["en"],
   },
-
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -101,6 +110,39 @@ const config = {
       theme: lightCodeTheme,
       darkTheme: darkCodeTheme,
     },
+    metadata: [
+      { name: "description", content: SHORT_DESCRIPTION },
+      { name: "og:title", content: DOCS_TITLE },
+      { name: "og:image", content: DOCS_OPENGRAPH },
+      { name: "og:description", content: DESCRIPTION },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: DOCS_BASE_URL },
+      { name: "twitter:creator", content: TWITTER_HANDLE },
+      { name: "twitter:description", content: SHORT_DESCRIPTION },
+      { name: "twitter:image", content: DOCS_OPENGRAPH },
+    ],
+    headTags: [
+      {
+        tagName: "script",
+        attributes: {
+          type: "application/ld+json",
+        },
+        innerHTML: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Renegade Finance",
+          alternateName: "Renegade",
+          url: "https://renegade.fi/",
+        }),
+      },
+      {
+        tagName: "script",
+        attributes: {
+          type: "application/ld+json",
+        },
+        innerHTML: JSON.stringify(ORGANIZATION_JSONLD),
+      },
+    ],
   },
 }
 
