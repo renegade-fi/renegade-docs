@@ -16,7 +16,7 @@
 This repository contains all React source for the landing page
 [renegade.fi](https://renegade.fi), technical documentation
 [docs.renegade.fi](https://docs.renegade.fi), and the upcoming
-[testnet.renegade.fi](https://testnet.renegade.fi).
+[trade.renegade.fi](https://trade.renegade.fi).
 
 <div>
   <a href="https://twitter.com/renegade_fi" target="_blank">
@@ -26,4 +26,3 @@ This repository contains all React source for the landing page
     <img src="https://img.shields.io/discord/1032770899675463771?label=Join%20Discord&logo=discord&style=social" />
   </a>
 </div>
-
