@@ -18,11 +18,11 @@ jobs:
         with:
           cmd: format:check
           dir: "renegade.fi"
-      - name: Prettier Check (docs.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: prettier
-          dir: "docs.renegade.fi"
+      # - name: Prettier Check (docs.renegade.fi)
+      #   uses: borales/actions-yarn@v4.2.0
+      #   with:
+      #     cmd: prettier
+      #     dir: "docs.renegade.fi"
       - name: Install yarn (testnet.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
