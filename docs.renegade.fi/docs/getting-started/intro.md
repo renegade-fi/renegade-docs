@@ -17,7 +17,7 @@ import LogoDark from '@site/static/img/logo_dark.svg'
       '@type': 'Organization',
       name: 'Renegade',
       url: 'https://renegade.fi/',
-      logo: 'https://s3.us-east-2.amazonaws.com/renegade.fi/logos/glyph_light.svg',
+      logo: 'https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg',
       sameAs: ["https://twitter.com/renegade_fi"],
     })}
   </script>
