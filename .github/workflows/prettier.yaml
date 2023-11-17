@@ -23,13 +23,13 @@ jobs:
       #   with:
       #     cmd: prettier
       #     dir: "docs.renegade.fi"
-      - name: Install yarn (testnet.renegade.fi)
+      - name: Install yarn (trade.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
-          dir: "testnet.renegade.fi"
-      - name: Prettier Check (testnet.renegade.fi)
+          dir: "trade.renegade.fi"
+      - name: Prettier Check (trade.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: format:check
-          dir: "testnet.renegade.fi"
+          dir: "trade.renegade.fi"

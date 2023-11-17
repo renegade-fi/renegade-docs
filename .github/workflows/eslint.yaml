@@ -30,19 +30,19 @@ jobs:
       - uses: borales/actions-yarn@v4.2.0
         with:
           cmd: install
-          dir: "testnet.renegade.fi"
-      - name: Eslint Check (testnet.renegade.fi)
+          dir: "trade.renegade.fi"
+      - name: Eslint Check (trade.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: lint
-          dir: "testnet.renegade.fi"
+          dir: "trade.renegade.fi"
         env:
           NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME: ${{ secrets.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME }}
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
           NEXT_PUBLIC_NODE_ENV: ${{ secrets.NEXT_PUBLIC_NODE_ENV }}
           NEXT_PUBLIC_INTERCOM_APP_ID: ${{ secrets.NEXT_PUBLIC_INTERCOM_APP_ID }}
-      - name: Type check (testnet.renegade.fi)
+      - name: Type check (trade.renegade.fi)
         uses: borales/actions-yarn@v4.2.0
         with:
           cmd: typecheck
-          dir: "testnet.renegade.fi"
+          dir: "trade.renegade.fi"
