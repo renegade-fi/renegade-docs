@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
+    "@types/mixpanel-browser": "^2.47.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -36,6 +37,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-chakra-ui": "^0.10.1",
     "eslint-plugin-react": "^7.32.2",
+    "mixpanel-browser": "^2.48.1",
     "prettier": "^2.8.8",
     "typescript": "^5"
   }

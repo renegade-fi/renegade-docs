@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Head from "next/head"
 import LandingPageDesktop from "@/views/desktop"
 import LandingPageMobile from "@/views/mobile"
+import mixpanel from "mixpanel-browser"
 
 import {
   BASE_URL,
@@ -13,7 +14,37 @@ import {
   TWITTER_HANDLE,
 } from "../../seo"
 
+if (!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN) {
+  throw new Error("Missing NEXT_PUBLIC_MIXPANEL_TOKEN")
+}
+
+mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, {
+  debug: true,
+  track_pageview: true,
+})
+mixpanel.track("Initialization")
+
 export default function Home() {
+  const [width, setWidth] = useState<number | null>(null)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth)
+    }
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [])
+
+  const Content = useMemo(() => {
+    if (width && width <= 768) {
+      return LandingPageMobile
+    }
+    return LandingPageDesktop
+  }, [width])
+
   return (
     <>
       <Head>
@@ -87,25 +118,8 @@ export default function Home() {
         />
       </Head>
       <main>
-        <LandingPage />
+        <Content />
       </main>
     </>
   )
-}
-
-function LandingPage() {
-  const [width, setWidth] = useState<number | null>(null)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth)
-    }
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
-
-  return width && width <= 768 ? <LandingPageMobile /> : <LandingPageDesktop />
 }
