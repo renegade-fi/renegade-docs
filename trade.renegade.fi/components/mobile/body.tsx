@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import backgroundPattern from "@/icons/background_pattern.png"
 import logoDark from "@/icons/logo_dark.svg"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, Flex, HStack, Text } from "@chakra-ui/react"
@@ -8,8 +9,6 @@ import { ExchangeHealthState, PriceReport } from "@renegade-fi/renegade-js"
 
 import { MedianBanner } from "@/components/banners/median-banner"
 import { TokensBanner } from "@/components/banners/tokens-banner"
-
-import backgroundPattern from "../../icons/background_pattern.png"
 
 function BodyText() {
   return (

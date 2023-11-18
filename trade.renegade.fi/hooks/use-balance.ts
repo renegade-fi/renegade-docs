@@ -11,7 +11,9 @@ export const useBalance = () => {
   useEffect(() => {
     if (!accountId) return
     const interval = setInterval(async () => {
-      const fetchedBalances = renegade.getBalances(accountId)
+      const fetchedBalances = await renegade
+        .queryWallet(accountId)
+        .then(() => renegade.getBalances(accountId))
       setBalances(fetchedBalances)
     }, 1000)
 
