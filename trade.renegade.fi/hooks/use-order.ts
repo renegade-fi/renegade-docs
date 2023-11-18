@@ -17,7 +17,9 @@ export const useOrders = () => {
         ? existingOrders.split(",")
         : []
 
-      const fetchedOrders = renegade.getOrders(accountId)
+      const fetchedOrders = await renegade
+        .queryWallet(accountId)
+        .then(() => renegade.getOrders(accountId))
       setOrders(fetchedOrders)
 
       const uniqueNewOrderIds = Object.keys(fetchedOrders).filter(
