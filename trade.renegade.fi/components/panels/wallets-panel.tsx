@@ -7,7 +7,7 @@ import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
-import { Exchange, Token } from "@renegade-fi/renegade-js"
+import { Exchange } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import {
   useAccount as useAccountWagmi,
@@ -19,7 +19,7 @@ import {
   DISPLAYED_TICKERS,
   KATANA_ADDRESS_TO_TICKER,
 } from "@/lib/tokens"
-import { findBalanceByTicker, getNetwork } from "@/lib/utils"
+import { findBalanceByTicker, getNetwork, getToken } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { LivePrices } from "@/components/banners/live-price"
 import {
@@ -197,11 +197,11 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     const result: [string, bigint][] = []
     for (const [base] of DISPLAYED_TICKERS) {
       const bal = findBalanceByTicker(balances, base)
-      const address = new Token({ ticker: base, network: getNetwork() }).address
+      const address = getToken({ ticker: base }).address
       result.push([address, bal.amount])
     }
     result.push([
-      new Token({ ticker: "USDC", network: getNetwork() }).address,
+      getToken({ ticker: "USDC" }).address,
       findBalanceByTicker(balances, "USDC").amount,
     ])
     result.sort((a, b) => {

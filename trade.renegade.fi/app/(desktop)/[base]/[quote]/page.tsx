@@ -1,9 +1,10 @@
 import Image from "next/image"
 import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
-import { Renegade, Token } from "@renegade-fi/renegade-js"
+import { Renegade } from "@renegade-fi/renegade-js"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
+import { getToken } from "@/lib/utils"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
@@ -33,9 +34,10 @@ export default async function Page({
 }: {
   params: { base: string; quote: string }
 }) {
+  // TODO: Network is hardcoded until PriceReporter token addresses are standardized
   const report = await renegade.queryExchangeHealthStates(
-    new Token({ ticker: base }),
-    new Token({ ticker: quote })
+    getToken({ input: base, network: "goerli" }),
+    getToken({ input: quote, network: "goerli" })
   )
   return (
     <div

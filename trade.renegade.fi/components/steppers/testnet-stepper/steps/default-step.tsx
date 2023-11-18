@@ -8,10 +8,9 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 import { Repeat2 } from "lucide-react"
 
-import { getNetwork } from "@/lib/utils"
+import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { useStepper } from "../testnet-stepper"
@@ -25,11 +24,7 @@ export function DefaultStep() {
   const handleDeposit = async () => {
     if (!accountId) return
     renegade.task
-      .deposit(
-        accountId,
-        new Token({ ticker, network: getNetwork() }),
-        BigInt(amount)
-      )
+      .deposit(accountId, getToken({ ticker: ticker }), BigInt(amount))
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
       .then(() => onNext())
   }

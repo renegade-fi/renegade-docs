@@ -11,9 +11,8 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 
-import { getNetwork } from "@/lib/utils"
+import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { ErrorType, useStepper } from "../deposit-stepper"
@@ -28,7 +27,7 @@ export function DefaultStep() {
     renegade.task
       .deposit(
         accountId,
-        new Token({ ticker: baseTicker, network: getNetwork() }),
+        getToken({ ticker: baseTicker }),
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))

@@ -27,6 +27,7 @@ function DepositProvider({ children }: PropsWithChildren) {
   return (
     <DepositStateContext.Provider
       value={{
+        // TODO: Export baseToken and quoteToken
         baseTicker,
         baseTokenAmount,
         setBaseTicker: handleSetBaseToken,
