@@ -24,6 +24,8 @@ import {
   TaskState,
   TaskType,
 } from "./types"
+import { useLocalStorage } from "usehooks-ts"
+import { useAccount } from "wagmi"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -69,6 +71,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [taskId])
 
+
   const accountCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
     if (accountCallbackId.current || !accountId) return
@@ -88,6 +91,47 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId])
 
+  // TODO: This logic should probably be moved to SDK
+  // TODO: Should only do if wallet is connected
+  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
+  const attemptedAutoSignin = React.useRef<AccountId>()
+  const initAccount = React.useCallback(async () => {
+    if (!seed || attemptedAutoSignin.current || accountId) return
+    try {
+      console.log("Initializing account using saved seed: ", seed)
+      const keychain = new Keychain({ seed })
+      const _accountId = renegade.registerAccount(keychain)
+      attemptedAutoSignin.current = _accountId
+      // TODO: Will try to automatically create new wallet if relayer restarted
+      await renegade.task
+        .initializeAccount(_accountId)
+        .then(([taskId, taskJob]) => {
+          // TODO: Should I attempt to fund in this scenario
+          setTask(taskId, TaskType.InitializeAccount)
+          return taskJob
+        })
+        .then(() => {
+          setAccountId(_accountId)
+          refreshAccount(_accountId)
+        })
+    } catch (error) {
+      console.error("Tried to automatically sign in user, but failed with error: ", error)
+      setAccountId(undefined)
+      setSeed(undefined)
+      if (attemptedAutoSignin.current) {
+        await renegade.unregisterAccount(attemptedAutoSignin.current)
+      }
+    }
+  }, [accountId, seed, setAccountId, setSeed])
+
+  const [shouldAutoLogin] = useLocalStorage<boolean>('shouldAutoLogin', false)
+  React.useEffect(() => {
+    if (shouldAutoLogin) {
+      initAccount()
+    }
+  }, [initAccount, shouldAutoLogin])
+
+  const { address } = useAccount()
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -104,7 +148,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
-    console.log("🚀 ~ RenegadeProvider ~ accountId:", accountId)
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
@@ -112,9 +155,12 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         return taskJob
       })
       .then(() => {
+        attemptedAutoSignin.current = accountId
         setAccountId(accountId)
-        console.log("🚀 ~ .then ~ accountId:", accountId)
         refreshAccount(accountId)
+        fetch(`/api/fund?address=${address}`, {
+          method: 'GET',
+        })
       })
   }
 

@@ -1,5 +1,4 @@
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import {
   Button,
   Flex,
@@ -8,31 +7,27 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 import { Repeat2 } from "lucide-react"
 
-import { getNetwork } from "@/lib/utils"
-import { renegade } from "@/app/providers"
 
 import { useStepper } from "../testnet-stepper"
+import { useAccount } from "wagmi"
 
 export function DefaultStep() {
-  const { accountId, setTask } = useRenegade()
-  const { onNext, setTicker, ticker } = useStepper()
+  const { address } = useAccount()
+  const { accountId } = useRenegade()
+  const { setTicker, ticker, onNext } = useStepper()
 
   const amount = ticker === "USDC" ? 10000 : 10
 
-  const handleDeposit = async () => {
+  const handleFund = async () => {
     if (!accountId) return
-    renegade.task
-      .deposit(
-        accountId,
-        new Token({ ticker, network: getNetwork() }),
-        BigInt(amount)
-      )
-      .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-      .then(() => onNext())
+    // TODO: Hit faucet contract
+    // TODO: Should funds get automatically deposited into Renegade Wallet?
+    // Move to next step
+    onNext()
   }
+  const formattedAccount = address?.slice(0, 6) + "..."
 
   return (
     <>
@@ -50,7 +45,7 @@ export function DefaultStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Deposit test funds into your Renegade account
+            Fund {formattedAccount} with testnet funds from the Renegade Faucet
           </Text>
           <HStack
             gap="2"
@@ -86,9 +81,9 @@ export function DefaultStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={handleDeposit}
+          onClick={handleFund}
         >
-          Deposit
+          Fund
         </Button>
       </ModalFooter>
     </>

@@ -1,29 +1,31 @@
 "use client"
 
-import { useMemo } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
-import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { useModal as useModalConnectKit } from "connectkit"
-import SimpleBar from "simplebar-react"
-import { useAccount as useAccountWagmi } from "wagmi"
-
 import {
-  ADDR_TO_TICKER,
-  DISPLAYED_TICKERS,
-  KATANA_ADDRESS_TO_TICKER,
-} from "@/lib/tokens"
-import { findBalanceByTicker, getNetwork } from "@/lib/utils"
+  ArrowDownIcon,
+  ArrowUpIcon,
+  LockIcon,
+  UnlockIcon,
+} from "@chakra-ui/icons"
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
+import { useModal as useModalConnectKit } from "connectkit"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
+import SimpleBar from "simplebar-react"
+import { useAccount, useAccount as useAccountWagmi } from "wagmi"
+
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
+import { TaskType } from "@/contexts/Renegade/types"
+import { Token } from "@renegade-fi/renegade-js"
 import "simplebar-react/dist/simplebar.min.css"
+
+import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -34,11 +36,10 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const router = useRouter()
+  const { setTask, accountId } = useRenegade()
+  const { address } = useAccount()
 
-  const ticker =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
-      : ADDR_TO_TICKER[props.tokenAddr]
+  const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
   const isZero = props.amount === BigInt(0)
@@ -90,54 +91,73 @@ function TokenBalance(props: TokenBalanceProps) {
           setView(ViewEnum.DEPOSIT)
         }}
       />
-      {/* <ArrowUpIcon
+      <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
         cursor="pointer"
-        _hover={{
-          background: "white.10",
-        }}
         onClick={() => {
-          if (accountId) {
+          if (accountId && address) {
             renegade.task
               .withdraw(
                 accountId,
                 new Token({ address: props.tokenAddr }),
-                BigInt(1)
+                BigInt(1),
+                address
               )
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
           }
         }}
-      /> */}
+      />
     </Flex>
   )
 }
 
 function DepositWithdrawButtons() {
-  const { setView } = useApp()
+  const { onOpenAirdropModal, setView } = useApp()
   const { accountId } = useRenegade()
   if (!accountId) return null
   return (
-    <Box
-      display="grid"
+    <Flex
+      flexDirection="row"
       width="100%"
       height="calc(1.5 * var(--banner-height))"
-      color="white.60"
       borderColor="border"
       borderTop="var(--border)"
-      _hover={{
-        color: "white.90",
-      }}
+      borderBottom="var(--border)"
       cursor="pointer"
-      onClick={() => setView(ViewEnum.DEPOSIT)}
-      placeContent="center"
     >
-      <HStack gap="4px">
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+        gap="5px"
+        color="white.90"
+        borderColor="border"
+        borderRight="var(--border)"
+        _hover={{
+          backgroundColor: "#000",
+        }}
+        cursor="pointer"
+        onClick={() => setView(ViewEnum.DEPOSIT)}
+      >
         <Text>Deposit</Text>
         <ArrowDownIcon />
-      </HStack>
-    </Box>
+      </Flex>
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+        gap="5px"
+        _hover={{
+          backgroundColor: "#000"
+        }}
+        onClick={onOpenAirdropModal}
+      >
+        <Text>Airdrop</Text>
+        <ArrowUpIcon />
+      </Flex>
+    </Flex>
   )
 }
 
@@ -149,27 +169,27 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const { isSigningIn, setView } = useApp()
   const balances = useBalance()
-  console.log("🚀 ~ RenegadeWalletPanel ~ balances:", balances)
   const { accountId } = useRenegade()
-  console.log("🚀 ~ RenegadeWalletPanel ~ accountId:", accountId)
 
-  const placeholderBalances = useMemo(() => {
-    const result: [string, bigint][] = []
-    for (const [base] of DISPLAYED_TICKERS) {
-      const bal = findBalanceByTicker(balances, base)
-      const address = new Token({ ticker: base, network: getNetwork() }).address
-      result.push([address, bal.amount])
-    }
-    return result
+  // const placeholderBalances = useMemo(() => {
+  //   const result: [string, bigint][] = []
+  //   for (const { ticker: base } of tokenMappings.tokens) {
+  //     const bal = findBalanceByTicker(balances, base)
+  //     const address = getToken({ ticker: base }).address
+  //     result.push([address, bal.amount])
+  //   }
+  //   return result
+  // }, [balances])
+  const formattedBalances: Array<[string, bigint]> = useMemo(() => {
+    return Object.entries(balances).map(([_, b]) => [
+      b.mint.address,
+      b.amount,
+    ])
   }, [balances])
-  console.log(
-    "🚀 ~ placeholderBalances ~ placeholderBalances:",
-    placeholderBalances
-  )
 
   const showDeposit = useMemo(() => {
-    return !placeholderBalances.some(([_, bal]) => bal > BigInt(0))
-  }, [placeholderBalances])
+    return !formattedBalances.some(([_, bal]) => bal > BigInt(0))
+  }, [formattedBalances])
 
   const Content = useMemo(() => {
     if (accountId && !showDeposit) {
@@ -182,7 +202,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               padding: "0 8px",
             }}
           >
-            {placeholderBalances.map(([address, amount]) => (
+            {formattedBalances.map(([address, amount]) => (
               <Box key={address} width="100%">
                 <TokenBalance tokenAddr={"0x" + address} amount={amount} />
               </Box>
@@ -225,8 +245,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
-              : "Connect your Ethereum wallet before signing in."}
+                ? "Sign in to create a Renegade account and view your balances."
+                : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
@@ -235,7 +255,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     accountId,
     address,
     isSigningIn,
-    placeholderBalances,
+    formattedBalances,
     setView,
     showDeposit,
   ])

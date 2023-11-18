@@ -1,21 +1,22 @@
-import { useEffect } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
+import { useEffect } from "react"
 import { useAccount } from "wagmi"
 
 import { useStepper } from "../testnet-stepper"
 
 export function LoadingStep() {
   const { onNext } = useStepper()
-  const { taskType, taskState } = useRenegade()
   const { address } = useAccount()
 
+
   useEffect(() => {
-    if (taskType === TaskType.Deposit && taskState === TaskState.Completed) {
-      onNext()
+    const handleFund = async () => {
+      await fetch(`/api/fund?address=${address}`).then(() => {
+        onNext()
+      })
     }
-  }, [address, onNext, taskState, taskType])
+    handleFund()
+  }, [address, onNext])
 
   return (
     <>
@@ -33,7 +34,7 @@ export function LoadingStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Deposit in progress...
+            Funding in progress...
           </Text>
           <Spinner />
         </Flex>

@@ -1,22 +1,23 @@
 "use client"
 
+import { useToast } from "@chakra-ui/react"
+import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
+import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { CounterpartyOrder } from "@/contexts/Renegade/types"
-import { useToast } from "@chakra-ui/react"
-import { CallbackId, OrderId } from "@renegade-fi/renegade-js"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
-
+import { CounterpartyOrder } from "@/contexts/Renegade/types"
+import {
+  getToken
+} from "@/lib/utils"
+import { useLocalStorage } from "usehooks-ts"
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -26,34 +27,33 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 function OrderProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
-  const [direction, setDirection] = useState<Direction>(
-    safeLocalStorageGetItem("direction") === "buy"
-      ? Direction.BUY
-      : Direction.SELL
-  )
-  const baseTicker = params.base?.toString()
+  // const [direction, setDirection] = useState<Direction>(
+  //   safeLocalStorageGetItem("direction") === "buy"
+  //     ? Direction.BUY
+  //     : Direction.SELL
+  // )
+  const [direction, setDirection] = useLocalStorage('direction', Direction.BUY)
+  const handleSetDirection = (direction: Direction) => {
+    setDirection(direction)
+  }
+
+  const base = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
-    router.push(`/${token}/${quoteTicker}`)
+    router.push(`/${token}/${quote}`)
   }
-  const quoteTicker = params.quote?.toString()
+  const baseToken = getToken({ input: base })
+  const baseTicker = Token.findTickerByAddress(`0x${baseToken.address}`)
+  const quote = params.quote?.toString()
   const handleSetQuoteToken = (token: string) => {
-    router.push(`/${baseTicker}/${token}`)
+    router.push(`/${base}/${token}`)
   }
+  const quoteToken = getToken({ input: quote })
+  const quoteTicker = Token.findTickerByAddress(`0x${quoteToken.address}`)
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
 
   const [orderBook, setOrderBook] = useState<
     Record<OrderId, CounterpartyOrder>
   >({})
-
-  useEffect(() => {
-    if (!baseTicker || !quoteTicker) return
-    const regex = /[a-z]/
-    if (regex.test(baseTicker) || regex.test(quoteTicker)) {
-      router.replace(
-        `/${baseTicker.toUpperCase()}/${quoteTicker.toUpperCase()}`
-      )
-    }
-  }, [baseTicker, quoteTicker, router])
 
   const orderCallbackId = useRef<CallbackId>()
   useEffect(() => {
@@ -119,12 +119,10 @@ function OrderProvider({ children }: PropsWithChildren) {
           if (!toast.isActive(toastId)) {
             toast({
               id: toastId,
-              title: `MPC ${
-                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
-              }`,
-              description: `A handshake with a counterparty has ${
-                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
-              }.`,
+              title: `MPC ${mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+                }`,
+              description: `A handshake with a counterparty has ${mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+                }.`,
               status: "info",
               duration: 5000,
               isClosable: true,
@@ -152,17 +150,19 @@ function OrderProvider({ children }: PropsWithChildren) {
     }
   }, [orderBook, toast])
 
-  const handleSetDirection = useCallback((direction: Direction) => {
-    setDirection(direction)
-    safeLocalStorageSetItem("direction", direction)
-  }, [])
+  // const handleSetDirection = useCallback((direction: Direction) => {
+  //   setDirection(direction)
+  //   safeLocalStorageSetItem("direction", direction)
+  // }, [])
 
   return (
     <OrderStateContext.Provider
       value={{
+        base: baseToken,
         baseTicker,
         baseTokenAmount,
         direction,
+        quote: quoteToken,
         quoteTicker,
         setBaseToken: handleSetBaseToken,
         setBaseTokenAmount,

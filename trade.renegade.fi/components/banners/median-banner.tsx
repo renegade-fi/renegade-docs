@@ -7,9 +7,9 @@ import {
   ExchangeHealthState,
   HealthState,
   PriceReport,
+  Token,
 } from "@renegade-fi/renegade-js"
 
-import { TICKER_TO_ADDR } from "@/lib/tokens"
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
@@ -71,9 +71,8 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     coinbase: `https://www.coinbase.com/advanced-trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     kraken: `https://pro.kraken.com/app/trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     okx: `https://www.okx.com/trade-swap/${renamedBaseTicker}-${renamedQuoteTicker}-swap`,
-    uniswapv3: `https://info.uniswap.org/#/tokens/${
-      TICKER_TO_ADDR[props.activeBaseTicker]
-    }`,
+    uniswapv3: `https://info.uniswap.org/#/tokens/${Token.findAddressByTicker(props.activeBaseTicker)
+      }`,
     median: "",
   }[props.exchange]
 
@@ -144,9 +143,9 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           sx={
             props.isMobile
               ? {
-                  writingMode: "vertical-rl",
-                  textOrientation: "sideways",
-                }
+                writingMode: "vertical-rl",
+                textOrientation: "sideways",
+              }
               : undefined
           }
           lineHeight="1"
@@ -319,9 +318,9 @@ export class MedianBanner extends React.Component<
       scrollDest += this.state.scrollDirection === "left" ? 1 : -1
       const maxScroll = this.props.isMobile
         ? exchangeConnectionsBanner.scrollHeight -
-          exchangeConnectionsBanner.clientHeight
+        exchangeConnectionsBanner.clientHeight
         : exchangeConnectionsBanner.scrollWidth -
-          exchangeConnectionsBanner.clientWidth
+        exchangeConnectionsBanner.clientWidth
       this.setState({ isTooShort: maxScroll > 5 })
       if (maxScroll > 5 && !this.state.isHovered && !this.state.isClicked) {
         if (scrollDest <= 0) {
@@ -428,9 +427,8 @@ export class MedianBanner extends React.Component<
             left={this.props.isMobile ? "1px" : "0px"}
             width={this.props.isMobile ? undefined : "10px"}
             height={this.props.isMobile ? "10px" : undefined}
-            background={`linear-gradient(${
-              this.props.isMobile ? "180deg" : "90deg"
-            }, rgba(0,0,0,1), rgba(0,0,0,0))`}
+            background={`linear-gradient(${this.props.isMobile ? "180deg" : "90deg"
+              }, rgba(0,0,0,1), rgba(0,0,0,0))`}
             visibility={this.state.isTooShort ? undefined : "hidden"}
           ></Box>
           <Box

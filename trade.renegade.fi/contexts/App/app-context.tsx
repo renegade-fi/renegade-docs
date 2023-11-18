@@ -8,6 +8,7 @@ import {
   useState,
 } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TestnetStepper } from "@/components/steppers/testnet-stepper/testnet-stepper"
 
 export enum ViewEnum {
   TRADING,
@@ -17,6 +18,7 @@ export enum ViewEnum {
 export interface AppContextValue {
   isOnboarding: boolean
   isSigningIn: boolean
+  onOpenAirdropModal: () => void
   setIsOnboarding: (isOnboarding: boolean) => void
   setIsSigningIn: (isSigningIn: boolean) => void
   setView: (view: ViewEnum) => void
@@ -34,6 +36,7 @@ function AppProvider({
   const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
   const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   useEffect(() => {
     let timeout = setTimeout(() => {
@@ -49,6 +52,7 @@ function AppProvider({
       value={{
         isOnboarding,
         isSigningIn,
+        onOpenAirdropModal: () => setIsOpen(true),
         setIsOnboarding,
         setIsSigningIn,
         setView,
@@ -57,6 +61,7 @@ function AppProvider({
       }}
     >
       {children}
+      {isOpen && <TestnetStepper onClose={() => setIsOpen(false)} />}
     </AppStateContext.Provider>
   )
 }

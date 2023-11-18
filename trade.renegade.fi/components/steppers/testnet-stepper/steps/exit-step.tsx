@@ -1,5 +1,3 @@
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -11,11 +9,20 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useRouter } from "next/navigation"
+import { useAccount } from "wagmi"
 import { useStepper } from "../testnet-stepper"
 
 export function ExitStep() {
-  const { setDirection } = useOrder()
+  const router = useRouter()
+  const { setView } = useApp()
+  const { address } = useAccount()
   const { onClose, ticker } = useStepper()
+  const formattedAddress = address ? address.slice(0, 6) + "..." : ""
+  if (ticker === 'USDC') {
+    router.prefetch("/USDC")
+  }
   return (
     <>
       <ModalCloseButton />
@@ -32,7 +39,7 @@ export function ExitStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Your account has been funded with
+            {formattedAddress} has been funded with
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
             {`${ticker === "USDC" ? "10,000" : "10"} ${ticker}`}
@@ -43,9 +50,8 @@ export function ExitStep() {
         <Button
           padding="20px"
           color="white.80"
-          fontFamily="Favorit"
           fontSize="1.2em"
-          fontWeight="500"
+          fontWeight="200"
           borderWidth="thin"
           borderColor="white.40"
           borderRadius="100px"
@@ -59,12 +65,21 @@ export function ExitStep() {
           transition="0.15s"
           backgroundColor="transparent"
           onClick={() => {
-            setDirection(ticker === "USDC" ? Direction.BUY : Direction.SELL)
+            // TODO: Not good enough, should render in deposit/order contexts and set baseToken accordingly
+            // setDirection(ticker === "USDC" ? Direction.BUY : Direction.SELL)
+            // if (ticker === "USDC") {
+            //   router.push("/USDC")
+            // } else {
+            //   setView(ViewEnum.DEPOSIT)
+            //   onClose()
+            // }
+            // TODO: Funding with both tokens so no longer need to conditionally step
+            setView(ViewEnum.DEPOSIT)
             onClose()
           }}
         >
           <HStack spacing="4px">
-            <Text>Trade</Text>
+            <Text>Deposit into Renegade</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>

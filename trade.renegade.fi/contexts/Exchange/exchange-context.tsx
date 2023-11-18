@@ -7,13 +7,9 @@ import {
   useRef,
   useState,
 } from "react"
-import {
-  CallbackId,
-  Exchange,
-  PriceReport,
-  Token,
-} from "@renegade-fi/renegade-js"
+import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
+import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { ExchangeContextValue } from "./types"
@@ -59,7 +55,7 @@ function ExchangeProvider({ children }: PropsWithChildren) {
               if (
                 !prev[key] ||
                 prev[key].midpointPrice?.toFixed(decimals || 2) !==
-                  priceReport.midpointPrice?.toFixed(decimals || 2)
+                priceReport.midpointPrice?.toFixed(decimals || 2)
               ) {
                 return {
                   ...prev,
@@ -70,8 +66,8 @@ function ExchangeProvider({ children }: PropsWithChildren) {
             })
           },
           exchange,
-          new Token({ ticker: base }),
-          new Token({ ticker: quote })
+          getToken({ ticker: base }),
+          getToken({ ticker: quote })
         )
         .then((callbackId) => {
           if (callbackId) {
