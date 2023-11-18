@@ -7,17 +7,12 @@ import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import SimpleBar from "simplebar-react"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import {
-  ADDR_TO_TICKER,
-  DISPLAYED_TICKERS,
-  KATANA_ADDRESS_TO_TICKER,
-} from "@/lib/tokens"
-import { findBalanceByTicker, getNetwork } from "@/lib/utils"
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
+import { findBalanceByTicker, getTickerFromToken, getToken } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
@@ -35,10 +30,7 @@ function TokenBalance(props: TokenBalanceProps) {
   const { setView } = useApp()
   const router = useRouter()
 
-  const ticker =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
-      : ADDR_TO_TICKER[props.tokenAddr]
+  const ticker = getTickerFromToken(getToken({ address: props.tokenAddr }))
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
   const isZero = props.amount === BigInt(0)
@@ -155,7 +147,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     const result: [string, bigint][] = []
     for (const [base] of DISPLAYED_TICKERS) {
       const bal = findBalanceByTicker(balances, base)
-      const address = new Token({ ticker: base, network: getNetwork() }).address
+      const address = getToken({ ticker: base }).address
       result.push([address, bal.amount])
     }
     return result

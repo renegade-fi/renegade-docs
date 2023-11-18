@@ -12,8 +12,12 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import SimpleBar from "simplebar-react"
 
-import { ADDR_TO_TICKER, KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
-import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
+import { KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
+import {
+  getTickerFromToken,
+  getToken,
+  safeLocalStorageGetItem,
+} from "@/lib/utils"
 import { useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
@@ -43,15 +47,8 @@ function SingleOrder({
   const { tokenIcons } = useApp()
   const { accountId, setTask } = useRenegade()
 
-  const base =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + baseAddr]
-      : ADDR_TO_TICKER["0x" + baseAddr]
-
-  const quote =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + quoteAddr]
-      : ADDR_TO_TICKER["0x" + quoteAddr]
+  const base = getTickerFromToken(getToken({ address: baseAddr }))
+  const quote = getTickerFromToken(getToken({ address: quoteAddr }))
 
   const handleCancel = () => {
     if (!accountId) return
