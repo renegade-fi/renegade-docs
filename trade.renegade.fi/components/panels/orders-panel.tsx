@@ -1,24 +1,25 @@
 "use client"
 
-import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { OrderId } from "@renegade-fi/renegade-js"
+import { OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
-import { ADDR_TO_TICKER, KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
-import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
-import { useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
+import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
+import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
+import {
+  safeLocalStorageGetItem
+} from "@/lib/utils"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -43,15 +44,8 @@ function SingleOrder({
   const { tokenIcons } = useApp()
   const { accountId, setTask } = useRenegade()
 
-  const base =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + baseAddr]
-      : ADDR_TO_TICKER["0x" + baseAddr]
-
-  const quote =
-    getNetwork() === "katana"
-      ? KATANA_ADDRESS_TO_TICKER["0x" + quoteAddr]
-      : ADDR_TO_TICKER["0x" + quoteAddr]
+  const base = Token.findTickerByAddress(`0x${baseAddr}`)
+  const quote = Token.findTickerByAddress(`0x${quoteAddr}`)
 
   const handleCancel = () => {
     if (!accountId) return
@@ -286,24 +280,20 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
+          if (!orders[counterpartyOrder.id]?.baseToken.address || !orders[counterpartyOrder.id]?.quoteToken.address) return null
+          const baseTicker = Token.findTickerByAddress(
+            `0x${orders[counterpartyOrder.id]?.baseToken.address}`
+          )
+          const quoteTicker = Token.findTickerByAddress(
+            `0x${orders[counterpartyOrder.id]?.quoteToken.address}`
+          )
           const title = orders[counterpartyOrder.id]
-            ? `${
-                orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-              } ${orders[counterpartyOrder.id].amount} ${
-                // TODO: Should use helper function to get ticker
-                KATANA_ADDRESS_TO_TICKER[
-                  "0x" + orders[counterpartyOrder.id].baseToken.address
-                ]
-              } ${
-                orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-              } ${
-                KATANA_ADDRESS_TO_TICKER[
-                  "0x" + orders[counterpartyOrder.id].quoteToken.address
-                ]
-              }`
+            ? `${orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
+            } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
+            } ${quoteTicker}`
             : `Unknown order hash: ${counterpartyOrder.id
-                .split("-")[0]
-                .toString()}`
+              .split("-")[0]
+              .toString()}`
 
           const status =
             counterpartyOrder.id in orders
@@ -311,10 +301,10 @@ function OrderBookPanel() {
               : counterpartyOrder.state === "Cancelled" &&
                 !(counterpartyOrder.id in orders) &&
                 savedOrders.some(({ id }) => id === counterpartyOrder.id)
-              ? "MATCHED"
-              : counterpartyOrder.state === "Cancelled"
-              ? "VERIFIED"
-              : counterpartyOrder.state.toUpperCase()
+                ? "MATCHED"
+                : counterpartyOrder.state === "Cancelled"
+                  ? "VERIFIED"
+                  : counterpartyOrder.state.toUpperCase()
 
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
 
@@ -322,8 +312,8 @@ function OrderBookPanel() {
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
-              ? "red"
-              : "white.60"
+                ? "red"
+                : "white.60"
 
           return (
             <Flex

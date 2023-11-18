@@ -15,7 +15,7 @@ export const useBalance = () => {
         .queryWallet(accountId)
         .then(() => renegade.getBalances(accountId))
       setBalances(fetchedBalances)
-    }, 1000)
+    }, 5000)
 
     return () => {
       clearInterval(interval)

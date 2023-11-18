@@ -1,14 +1,8 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { useErc20Allowance, useErc20Approve } from "@/src/generated"
 import {
-  ArrowForwardIcon,
   ChevronDownIcon,
-  ChevronLeftIcon,
+  ChevronLeftIcon
 } from "@chakra-ui/icons"
 import {
   Box,
@@ -19,61 +13,20 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { useAccount, useBalance } from "wagmi"
+import Link from "next/link"
 
-import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
+import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
 
 function DepositInner() {
-  const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const {
-    isOpen: stepperIsOpen,
-    onOpen: onOpenStepper,
-    onClose: onCloseStepper,
-  } = useDisclosure()
-  const {
-    isOpen: signInIsOpen,
-    onOpen: onOpenSignIn,
-    onClose: onCloseSignIn,
-  } = useDisclosure()
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
-  const isLocked = useIsLocked()
-  const pathname = usePathname()
-  const { accountId } = useRenegade()
-  const router = useRouter()
-  const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
-    connectText: "Connect Wallet to Deposit",
-    onOpenSignIn,
-    signInText: "Sign in to Deposit",
-  })
-  // const { data: allowance } = useErc20Allowance()
-  // const { data: approveData, write: approve } = useErc20Approve({
-  //   address: getToken(baseTicker).address,
-  // })
-  const { address } = useAccount()
-  const { data: ethBalance } = useBalance({
-    // address: "0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e",
-    address
-  })
-  console.log("🚀 ~ DepositInner ~ ethBalance:", ethBalance)
-
-  const handleClick = () => {
-    if (shouldUse) {
-      buttonOnClick()
-    } else {
-      onOpenStepper()
-    }
-  }
-  const isDisabled = accountId && (isLocked || !baseTokenAmount)
 
   return (
     <>
@@ -90,24 +43,17 @@ function DepositInner() {
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
             <div>
-              <Button
-                position="absolute"
-                top="-24px"
-                fontWeight="600"
-                onClick={() => {
-                  const replace = `/${
-                    baseTicker === "USDC" ? "WETH" : baseTicker
-                  }/USDC`
-                  if (pathname !== replace) {
-                    router.replace(replace)
-                  }
-                  setView(ViewEnum.TRADING)
-                }}
-                variant="link"
-              >
-                <ChevronLeftIcon />
-                Back to Trading
-              </Button>
+              <Link href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}>
+                <Button
+                  position="absolute"
+                  top="-24px"
+                  fontWeight="600"
+                  variant="link"
+                >
+                  <ChevronLeftIcon />
+                  Back to Trading
+                </Button>
+              </Link>
               <Text color="white.50" fontSize="34px">
                 Let&apos;s get started by depositing{" "}
               </Text>
@@ -144,41 +90,8 @@ function DepositInner() {
             </HStack>
           </HStack>
         </Box>
-        <Button
-          padding="20px"
-          color="white.80"
-          fontSize="1.2em"
-          fontWeight="200"
-          opacity={baseTokenAmount ? 1 : 0}
-          borderWidth="thin"
-          borderColor="white.40"
-          borderRadius="100px"
-          _hover={
-            isDisabled
-              ? { backgroundColor: "transparent" }
-              : {
-                  borderColor: "white.60",
-                  color: "white",
-                }
-          }
-          transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-          visibility={baseTokenAmount ? "visible" : "hidden"}
-          cursor={cursor}
-          transition="0.15s"
-          backgroundColor="transparent"
-          isDisabled={isDisabled}
-          isLoading={isLocked}
-          loadingText="Please wait for task completion"
-          onClick={handleClick}
-          rightIcon={<ArrowForwardIcon />}
-        >
-          {shouldUse
-            ? buttonText
-            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
-        </Button>
+        <DepositButton />
       </Flex>
-      {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
-      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
         onClose={onCloseTokenMenu}

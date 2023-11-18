@@ -14,20 +14,10 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import {
-  Exchange,
-  Order,
-  OrderId,
-  PriceReport,
-  Token,
-} from "@renegade-fi/renegade-js"
+import { Exchange, Order, OrderId, PriceReport } from "@renegade-fi/renegade-js"
 import { v4 as uuidv4 } from "uuid"
 
-import {
-  getNetwork,
-  safeLocalStorageGetItem,
-  safeLocalStorageSetItem,
-} from "@/lib/utils"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { ErrorType, useStepper } from "../order-stepper"
@@ -45,9 +35,11 @@ export function ConfirmStep() {
   const { onClose, setMidpoint, setError } = useStepper()
   const { getPriceData } = useExchange()
   const {
+    base,
     baseTicker,
     baseTokenAmount,
     direction,
+    quote,
     quoteTicker,
     setBaseTokenAmount,
   } = useOrder()
@@ -72,8 +64,8 @@ export function ConfirmStep() {
     const id = uuidv4() as OrderId
     const order = new Order({
       id,
-      baseToken: new Token({ ticker: baseTicker, network: getNetwork() }),
-      quoteToken: new Token({ ticker: quoteTicker, network: getNetwork() }),
+      baseToken: base,
+      quoteToken: quote,
       side: direction,
       type: "midpoint",
       amount: BigInt(baseTokenAmount),

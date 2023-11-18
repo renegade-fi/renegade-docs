@@ -1,9 +1,13 @@
 "use client"
 
-import { PropsWithChildren, createContext, useContext, useState } from "react"
+import { Token } from "@renegade-fi/renegade-js"
 import { useParams, useRouter } from "next/navigation"
+import { PropsWithChildren, createContext, useContext, useState } from "react"
+
+import { getToken } from "@/lib/utils"
 
 export interface DepositContextValue {
+  base: Token
   baseTicker: string
   baseTokenAmount: number
   setBaseTicker: (ticker: string) => void
@@ -17,7 +21,8 @@ const DepositStateContext = createContext<DepositContextValue | undefined>(
 function DepositProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
-  const baseTicker = params.base?.toString()
+  const base = params.base?.toString()
+  const baseToken = getToken({ input: base })
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}`)
   }
@@ -26,7 +31,8 @@ function DepositProvider({ children }: PropsWithChildren) {
   return (
     <DepositStateContext.Provider
       value={{
-        baseTicker,
+        base: baseToken,
+        baseTicker: Token.findTickerByAddress(`0x${baseToken.address}`),
         baseTokenAmount,
         setBaseTicker: handleSetBaseToken,
         setBaseTokenAmount,
