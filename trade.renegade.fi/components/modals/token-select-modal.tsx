@@ -18,13 +18,8 @@ import {
 } from "@chakra-ui/react"
 import SimpleBar from "simplebar-react"
 
-import {
-  DISPLAYED_TICKERS,
-  KATANA_TICKER_TO_ADDR,
-  TICKER_TO_ADDR,
-  TICKER_TO_NAME,
-} from "@/lib/tokens"
-import { getNetwork } from "@/lib/utils"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
+import { getToken } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
 
@@ -103,12 +98,9 @@ export function TokenSelectModal({
             {filteredTickers
               .filter(([base]) => (isTrading ? base !== "USDC" : true))
               .map(([ticker]) => {
-                const tickerAddress =
-                  getNetwork() === "katana"
-                    ? KATANA_TICKER_TO_ADDR[ticker]
-                    : TICKER_TO_ADDR[ticker]
+                const addr = getToken({ ticker }).address
                 const matchingBalance = Object.values(balances).find(
-                  (balance) => `0x${balance.mint.address}` === tickerAddress
+                  ({ mint: { address } }) => address === addr
                 )
                 const balanceAmount = matchingBalance
                   ? matchingBalance.amount.toString()

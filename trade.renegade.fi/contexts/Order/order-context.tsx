@@ -14,7 +14,12 @@ import { CounterpartyOrder } from "@/contexts/Renegade/types"
 import { useToast } from "@chakra-ui/react"
 import { CallbackId, OrderId } from "@renegade-fi/renegade-js"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import {
+  getTickerFromToken,
+  getToken,
+  safeLocalStorageGetItem,
+  safeLocalStorageSetItem,
+} from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { Direction, OrderContextValue } from "./types"
@@ -31,29 +36,22 @@ function OrderProvider({ children }: PropsWithChildren) {
       ? Direction.BUY
       : Direction.SELL
   )
-  const baseTicker = params.base?.toString()
+  const base = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
-    router.push(`/${token}/${quoteTicker}`)
+    router.push(`/${token}/${quote}`)
   }
-  const quoteTicker = params.quote?.toString()
+  const baseToken = getToken({ input: base })
+  const baseTicker = getTickerFromToken(baseToken)
+  const quote = params.quote?.toString()
   const handleSetQuoteToken = (token: string) => {
-    router.push(`/${baseTicker}/${token}`)
+    router.push(`/${base}/${token}`)
   }
+  const quoteToken = getToken({ input: quote })
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
 
   const [orderBook, setOrderBook] = useState<
     Record<OrderId, CounterpartyOrder>
   >({})
-
-  useEffect(() => {
-    if (!baseTicker || !quoteTicker) return
-    const regex = /[a-z]/
-    if (regex.test(baseTicker) || regex.test(quoteTicker)) {
-      router.replace(
-        `/${baseTicker.toUpperCase()}/${quoteTicker.toUpperCase()}`
-      )
-    }
-  }, [baseTicker, quoteTicker, router])
 
   const orderCallbackId = useRef<CallbackId>()
   useEffect(() => {
@@ -160,10 +158,12 @@ function OrderProvider({ children }: PropsWithChildren) {
   return (
     <OrderStateContext.Provider
       value={{
+        base: baseToken,
         baseTicker,
         baseTokenAmount,
         direction,
-        quoteTicker,
+        quote: quoteToken,
+        quoteTicker: getTickerFromToken(quoteToken),
         setBaseToken: handleSetBaseToken,
         setBaseTokenAmount,
         setDirection: handleSetDirection,

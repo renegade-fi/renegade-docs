@@ -47,7 +47,7 @@ export const LivePrices = ({
     })
   }, [priceReport])
 
-  const baseDefaultDecimals = TICKER_TO_DEFAULT_DECIMALS[baseTicker]
+  const baseDefaultDecimals = TICKER_TO_DEFAULT_DECIMALS[baseTicker] || 0
   const trailingDecimals = useMemo(() => {
     if (quoteTicker !== "USDC") {
       return 2

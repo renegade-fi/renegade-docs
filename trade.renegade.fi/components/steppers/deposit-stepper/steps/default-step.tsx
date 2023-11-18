@@ -11,9 +11,8 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 
-import { getNetwork } from "@/lib/utils"
+import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import { ErrorType, useStepper } from "../deposit-stepper"
@@ -24,12 +23,12 @@ export function DefaultStep() {
   const { onClose, setError } = useStepper()
 
   const handleDeposit = async () => {
-  console.log("🚀 ~ DefaultStep ~ accountId:", accountId)
+    console.log("🚀 ~ DefaultStep ~ accountId:", accountId)
     if (!accountId) return
     renegade.task
       .deposit(
         accountId,
-        new Token({ address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4" }),
+        getToken({ ticker: baseTicker }),
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
