@@ -10,18 +10,17 @@ import { OrderId } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import SimpleBar from "simplebar-react"
 
 import { ADDR_TO_TICKER, KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
 import { getNetwork, safeLocalStorageGetItem } from "@/lib/utils"
-import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
+import { useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
-import {
-  Panel,
-  callAfterTimeout,
-  expandedPanelWidth,
-} from "@/components/panels/panels"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
 import { renegade } from "@/app/providers"
+
+import "simplebar-react/dist/simplebar.min.css"
 
 dayjs.extend(relativeTime)
 
@@ -66,17 +65,16 @@ function SingleOrder({
       alignItems="center"
       justifyContent="space-evenly"
       gap="4px"
+      padding="4%"
       color="white.60"
       borderColor="white.20"
-      borderBottom="var(--border)"
+      borderBottom="var(--secondary-border)"
       _hover={{
         filter: "inherit",
         color: "white.90",
       }}
-      cursor="pointer"
-      transition="filter 0.1s"
+      transition="all 0.2s"
       filter="grayscale(1)"
-      paddingY="10px"
     >
       <Text fontFamily="Favorit">{matched ? "Matched" : "Open"}</Text>
       <Box position="relative" width="45px" height="40px">
@@ -138,7 +136,6 @@ function OrdersPanel(props: OrdersPanelProps) {
   const globalOrders = useGlobalOrders()
   const orders = useOrders()
   const { accountId } = useRenegade()
-  let panelBody: React.ReactElement
 
   const [filteredOrders, filteredMatchedOrders] = useMemo(() => {
     const matchedOrders = safeLocalStorageGetItem(`order-details-${accountId}`)
@@ -156,28 +153,36 @@ function OrdersPanel(props: OrdersPanelProps) {
     return [filteredOrders, filteredMatchedOrders]
   }, [accountId, globalOrders, orders])
 
-  if (
-    !accountId ||
-    !orders ||
-    (filteredOrders.length === 0 && filteredMatchedOrders.length === 0)
-  ) {
-    panelBody = (
-      <Text
-        margin="auto"
-        padding="0 10% 50px 10%"
-        color="white.50"
-        fontSize="0.8em"
-        fontWeight="100"
-        textAlign="center"
+  const Content = useMemo(() => {
+    if (
+      !accountId ||
+      !orders ||
+      (!filteredOrders.length && !filteredMatchedOrders.length)
+    ) {
+      return (
+        <Text
+          margin="auto"
+          padding="0 10%"
+          color="white.50"
+          fontSize="0.8em"
+          fontWeight="100"
+          textAlign="center"
+        >
+          {accountId
+            ? "No orders. Submit an order to broadcast it to the dark pool."
+            : "Sign in to create a Renegade account and view your orders."}
+        </Text>
+      )
+    }
+
+    return (
+      <SimpleBar
+        style={{
+          height: "calc(100% - 30vh -  (3 * var(--banner-height)))",
+          width: "100%",
+          padding: "0 8px",
+        }}
       >
-        {accountId
-          ? "No orders. Submit an order to broadcast it to the dark pool."
-          : "Sign in to create a Renegade account and view your orders."}
-      </Text>
-    )
-  } else {
-    panelBody = (
-      <>
         {filteredMatchedOrders.map((order) => (
           <Box key={order.id} width="100%">
             <SingleOrder
@@ -203,9 +208,9 @@ function OrdersPanel(props: OrdersPanelProps) {
             </Box>
           )
         )}
-      </>
+      </SimpleBar>
     )
-  }
+  }, [accountId, orders, filteredMatchedOrders, filteredOrders])
 
   return (
     <>
@@ -214,8 +219,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         alignItems="center"
         justifyContent="center"
         width="100%"
-        height="var(--banner-height)"
-        borderColor="border"
+        minHeight="var(--banner-height)"
         borderBottom="var(--border)"
       >
         <Flex
@@ -240,25 +244,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         </Flex>
         <Text>Order History</Text>
       </Flex>
-      <Flex
-        className="scroll scroll-orders hidden"
-        alignItems="center"
-        flexDirection="column"
-        flexGrow="1"
-        overflow="overlay"
-        width="100%"
-        onWheel={() => {
-          const query = document.querySelector(".scroll-orders")
-          if (query) {
-            query.classList.remove("hidden")
-            callAfterTimeout(() => {
-              query.classList.add("hidden")
-            }, 400)()
-          }
-        }}
-      >
-        {panelBody}
-      </Flex>
+      {Content}
     </>
   )
 }
@@ -274,39 +260,32 @@ function OrderBookPanel() {
     return parsed
   }, [accountId])
 
-  const seen = savedOrders.some(({ id }) => id in orders)
-
-  const globalOrdersSorted = useMemo(() => {
-    const res: GlobalOrder[] = []
-    Object.entries(globalOrders).forEach(([orderId, order]) => {
-      if (orderId in orders || seen) {
-        res.unshift(order)
-      } else {
-        res.push(order)
-      }
-    })
-    return res
-  }, [globalOrders, orders, seen])
-
   let panelBody: React.ReactElement
 
-  if (globalOrdersSorted.length === 0) {
+  if (Object.values(globalOrders).length === 0) {
     panelBody = (
-      <Text
-        marginTop="120px"
-        padding="0 10% 0 10%"
-        color="white.50"
-        fontSize="0.8em"
-        fontWeight="100"
-        textAlign="center"
-      >
-        No counterparty orders have been received.
-      </Text>
+      <Box display="grid" height="30vh" placeContent="center">
+        <Text
+          padding="0 10%"
+          color="white.50"
+          fontSize="0.8em"
+          fontWeight="100"
+          textAlign="center"
+        >
+          No counterparty orders have been received.
+        </Text>
+      </Box>
     )
   } else {
     panelBody = (
-      <>
-        {globalOrdersSorted.map((counterpartyOrder) => {
+      <SimpleBar
+        style={{
+          height: "30vh",
+          width: "100%",
+          padding: "0 8px",
+        }}
+      >
+        {Object.values(globalOrders).map((counterpartyOrder) => {
           const title = orders[counterpartyOrder.id]
             ? `${
                 orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
@@ -334,16 +313,10 @@ function OrderBookPanel() {
                 savedOrders.some(({ id }) => id === counterpartyOrder.id)
               ? "MATCHED"
               : counterpartyOrder.state === "Cancelled"
-              ? "PENDING"
+              ? "VERIFIED"
               : counterpartyOrder.state.toUpperCase()
 
-          const ago = dayjs(
-            counterpartyOrder.id in orders
-              ? orders[counterpartyOrder.id].timestamp ||
-                  savedOrders.find(({ id }) => id === counterpartyOrder.id)
-                    ?.timestamp
-              : counterpartyOrder.timestamp
-          ).fromNow()
+          const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
 
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
@@ -357,16 +330,14 @@ function OrderBookPanel() {
               key={counterpartyOrder.id}
               flexDirection="row"
               width="100%"
-              padding="4% 8% 4% 8%"
-              borderColor="white.20"
-              borderBottom="var(--border)"
-              userSelect="none"
+              padding="4%"
+              borderBottom="var(--secondary-border)"
             >
               <Flex flexDirection="column">
                 <Flex alignItems="center">
                   <Text
                     color={textColor}
-                    fontFamily="Favorit Expanded"
+                    fontFamily="Favorit Extended"
                     fontWeight="500"
                   >
                     {status}&nbsp;
@@ -387,7 +358,7 @@ function OrderBookPanel() {
             </Flex>
           )
         })}
-      </>
+      </SimpleBar>
     )
   }
 
@@ -398,33 +369,14 @@ function OrderBookPanel() {
         alignItems="center"
         justifyContent="center"
         width="100%"
-        height="var(--banner-height)"
+        minHeight="var(--banner-height)"
         borderColor="border"
         borderTop="var(--border)"
         borderBottom="var(--border)"
       >
         <Text>Order Book</Text>
       </Flex>
-      <Flex
-        className="scroll scroll-order-book hidden"
-        alignItems="center"
-        flexDirection="column"
-        flexGrow="1"
-        overflow="overlay"
-        width="100%"
-        maxHeight="30vh"
-        onWheel={() => {
-          const query = document.querySelector(".scroll-order-book")
-          if (query) {
-            query.classList.remove("hidden")
-            callAfterTimeout(() => {
-              query.classList.add("hidden")
-            }, 400)()
-          }
-        }}
-      >
-        {panelBody}
-      </Flex>
+      {panelBody}
     </>
   )
 }
@@ -437,7 +389,7 @@ function CounterpartiesPanel() {
       alignItems="center"
       justifyContent="center"
       width="100%"
-      height="var(--banner-height)"
+      minHeight="var(--banner-height)"
       borderColor="border"
       borderTop="var(--border)"
       borderBottom="var(--border)"

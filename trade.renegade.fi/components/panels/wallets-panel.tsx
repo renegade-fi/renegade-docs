@@ -6,13 +6,11 @@ import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
-import { Box, Button, Flex, Text, useDisclosure } from "@chakra-ui/react"
-import { Exchange, Token } from "@renegade-fi/renegade-js"
+import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
-import {
-  useAccount as useAccountWagmi,
-  useBalance as useBalanceWagmi,
-} from "wagmi"
+import SimpleBar from "simplebar-react"
+import { useAccount as useAccountWagmi } from "wagmi"
 
 import {
   ADDR_TO_TICKER,
@@ -21,26 +19,19 @@ import {
 } from "@/lib/tokens"
 import { findBalanceByTicker, getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
-import { LivePrices } from "@/components/banners/live-price"
-import {
-  Panel,
-  callAfterTimeout,
-  expandedPanelWidth,
-} from "@/components/panels/panels"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { renegade } from "@/app/providers"
+import { useUDSPrice } from "@/hooks/use-usd-price"
+import { ConnectWalletButton, SignInButton } from "@/components/main-nav"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+
+import "simplebar-react/dist/simplebar.min.css"
 
 interface TokenBalanceProps {
   tokenAddr: string
   userAddr?: string
-  amount?: bigint
+  amount: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
-  const { data } = useBalanceWagmi({
-    address: props.userAddr as `0x${string}`,
-    token: props.tokenAddr as `0x${string}`,
-  })
   const { setView } = useApp()
   const router = useRouter()
 
@@ -48,16 +39,10 @@ function TokenBalance(props: TokenBalanceProps) {
     getNetwork() === "katana"
       ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
       : ADDR_TO_TICKER[props.tokenAddr]
+  const usdPrice = useUDSPrice(ticker, Number(props.amount))
 
-  let amount = ""
-  if (props.userAddr && data && data.value !== BigInt(0)) {
-    amount = data.formatted
-  }
-  if (props.amount !== undefined) {
-    amount = props.amount.toString()
-  } else {
-    // throw new Error("Exactly one of userAddr or amount must be provided.")
-  }
+  const isZero = props.amount === BigInt(0)
+
   return (
     <Flex
       alignItems="center"
@@ -66,14 +51,10 @@ function TokenBalance(props: TokenBalanceProps) {
       padding="0 8% 0 8%"
       color="white.60"
       borderColor="white.20"
-      borderBottom="var(--border)"
-      _hover={{
-        filter: Number(amount) > 0 ? "inherit" : undefined,
-        color: Number(amount) > 0 ? "white.90" : "white.70",
-      }}
-      cursor="pointer"
+      borderBottom="var(--secondary-border)"
+      boxSizing="border-box"
       transition="filter 0.1s"
-      filter="grayscale(1)"
+      filter={isZero ? "grayscale(1)" : undefined}
     >
       <Image width="25" height="25" alt="Logo" src={tokenIcons[ticker]} />
       <Flex
@@ -84,17 +65,20 @@ function TokenBalance(props: TokenBalanceProps) {
         padding="10px 0 10px 0"
         fontFamily="Favorit"
       >
-        <Text fontSize="1.1em" lineHeight="1">
-          {amount.slice(0, 6)} {ticker}
+        <Text
+          fontSize="1.1em"
+          lineHeight="1"
+          opacity={isZero ? "40%" : undefined}
+        >
+          {props.amount.toString()} {ticker}
         </Text>
-        <Box color="white.40" fontSize="0.8em" lineHeight="1">
-          <LivePrices
-            baseTicker={ticker}
-            quoteTicker={"USDC"}
-            exchange={Exchange.Median}
-            onlyShowPrice
-            scaleBy={Number.parseFloat(amount)}
-          />
+        <Box
+          color="white.40"
+          fontSize="0.8em"
+          lineHeight="1"
+          opacity={usdPrice === "0.00" ? "40%" : undefined}
+        >
+          ${usdPrice}
         </Box>
       </Flex>
       <ArrowDownIcon
@@ -132,54 +116,28 @@ function TokenBalance(props: TokenBalanceProps) {
 
 function DepositWithdrawButtons() {
   const { setView } = useApp()
+  const { accountId } = useRenegade()
+  if (!accountId) return null
   return (
-    <Flex
-      flexDirection="row"
+    <Box
+      display="grid"
       width="100%"
       height="calc(1.5 * var(--banner-height))"
+      color="white.60"
       borderColor="border"
       borderTop="var(--border)"
-      borderBottom="var(--border)"
+      _hover={{
+        color: "white.90",
+      }}
       cursor="pointer"
+      onClick={() => setView(ViewEnum.DEPOSIT)}
+      placeContent="center"
     >
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexGrow="1"
-        gap="5px"
-        color="white.60"
-        borderColor="border"
-        borderRight="var(--border)"
-        _hover={{
-          color: "white.90",
-        }}
-        cursor="pointer"
-        onClick={() => setView(ViewEnum.DEPOSIT)}
-      >
+      <HStack gap="4px">
         <Text>Deposit</Text>
         <ArrowDownIcon />
-      </Flex>
-      {/* <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexGrow="1"
-        gap="5px"
-        onClick={() => {
-          if (accountId) {
-            renegade.task
-              .withdraw(
-                accountId,
-                new Token({ ticker: "USDC", network: getNetwork() }),
-                BigInt(1)
-              )
-              .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
-          }
-        }}
-      >
-        <Text>Withdraw</Text>
-        <ArrowUpIcon />
-      </Flex> */}
-    </Flex>
+      </HStack>
+    </Box>
   )
 }
 
@@ -189,8 +147,8 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
+  const { isSigningIn, setView } = useApp()
   const balances = useBalance()
-  const { isOpen, onClose, onOpen } = useDisclosure()
   const { accountId } = useRenegade()
 
   const placeholderBalances = useMemo(() => {
@@ -200,67 +158,32 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       const address = new Token({ ticker: base, network: getNetwork() }).address
       result.push([address, bal.amount])
     }
-    result.push([
-      new Token({ ticker: "USDC", network: getNetwork() }).address,
-      findBalanceByTicker(balances, "USDC").amount,
-    ])
-    result.sort((a, b) => {
-      if (a[1] === BigInt(0) && b[1] !== BigInt(0)) {
-        return 1
-      } else if (a[1] !== BigInt(0) && b[1] === BigInt(0)) {
-        return -1
-      } else {
-        return 0
-      }
-    })
     return result
   }, [balances])
 
-  const pkSettleHex = useMemo(() => {
-    if (!accountId) return ""
-    const pkSettle =
-      renegade.getKeychain(accountId).keyHierarchy.settle.publicKey
-    // Serialize pkSettle from Uint8Array to hex string
-    return Buffer.from(pkSettle).toString("hex")
-  }, [accountId])
+  const showDeposit = useMemo(() => {
+    return !placeholderBalances.some(([_, bal]) => bal > BigInt(0))
+  }, [placeholderBalances])
 
   const Content = useMemo(() => {
-    if (accountId) {
+    if (accountId && !showDeposit) {
       return (
-        <Flex
-          className="scroll scroll-renegade-wallet hidden"
-          alignItems="center"
-          flexDirection="column"
-          flexGrow="1"
-          overflow="overlay"
-          width="100%"
-          onWheel={() => {
-            const query = document.querySelector(".scroll-renegade-wallet")
-            if (query) {
-              query.classList.remove("hidden")
-              callAfterTimeout(() => {
-                query.classList.add("hidden")
-              }, 400)()
-            }
-          }}
-        >
-          {placeholderBalances.map(([address, amount]) => (
-            <Box key={address} width="100%">
-              <TokenBalance tokenAddr={"0x" + address} amount={amount} />
-            </Box>
-          ))}
-          <Text
-            marginTop="auto"
-            padding="10%"
-            color="white.40"
-            fontSize="0.5em"
-            fontWeight="100"
-            textAlign="start"
-            overflowWrap="anywhere"
+        <>
+          <SimpleBar
+            style={{
+              height: "calc(100% - (2.5 * var(--banner-height)))",
+              width: "100%",
+              padding: "0 8px",
+            }}
           >
-            Settle Key: 0x{pkSettleHex}
-          </Text>
-        </Flex>
+            {placeholderBalances.map(([address, amount]) => (
+              <Box key={address} width="100%">
+                <TokenBalance tokenAddr={"0x" + address} amount={amount} />
+              </Box>
+            ))}
+          </SimpleBar>
+          <Spacer />
+        </>
       )
     } else {
       return (
@@ -270,22 +193,21 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           flexDirection="column"
           flexGrow="1"
         >
-          <Button
-            padding="0 15% 0 15%"
-            opacity={address ? 1 : 0.4}
-            _hover={address ? undefined : {}}
-            cursor={address ? "pointer" : "inherit"}
-            transition="0.2s"
-            onClick={() => {
-              if (!address) {
-                return
-              }
-              onOpen()
-            }}
-            variant="wallet-connect"
-          >
-            Sign in
-          </Button>
+          <ConnectWalletButton />
+          <SignInButton />
+          {accountId && (
+            <Button
+              padding="0 15% 0 15%"
+              onClick={() => {
+                setView(ViewEnum.DEPOSIT)
+              }}
+              variant="wallet-connect"
+            >
+              <Text>
+                {accountId ? "Deposit" : isSigningIn ? "Signing In" : "Sign In"}
+              </Text>
+            </Button>
+          )}
           <Text
             marginTop="10px"
             padding="0 10% 0 10%"
@@ -294,14 +216,23 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             fontWeight="100"
             textAlign="center"
           >
-            {address
+            {accountId
+              ? "Deposit tokens into your Renegade Account to get started."
+              : address
               ? "Sign in to create a Renegade account and view your balances."
               : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
     }
-  }, [accountId, address, onOpen, pkSettleHex, placeholderBalances])
+  }, [
+    accountId,
+    address,
+    isSigningIn,
+    placeholderBalances,
+    setView,
+    showDeposit,
+  ])
 
   return (
     <>
@@ -310,7 +241,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         alignItems="center"
         justifyContent="center"
         width="100%"
-        height="var(--banner-height)"
+        minHeight="var(--banner-height)"
         borderColor="border"
         borderBottom="var(--border)"
       >
@@ -337,7 +268,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         </Flex>
       </Flex>
       {Content}
-      {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )
 }
@@ -349,10 +279,8 @@ interface WalletsPanelExpandedProps {
 function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
   return (
     <Flex
-      alignItems="center"
       flexDirection="column"
       width={expandedPanelWidth}
-      borderColor="border"
       borderRight="var(--border)"
       backdropFilter="blur(8px)"
     >
@@ -375,7 +303,7 @@ export function WalletsPanel() {
           toggleIsLocked={toggleIsLocked}
         />
       )}
-      panelCollapsedDisplayTexts={["Renegade Account", "Airdrop"]}
+      panelCollapsedDisplayTexts={["Renegade Account", "Deposit"]}
       isOpenConnectKitModal={open}
       flipDirection={false}
     />

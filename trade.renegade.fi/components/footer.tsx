@@ -3,7 +3,7 @@
 import React from "react"
 import Image from "next/image"
 import logoDark from "@/icons/logo_dark.svg"
-import { Box, Flex, Link, Spacer, Text } from "@chakra-ui/react"
+import { Box, Flex, Link, Text } from "@chakra-ui/react"
 
 interface FooterState {
   logoRef: React.RefObject<HTMLDivElement>
@@ -51,6 +51,7 @@ export class Footer extends React.Component<
   render() {
     return (
       <Flex
+        position="relative"
         alignItems="center"
         width="100%"
         height="120px"
@@ -84,12 +85,17 @@ export class Footer extends React.Component<
             Download Logo Pack
           </Link>
         </Flex>
-        <Spacer />
-        <Text color="white.90" fontSize="1.1em" fontWeight="300">
-          TESTNET
-        </Text>
-        <Spacer />
-        <Box width="30%" />
+        <Box
+          position="absolute"
+          right="0"
+          left="0"
+          display="grid"
+          placeContent="center"
+        >
+          <Text color="white.90" fontSize="1.1em" fontWeight="300">
+            TESTNET
+          </Text>
+        </Box>
       </Flex>
     )
   }

@@ -44,7 +44,13 @@ export interface LocalOrder {
 export function ConfirmStep() {
   const { onClose, setMidpoint, setError } = useStepper()
   const { getPriceData } = useExchange()
-  const { baseTicker, baseTokenAmount, direction, quoteTicker } = useOrder()
+  const {
+    baseTicker,
+    baseTokenAmount,
+    direction,
+    quoteTicker,
+    setBaseTokenAmount,
+  } = useOrder()
   const { setTask, accountId } = useRenegade()
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
 
@@ -95,6 +101,7 @@ export function ConfirmStep() {
         timestampMap[id] = order.timestamp
         safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
       })
+      .then(() => setBaseTokenAmount(0))
       .then(() => onClose())
       .catch((e) => {
         if (

@@ -1,6 +1,13 @@
 "use client"
 
-import { PropsWithChildren, createContext, useContext, useState } from "react"
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
 export enum ViewEnum {
   TRADING,
@@ -9,7 +16,9 @@ export enum ViewEnum {
 
 export interface AppContextValue {
   isOnboarding: boolean
+  isSigningIn: boolean
   setIsOnboarding: (isOnboarding: boolean) => void
+  setIsSigningIn: (isSigningIn: boolean) => void
   setView: (view: ViewEnum) => void
   tokenIcons: Record<string, string>
   view: ViewEnum
@@ -21,13 +30,27 @@ function AppProvider({
   children,
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
-  const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+  const { accountId } = useRenegade()
   const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
+  const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
+  const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      if (accountId) {
+        setIsSigningIn(false)
+      }
+    }, 3000)
+    return () => clearTimeout(timeout)
+  }, [accountId])
+
   return (
     <AppStateContext.Provider
       value={{
         isOnboarding,
+        isSigningIn,
         setIsOnboarding,
+        setIsSigningIn,
         setView,
         tokenIcons: tokenIcons || {},
         view,

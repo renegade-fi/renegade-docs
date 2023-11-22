@@ -19,7 +19,7 @@ import { renegade } from "@/app/providers"
 import { ErrorType, useStepper } from "../deposit-stepper"
 
 export function DefaultStep() {
-  const { baseTicker, baseTokenAmount } = useDeposit()
+  const { baseTicker, baseTokenAmount, setBaseTokenAmount } = useDeposit()
   const { setTask, accountId } = useRenegade()
   const { onClose, setError } = useStepper()
 
@@ -32,6 +32,7 @@ export function DefaultStep() {
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
+      .then(() => setBaseTokenAmount(0))
       .then(() => onClose())
       .catch((e) => {
         if (
@@ -95,7 +96,7 @@ export function DefaultStep() {
           onClick={handleDeposit}
         >
           <HStack spacing="4px">
-            <Text>Deposit</Text>
+            <Text>Deposit {baseTicker}</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>

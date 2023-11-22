@@ -19,9 +19,8 @@ function DepositProvider({ children }: PropsWithChildren) {
   const router = useRouter()
   const baseTicker = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
-    router.push(`/${token}/${quoteTicker}`)
+    router.push(`/${token}`)
   }
-  const quoteTicker = params.quote?.toString()
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
 
   return (

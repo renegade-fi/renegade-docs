@@ -6,6 +6,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
 
 import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { usePrevious } from "@/hooks/use-previous"
 
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))"
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))"
@@ -111,31 +112,31 @@ export function Panel({
 }: PanelProps) {
   const key = `${flipDirection ? "right" : "left"}-panel-isLocked`
 
-  const { isOnboarding } = useApp()
+  const { isOnboarding, isSigningIn } = useApp()
+  console.log("🚀 ~ isSigningIn:", isSigningIn)
+  console.log("🚀 ~ isOnboarding:", isOnboarding)
   const [isLocked, setIsLocked] = useState(
     safeLocalStorageGetItem(key) === "true" || false
   )
   const [isOpen, setIsOpen] = useState(false)
 
-  useEffect(() => {
-    const lockState = safeLocalStorageGetItem(key) === "true"
-    if (isLocked !== lockState) {
-      setIsLocked(lockState)
-    }
-  }, [isLocked, key])
+  const prevIsOnboarding = usePrevious(isOnboarding)
 
   useEffect(() => {
-    if (safeLocalStorageGetItem(key) === "true" && !isOpen) {
-      setIsOpen(true)
+    const lockState = safeLocalStorageGetItem(key) === "true"
+    if (prevIsOnboarding && !isOnboarding && !isSigningIn && !lockState) {
+      setIsOpen(false)
     }
-  }, [isOpen, key])
+  }, [isOnboarding, isSigningIn, key, prevIsOnboarding])
 
   const onMouseEnter = () => {
     setIsOpen(true)
   }
 
   const onMouseLeave = () => {
-    setIsOpen(isOnboarding || safeLocalStorageGetItem(key) === "true")
+    setIsOpen(
+      isOnboarding || isSigningIn || safeLocalStorageGetItem(key) === "true"
+    )
   }
 
   const toggleIsLocked = () => {

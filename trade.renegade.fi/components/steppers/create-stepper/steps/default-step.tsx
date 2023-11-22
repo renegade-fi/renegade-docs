@@ -1,12 +1,6 @@
+import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import {
-  Button,
-  Flex,
-  HStack,
-  ModalBody,
-  Spinner,
-  Text,
-} from "@chakra-ui/react"
+import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
 import { verifyMessage } from "viem"
@@ -20,12 +14,14 @@ import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { client } from "@/app/providers"
 
 export function DefaultStep() {
+  const { setIsOnboarding, setIsSigningIn } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
   const { isLoading, signMessage } = useSignMessageWagmi({
     message: "Unlock your Renegade account.\nTestnet v0",
     async onSuccess(data, variables) {
+      setIsSigningIn(true)
       // If Cloudflare is down, Smart Contract accounts cannot be verified
       // EOA accounts can be verified using verifyMessage util
       const valid = await client
@@ -48,7 +44,11 @@ export function DefaultStep() {
         throw new Error("Invalid signature")
       }
       setAccount(accountId, new Keychain({ seed: data }))
+      setIsOnboarding(false)
       onClose()
+    },
+    onError() {
+      setIsSigningIn(false)
     },
   })
   const { disconnect } = useDisconnectWagmi()
@@ -61,45 +61,48 @@ export function DefaultStep() {
             To trade on Renegade, we require a one-time signature to unlock and
             create your wallet.
           </Text>
-          <Button
-            color="white.90"
-            fontWeight="800"
-            transition="0.2s"
-            onClick={() => signMessage()}
-          >
-            <HStack spacing="10px">
-              <Spinner
-                width={isLoading ? "17px" : "0px"}
-                height={isLoading ? "17px" : "0px"}
-                opacity={isLoading ? 1 : 0}
-                transition="0.2s"
-                speed="0.8s"
-              />
+          <div>
+            <Button
+              width="100%"
+              height={isLoading ? "56px" : "40px"}
+              color="white.90"
+              fontWeight="800"
+              transition="0.2s"
+              isLoading={isLoading}
+              loadingText="Signing in to Renegade"
+              onClick={() => {
+                signMessage()
+              }}
+            >
               <Text>Sign in to Renegade</Text>
-            </HStack>
-          </Button>
-          <Button
-            padding="0"
-            color="white.50"
-            fontFamily="Favorit"
-            fontSize="1.05em"
-            fontWeight="400"
-            disabled={isLoading}
-            onClick={() => {
-              disconnect()
-              onClose()
-            }}
-            variant="transparent"
-          >
-            <HStack spacing="4px">
-              <Unplug size={18} />
-              <Text>
-                Disconnect L1 address 0x
-                {address ? address.slice(2, 6) : "????"}
-                ..
-              </Text>
-            </HStack>
-          </Button>
+            </Button>
+            <Flex
+              justifyContent="center"
+              height={isLoading ? "0px" : "auto"}
+              opacity={isLoading ? 0 : 1}
+              transition="0.2s"
+            >
+              <Button
+                color="white.50"
+                fontFamily="Favorit"
+                fontSize="1em"
+                fontWeight="400"
+                onClick={() => {
+                  disconnect()
+                  onClose()
+                }}
+                variant="transparent"
+              >
+                <HStack spacing="4px">
+                  <Unplug size={18} />
+                  <Text>
+                    Disconnect L1 address 0x
+                    {address ? address.slice(2, 6) : "????"}..
+                  </Text>
+                </HStack>
+              </Button>
+            </Flex>
+          </div>
         </Flex>
       </ModalBody>
     </>
