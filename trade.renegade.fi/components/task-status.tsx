@@ -97,12 +97,19 @@ export const TaskStatus = () => {
 
   useEffect(() => {
     if (
-      taskState === prevTaskState.current &&
-      taskType === prevTaskType.current
+      (taskState === prevTaskState.current &&
+        taskType === prevTaskType.current) ||
+      !taskState ||
+      !taskType
     ) {
       return
     }
     const currentTime = Date.now()
+    // TODO: Test this
+    const nextTaskDuration = TASK_TO_LATENCY[taskType][taskState]
+    if (nextTaskDuration < 5000) {
+      return // Stay on the current status until the next status update occurs
+    }
     setTaskStartTime(currentTime)
     prevTaskState.current = taskState
     prevTaskType.current = taskType
@@ -141,10 +148,11 @@ export const TaskStatus = () => {
   const displayedTaskState = {
     [TaskState.Proving]: "Generating ZK Proof",
     [TaskState.SubmittingTx]: "Submitting Transaction",
-    [TaskState.FindingOpening]: "Verifying ZK Proof",
+    [TaskState.FindingOpening]: "Finding New Merkle Opening",
+    // TODO: Make sure this works for CreateNewWalletTask
     // @ts-ignore
-    [TaskState.FindingOpening]: "Verifying ZK Proof",
-    [TaskState.UpdatingValidityProofs]: "Verifying ZK Proof",
+    [TaskState.FindingMerkleOpening]: "Finding New Merkle Opening",
+    [TaskState.UpdatingValidityProofs]: "Updating Validity Proofs",
     [TaskState.Completed]: "Completed",
   }[taskState || TaskState.Proving] // If taskState is undefined, we won't use this displayedTaskState anyway.
 

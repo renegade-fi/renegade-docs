@@ -2,9 +2,7 @@
 
 import { PropsWithChildren } from "react"
 import { AppProvider } from "@/contexts/App/app-context"
-import { DepositProvider } from "@/contexts/Deposit/deposit-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
-import { OrderProvider } from "@/contexts/Order/order-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
@@ -212,15 +210,12 @@ export function Providers({
                   "--ck-font-family": "Favorit Extended",
                   "--ck-border-radius": "10px",
                   "--ck-body-background": "#1e1e1e",
+                  "--ck-spinner-color": "#ffffff",
                 }}
               >
                 <RenegadeProvider>
                   <ExchangeProvider>
-                    <OrderProvider>
-                      <DepositProvider>
-                        <AppProvider tokenIcons={icons}>{children}</AppProvider>
-                      </DepositProvider>
-                    </OrderProvider>
+                    <AppProvider tokenIcons={icons}>{children}</AppProvider>
                   </ExchangeProvider>
                 </RenegadeProvider>
               </ConnectKitProvider>

@@ -2,6 +2,7 @@
 
 import React, { createRef, useEffect, useState } from "react"
 import Image from "next/image"
+import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import glyphDark from "@/icons/glyph_dark.svg"
 import {
@@ -21,12 +22,12 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi"
 
+import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
   const [isCompleted, setIsCompleted] = React.useState(false)
-  // eslint-disable-next-line no-undef
   const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null)
   return (
     <Box
@@ -136,40 +137,34 @@ export function ConnectWalletButton() {
  * The "Sign In with..." button. Only visible if the user has connected their
  * wallet, but we have not re-derived the key hierarchy.
  */
-function SignInButton() {
+export function SignInButton() {
   const { address } = useAccountWagmi()
+  const { isSigningIn } = useApp()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data } = useEnsNameWagmi({ address })
   const { accountId } = useRenegade()
-  if (!address) {
+  const signInText = data
+    ? `Sign in with ${data}`
+    : `Sign in with 0x${address?.slice(2, 6)}`
+  const { buttonOnClick, buttonText } = useButton({
+    connectText: "Connect Wallet",
+    onOpenSignIn: onOpen,
+    signInText,
+  })
+  if (!address || accountId) {
     return null
-  }
-  if (accountId) {
-    return null
-  }
-
-  let buttonContent: React.ReactElement
-  if (data) {
-    buttonContent = (
-      <HStack spacing="4px">
-        <Text>Sign in with</Text>
-        <Text>{data}</Text>
-      </HStack>
-    )
-  } else {
-    buttonContent = (
-      <HStack spacing="0px">
-        <Text>Sign in with 0x</Text>
-        <Text>{address.slice(2, 6)}</Text>
-        <Text>{data}</Text>
-      </HStack>
-    )
   }
 
   return (
     <>
-      <Button onClick={onOpen} variant="wallet-connect">
-        {buttonContent}
+      <Button
+        cursor={isSigningIn ? "default" : "pointer"}
+        isLoading={isSigningIn}
+        loadingText="Signing in"
+        onClick={isSigningIn ? () => {} : buttonOnClick}
+        variant="wallet-connect"
+      >
+        {buttonText}
       </Button>
       {isOpen && <CreateStepper onClose={onClose} />}
     </>
@@ -185,10 +180,7 @@ function DisconnectWalletButton() {
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
   const { accountId, setAccount } = useRenegade()
-  if (!address) {
-    return null
-  }
-  if (!accountId) {
+  if (!address || !accountId) {
     return null
   }
 

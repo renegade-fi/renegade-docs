@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useDeposit } from "@/contexts/Deposit/deposit-context"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   ArrowForwardIcon,
@@ -18,16 +18,15 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { useModal as useModalConnectKit } from "connectkit"
-import { useAccount as useAccountWagmi } from "wagmi"
 
+import { useButton } from "@/hooks/use-button"
+import { useIsLocked } from "@/hooks/use-is-locked"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 
-export function DepositBody() {
+function DepositInner() {
   const { setView } = useApp()
-  const { address } = useAccountWagmi()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -45,29 +44,24 @@ export function DepositBody() {
   } = useDisclosure()
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
-  const { setOpen } = useModalConnectKit()
+  const isLocked = useIsLocked()
   const pathname = usePathname()
   const { accountId } = useRenegade()
   const router = useRouter()
+  const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
+    connectText: "Connect Wallet to Deposit",
+    onOpenSignIn,
+    signInText: "Sign in to Deposit",
+  })
 
-  const buttonText = !address
-    ? "Connect Wallet to Deposit"
-    : !accountId
-    ? "Sign in to Deposit"
-    : baseTokenAmount > 10_000
-    ? "Try a smaller amount"
-    : `Deposit ${baseTokenAmount} ${baseTicker}`
   const handleClick = () => {
-    if (!address) {
-      setOpen(true)
-    } else if (!accountId) {
-      onOpenSignIn()
-    } else if (baseTokenAmount > 10_000) {
-      return
+    if (shouldUse) {
+      buttonOnClick()
     } else {
       onOpenStepper()
     }
   }
+  const isDisabled = accountId && (isLocked || !baseTokenAmount)
 
   return (
     <>
@@ -87,9 +81,7 @@ export function DepositBody() {
               <Button
                 position="absolute"
                 top="-24px"
-                left="-16px"
-                fontFamily="Favorit"
-                fontWeight="400"
+                fontWeight="600"
                 onClick={() => {
                   const replace = `/${
                     baseTicker === "USDC" ? "WETH" : baseTicker
@@ -130,14 +122,8 @@ export function DepositBody() {
               type="number"
               value={baseTokenAmount || ""}
             />
-            <HStack
-              userSelect="none"
-              cursor="pointer"
-              onClick={onOpenTokenMenu}
-            >
-              <Text cursor="pointer" variant="trading-body-button">
-                {baseTicker}
-              </Text>
+            <HStack userSelect="none" onClick={onOpenTokenMenu}>
+              <Text variant="trading-body-button">{baseTicker}</Text>
               <ChevronDownIcon
                 boxSize="20px"
                 viewBox="6 6 12 12"
@@ -155,25 +141,28 @@ export function DepositBody() {
           borderWidth="thin"
           borderColor="white.40"
           borderRadius="100px"
-          _hover={{
-            borderColor: "white.60",
-            color: "white",
-          }}
-          _focus={{
-            backgroundColor: "transparent",
-          }}
+          _hover={
+            isDisabled
+              ? { backgroundColor: "transparent" }
+              : {
+                  borderColor: "white.60",
+                  color: "white",
+                }
+          }
           transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
           visibility={baseTokenAmount ? "visible" : "hidden"}
-          cursor={baseTokenAmount ? "pointer" : "default"}
+          cursor={cursor}
           transition="0.15s"
           backgroundColor="transparent"
-          disabled={baseTokenAmount > 10_000}
+          isDisabled={isDisabled}
+          isLoading={isLocked}
+          loadingText="Please wait for task completion"
           onClick={handleClick}
+          rightIcon={<ArrowForwardIcon />}
         >
-          <HStack spacing="4px">
-            <Text>{buttonText}</Text>
-            <ArrowForwardIcon />
-          </HStack>
+          {shouldUse
+            ? buttonText
+            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
         </Button>
       </Flex>
       {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
@@ -184,5 +173,13 @@ export function DepositBody() {
         setToken={setBaseTicker}
       />
     </>
+  )
+}
+
+export function DepositBody() {
+  return (
+    <DepositProvider>
+      <DepositInner />
+    </DepositProvider>
   )
 }

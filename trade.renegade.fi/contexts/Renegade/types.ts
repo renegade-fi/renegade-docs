@@ -29,6 +29,7 @@ export interface RenegadeContextType {
   accountId: AccountId | undefined
   counterparties: Record<PeerId, Counterparty>
   fees: Record<FeeId, Fee>
+  isLocked: boolean
   orderBook: Record<OrderId, CounterpartyOrder>
   refreshAccount: (accountId?: AccountId) => void
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>

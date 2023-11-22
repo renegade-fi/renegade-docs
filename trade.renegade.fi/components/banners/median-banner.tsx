@@ -17,10 +17,11 @@ import { PulsingConnection } from "@/components/banners/pulsing-connection-indic
 function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
   return (
     <Flex
-      as={Link}
+      as={props.link ? Link : undefined}
       alignItems="center"
       justifyContent="center"
       flexGrow="1"
+      gap="8px"
       height="100%"
       _hover={{ textDecoration: "none" }}
       userSelect="none"
@@ -114,12 +115,10 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   }[textVariant] as "live" | "loading" | "dead"
 
   return (
-    <>
-      <LinkWrapper link={link}>
-        <Text variant={props.isMobile ? "rotate-right" : undefined}>
-          {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
-        </Text>
-      </LinkWrapper>
+    <LinkWrapper link={link}>
+      <Text variant={props.isMobile ? "rotate-right" : undefined}>
+        {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
+      </Text>
       {/* TODO: Add Link */}
       <BannerSeparator flexGrow={1} />
       {showPrice && (
@@ -131,31 +130,29 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           price={props.priceReport.midpointPrice}
         />
       )}
-      <LinkWrapper link={link}>
-        <Stack
-          alignItems="center"
-          justifyContent="center"
-          direction={props.isMobile ? "column" : "row"}
-          spacing={props.isMobile ? "8px" : "5px"}
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        direction={props.isMobile ? "column" : "row"}
+        spacing={props.isMobile ? "8px" : "5px"}
+      >
+        <Text
+          sx={
+            props.isMobile
+              ? {
+                  writingMode: "vertical-rl",
+                  textOrientation: "sideways",
+                }
+              : undefined
+          }
+          lineHeight="1"
+          variant={textVariant}
         >
-          <Text
-            sx={
-              props.isMobile
-                ? {
-                    writingMode: "vertical-rl",
-                    textOrientation: "sideways",
-                  }
-                : undefined
-            }
-            lineHeight="1"
-            variant={textVariant}
-          >
-            {connectionText}
-          </Text>
-          <PulsingConnection state={pulseState} />
-        </Stack>
-      </LinkWrapper>
-    </>
+          {connectionText}
+        </Text>
+        <PulsingConnection state={pulseState} />
+      </Stack>
+    </LinkWrapper>
   )
 }
 
@@ -384,6 +381,11 @@ export class MedianBanner extends React.Component<
   }
 
   render() {
+    if (this.props.activeBaseTicker === "USDC") {
+      // TODO: Better solution for USDC deposit that does't vertically shift layout
+      return <></>
+    }
+
     return (
       <Stack
         alignItems="center"
@@ -453,6 +455,7 @@ export class MedianBanner extends React.Component<
               alignItems="center"
               justifyContent="center"
               flexDirection={this.props.isMobile ? "column" : "row"}
+              gap="16px"
               minWidth={this.props.isMobile ? undefined : "1200px"}
               minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >

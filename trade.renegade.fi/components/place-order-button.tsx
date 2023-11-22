@@ -1,18 +1,19 @@
 "use client"
 
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
-import { Button, HStack, Text, useDisclosure } from "@chakra-ui/react"
+import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
-import { useModal as useModalConnectKit } from "connectkit"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { findBalanceByTicker } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
+import { useButton } from "@/hooks/use-button"
+import { useIsLocked } from "@/hooks/use-is-locked"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 
@@ -29,15 +30,20 @@ export function PlaceOrderButton() {
     onOpen: onOpenSignIn,
     onClose: onCloseSignIn,
   } = useDisclosure()
-  const { setOpen } = useModalConnectKit()
-  const { accountId } = useRenegade()
-  const { baseTicker, quoteTicker, baseTokenAmount, direction } = useOrder()
   const { getPriceData } = useExchange()
+  const isLocked = useIsLocked()
+  const { baseTicker, quoteTicker, baseTokenAmount, direction } = useOrder()
+  const { accountId } = useRenegade()
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
 
+  const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
+    connectText: "Connect Wallet to Place Orders",
+    onOpenSignIn,
+    signInText: "Sign in to Place Orders",
+  })
+
   const hasInsufficientBalance = useMemo(() => {
-    if (!accountId) return false
     const baseBalance = findBalanceByTicker(balances, baseTicker)
     const quoteBalance = findBalanceByTicker(balances, quoteTicker)
     if (direction === Direction.SELL) {
@@ -46,7 +52,6 @@ export function PlaceOrderButton() {
     if (!priceReport?.midpointPrice) return false
     return quoteBalance.amount < priceReport?.midpointPrice
   }, [
-    accountId,
     balances,
     baseTicker,
     baseTokenAmount,
@@ -56,25 +61,20 @@ export function PlaceOrderButton() {
   ])
 
   const isSignedIn = accountId !== undefined
-  let placeOrderButtonContent: React.ReactElement
-  if (!address) {
-    placeOrderButtonContent = <Text>Connect Wallet to Place Orders</Text>
-  } else if (!isSignedIn) {
-    placeOrderButtonContent = <Text>Sign in to Place Orders</Text>
+  let placeOrderButtonContent: string
+  if (shouldUse) {
+    placeOrderButtonContent = buttonText
   } else if (!priceReport?.midpointPrice) {
-    placeOrderButtonContent = <Text>No Exchange Data</Text>
+    placeOrderButtonContent = "No Exchange Data"
   } else if (hasInsufficientBalance) {
-    placeOrderButtonContent = <Text>Insufficient Balance</Text>
+    placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = (
-      <HStack spacing="4px">
-        <Text>
-          Place Order for {baseTokenAmount} {baseTicker}
-        </Text>
-        <ArrowForwardIcon />
-      </HStack>
-    )
+    placeOrderButtonContent = `Place Order for ${
+      baseTokenAmount || ""
+    } ${baseTicker}`
   }
+  const isDisabled =
+    accountId && (!baseTokenAmount || hasInsufficientBalance || isLocked)
 
   return (
     <>
@@ -87,32 +87,32 @@ export function PlaceOrderButton() {
         borderWidth="thin"
         borderColor="white.40"
         borderRadius="100px"
-        _hover={{
-          borderColor: "white.60",
-          color: "white",
-        }}
-        _focus={{
-          backgroundColor: "transparent",
-        }}
+        _hover={
+          isDisabled
+            ? { backgroundColor: "transparent" }
+            : {
+                borderColor: "white.60",
+                color: "white",
+              }
+        }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
-        cursor={baseTokenAmount ? "pointer" : "default"}
+        cursor={cursor}
         transition="0.15s"
         backgroundColor="transparent"
+        isDisabled={isDisabled}
+        isLoading={isLocked}
+        loadingText="Please wait for task completion"
         onClick={() => {
-          if (!baseTokenAmount || hasInsufficientBalance) {
+          if (shouldUse) {
+            buttonOnClick()
+          } else if (isDisabled) {
             return
+          } else {
+            onOpenPlaceOrder()
           }
-          if (!address) {
-            setOpen(true)
-            return
-          }
-          if (!isSignedIn) {
-            onOpenSignIn()
-            return
-          }
-          onOpenPlaceOrder()
         }}
+        rightIcon={<ArrowForwardIcon />}
       >
         {placeOrderButtonContent}
       </Button>

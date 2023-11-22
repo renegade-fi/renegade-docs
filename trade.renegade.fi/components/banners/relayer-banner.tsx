@@ -149,14 +149,14 @@ export class RelayerStatusBanner extends React.Component<
     }
     return (
       <RenegadeContext.Consumer>
-        {(value) => (
+        {() => (
           <Box
             ref={this.state.relayerStatusBannerRef}
             overflow="hidden"
             height="var(--banner-height)"
             color="white.80"
             borderBottom="var(--border)"
-            userSelect="none"
+            userSelect="text"
             onMouseDown={this.onMouseDown}
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
@@ -192,13 +192,6 @@ export class RelayerStatusBanner extends React.Component<
               <Text>Relayer 0.08%</Text>
               <BannerSeparator flexGrow={1} />
               <Text>Protocol 0.02%</Text>
-              <BannerSeparator flexGrow={3} />
-              <Box
-                cursor="pointer"
-                onClick={() => value?.refreshAccount(value.accountId)}
-              >
-                <Text>Refresh</Text>
-              </Box>
               <Spacer flexGrow="2" />
             </Flex>
           </Box>

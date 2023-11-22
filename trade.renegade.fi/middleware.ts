@@ -16,9 +16,10 @@ export function middleware(request: NextRequest) {
     url.pathname = "/WETH/USDC"
     return NextResponse.redirect(url)
   }
-  if (pathname.split("/").length === 2) {
-    url.pathname = `${pathname}/USDC`
-    return NextResponse.redirect(url)
+  const [, base, quote] = pathname.split("/")
+  if (base === quote) {
+    request.nextUrl.pathname = `/${base}`
+    return NextResponse.redirect(request.nextUrl)
   }
   const regex = /[a-z]/
   if (regex.test(pathname)) {

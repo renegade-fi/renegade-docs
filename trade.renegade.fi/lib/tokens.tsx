@@ -139,8 +139,9 @@ for (const addr in ADDR_TO_TICKER) {
 export const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: {
   [key: string]: [string, number]
 } = {
-  WBTC: ["Bitcoin", 5],
+  USDC: ["USD Coin", 1],
   WETH: ["Ethereum", 4],
+  WBTC: ["Bitcoin", 5],
   BNB: ["Binance Coin", 3],
   MATIC: ["Polygon", -1],
   LDO: ["Lido DAO", 1],
@@ -152,7 +153,6 @@ export const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: {
   AAVE: ["AAVE", 2],
   // FTM: ["Fantom", -1],
   // GNO: ["Gnosis", 2],
-  // USDC: ["USD Coin", 1],
   // USDT: ["Tether", 1],
   // BUSD: ["Binance USD", 1],
   // BAND: ["Band Protocol", 1],

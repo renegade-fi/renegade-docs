@@ -13,12 +13,11 @@ import { DefaultStep } from "@/components/steppers/create-stepper/steps/default-
 import { LoadingStep } from "@/components/steppers/create-stepper/steps/loading-step"
 
 const CreateStepperInner = () => {
-  const { setIsOnboarding } = useApp()
   const { step, onClose } = useStepper()
+  const { setIsOnboarding } = useApp()
 
   useEffect(() => {
     setIsOnboarding(true)
-    return () => setIsOnboarding(false)
   }, [setIsOnboarding])
 
   return (
@@ -27,7 +26,7 @@ const CreateStepperInner = () => {
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
       />
-      <ModalContent height="212px" background="surfaces.1" borderRadius="10">
+      <ModalContent height="192px" background="surfaces.1" borderRadius="10">
         {step === Step.DEFAULT && (
           <ModalHeader paddingBottom="0">Unlock your Wallet</ModalHeader>
         )}

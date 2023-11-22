@@ -1,13 +1,12 @@
 "use client"
 
 import React, { createRef, useEffect, useRef, useState } from "react"
-import { useOrder } from "@/contexts/Order/order-context"
+import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import { Box, Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 
-import { LivePrices } from "@/components/banners/live-price"
+import { useUDSPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
@@ -43,6 +42,14 @@ const Selectable = React.forwardRef(
 Selectable.displayName = "selectable"
 
 export function TradingBody() {
+  return (
+    <OrderProvider>
+      <TradingInner />
+    </OrderProvider>
+  )
+}
+
+function TradingInner() {
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -94,7 +101,10 @@ export function TradingBody() {
         flexDirection="column"
         flexGrow="1"
       >
-        <Box
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
           transform={baseTokenAmount ? "translateY(-15px)" : "translateY(10px)"}
           transition="0.15s"
         >
@@ -152,29 +162,8 @@ export function TradingBody() {
             </Text>
             <Text variant="trading-body-button">{quoteTicker}</Text>
           </HStack>
-          <HStack
-            marginTop="5px"
-            color="white.50"
-            fontFamily="Favorit Extended"
-            fontWeight="100"
-            userSelect="all"
-            spacing="0"
-          >
-            <Text marginRight="4px">
-              Trades are end-to-end encrypted and always clear at the real-time
-              midpoint of
-            </Text>
-            <Box fontFamily="Favorit Mono">
-              <LivePrices
-                baseTicker={baseTicker}
-                quoteTicker={quoteTicker}
-                exchange={Exchange.Median}
-                onlyShowPrice
-                withCommas
-              />
-            </Box>
-          </HStack>
-        </Box>
+          <HelperText baseTicker={baseTicker} />
+        </Flex>
         <PlaceOrderButton />
         <BlurredOverlay
           activeModal={activeModal}
@@ -184,9 +173,29 @@ export function TradingBody() {
       </Flex>
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
+        isTrading
         onClose={onCloseTokenMenu}
         setToken={setBaseToken}
       />
     </>
+  )
+}
+
+function HelperText({ baseTicker }: { baseTicker: string }) {
+  const usdPrice = useUDSPrice(baseTicker, 1)
+  return (
+    <HStack
+      marginTop="5px"
+      color="white.50"
+      fontFamily="Favorit Extended"
+      fontWeight="100"
+      userSelect="text"
+      spacing="0"
+    >
+      <Text marginRight="4px">
+        Trades are end-to-end encrypted and always clear at the real-time
+        midpoint of ${usdPrice}
+      </Text>
+    </HStack>
   )
 }

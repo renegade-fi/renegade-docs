@@ -8,17 +8,15 @@ import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { Main } from "@/app/(desktop)/[base]/[quote]/main"
+import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 
 export function generateStaticParams() {
-  return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(
-    ([base, quote]) => {
-      return {
-        base,
-        quote,
-      }
+  return DISPLAYED_TICKERS.map(([base, quote]) => {
+    return {
+      base,
+      quote,
     }
-  )
+  })
 }
 
 const renegade = new Renegade({
@@ -36,8 +34,8 @@ export default async function Page({
   params: { base: string; quote: string }
 }) {
   const report = await renegade.queryExchangeHealthStates(
-    new Token({ ticker: base }),
-    new Token({ ticker: quote })
+    new Token({ ticker: base === "USDC" ? "WETH" : base }),
+    new Token({ ticker: "USDC" })
   )
   return (
     <div
@@ -79,7 +77,7 @@ export default async function Page({
               position: "relative",
             }}
           >
-            <Main />
+            <DepositBody />
           </div>
         </div>
         <OrdersAndCounterpartiesPanel />
