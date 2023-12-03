@@ -4,8 +4,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/docs",
-        destination: "https://docs.renegade.fi/",
+        source: "/docs/:path*",
+        destination: "https://docs.renegade.fi/:path*",
         permanent: true,
       },
       {
