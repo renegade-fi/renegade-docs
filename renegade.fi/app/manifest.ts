@@ -1,10 +1,10 @@
 import { MetadataRoute } from "next"
 
-import { DESCRIPTION, NAME, SHORT_NAME } from "../../seo"
+import { DESCRIPTION, SHORT_NAME, TITLE } from "../../seo"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: NAME,
+    name: TITLE,
     short_name: SHORT_NAME,
     description: DESCRIPTION,
     start_url: "/",

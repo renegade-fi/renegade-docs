@@ -113,8 +113,6 @@ export function Panel({
   const key = `${flipDirection ? "right" : "left"}-panel-isLocked`
 
   const { isOnboarding, isSigningIn } = useApp()
-  console.log("🚀 ~ isSigningIn:", isSigningIn)
-  console.log("🚀 ~ isOnboarding:", isOnboarding)
   const [isLocked, setIsLocked] = useState(
     safeLocalStorageGetItem(key) === "true" || false
   )
