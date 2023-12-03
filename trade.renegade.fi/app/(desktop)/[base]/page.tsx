@@ -3,21 +3,20 @@ import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
 
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
 import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 
-export function generateStaticParams() {
-  return DISPLAYED_TICKERS.map(([base, quote]) => {
-    return {
-      base,
-      quote,
-    }
-  })
-}
+// export function generateStaticParams() {
+//   return DISPLAYED_TICKERS.map(([base, quote]) => {
+//     return {
+//       base,
+//       quote,
+//     }
+//   })
+// }
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
