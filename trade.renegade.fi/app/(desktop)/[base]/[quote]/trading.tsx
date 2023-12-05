@@ -6,7 +6,7 @@ import { Direction } from "@/contexts/Order/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 
-import { useUDSPrice } from "@/hooks/use-usd-price"
+import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
@@ -182,7 +182,7 @@ function TradingInner() {
 }
 
 function HelperText({ baseTicker }: { baseTicker: string }) {
-  const usdPrice = useUDSPrice(baseTicker, 1)
+  const usdPrice = useUSDPrice(baseTicker, 1)
   return (
     <HStack
       marginTop="5px"

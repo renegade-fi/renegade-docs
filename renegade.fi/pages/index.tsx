@@ -3,15 +3,22 @@ import Head from "next/head"
 import LandingPageDesktop from "@/views/desktop"
 import LandingPageMobile from "@/views/mobile"
 import mixpanel from "mixpanel-browser"
+import type { Organization, WebPage, WebSite, WithContext } from "schema-dts"
 
 import {
   BASE_URL,
+  CONTACT_POINT,
   DESCRIPTION,
+  DISCORD_URL,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  LOGO_GLYPH_LIGHT,
   MAIN_OPENGRAPH,
-  ORGANIZATION_JSONLD,
   SHORT_DESCRIPTION,
+  SHORT_NAME,
   TITLE,
   TWITTER_HANDLE,
+  TWITTER_URL,
 } from "../../seo"
 
 if (!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN) {
@@ -23,6 +30,83 @@ mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN, {
   track_pageview: true,
 })
 mixpanel.track("Initialization")
+
+const ORGANIZATION_SCHEMA: WithContext<Organization> = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SHORT_NAME,
+  url: BASE_URL,
+  sameAs: [TWITTER_URL, GITHUB_URL, DISCORD_URL, LINKEDIN_URL],
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: CONTACT_POINT,
+  },
+  logo: {
+    "@type": "ImageObject",
+    inLanguage: "en-US",
+    "@id": "Reneagade Logo",
+    url: LOGO_GLYPH_LIGHT,
+    contentUrl: MAIN_OPENGRAPH,
+    width: "100%",
+    height: "100%",
+    caption: SHORT_DESCRIPTION,
+  },
+}
+
+const WEBSITE_SCHEMA: WithContext<WebSite> = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  url: BASE_URL,
+  name: SHORT_NAME,
+  description: DESCRIPTION,
+  publisher: {
+    "@type": "Organization",
+    name: SHORT_NAME,
+    logo: {
+      "@type": "ImageObject",
+      inLanguage: "en-US",
+      "@id": "Reneagade Logo",
+      url: LOGO_GLYPH_LIGHT,
+      contentUrl: MAIN_OPENGRAPH,
+      width: "100%",
+      height: "100%",
+      caption: SHORT_DESCRIPTION,
+    },
+  },
+}
+
+const WEBPAGE_SCHEMA: WithContext<WebPage> = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  url: BASE_URL,
+  name: TITLE,
+  description: DESCRIPTION,
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: BASE_URL,
+      },
+    ],
+  },
+  mainEntity: {
+    "@type": "Organization",
+    name: SHORT_NAME,
+    logo: {
+      "@type": "ImageObject",
+      inLanguage: "en-US",
+      "@id": "Reneagade Logo",
+      url: LOGO_GLYPH_LIGHT,
+      contentUrl: MAIN_OPENGRAPH,
+      width: "100%",
+      height: "100%",
+      caption: SHORT_DESCRIPTION,
+    },
+  },
+}
 
 export default function Home() {
   const [width, setWidth] = useState<number | null>(null)
@@ -113,7 +197,19 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(ORGANIZATION_JSONLD),
+            __html: JSON.stringify(ORGANIZATION_SCHEMA),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(WEBSITE_SCHEMA),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(WEBPAGE_SCHEMA),
           }}
         />
       </Head>
