@@ -39,6 +39,7 @@
     "eslint-plugin-react": "^7.32.2",
     "mixpanel-browser": "^2.48.1",
     "prettier": "^2.8.8",
+    "schema-dts": "^1.1.2",
     "typescript": "^5"
   }
 }

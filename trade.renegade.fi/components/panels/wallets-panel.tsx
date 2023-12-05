@@ -19,7 +19,7 @@ import {
 } from "@/lib/tokens"
 import { findBalanceByTicker, getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
-import { useUDSPrice } from "@/hooks/use-usd-price"
+import { useUSDPrice } from "@/hooks/use-usd-price"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
@@ -39,7 +39,7 @@ function TokenBalance(props: TokenBalanceProps) {
     getNetwork() === "katana"
       ? KATANA_ADDRESS_TO_TICKER[props.tokenAddr]
       : ADDR_TO_TICKER[props.tokenAddr]
-  const usdPrice = useUDSPrice(ticker, Number(props.amount))
+  const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
   const isZero = props.amount === BigInt(0)
 

@@ -28,3 +28,13 @@ export const DOCS_BASE_URL = "https://docs.renegade.fi";
 export const DOCS_OPENGRAPH =
   "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-docs.png";
 export const DOCS_TITLE = `${SHORT_NAME} | Docs`;
+
+// Socials
+export const LINKEDIN_URL = "https://www.linkedin.com/company/renegade-fi";
+export const TWITTER_URL = "https://twitter.com/renegade_fi";
+export const GITHUB_URL = "https://github.com/renegade-fi";
+export const SUBSTACK_URL = "https://substack.renegade.fi/";
+export const DISCORD_URL = "https://discord.gg/5Qj5q2Z8";
+
+// Contact Point
+export const CONTACT_POINT = "chris@renegade.fi";
