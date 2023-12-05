@@ -1,9 +1,10 @@
 "use client"
 
 import React from "react"
+import Image from "next/image"
 import glyphDark from "@/icons/glyph_dark.svg"
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons"
-import { Box, Flex, Image, Link, Spacer, Text } from "@chakra-ui/react"
+import { Box, Flex, Link, Spacer, Text } from "@chakra-ui/react"
 
 const headerHeight = "calc(2 * var(--banner-height))"
 
@@ -38,10 +39,10 @@ function OverlayMenu(props: OverlayMenuProps) {
         transitionDelay="0.05s"
       >
         <Flex alignItems="center" justifyContent="center" padding="18px">
-          <Image width="auto" height="30px" alt="" src={glyphDark} />
+          <Image alt="Renegade Logo" height="32" src={glyphDark} />
           <Spacer />
           <CloseIcon
-            height="20px"
+            height="16px"
             opacity="0.6"
             width="auto"
             onClick={() => props.setShowOverlay(false)}
@@ -133,7 +134,7 @@ export function MobileNav() {
       borderBottom="var(--border)"
       transition="0.2s"
     >
-      <Image height="50%" alt="" src={glyphDark} />
+      <Image alt="Renegade Logo" height="32" src={glyphDark} />
       <Spacer />
       <HamburgerIcon
         height="24px"
