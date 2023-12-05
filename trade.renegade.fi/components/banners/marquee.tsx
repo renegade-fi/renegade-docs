@@ -1,95 +1,251 @@
-"use client"
+import React, {
+  CSSProperties,
+  Children,
+  FC,
+  Fragment,
+  MutableRefObject,
+  ReactNode,
+  RefAttributes,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 
-import { useRef } from "react"
-import { motion, useSpring } from "framer-motion"
-import normalizeWheel from "normalize-wheel"
-import { useRafLoop } from "react-use"
+import "@/styles/marquee.css"
 
-import { MarqueeItem } from "@/components/banners/marquee-item"
+type MarqueeProps = {
+  style?: CSSProperties
+  className?: string
+  autoFill?: boolean
+  play?: boolean
+  pauseOnHover?: boolean
+  direction?: "left" | "right" | "up" | "down"
+  speed?: number
+  delay?: number
+  loop?: number
+  children?: ReactNode
+} & RefAttributes<HTMLDivElement>
 
-const _ = {
-  userSelect: "none",
-  speed: 0.4,
-  threshold: 0.014,
-  wheelFactor: 1,
-  dragFactor: 1.2,
-}
+const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
+  {
+    style = {},
+    className = "",
+    autoFill = false,
+    play = true,
+    pauseOnHover = false,
+    direction = "left",
+    speed = 50,
+    delay = 0,
+    loop = 0,
+    children,
+  },
+  ref
+) {
+  const [containerWidth, setContainerWidth] = useState(0)
+  const [marqueeWidth, setMarqueeWidth] = useState(0)
+  const [multiplier, setMultiplier] = useState(1)
+  const [isMounted, setIsMounted] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const containerRef = (ref as MutableRefObject<HTMLDivElement>) || rootRef
+  const marqueeRef = useRef<HTMLDivElement>(null)
 
-export const InteractiveMarquee = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
-  const marquee = useRef<HTMLDivElement>(null)
-  const slowDown = useRef(false)
-  const isScrolling = useRef<ReturnType<typeof setTimeout>>()
-  const x = useRef(0)
-  const speed = useSpring(_.speed, {
-    damping: 40,
-    stiffness: 90,
-    mass: 5,
-  })
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
 
-  const loop = () => {
-    if (slowDown.current || Math.abs(x.current) < _.threshold) return
-    x.current *= 0.66
-    if (x.current < 0) {
-      x.current = Math.min(x.current, 0)
-    } else {
-      x.current = Math.max(x.current, 0)
-    }
-    speed.set(_.speed + x.current)
-  }
-
-  const onWheel = (e: React.WheelEvent) => {
-    const normalized = normalizeWheel(e)
-    x.current = normalized.pixelY * _.wheelFactor
-
-    window.clearTimeout(isScrolling.current)
-    isScrolling.current = setTimeout(function () {
-      speed.set(_.speed)
-    }, 30)
-  }
-
-  const onDragStart = () => {
-    slowDown.current = true
-    marquee.current?.classList.add("drag")
-    speed.set(0)
-  }
-
-  // @ts-ignore
-  const onDrag = (e, info) => {
-    speed.set(_.dragFactor * -info.delta.x)
-  }
-
-  const onDragEnd = () => {
-    slowDown.current = false
-    marquee.current?.classList.remove("drag")
-    x.current = _.speed
-  }
-
-  useRafLoop(loop, true)
-
-  return (
-    <motion.div
-      style={{
-        cursor: "-webkit-grab",
-        display: "flex",
-        height: "var(--banner-height)",
-        alignItems: "center",
-        overflow: "hidden",
-      }}
-      ref={marquee}
-      onWheel={onWheel}
-      drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      onDragStart={onDragStart}
-      onDrag={onDrag}
-      onDragEnd={onDragEnd}
-      dragElastic={0.001}
-    >
-      <MarqueeItem speed={speed}>{children}</MarqueeItem>
-      <MarqueeItem speed={speed}>{children}</MarqueeItem>
-    </motion.div>
+  const onMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setIsDragging(true)
+      setStartX(event.clientX)
+    },
+    []
   )
-}
+
+  const onMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (!isDragging) return
+      const currentX = event.clientX
+      const deltaX = currentX - startX
+      if (containerRef.current) {
+        containerRef.current.scrollBy({ left: -deltaX })
+        setStartX(currentX)
+      }
+    },
+    [containerRef, isDragging, startX]
+  )
+
+  const onMouseUp = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", onMouseMove)
+      window.addEventListener("mouseup", onMouseUp)
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup", onMouseUp)
+    }
+  }, [isDragging, onMouseMove, onMouseUp])
+
+  // Calculate width of container and marquee and set multiplier
+  const calculateWidth = useCallback(() => {
+    if (marqueeRef.current && containerRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect()
+      const marqueeRect = marqueeRef.current.getBoundingClientRect()
+      let containerWidth = containerRect.width
+      let marqueeWidth = marqueeRect.width
+
+      // Swap width and height if direction is up or down
+      if (direction === "up" || direction === "down") {
+        containerWidth = containerRect.height
+        marqueeWidth = marqueeRect.height
+      }
+
+      if (autoFill && containerWidth && marqueeWidth) {
+        setMultiplier(
+          marqueeWidth < containerWidth
+            ? Math.ceil(containerWidth / marqueeWidth)
+            : 1
+        )
+      } else {
+        setMultiplier(1)
+      }
+
+      setContainerWidth(containerWidth)
+      setMarqueeWidth(marqueeWidth)
+    }
+  }, [autoFill, containerRef, direction])
+
+  // Calculate width and multiplier on mount and on window resize
+  useEffect(() => {
+    if (!isMounted) return
+
+    calculateWidth()
+    if (marqueeRef.current && containerRef.current) {
+      const resizeObserver = new ResizeObserver(() => calculateWidth())
+      resizeObserver.observe(containerRef.current)
+      resizeObserver.observe(marqueeRef.current)
+      return () => {
+        if (!resizeObserver) return
+        resizeObserver.disconnect()
+      }
+    }
+  }, [calculateWidth, containerRef, isMounted])
+
+  // Recalculate width when children change
+  useEffect(() => {
+    calculateWidth()
+  }, [calculateWidth, children])
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Animation duration
+  const duration = useMemo(() => {
+    if (autoFill) {
+      return (marqueeWidth * multiplier) / speed
+    } else {
+      return marqueeWidth < containerWidth
+        ? containerWidth / speed
+        : marqueeWidth / speed
+    }
+  }, [autoFill, containerWidth, marqueeWidth, multiplier, speed])
+
+  const containerStyle = useMemo(
+    () => ({
+      ...style,
+      ["--pause-on-hover" as string]:
+        !play || pauseOnHover ? "paused" : "running",
+      ["--pause-on-click" as string]:
+        !play || pauseOnHover ? "paused" : "running",
+      ["--width" as string]:
+        direction === "up" || direction === "down" ? `100vh` : "100%",
+      ["--transform" as string]:
+        direction === "up"
+          ? "rotate(-90deg)"
+          : direction === "down"
+          ? "rotate(90deg)"
+          : "none",
+    }),
+    [style, play, pauseOnHover, direction]
+  )
+
+  const marqueeStyle = useMemo(
+    () => ({
+      ["--play" as string]: play ? "running" : "paused",
+      ["--direction" as string]: direction === "left" ? "normal" : "reverse",
+      ["--duration" as string]: `${duration}s`,
+      ["--delay" as string]: `${delay}s`,
+      ["--iteration-count" as string]: !!loop ? `${loop}` : "infinite",
+      ["--min-width" as string]: autoFill ? `auto` : "100%",
+    }),
+    [play, direction, duration, delay, loop, autoFill]
+  )
+
+  const childStyle = useMemo(
+    () => ({
+      ["--transform" as string]:
+        direction === "up"
+          ? "rotate(90deg)"
+          : direction === "down"
+          ? "rotate(-90deg)"
+          : "none",
+    }),
+    [direction]
+  )
+
+  // Render {multiplier} number of children
+  const multiplyChildren = useCallback(
+    (multiplier: number) => {
+      return [
+        ...Array(
+          Number.isFinite(multiplier) && multiplier >= 0 ? multiplier : 0
+        ),
+      ].map((_, i) => (
+        <Fragment key={i}>
+          {Children.map(children, (child) => {
+            return (
+              <div style={childStyle} className="rfm-child">
+                {child}
+              </div>
+            )
+          })}
+        </Fragment>
+      ))
+    },
+    [childStyle, children]
+  )
+
+  return !isMounted ? null : (
+    <div
+      ref={containerRef}
+      style={containerStyle}
+      className={"rfm-marquee-container " + className}
+      onMouseDown={onMouseDown}
+    >
+      <div className="rfm-marquee" style={marqueeStyle}>
+        <div className="rfm-initial-child-container" ref={marqueeRef}>
+          {Children.map(children, (child) => {
+            return (
+              <div style={childStyle} className="rfm-child">
+                {child}
+              </div>
+            )
+          })}
+        </div>
+        {multiplyChildren(multiplier - 1)}
+      </div>
+      <div className="rfm-marquee" style={marqueeStyle}>
+        {multiplyChildren(multiplier)}
+      </div>
+    </div>
+  )
+})
+
+export default Marquee
