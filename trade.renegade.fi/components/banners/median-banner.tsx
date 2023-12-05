@@ -14,12 +14,17 @@ import { BannerSeparator } from "@/components/banners/banner-separator"
 import { LivePrices } from "@/components/banners/live-price"
 import { PulsingConnection } from "@/components/banners/pulsing-connection-indicator"
 
-function LinkWrapper(props: { link?: string; children: React.ReactNode }) {
+function LinkWrapper(props: {
+  link?: string
+  isMobile?: boolean
+  children: React.ReactNode
+}) {
   return (
     <Flex
       as={props.link ? Link : undefined}
       alignItems="center"
       justifyContent="center"
+      flexDirection={props.isMobile ? "column-reverse" : "row"}
       flexGrow="1"
       gap="8px"
       height="100%"
@@ -115,7 +120,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   }[textVariant] as "live" | "loading" | "dead"
 
   return (
-    <LinkWrapper link={link}>
+    <LinkWrapper link={link} isMobile={props.isMobile}>
       <Text variant={props.isMobile ? "rotate-right" : undefined}>
         {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
       </Text>
@@ -465,7 +470,7 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.Binance}
                 isMobile={this.props.isMobile}
               />
-              <BannerSeparator flexGrow={4} />
+              <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
@@ -473,7 +478,7 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.Coinbase}
                 isMobile={this.props.isMobile}
               />
-              <BannerSeparator flexGrow={4} />
+              <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
@@ -481,7 +486,7 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.Kraken}
                 isMobile={this.props.isMobile}
               />
-              <BannerSeparator flexGrow={4} />
+              <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
@@ -489,7 +494,7 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.Okx}
                 isMobile={this.props.isMobile}
               />
-              <BannerSeparator flexGrow={4} />
+              <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}

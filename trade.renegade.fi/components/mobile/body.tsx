@@ -8,7 +8,7 @@ import { Button, Flex, HStack, Text } from "@chakra-ui/react"
 import { ExchangeHealthState, PriceReport } from "@renegade-fi/renegade-js"
 
 import { MedianBanner } from "@/components/banners/median-banner"
-import { TokensBanner } from "@/components/banners/tokens-banner"
+import { TokensBanner } from "@/app/(mobile)/m/tokens-banner"
 
 function BodyText() {
   return (
@@ -84,7 +84,7 @@ export function MobileBody({
       width="100%"
       height="220vw"
     >
-      <TokensBanner isMobile prices={prices} />
+      <TokensBanner prices={prices} />
       <BodyText />
       <MedianBanner
         isMobile

@@ -136,7 +136,7 @@ export function MobileNav() {
       <Image height="50%" alt="" src={glyphDark} />
       <Spacer />
       <HamburgerIcon
-        height="40px"
+        height="24px"
         width="auto"
         onClick={() => setShowOverlay(true)}
       />

@@ -1,0 +1,87 @@
+.rfm-marquee-container {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  /* The value for --width must be defined in your CSS or inline styles */
+  width: var(--width);
+  /* The value for --transform must be defined in your CSS or inline styles */
+  transform: var(--transform);
+}
+
+.rfm-marquee-container:hover div {
+  /* The value for --pause-on-hover must be defined in your CSS or inline styles */
+  animation-play-state: var(--pause-on-hover);
+}
+
+.rfm-marquee-container:active div {
+  /* The value for --pause-on-click must be defined in your CSS or inline styles */
+  animation-play-state: var(--pause-on-click);
+}
+
+.rfm-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.rfm-overlay::before,
+.rfm-overlay::after {
+  /* You need to define the actual gradient color and gradient width in your CSS */
+  background: linear-gradient(to right, var(--gradient-color), transparent);
+  content: "";
+  height: 100%;
+  position: absolute;
+  width: var(--gradient-width);
+  z-index: 2;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.rfm-overlay::after {
+  right: 0;
+  top: 0;
+  transform: rotateZ(180deg);
+}
+
+.rfm-overlay::before {
+  left: 0;
+  top: 0;
+}
+
+.rfm-marquee {
+  flex: 0 0 auto;
+  /* The value for --min-width must be defined in your CSS or inline styles */
+  min-width: var(--min-width);
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* The following animation properties require specific values in your CSS */
+  animation: scroll var(--duration) linear var(--delay) var(--iteration-count);
+  animation-play-state: var(--play);
+  animation-delay: var(--delay);
+  animation-direction: var(--direction);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.rfm-initial-child-container {
+  flex: 0 0 auto;
+  display: flex;
+  min-width: auto;
+  flex-direction: row;
+  align-items: center;
+}
+
+.rfm-child {
+  /* The value for --transform must be defined in your CSS or inline styles */
+  transform: var(--transform);
+}

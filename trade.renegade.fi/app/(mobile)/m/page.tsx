@@ -20,9 +20,9 @@ export default async function Page() {
     new Token({ ticker: "USDC" })
   )
   return (
-    <>
+    <div style={{ height: "100vh", overflowY: "hidden" }}>
       <MobileNav />
       <MobileBody prices={prices} report={report} />
-    </>
+    </div>
   )
 }
