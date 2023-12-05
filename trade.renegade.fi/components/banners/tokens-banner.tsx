@@ -5,8 +5,8 @@ import { Stack, Text } from "@chakra-ui/react"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import { LivePrices } from "@/components/banners/live-price"
 import Marquee from "@/components/banners/marquee"
+import { LivePrices } from "@/components/live-price"
 
 export function TokensBanner({
   prices,

@@ -20,8 +20,8 @@ import {
 import { findBalanceByTicker, getNetwork } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useUDSPrice } from "@/hooks/use-usd-price"
-import { ConnectWalletButton, SignInButton } from "@/components/main-nav"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
 import "simplebar-react/dist/simplebar.min.css"
 

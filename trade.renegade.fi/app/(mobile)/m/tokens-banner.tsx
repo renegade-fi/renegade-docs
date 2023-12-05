@@ -3,7 +3,7 @@
 import { Box, Stack, Text } from "@chakra-ui/react"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
-import { LivePrices } from "@/components/banners/live-price"
+import { LivePrices } from "@/components/live-price"
 
 const DISPLAYED_TICKERS = [
   ["WBTC", "USDC"],
