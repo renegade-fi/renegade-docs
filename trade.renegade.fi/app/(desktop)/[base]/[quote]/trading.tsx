@@ -7,7 +7,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 
 import { useUDSPrice } from "@/hooks/use-usd-price"
-import { BlurredOverlay } from "@/components/blurred-overlay"
+import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
 

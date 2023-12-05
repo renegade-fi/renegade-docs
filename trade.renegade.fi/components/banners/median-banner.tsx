@@ -10,9 +10,9 @@ import {
 } from "@renegade-fi/renegade-js"
 
 import { TICKER_TO_ADDR } from "@/lib/tokens"
-import { BannerSeparator } from "@/components/banners/banner-separator"
-import { LivePrices } from "@/components/banners/live-price"
-import { PulsingConnection } from "@/components/banners/pulsing-connection-indicator"
+import { BannerSeparator } from "@/components/banner-separator"
+import { LivePrices } from "@/components/live-price"
+import { PulsingConnection } from "@/components/pulsing-connection-indicator"
 
 function LinkWrapper(props: {
   link?: string

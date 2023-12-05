@@ -2,8 +2,9 @@ import { env } from "@/env.mjs"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
 
 import { getTokenBannerData } from "@/lib/utils"
-import { MobileBody } from "@/components/mobile/body"
-import { MobileNav } from "@/components/mobile/main-nav"
+
+import { MobileBody } from "./body"
+import { MobileNav } from "./main-nav"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
