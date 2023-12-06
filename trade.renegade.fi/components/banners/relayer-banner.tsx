@@ -36,7 +36,7 @@ export class RelayerStatusBanner extends React.Component<
       isHovered: false,
       isClicked: false,
     }
-    // this.pingRelayer = this.pingRelayer.bind(this)
+    this.pingRelayer = this.pingRelayer.bind(this)
     this.performScroll = this.performScroll.bind(this)
     this.onMouseEnter = this.onMouseEnter.bind(this)
     this.onMouseLeave = this.onMouseLeave.bind(this)
@@ -56,16 +56,16 @@ export class RelayerStatusBanner extends React.Component<
     this.performScroll()
   }
 
-  //   async pingRelayer() {
-  //     const { renegade } = this.context as RenegadeContextType
-  //     try {
-  //       await renegade?.ping()
-  //       this.setState({ connectionState: "live" })
-  //     } catch (e) {
-  //       this.setState({ connectionState: "dead" })
-  //     }
-  //     setTimeout(this.pingRelayer, 5000)
-  //   }
+  async pingRelayer() {
+    const { renegade } = this.context as RenegadeContextType
+    try {
+      await renegade?.ping()
+      this.setState({ connectionState: "live" })
+    } catch (e) {
+      this.setState({ connectionState: "dead" })
+    }
+    setTimeout(this.pingRelayer, 5000)
+  }
 
   performScroll() {
     const relayerStatusBanner = this.state.relayerStatusBannerRef.current
@@ -156,43 +156,65 @@ export class RelayerStatusBanner extends React.Component<
             height="var(--banner-height)"
             color="white.80"
             borderBottom="var(--border)"
+            whiteSpace="nowrap"
             userSelect="text"
             onMouseDown={this.onMouseDown}
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
             onMouseMove={this.onMouseMove}
             onMouseUp={this.onMouseUp}
+            paddingX="32px"
           >
             <Flex
               alignItems="center"
-              justifyContent="center"
-              minWidth="1200px"
+              justifyContent="space-evenly"
+              // minWidth="1200px"
               height="var(--banner-height)"
+              // paddingX="32px"
             >
-              <Spacer flexGrow="2" />
-              <Text>Liquidity</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>420.00 {this.props.activeBaseTicker}</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
-              <BannerSeparator flexGrow={3} />
-              <Text>Relayer</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>renegade-relayer.eth</Text>
-              <BannerSeparator flexGrow={1} />
-              <HStack>
-                {connectionText}
-                <PulsingConnection
-                  state={this.props.connectionState || "dead"}
-                />
-              </HStack>
-              <BannerSeparator flexGrow={3} />
-              <Text>Fees</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>Relayer 0.08%</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>Protocol 0.02%</Text>
-              <Spacer flexGrow="2" />
+              <Flex gap="32px">
+                <Text>Liquidity</Text>
+                <Text>
+                  <Text as="span" fontFamily="Favorit Mono">
+                    420.00&nbsp;
+                  </Text>
+                  {this.props.activeBaseTicker}
+                </Text>
+                <Text>
+                  <Text as="span" fontFamily="Favorit Mono">
+                    69,000.00&nbsp;
+                  </Text>
+                  {this.props.activeQuoteTicker}
+                </Text>
+              </Flex>
+              <BannerSeparator />
+              <Flex gap="32px">
+                <Text>Relayer</Text>
+                <Text>renegade-relayer.eth</Text>
+                <HStack>
+                  {connectionText}
+                  <PulsingConnection
+                    state={this.props.connectionState || "dead"}
+                  />
+                </HStack>
+              </Flex>
+              <BannerSeparator />
+              <Flex gap="32px">
+                <Text>Fees</Text>
+                <Text>
+                  Relayer&nbsp;&nbsp;
+                  <Text as="span" fontFamily="Favorit Mono">
+                    0.08%
+                  </Text>
+                </Text>
+                <Text>
+                  Protocol&nbsp;&nbsp;
+                  <Text as="span" fontFamily="Favorit Mono">
+                    0.02%
+                  </Text>
+                </Text>
+                <Box width="0px" />
+              </Flex>
             </Flex>
           </Box>
         )}

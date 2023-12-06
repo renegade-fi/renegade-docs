@@ -1,12 +1,9 @@
-import { Box, Center } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
 
-interface BannerSeparatorProps {
-  flexGrow?: number
-}
-export function BannerSeparator(props: BannerSeparatorProps) {
+export function BannerSeparator() {
   return (
-    <Center flexGrow={props.flexGrow} height="100%">
-      <Box width="4px" height="4px" background="white.80" borderRadius="2px" />
-    </Center>
+    <Box userSelect="none" marginX="36px">
+      &#8226;
+    </Box>
   )
 }

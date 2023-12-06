@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
+import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react"
 import {
   Exchange,
   ExchangeHealthState,
@@ -14,30 +14,30 @@ import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
 
-function LinkWrapper(props: {
-  link?: string
-  isMobile?: boolean
-  children: React.ReactNode
-}) {
-  return (
-    <Flex
-      as={props.link ? Link : undefined}
-      alignItems="center"
-      justifyContent="center"
-      flexDirection={props.isMobile ? "column-reverse" : "row"}
-      flexGrow="1"
-      gap="8px"
-      height="100%"
-      _hover={{ textDecoration: "none" }}
-      userSelect="none"
-      cursor={props.link ? undefined : "inherit"}
-      href={props.link}
-      isExternal
-    >
-      {props.children}
-    </Flex>
-  )
-}
+// function LinkWrapper(props: {
+//   link?: string
+//   isMobile?: boolean
+//   children: React.ReactNode
+// }) {
+//   return (
+//     <Flex
+//       as={props.link ? Link : undefined}
+//       // alignItems="center"
+//       // justifyContent="center"
+//       flexDirection={props.isMobile ? "column-reverse" : "row"}
+//       // flexGrow="1"
+//       gap="8px"
+//       // height="100%"
+//       _hover={{ textDecoration: "none" }}
+//       userSelect="none"
+//       cursor={props.link ? undefined : "inherit"}
+//       href={props.link}
+//       isExternal
+//     >
+//       {props.children}
+//     </Flex>
+//   )
+// }
 
 interface ExchangeConnectionTripleProps {
   activeBaseTicker: string
@@ -120,43 +120,52 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   }[textVariant] as "live" | "loading" | "dead"
 
   return (
-    <LinkWrapper link={link} isMobile={props.isMobile}>
-      <Text variant={props.isMobile ? "rotate-right" : undefined}>
-        {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
-      </Text>
-      <BannerSeparator flexGrow={1} />
-      {showPrice && (
-        <LivePrices
-          baseTicker={props.activeBaseTicker}
-          quoteTicker={props.activeQuoteTicker}
-          exchange={props.exchange}
-          isMobile={props.isMobile}
-          price={props.priceReport.midpointPrice}
-        />
-      )}
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        direction={props.isMobile ? "column" : "row"}
-        spacing={props.isMobile ? "8px" : "5px"}
-      >
-        <Text
-          sx={
-            props.isMobile
-              ? {
-                  writingMode: "vertical-rl",
-                  textOrientation: "sideways",
-                }
-              : undefined
-          }
-          lineHeight="1"
-          variant={textVariant}
+    // <LinkWrapper link={link} isMobile={props.isMobile}>
+    <Link _hover={{ textDecoration: "none" }} href={link} isExternal>
+      <Flex gap="8px">
+        <Flex alignItems="baseline" gap="8px">
+          <Text
+            marginRight="12px"
+            variant={props.isMobile ? "rotate-right" : undefined}
+          >
+            {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
+          </Text>
+          {/* <BannerSeparator flexGrow={1} /> */}
+          {showPrice && (
+            <LivePrices
+              baseTicker={props.activeBaseTicker}
+              quoteTicker={props.activeQuoteTicker}
+              exchange={props.exchange}
+              isMobile={props.isMobile}
+              price={props.priceReport.midpointPrice}
+            />
+          )}
+        </Flex>
+        <Stack
+          alignItems="baseline"
+          // justifyContent="center"
+          direction={props.isMobile ? "column" : "row"}
+          spacing={props.isMobile ? "8px" : "5px"}
         >
-          {connectionText}
-        </Text>
-        <PulsingConnection state={pulseState} />
-      </Stack>
-    </LinkWrapper>
+          <Text
+            sx={
+              props.isMobile
+                ? {
+                    writingMode: "vertical-rl",
+                    textOrientation: "sideways",
+                  }
+                : undefined
+            }
+            lineHeight="2"
+            variant={textVariant}
+          >
+            {connectionText}
+          </Text>
+          <PulsingConnection state={pulseState} />
+          {/* <MyPingComponent /> */}
+        </Stack>
+      </Flex>
+    </Link>
   )
 }
 
@@ -170,21 +179,22 @@ function MedianTriple(props: MedianTripleProps) {
   return (
     <Flex
       alignItems="center"
-      justifyContent="center"
+      justifyContent="space-between"
       flexDirection={props.isMobile ? "column" : "row"}
-      width={props.isMobile ? "100%" : "24%"}
+      // width={props.isMobile ? "100%" : "24%"}
       minWidth={props.isMobile ? undefined : "400px"}
       height={props.isMobile ? "40%" : "100%"}
       paddingTop={props.isMobile ? "10px" : undefined}
+      paddingX="32px"
     >
-      <Spacer flexGrow="3" />
+      {/* <Spacer flexGrow="3" /> */}
       <Text
         whiteSpace="nowrap"
         variant={props.isMobile ? "rotate-right" : undefined}
       >
         NBBO Feed
       </Text>
-      <BannerSeparator flexGrow={4} />
+      {/* <BannerSeparator flexGrow={4} /> */}
       <ExchangeConnectionTriple
         activeBaseTicker={props.activeBaseTicker}
         activeQuoteTicker={props.activeQuoteTicker}
@@ -192,7 +202,7 @@ function MedianTriple(props: MedianTripleProps) {
         isMobile={props.isMobile}
         priceReport={props.priceReport}
       />
-      <BannerSeparator flexGrow={4} />
+      {/* <BannerSeparator flexGrow={4} /> */}
     </Flex>
   )
 }
@@ -392,8 +402,8 @@ export class MedianBanner extends React.Component<
 
     return (
       <Stack
-        alignItems="center"
-        justifyContent="flex-start"
+        // alignItems="center"
+        // justifyContent="space-around"
         direction={this.props.isMobile ? "column" : "row"}
         width={
           this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
@@ -403,9 +413,9 @@ export class MedianBanner extends React.Component<
         fontSize={this.props.isMobile ? "0.8em" : undefined}
         borderColor="border"
         borderBottom={this.props.isMobile ? undefined : "var(--border)"}
+        // userSelect="none"
+        // spacing="0px"
         borderLeft={this.props.isMobile ? "var(--border)" : undefined}
-        userSelect="none"
-        spacing="0px"
       >
         <MedianTriple
           activeBaseTicker={this.props.activeBaseTicker}
@@ -416,8 +426,10 @@ export class MedianBanner extends React.Component<
         <Flex
           position="relative"
           flexDirection={this.props.isMobile ? "column" : "row"}
-          width={this.props.isMobile ? undefined : "76%"}
+          // width="100%"
+          width={this.props.isMobile ? undefined : "100%"}
           height={this.props.isMobile ? "60%" : undefined}
+          paddingRight="42px"
         >
           <Box
             position="absolute"
@@ -457,9 +469,9 @@ export class MedianBanner extends React.Component<
           >
             <Flex
               alignItems="center"
-              justifyContent="center"
+              justifyContent="space-between"
               flexDirection={this.props.isMobile ? "column" : "row"}
-              gap="16px"
+              // gap="32px"
               minWidth={this.props.isMobile ? undefined : "1200px"}
               minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >
@@ -502,7 +514,7 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.UniswapV3}
                 isMobile={this.props.isMobile}
               />
-              <Spacer flexGrow="3" />
+              {/* <Spacer flexGrow="3" /> */}
             </Flex>
           </Box>
         </Flex>

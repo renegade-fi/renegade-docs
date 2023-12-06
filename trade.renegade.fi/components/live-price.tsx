@@ -115,6 +115,9 @@ export const LivePrices = ({
     (!Object.keys(currentPriceReport).length || scaleBy === 0) &&
     baseDefaultDecimals > 0
   ) {
+    if (baseTicker === "USDC") {
+      priceStr = "1.00"
+    }
     const leadingDecimals = priceStr.split(".")[0].length
     priceStr =
       "0".repeat(Math.max(0, baseDefaultDecimals - leadingDecimals)) + priceStr
@@ -170,7 +173,7 @@ export const LivePrices = ({
 
   return (
     <>
-      <Flex
+      <Text
         className={priceStrClass}
         key={key + "_price"}
         sx={
@@ -181,30 +184,16 @@ export const LivePrices = ({
               }
             : undefined
         }
-        alignItems="center"
-        justifyContent="center"
-        flexGrow="1"
         width={isMobile ? "100%" : undefined}
         color="white.80"
         fontFamily="Favorit Mono"
-        lineHeight="1"
         opacity={price === 0 ? "20%" : "100%"}
         _hover={{ textDecoration: "none" }}
         transform={isMobile && shouldRotate ? "rotate(180deg)" : undefined}
       >
         ${priceStr}
-      </Flex>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width={isMobile ? "100%" : undefined}
-        height="100%"
-        _hover={{ textDecoration: "none" }}
-      >
-        <Box position="absolute">
-          <BannerSeparator />
-        </Box>
+      </Text>
+      <Flex position="relative" width={isMobile ? "100%" : undefined}>
         {priceIcon}
       </Flex>
     </>
