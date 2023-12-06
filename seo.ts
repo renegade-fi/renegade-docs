@@ -24,7 +24,7 @@ export const ORGANIZATION_JSONLD = {
 };
 
 // Docs
-export const DOCS_BASE_URL = "https://renegade.fi";
+export const DOCS_BASE_URL = "https://renegade.fi/docs";
 export const DOCS_OPENGRAPH =
   "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-docs.png";
 export const DOCS_TITLE = `${SHORT_NAME} | Docs`;
