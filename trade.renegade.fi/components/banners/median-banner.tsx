@@ -14,31 +14,6 @@ import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
 
-// function LinkWrapper(props: {
-//   link?: string
-//   isMobile?: boolean
-//   children: React.ReactNode
-// }) {
-//   return (
-//     <Flex
-//       as={props.link ? Link : undefined}
-//       // alignItems="center"
-//       // justifyContent="center"
-//       flexDirection={props.isMobile ? "column-reverse" : "row"}
-//       // flexGrow="1"
-//       gap="8px"
-//       // height="100%"
-//       _hover={{ textDecoration: "none" }}
-//       userSelect="none"
-//       cursor={props.link ? undefined : "inherit"}
-//       href={props.link}
-//       isExternal
-//     >
-//       {props.children}
-//     </Flex>
-//   )
-// }
-
 interface ExchangeConnectionTripleProps {
   activeBaseTicker: string
   activeQuoteTicker: string
@@ -120,7 +95,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   }[textVariant] as "live" | "loading" | "dead"
 
   return (
-    // <LinkWrapper link={link} isMobile={props.isMobile}>
     <Link _hover={{ textDecoration: "none" }} href={link} isExternal>
       <Flex gap="8px">
         <Flex alignItems="baseline" gap="8px">
@@ -130,7 +104,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
           >
             {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
           </Text>
-          {/* <BannerSeparator flexGrow={1} /> */}
           {showPrice && (
             <LivePrices
               baseTicker={props.activeBaseTicker}
@@ -143,7 +116,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
         </Flex>
         <Stack
           alignItems="baseline"
-          // justifyContent="center"
           direction={props.isMobile ? "column" : "row"}
           spacing={props.isMobile ? "8px" : "5px"}
         >
@@ -162,7 +134,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
             {connectionText}
           </Text>
           <PulsingConnection state={pulseState} />
-          {/* <MyPingComponent /> */}
         </Stack>
       </Flex>
     </Link>
@@ -181,20 +152,17 @@ function MedianTriple(props: MedianTripleProps) {
       alignItems="center"
       justifyContent="space-between"
       flexDirection={props.isMobile ? "column" : "row"}
-      // width={props.isMobile ? "100%" : "24%"}
       minWidth={props.isMobile ? undefined : "400px"}
       height={props.isMobile ? "40%" : "100%"}
       paddingTop={props.isMobile ? "10px" : undefined}
       paddingX="32px"
     >
-      {/* <Spacer flexGrow="3" /> */}
       <Text
         whiteSpace="nowrap"
         variant={props.isMobile ? "rotate-right" : undefined}
       >
         NBBO Feed
       </Text>
-      {/* <BannerSeparator flexGrow={4} /> */}
       <ExchangeConnectionTriple
         activeBaseTicker={props.activeBaseTicker}
         activeQuoteTicker={props.activeQuoteTicker}
@@ -202,7 +170,6 @@ function MedianTriple(props: MedianTripleProps) {
         isMobile={props.isMobile}
         priceReport={props.priceReport}
       />
-      {/* <BannerSeparator flexGrow={4} /> */}
     </Flex>
   )
 }
@@ -215,9 +182,6 @@ interface ExchangeConnectionsBannerProps {
 }
 interface ExchangeConnectionsBannerState {
   exchangeConnectionsBannerRef: React.RefObject<HTMLDivElement>
-  // priceReporterHealthStates: {
-  //   [exchange: string]: HealthState
-  // }
   isTooShort: boolean
   isScrolling: boolean
   scrollDirection: "left" | "right"
@@ -273,51 +237,6 @@ export class MedianBanner extends React.Component<
       mouseDownX: 0,
     }
   }
-
-  // async checkExchangeHealthStates() {
-  //   if (this.props.activeBaseTicker === this.props.activeQuoteTicker) {
-  //     return
-  //   }
-  //   const healthStates = await renegade.queryExchangeHealthStates(
-  //     new Token({ ticker: this.props.activeBaseTicker }),
-  //     new Token({ ticker: this.props.activeQuoteTicker })
-  //   )
-  //   function getHealthState(
-  //     priceReport: string | Record<string, PriceReport>
-  //   ): HealthState {
-  //     if (!priceReport || priceReport === "Unsupported") {
-  //       return "unsupported"
-  //     }
-  //     if (priceReport["Nominal"] !== undefined) {
-  //       return "live"
-  //     }
-  //     if (priceReport === "NoDataReported") {
-  //       return "no-data"
-  //     }
-  //     if (priceReport["DataTooStale"] !== undefined) {
-  //       return "too-stale"
-  //     }
-  //     if (priceReport["NotEnoughDataReported"] !== undefined) {
-  //       return "not-enough-data"
-  //     }
-  //     if (priceReport["TooMuchDeviation"] !== undefined) {
-  //       return "too-much-deviation"
-  //     }
-  //     throw new Error("Invalid priceReport: " + priceReport)
-  //   }
-  //   const newPriceReporterHealthStates = {
-  //     median: getHealthState(healthStates["median"]),
-  //     binance: getHealthState(healthStates["all_exchanges"]["Binance"]),
-  //     coinbase: getHealthState(healthStates["all_exchanges"]["Coinbase"]),
-  //     kraken: getHealthState(healthStates["all_exchanges"]["Kraken"]),
-  //     okx: getHealthState(healthStates["all_exchanges"]["Okx"]),
-  //     uniswapv3: getHealthState(healthStates["all_exchanges"]["UniswapV3"]),
-  //   }
-  //   this.setState({
-  //     priceReporterHealthStates: newPriceReporterHealthStates,
-  //   })
-  //   setTimeout(this.checkExchangeHealthStates, 1000)
-  // }
 
   performScroll() {
     const exchangeConnectionsBanner =
@@ -402,8 +321,6 @@ export class MedianBanner extends React.Component<
 
     return (
       <Stack
-        // alignItems="center"
-        // justifyContent="space-around"
         direction={this.props.isMobile ? "column" : "row"}
         width={
           this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
@@ -413,9 +330,9 @@ export class MedianBanner extends React.Component<
         fontSize={this.props.isMobile ? "0.8em" : undefined}
         borderColor="border"
         borderBottom={this.props.isMobile ? undefined : "var(--border)"}
-        // userSelect="none"
-        // spacing="0px"
         borderLeft={this.props.isMobile ? "var(--border)" : undefined}
+        userSelect="none"
+        spacing="0px"
       >
         <MedianTriple
           activeBaseTicker={this.props.activeBaseTicker}
@@ -426,10 +343,8 @@ export class MedianBanner extends React.Component<
         <Flex
           position="relative"
           flexDirection={this.props.isMobile ? "column" : "row"}
-          // width="100%"
-          width={this.props.isMobile ? undefined : "100%"}
+          width={this.props.isMobile ? undefined : "76%"}
           height={this.props.isMobile ? "60%" : undefined}
-          paddingRight="42px"
         >
           <Box
             position="absolute"
@@ -452,6 +367,7 @@ export class MedianBanner extends React.Component<
             overflowY="hidden"
             width="100%"
             height="100%"
+            paddingLeft="32px"
             onClick={(e) => {
               if (
                 this.props.isMobile ||
@@ -468,11 +384,11 @@ export class MedianBanner extends React.Component<
             onMouseUp={this.props.isMobile ? undefined : this.onMouseUp}
           >
             <Flex
+              sx={{ justifyContent: "space-between", minWidth: undefined }}
               alignItems="center"
-              justifyContent="space-between"
               flexDirection={this.props.isMobile ? "column" : "row"}
-              // gap="32px"
-              minWidth={this.props.isMobile ? undefined : "1200px"}
+              gap="16px"
+              minWidth={this.props.isMobile ? undefined : "105vw"}
               minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >
               <ExchangeConnectionTriple
@@ -514,7 +430,6 @@ export class MedianBanner extends React.Component<
                 priceReport={this.props.report.UniswapV3}
                 isMobile={this.props.isMobile}
               />
-              {/* <Spacer flexGrow="3" /> */}
             </Flex>
           </Box>
         </Flex>

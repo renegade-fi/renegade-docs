@@ -115,7 +115,7 @@ export const RelayerStatusBanner: React.FC<RelayerStatusBannerProps> = ({
       paddingX="32px"
     >
       <Flex
-        sx={{ justifyContent: "space-between" }}
+        sx={{ justifyContent: "space-evenly" }}
         alignItems="center"
         height="var(--banner-height)"
       >
