@@ -11,8 +11,8 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "typecheck": "tsc --noEmit",
-    "format:write": "prettier --write \"**/*.{ts,tsx,css,json}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,css,json}\" --cache"
+    "format:write": "prettier --write \"**/*.{ts,tsx,css,json}\" --cache --experimental-ternaries",
+    "format:check": "prettier --check \"**/*.{ts,tsx,css,json}\" --cache --experimental-ternaries"
   },
   "dependencies": {
     "@chakra-ui/anatomy": "^2.2.0",
@@ -43,13 +43,13 @@
     "@types/react": "^18.2.34",
     "@types/react-dom": "^18.2.14",
     "@types/uuid": "^9.0.7",
-    "@typescript-eslint/parser": "^5.61.0",
-    "eslint": "8.45.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
     "eslint-config-next": "^14.0.3",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-chakra-ui": "^0.9.1",
-    "eslint-plugin-react": "^7.32.2",
-    "prettier": "^2.8.8",
-    "typescript": "5.1.6"
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-chakra-ui": "^0.10.1",
+    "eslint-plugin-react": "^7.33.2",
+    "prettier": "^3.1.1",
+    "typescript": "^5.3.3"
   }
 }

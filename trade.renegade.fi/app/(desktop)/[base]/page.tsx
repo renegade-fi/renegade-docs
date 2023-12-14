@@ -19,68 +19,72 @@ import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 // }
 
 const renegade = new Renegade({
-  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport:
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-  verbose: false,
+    relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+    relayerHttpPort: 3000,
+    relayerWsPort: 4000,
+    useInsecureTransport:
+        env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
+    verbose: false,
 })
 
 export default async function Page({
-  params: { base, quote },
+    params: { base, quote },
 }: {
-  params: { base: string; quote: string }
+    params: { base: string; quote: string }
 }) {
-  const report = await renegade.queryExchangeHealthStates(
-    new Token({ ticker: base === "USDC" ? "WETH" : base }),
-    new Token({ ticker: "USDC" })
-  )
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: "1",
-        position: "relative",
-      }}
-    >
-      <Image
-        alt="bg"
-        fill
-        priority
-        src={backgroundPattern}
-        style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
-      />
-      <MedianBanner
-        report={report}
-        activeBaseTicker={base}
-        activeQuoteTicker={quote}
-      />
-      <div style={{ flexGrow: 1, display: "flex" }}>
-        <WalletsPanel />
+    const report = await renegade.queryExchangeHealthStates(
+        new Token({ ticker: base === "USDC" ? "WETH" : base }),
+        new Token({ ticker: "USDC" })
+    )
+    return (
         <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-            overflowX: "hidden",
-          }}
-        >
-          <RelayerStatusData baseToken={base} quoteToken={quote} />
-          <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              flexGrow: "1",
-              position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: "1",
+                position: "relative",
             }}
-          >
-            <DepositBody />
-          </div>
+        >
+            <Image
+                alt="bg"
+                fill
+                priority
+                src={backgroundPattern}
+                style={{
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    zIndex: -1,
+                }}
+            />
+            <MedianBanner
+                report={report}
+                activeBaseTicker={base}
+                activeQuoteTicker={quote}
+            />
+            <div style={{ flexGrow: 1, display: "flex" }}>
+                <WalletsPanel />
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flexGrow: 1,
+                        overflowX: "hidden",
+                    }}
+                >
+                    <RelayerStatusData baseToken={base} quoteToken={quote} />
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            flexGrow: "1",
+                            position: "relative",
+                        }}
+                    >
+                        <DepositBody />
+                    </div>
+                </div>
+                <OrdersAndCounterpartiesPanel />
+            </div>
         </div>
-        <OrdersAndCounterpartiesPanel />
-      </div>
-    </div>
-  )
+    )
 }

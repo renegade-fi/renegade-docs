@@ -1,11 +1,11 @@
 :root {
-  --banner-height: 38px;
-  --border-color: #808080;
-  --secondary-border-color: #474554;
-  --border: 0.9px solid var(--border-color);
-  --secondary-border: 0.25px solid var(--secondary-border-color);
+    --banner-height: 38px;
+    --border-color: #808080;
+    --secondary-border-color: #474554;
+    --border: 0.9px solid var(--border-color);
+    --secondary-border: 0.25px solid var(--secondary-border-color);
 }
 
 .simplebar-scrollbar::before {
-  background-color: #888 !important;
+    background-color: #888 !important;
 }

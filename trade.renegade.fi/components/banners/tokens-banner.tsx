@@ -9,42 +9,49 @@ import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
 
 export function TokensBanner({
-  prices,
+    prices,
 }: {
-  prices: (PriceReport | undefined)[]
+    prices: (PriceReport | undefined)[]
 }) {
-  return (
-    <Marquee
-      autoFill
-      pauseOnHover
-      style={{
-        alignItems: "center",
-        borderBottom: "var(--border)",
-        borderTop: "var(--border)",
-        display: "flex",
-        height: "var(--banner-height)",
-      }}
-    >
-      {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker], i) => {
-        return (
-          <Link
-            href={`/${baseTicker}/${quoteTicker}`}
-            key={baseTicker + quoteTicker}
-          >
-            <Stack alignItems="center" direction="row" marginRight="0.5rem">
-              <Text color="white.80" fontFamily="Favorit Expanded">
-                {baseTicker}
-              </Text>
-              <LivePrices
-                baseTicker={baseTicker}
-                quoteTicker={quoteTicker}
-                exchange={Exchange.Median}
-                price={prices[i]?.midpointPrice}
-              />
-            </Stack>
-          </Link>
-        )
-      })}
-    </Marquee>
-  )
+    return (
+        <Marquee
+            autoFill
+            pauseOnHover
+            style={{
+                alignItems: "center",
+                borderBottom: "var(--border)",
+                borderTop: "var(--border)",
+                display: "flex",
+                height: "var(--banner-height)",
+            }}
+        >
+            {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker], i) => {
+                return (
+                    <Link
+                        href={`/${baseTicker}/${quoteTicker}`}
+                        key={baseTicker + quoteTicker}
+                    >
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            marginRight="0.5rem"
+                        >
+                            <Text
+                                color="white.80"
+                                fontFamily="Favorit Expanded"
+                            >
+                                {baseTicker}
+                            </Text>
+                            <LivePrices
+                                baseTicker={baseTicker}
+                                quoteTicker={quoteTicker}
+                                exchange={Exchange.Median}
+                                price={prices[i]?.midpointPrice}
+                            />
+                        </Stack>
+                    </Link>
+                )
+            })}
+        </Marquee>
+    )
 }

@@ -9,24 +9,24 @@ import "@/styles/globals.css"
 import "@/styles/index.css"
 
 export const metadata: Metadata = {
-  title: {
-    default: "Trade - Renegade Testnet",
-    template: `%s - Renegade Testnet`,
-  },
-  description:
-    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
+    title: {
+        default: "Trade - Renegade Testnet",
+        template: `%s - Renegade Testnet`,
+    },
+    description:
+        "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
 }
 
 export default async function RootLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode
+    children: React.ReactNode
 }) {
-  return (
-    <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
-  )
+    return (
+        <html lang="en">
+            <body>
+                <Providers>{children}</Providers>
+            </body>
+        </html>
+    )
 }
