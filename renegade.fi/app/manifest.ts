@@ -1,12 +1,11 @@
 import { MetadataRoute } from "next"
 
-import { DESCRIPTION, SHORT_NAME, TITLE } from "../../seo"
-
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: TITLE,
-    short_name: SHORT_NAME,
-    description: DESCRIPTION,
+    name: "Renegade | On-Chain Dark Pool",
+    short_name: "Renegade",
+    description:
+      "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.",
     start_url: "/",
     display: "standalone",
     background_color: "#fff",

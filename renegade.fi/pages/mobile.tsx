@@ -3,22 +3,6 @@ import LandingPageMobile from "@/views/mobile"
 import mixpanel from "mixpanel-browser"
 import type { Organization, WebPage, WebSite, WithContext } from "schema-dts"
 
-import {
-  BASE_URL,
-  CONTACT_POINT,
-  DESCRIPTION,
-  DISCORD_URL,
-  GITHUB_URL,
-  LINKEDIN_URL,
-  LOGO_GLYPH_LIGHT,
-  MAIN_OPENGRAPH,
-  SHORT_DESCRIPTION,
-  SHORT_NAME,
-  TITLE,
-  TWITTER_HANDLE,
-  TWITTER_URL,
-} from "../../seo"
-
 if (!process.env.NEXT_PUBLIC_MIXPANEL_TOKEN) {
   throw new Error("Missing NEXT_PUBLIC_MIXPANEL_TOKEN")
 }
@@ -32,43 +16,53 @@ mixpanel.track("Initialization")
 const ORGANIZATION_SCHEMA: WithContext<Organization> = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: SHORT_NAME,
-  url: BASE_URL,
-  sameAs: [TWITTER_URL, GITHUB_URL, DISCORD_URL, LINKEDIN_URL],
+  name: "Renegade",
+  url: "https://renegade.fi",
+  sameAs: [
+    "https://twitter.com/renegade_fi",
+    "https://github.com/renegade-fi",
+    "https://discord.gg/5Qj5q2Z8",
+    "https://www.linkedin.com/company/renegade-fi",
+  ],
   contactPoint: {
     "@type": "ContactPoint",
-    email: CONTACT_POINT,
+    email: "chris@renegade.fi",
   },
   logo: {
     "@type": "ImageObject",
     inLanguage: "en-US",
-    "@id": "Reneagade Logo",
-    url: LOGO_GLYPH_LIGHT,
-    contentUrl: MAIN_OPENGRAPH,
+    "@id": "#glyph-light",
+    url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
+    contentUrl:
+      "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
     width: "100%",
     height: "100%",
-    caption: SHORT_DESCRIPTION,
+    caption:
+      "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
   },
 }
 
 const WEBSITE_SCHEMA: WithContext<WebSite> = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  url: BASE_URL,
-  name: SHORT_NAME,
-  description: DESCRIPTION,
+  url: "https://renegade.fi",
+  name: "Renegade",
+  description:
+    "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.",
   publisher: {
     "@type": "Organization",
-    name: SHORT_NAME,
+    name: "Renegade",
     logo: {
       "@type": "ImageObject",
       inLanguage: "en-US",
-      "@id": "Reneagade Logo",
-      url: LOGO_GLYPH_LIGHT,
-      contentUrl: MAIN_OPENGRAPH,
+      "@id": "#glyph-light",
+      url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
+      contentUrl:
+        "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
       width: "100%",
       height: "100%",
-      caption: SHORT_DESCRIPTION,
+      caption:
+        "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
     },
   },
 }
@@ -76,9 +70,10 @@ const WEBSITE_SCHEMA: WithContext<WebSite> = {
 const WEBPAGE_SCHEMA: WithContext<WebPage> = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  url: BASE_URL,
-  name: TITLE,
-  description: DESCRIPTION,
+  url: "https://renegade.fi",
+  name: "Renegade | On-Chain Dark Pool",
+  description:
+    "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.",
   breadcrumb: {
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -86,22 +81,24 @@ const WEBPAGE_SCHEMA: WithContext<WebPage> = {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: BASE_URL,
+        item: "https://renegade.fi",
       },
     ],
   },
   mainEntity: {
     "@type": "Organization",
-    name: SHORT_NAME,
+    name: "Renegade",
     logo: {
       "@type": "ImageObject",
       inLanguage: "en-US",
-      "@id": "Reneagade Logo",
-      url: LOGO_GLYPH_LIGHT,
-      contentUrl: MAIN_OPENGRAPH,
+      "@id": "#glyph-light",
+      url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
+      contentUrl:
+        "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
       width: "100%",
       height: "100%",
-      caption: SHORT_DESCRIPTION,
+      caption:
+        "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
     },
   },
 }
@@ -110,21 +107,37 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>{TITLE}</title>
-        <meta name="description" content={DESCRIPTION} />
+        <title>Renegade | On-Chain Dark Pool</title>
+        <meta
+          name="description"
+          content="Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
         <meta name="robots" content="index, follow" />
-        <meta property="og:description" content={SHORT_DESCRIPTION} />
-        <meta property="og:image" content={MAIN_OPENGRAPH} />
-        <meta property="og:title" content="Renegade" />
+        <meta
+          property="og:description"
+          content="On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices."
+        />
+        <meta
+          property="og:image"
+          content="https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png"
+        />
+        <meta property="og:site_name" content="Renegade | On-Chain Dark Pool" />
+        <meta property="og:title" content="Renegade | On-Chain Dark Pool" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={BASE_URL} />
+        <meta property="og:url" content="https://renegade.fi" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:creator" content={TWITTER_HANDLE} />
-        <meta name="twitter:description" content={SHORT_DESCRIPTION} />
-        <meta property="twitter:image" content={MAIN_OPENGRAPH} />
-        <meta name="twitter:site" content={TWITTER_HANDLE} />
+        <meta name="twitter:creator" content="@renegade_fi" />
+        <meta
+          name="twitter:description"
+          content="On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices."
+        />
+        <meta
+          property="twitter:image"
+          content="https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png"
+        />
+        <meta name="twitter:site" content="@renegade_fi" />
         <meta name="twitter:title" content="Renegade" />
         <link
           rel="apple-touch-icon"
