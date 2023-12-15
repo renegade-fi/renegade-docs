@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useErc20Allowance, useErc20Approve } from "@/src/generated"
 import {
   ArrowForwardIcon,
   ChevronDownIcon,
@@ -18,6 +19,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import { useAccount, useBalance } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
 import { useIsLocked } from "@/hooks/use-is-locked"
@@ -53,6 +55,16 @@ function DepositInner() {
     onOpenSignIn,
     signInText: "Sign in to Deposit",
   })
+  // const { data: allowance } = useErc20Allowance()
+  // const { data: approveData, write: approve } = useErc20Approve({
+  //   address: getToken(baseTicker).address,
+  // })
+  const { address } = useAccount()
+  const { data: ethBalance } = useBalance({
+    // address: "0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e",
+    address
+  })
+  console.log("🚀 ~ DepositInner ~ ethBalance:", ethBalance)
 
   const handleClick = () => {
     if (shouldUse) {

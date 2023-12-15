@@ -24,11 +24,12 @@ export function DefaultStep() {
   const { onClose, setError } = useStepper()
 
   const handleDeposit = async () => {
+  console.log("🚀 ~ DefaultStep ~ accountId:", accountId)
     if (!accountId) return
     renegade.task
       .deposit(
         accountId,
-        new Token({ ticker: baseTicker, network: getNetwork() }),
+        new Token({ address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4" }),
         BigInt(baseTokenAmount)
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
