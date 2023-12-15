@@ -15,6 +15,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import { Keychain } from "@renegade-fi/renegade-js"
 import { ConnectKitButton } from "connectkit"
 import {
   useAccount as useAccountWagmi,
@@ -24,6 +25,7 @@ import {
 
 import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { renegade } from "@/app/providers"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -232,6 +234,15 @@ export function MainNav() {
     }
   }, [glyphRef])
 
+  const handleCreateAccount = async () => {
+    const accountId = renegade.registerAccount(
+      new Keychain({ seed: "asdf123" })
+    )
+    await renegade.task
+      .initializeAccount(accountId)
+      .then(([, taskJob]) => taskJob)
+  }
+
   return (
     <Flex
       alignItems="center"
@@ -250,6 +261,7 @@ export function MainNav() {
         onClick={(event) => event.stopPropagation()}
         spacing="20px"
       >
+        <Button onClick={handleCreateAccount}>Create</Button>
         <FancyUnderline>
           <Link
             color="white.100"
