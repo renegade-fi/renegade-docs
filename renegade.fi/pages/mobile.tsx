@@ -32,9 +32,8 @@ const ORGANIZATION_SCHEMA: WithContext<Organization> = {
     "@type": "ImageObject",
     inLanguage: "en-US",
     "@id": "#glyph-light",
-    url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
-    contentUrl:
-      "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
+    url: "https://www.renegade.fi/glyph_light.svg",
+    contentUrl: "https://www.renegade.fi/opengraph.png",
     width: "100%",
     height: "100%",
     caption:
@@ -56,9 +55,8 @@ const WEBSITE_SCHEMA: WithContext<WebSite> = {
       "@type": "ImageObject",
       inLanguage: "en-US",
       "@id": "#glyph-light",
-      url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
-      contentUrl:
-        "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
+      url: "https://www.renegade.fi/glyph_light.svg",
+      contentUrl: "https://www.renegade.fi/opengraph.png",
       width: "100%",
       height: "100%",
       caption:
@@ -92,9 +90,8 @@ const WEBPAGE_SCHEMA: WithContext<WebPage> = {
       "@type": "ImageObject",
       inLanguage: "en-US",
       "@id": "#glyph-light",
-      url: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
-      contentUrl:
-        "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png",
+      url: "https://www.renegade.fi/glyph_light.svg",
+      contentUrl: "https://www.renegade.fi/opengraph.png",
       width: "100%",
       height: "100%",
       caption:
@@ -121,7 +118,7 @@ export default function Home() {
         />
         <meta
           property="og:image"
-          content="https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png"
+          content="https://www.renegade.fi/opengraph.png"
         />
         <meta property="og:site_name" content="Renegade | On-Chain Dark Pool" />
         <meta property="og:title" content="Renegade | On-Chain Dark Pool" />
@@ -135,7 +132,7 @@ export default function Home() {
         />
         <meta
           property="twitter:image"
-          content="https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-main.png"
+          content="https://www.renegade.fi/opengraph.png"
         />
         <meta name="twitter:site" content="@renegade_fi" />
         <meta name="twitter:title" content="Renegade" />
