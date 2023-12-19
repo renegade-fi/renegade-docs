@@ -12,7 +12,8 @@ export function Main() {
   const CurrentView = {
     [ViewEnum.TRADING]: TradingBody,
     [ViewEnum.DEPOSIT]: DepositBody,
-  }[view]
+  }[ViewEnum.DEPOSIT]
+  // }[view]
 
   return (
     <>

@@ -19,7 +19,9 @@ import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { IntercomProvider } from "react-use-intercom"
 import { createPublicClient, http } from "viem"
-import { WagmiConfig, createConfig, mainnet } from "wagmi"
+import { WagmiConfig, createConfig } from "wagmi"
+
+import { arbitrumStylus } from "@/lib/arbitrumStylus"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -171,12 +173,17 @@ const wagmiConfig = createConfig(
   getDefaultConfig({
     alchemyId: "",
     walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    appName: "Renegade",
+    appName: "Renegade | On-Chain Dark Pool",
+    appDescription:
+      "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
+    appUrl: "https://renegade.fi",
+    appIcon: "https://www.renegade.fi/glyph_light.svg",
+    chains: [arbitrumStylus],
   })
 )
 
 export const client = createPublicClient({
-  chain: mainnet,
+  chain: arbitrumStylus,
   transport: http(),
 })
 
