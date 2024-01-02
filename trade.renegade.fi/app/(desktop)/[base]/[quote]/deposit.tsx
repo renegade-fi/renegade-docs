@@ -60,7 +60,10 @@ function DepositInner() {
   //   address: getToken(baseTicker).address,
   // })
   const { address } = useAccount()
-  const { data: ethBalance } = useBalance({ address })
+  const { data: ethBalance } = useBalance({
+    // address: "0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e",
+    address
+  })
   console.log("🚀 ~ DepositInner ~ ethBalance:", ethBalance)
 
   const handleClick = () => {

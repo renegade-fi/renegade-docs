@@ -149,7 +149,9 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const { isSigningIn, setView } = useApp()
   const balances = useBalance()
+  console.log("🚀 ~ RenegadeWalletPanel ~ balances:", balances)
   const { accountId } = useRenegade()
+  console.log("🚀 ~ RenegadeWalletPanel ~ accountId:", accountId)
 
   const placeholderBalances = useMemo(() => {
     const result: [string, bigint][] = []
@@ -160,6 +162,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     }
     return result
   }, [balances])
+  console.log(
+    "🚀 ~ placeholderBalances ~ placeholderBalances:",
+    placeholderBalances
+  )
 
   const showDeposit = useMemo(() => {
     return !placeholderBalances.some(([_, bal]) => bal > BigInt(0))

@@ -1,7 +1,7 @@
 import { defineChain } from "viem"
 
 export const arbitrumStylus = defineChain({
-  id: 23011913,
+  id: 412346,
   name: "Stylus testnet",
   network: "Arbitrum Stylus",
   nativeCurrency: {
@@ -11,12 +11,16 @@ export const arbitrumStylus = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["https://stylus-testnet.arbitrum.io/rpc"],
-      webSocket: ["wss://stylus-testnet.arbitrum.io/feed"],
+      http: ["http://localhost:8547"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
     },
     public: {
-      http: ["https://stylus-testnet.arbitrum.io/rpc"],
-      webSocket: ["wss://stylus-testnet.arbitrum.io/feed"],
+      http: ["http://localhost:8547"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
     },
   },
   blockExplorers: {
