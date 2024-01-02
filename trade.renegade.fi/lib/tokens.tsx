@@ -205,8 +205,27 @@ for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
     TICKER_TO_NAME_AND_DEFAULT_DECIMALS[ticker][1]
 }
 
+export const KATANA_TOKEN_REMAP: { [key in string]: string } = {
+  "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7":
+    TICKER_TO_ADDR["WETH"],
+  "0x8e3feea13add88dce4439bc1d02a662ab4c4cb6dca4639dccba89b4e594680":
+    TICKER_TO_ADDR["USDC"],
+}
+export const KATANA_TICKER_TO_ADDR: { [key in string]: string } = {
+  ...TICKER_TO_ADDR,
+}
+for (const addr in KATANA_TOKEN_REMAP) {
+  KATANA_TICKER_TO_ADDR[ADDR_TO_TICKER[KATANA_TOKEN_REMAP[addr]]] = addr
+}
+export const KATANA_ADDRESS_TO_TICKER: { [key in string]: string } = {
+  ...ADDR_TO_TICKER,
+}
+for (const addr in KATANA_TOKEN_REMAP) {
+  KATANA_ADDRESS_TO_TICKER[addr] = ADDR_TO_TICKER[KATANA_TOKEN_REMAP[addr]]
+}
+
 export const STYLUS_TOKEN_REMAP: { [key in string]: string } = {
-  "0x408Da76E87511429485C32E4Ad647DD14823Fdc4": TICKER_TO_ADDR["WETH"],
+  "0x408da76e87511429485c32e4ad647dd14823fdc4": TICKER_TO_ADDR["WETH"],
 }
 export const STYLUS_TICKER_TO_ADDR: { [key in string]: string } = {
   ...TICKER_TO_ADDR,

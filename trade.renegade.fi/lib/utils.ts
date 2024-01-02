@@ -5,6 +5,7 @@ import {
   ADDR_TO_TICKER,
   DISPLAYED_TICKERS,
   KATANA_ADDRESS_TO_TICKER,
+  STYLUS_ADDRESS_TO_TICKER,
 } from "@/lib/tokens"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -88,6 +89,8 @@ export function getTickerFromToken(token: Token) {
   try {
     if (getNetwork() === "katana") {
       return KATANA_ADDRESS_TO_TICKER[`0x${token.address}`]
+    } else if (getNetwork() === "stylus") {
+      return STYLUS_ADDRESS_TO_TICKER[`0x${token.address}`]
     } else {
       return ADDR_TO_TICKER[`0x${token.address}`]
     }

@@ -236,13 +236,13 @@ export function MainNav() {
       "0xd92773693917f0ff664f85c3cb698c33420947ff",
     ],
   })
-  console.log("🚀 ~ MainNav ~ wethAllowance:", wethAllowance)
+  console.log("WETH Allowance Darkpool: ", wethAllowance)
 
   const { data: wethBalance } = useWethBalanceOf({
     address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",
     args: ["0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e"],
   })
-  console.log("🚀 ~ MainNav ~ wethBalance:", wethBalance)
+  console.log("WETH Balance: ", wethBalance)
 
   const { config: approveConfig } = usePrepareErc20Approve({
     address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",

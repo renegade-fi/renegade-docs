@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { useErc20Allowance, useErc20Approve } from "@/src/generated"
 import {
   ArrowForwardIcon,
   ChevronDownIcon,
@@ -55,16 +54,11 @@ function DepositInner() {
     onOpenSignIn,
     signInText: "Sign in to Deposit",
   })
-  // const { data: allowance } = useErc20Allowance()
-  // const { data: approveData, write: approve } = useErc20Approve({
-  //   address: getToken(baseTicker).address,
-  // })
   const { address } = useAccount()
   const { data: ethBalance } = useBalance({
-    // address: "0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e",
-    address
+    address,
   })
-  console.log("🚀 ~ DepositInner ~ ethBalance:", ethBalance)
+  console.log("ETH Balance: ", ethBalance)
 
   const handleClick = () => {
     if (shouldUse) {
