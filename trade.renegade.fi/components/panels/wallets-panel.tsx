@@ -5,11 +5,16 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { ArrowDownIcon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  LockIcon,
+  UnlockIcon,
+} from "@chakra-ui/icons"
 import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import SimpleBar from "simplebar-react"
-import { useAccount as useAccountWagmi } from "wagmi"
+import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { findBalanceByTicker, getTickerFromToken, getToken } from "@/lib/utils"
@@ -19,6 +24,10 @@ import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
 import "simplebar-react/dist/simplebar.min.css"
+import { TaskType } from "@/contexts/Renegade/types"
+import { Token } from "@renegade-fi/renegade-js"
+
+import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -29,6 +38,8 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const router = useRouter()
+  const { setTask, accountId } = useRenegade()
+  const { address } = useAccount()
 
   const ticker = getTickerFromToken(getToken({ address: props.tokenAddr }))
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
@@ -82,26 +93,24 @@ function TokenBalance(props: TokenBalanceProps) {
           setView(ViewEnum.DEPOSIT)
         }}
       />
-      {/* <ArrowUpIcon
+      <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
         cursor="pointer"
-        _hover={{
-          background: "white.10",
-        }}
         onClick={() => {
-          if (accountId) {
+          if (accountId && address) {
             renegade.task
               .withdraw(
                 accountId,
                 new Token({ address: props.tokenAddr }),
-                BigInt(1)
+                BigInt(1),
+                address
               )
               .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
           }
         }}
-      /> */}
+      />
     </Flex>
   )
 }

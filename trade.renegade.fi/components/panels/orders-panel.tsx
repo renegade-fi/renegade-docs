@@ -283,20 +283,17 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
+          const baseTicker = getTickerFromToken(getToken({address: "0x" + orders[counterpartyOrder.id]?.baseToken.address}))
+          const quoteTicker = getTickerFromToken(getToken({address: "0x" + orders[counterpartyOrder.id]?.quoteToken.address}))
           const title = orders[counterpartyOrder.id]
             ? `${
                 orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
               } ${orders[counterpartyOrder.id].amount} ${
-                // TODO: Should use helper function to get ticker
-                KATANA_ADDRESS_TO_TICKER[
-                  "0x" + orders[counterpartyOrder.id].baseToken.address
-                ]
+                baseTicker
               } ${
                 orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
               } ${
-                KATANA_ADDRESS_TO_TICKER[
-                  "0x" + orders[counterpartyOrder.id].quoteToken.address
-                ]
+                quoteTicker
               }`
             : `Unknown order hash: ${counterpartyOrder.id
                 .split("-")[0]
