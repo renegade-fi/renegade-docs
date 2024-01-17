@@ -35,7 +35,7 @@ Some terminology:
 
 As previously mentioned, individual wallets are never revealed in plaintext.
 Instead, traders post "commitments" of individual wallets on-chain, where a
-commitment to a wallet is essentialy a hash of a wallet combined with some
+commitment to a wallet is essentially a hash of a wallet combined with some
 randomness. Just knowing a wallet commitment does not tell you anything about
 the underlying wallet data.
 
