@@ -104,7 +104,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
-    console.log("🚀 ~ RenegadeProvider ~ accountId:", accountId)
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
@@ -113,7 +112,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
       })
       .then(() => {
         setAccountId(accountId)
-        console.log("🚀 ~ .then ~ accountId:", accountId)
         refreshAccount(accountId)
       })
   }

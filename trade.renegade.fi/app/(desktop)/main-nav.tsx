@@ -6,15 +6,6 @@ import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import glyphDark from "@/icons/glyph_dark.svg"
 import {
-  useErc20Allowance,
-  useErc20Approve,
-  usePrepareErc20Approve,
-  usePrepareErc20Write,
-  usePrepareWethDeposit,
-  useWethBalanceOf,
-  useWethDeposit,
-} from "@/src/generated"
-import {
   Box,
   Button,
   Flex,
@@ -24,7 +15,6 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { Keychain } from "@renegade-fi/renegade-js"
 import { ConnectKitButton } from "connectkit"
 import {
   useAccount as useAccountWagmi,
@@ -34,7 +24,6 @@ import {
 
 import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { renegade } from "@/app/providers"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -229,36 +218,6 @@ function DisconnectWalletButton() {
 export function MainNav() {
   const [showDownloadPrompt, setshowDownloadPrompt] = useState(false)
   const glyphRef = createRef<HTMLDivElement>()
-  const { data: wethAllowance } = useErc20Allowance({
-    address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",
-    args: [
-      "0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e",
-      "0xd92773693917f0ff664f85c3cb698c33420947ff",
-    ],
-  })
-  console.log("WETH Allowance Darkpool: ", wethAllowance)
-
-  const { data: wethBalance } = useWethBalanceOf({
-    address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",
-    args: ["0x3f1eae7d46d88f08fc2f8ed27fcb2ab183eb2d0e"],
-  })
-  console.log("WETH Balance: ", wethBalance)
-
-  const { config: approveConfig } = usePrepareErc20Approve({
-    address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",
-    args: ["0xd92773693917f0ff664f85c3cb698c33420947ff", BigInt(10)],
-  })
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    write: approveWeth,
-  } = useErc20Approve(approveConfig)
-
-  // const { config } = usePrepareWethDeposit({
-  //   address: "0x408Da76E87511429485C32E4Ad647DD14823Fdc4",
-  // })
-  // const { data: wethDepositData, write: depositWeth } = useWethDeposit(config)
 
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
@@ -272,21 +231,6 @@ export function MainNav() {
       window.removeEventListener("contextmenu", handleContextMenu)
     }
   }, [glyphRef])
-
-  const handleClick = async () => {
-    if (!approveWeth) {
-      console.log("No write")
-      return
-    }
-    approveWeth()
-    console.log("🚀 ~ MainNav ~ data:", data)
-    // if (!depositWeth) {
-    //   console.log("No deposit")
-    //   return
-    // }
-    // depositWeth()
-    // console.log("🚀 ~ MainNav ~ wethDepositData:", wethDepositData)
-  }
 
   return (
     <Flex
@@ -306,7 +250,6 @@ export function MainNav() {
         onClick={(event) => event.stopPropagation()}
         spacing="20px"
       >
-        <Button onClick={handleClick}>Allow</Button>
         <FancyUnderline>
           <Link
             color="white.100"

@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useState } from "react"
 
-import { renegade } from "@/app/providers"
 
 export const useIsLocked = () => {
-  const [isLocked, setIsLocked] = useState<boolean>(false)
-  const { accountId } = useRenegade()
+  const [isLocked] = useState<boolean>(false)
 
   // useEffect(() => {
   //   if (!accountId) return

@@ -20,8 +20,7 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { IntercomProvider } from "react-use-intercom"
 import { createPublicClient, http } from "viem"
 import { WagmiConfig, createConfig } from "wagmi"
-
-import { arbitrumStylus } from "@/lib/arbitrumStylus"
+import { stylusDevnet, stylusTestnet } from "@/lib/stylus"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -178,12 +177,12 @@ const wagmiConfig = createConfig(
       "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
     appUrl: "https://renegade.fi",
     appIcon: "https://www.renegade.fi/glyph_light.svg",
-    chains: [arbitrumStylus],
+    chains: [stylusDevnet, stylusTestnet],
   })
 )
 
 export const client = createPublicClient({
-  chain: arbitrumStylus,
+  chain: stylusDevnet,
   transport: http(),
 })
 

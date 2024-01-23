@@ -18,7 +18,6 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import { useAccount, useBalance } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
 import { useIsLocked } from "@/hooks/use-is-locked"
@@ -54,11 +53,6 @@ function DepositInner() {
     onOpenSignIn,
     signInText: "Sign in to Deposit",
   })
-  const { address } = useAccount()
-  const { data: ethBalance } = useBalance({
-    address,
-  })
-  console.log("ETH Balance: ", ethBalance)
 
   const handleClick = () => {
     if (shouldUse) {

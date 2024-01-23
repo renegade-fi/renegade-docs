@@ -225,8 +225,8 @@ for (const addr in KATANA_TOKEN_REMAP) {
 }
 
 export const STYLUS_TOKEN_REMAP: { [key in string]: string } = {
-  "0x408da76e87511429485c32e4ad647dd14823fdc4": TICKER_TO_ADDR["WETH"],
-  "0x1bdce09dbc6fc66fb0f9c585c442a5a46eed7e7b": TICKER_TO_ADDR["USDC"],
+  "0x85d80784b93d20a41d66f5ae59271158c544272d": TICKER_TO_ADDR["WETH"],
+  "0xfa9702147126b87f54269135ae11306aa81c0222": TICKER_TO_ADDR["USDC"],
 }
 export const STYLUS_TICKER_TO_ADDR: { [key in string]: string } = {
   ...TICKER_TO_ADDR,

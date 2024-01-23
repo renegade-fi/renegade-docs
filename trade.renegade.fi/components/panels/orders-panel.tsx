@@ -1,6 +1,5 @@
 "use client"
 
-import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
@@ -10,19 +9,19 @@ import { OrderId } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
-import { KATANA_ADDRESS_TO_TICKER } from "@/lib/tokens"
+import { renegade } from "@/app/providers"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
 import {
   getTickerFromToken,
   getToken,
   safeLocalStorageGetItem,
 } from "@/lib/utils"
-import { useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -283,18 +282,22 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
-          const baseTicker = getTickerFromToken(getToken({address: "0x" + orders[counterpartyOrder.id]?.baseToken.address}))
-          const quoteTicker = getTickerFromToken(getToken({address: "0x" + orders[counterpartyOrder.id]?.quoteToken.address}))
+          const baseTicker = getTickerFromToken(
+            getToken({
+              address: "0x" + orders[counterpartyOrder.id]?.baseToken.address,
+            })
+          )
+          const quoteTicker = getTickerFromToken(
+            getToken({
+              address: "0x" + orders[counterpartyOrder.id]?.quoteToken.address,
+            })
+          )
           const title = orders[counterpartyOrder.id]
             ? `${
                 orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-              } ${orders[counterpartyOrder.id].amount} ${
-                baseTicker
-              } ${
+              } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${
                 orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-              } ${
-                quoteTicker
-              }`
+              } ${quoteTicker}`
             : `Unknown order hash: ${counterpartyOrder.id
                 .split("-")[0]
                 .toString()}`

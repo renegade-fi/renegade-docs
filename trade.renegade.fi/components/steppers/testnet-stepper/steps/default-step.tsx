@@ -1,5 +1,4 @@
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import {
   Button,
   Flex,
@@ -10,23 +9,21 @@ import {
 } from "@chakra-ui/react"
 import { Repeat2 } from "lucide-react"
 
-import { getToken } from "@/lib/utils"
-import { renegade } from "@/app/providers"
 
 import { useStepper } from "../testnet-stepper"
 
 export function DefaultStep() {
-  const { accountId, setTask } = useRenegade()
-  const { onNext, setTicker, ticker } = useStepper()
+  const { accountId } = useRenegade()
+  const { setTicker, ticker } = useStepper()
 
   const amount = ticker === "USDC" ? 10000 : 10
 
   const handleDeposit = async () => {
     if (!accountId) return
-    renegade.task
-      .deposit(accountId, getToken({ ticker: ticker }), BigInt(amount))
-      .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-      .then(() => onNext())
+    // renegade.task
+    //   .deposit(accountId, getToken({ ticker: ticker }), BigInt(amount))
+    //   .then(([taskId]) => setTask(taskId, TaskType.Deposit))
+    //   .then(() => onNext())
   }
 
   return (
