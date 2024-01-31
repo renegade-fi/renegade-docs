@@ -37,6 +37,31 @@ export const stylusDevnet = defineChain({
   },
 })
 
+export const stylusDevnetEc2 = defineChain({
+  id: 412346,
+  name: "Stylus Devnet on EC2",
+  network: "Arbitrum Stylus",
+  nativeCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: {
+      http: ["http://35.183.100.90:8547"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
+    },
+    public: {
+      http: ["http://35.183.100.90:8547"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
+    },
+  },
+})
+
 export const stylusTestnet = defineChain({
   id: 23011913,
   name: "Stylus Testnet",

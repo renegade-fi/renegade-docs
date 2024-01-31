@@ -225,8 +225,12 @@ for (const addr in KATANA_TOKEN_REMAP) {
 }
 
 export const STYLUS_TOKEN_REMAP: { [key in string]: string } = {
-  "0x85d80784b93d20a41d66f5ae59271158c544272d": TICKER_TO_ADDR["WETH"],
-  "0xfa9702147126b87f54269135ae11306aa81c0222": TICKER_TO_ADDR["USDC"],
+  // Local Stylus Devnet Addresses
+  // "0x75e0e92a79880bd81a69f72983d03c75e2b33dc8": TICKER_TO_ADDR["WETH"],
+  // "0x4af567288e68cad4aa93a272fe6139ca53859c70": TICKER_TO_ADDR["USDC"],
+  // EC2 Stylus Devnet Addresses
+  "0x7e32b54800705876d3b5cfbc7d9c226a211f7c1a": TICKER_TO_ADDR["WETH"],
+  "0x85d9a8a4bd77b9b5559c1b7fcb8ec9635922ed49": TICKER_TO_ADDR["USDC"],
 }
 export const STYLUS_TICKER_TO_ADDR: { [key in string]: string } = {
   ...TICKER_TO_ADDR,
