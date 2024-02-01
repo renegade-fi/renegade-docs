@@ -32,6 +32,7 @@
     "react-use-intercom": "^5.1.4",
     "simplebar-react": "^3.2.4",
     "usehooks-ts": "^2.13.0",
+    "sonner": "^1.4.0",
     "uuid": "^9.0.1",
     "viem": "^1.20.1",
     "wagmi": "^1.4.12",

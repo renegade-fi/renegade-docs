@@ -122,6 +122,7 @@ function DepositWithdrawButtons() {
       flexDirection="row"
       width="100%"
       height="calc(1.5 * var(--banner-height))"
+      color="white.60"
       borderColor="border"
       borderTop="var(--border)"
       borderBottom="var(--border)"
@@ -298,6 +299,54 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   )
 }
 
+function HistorySection() {
+  const { accountId } = useRenegade()
+
+  const Content = useMemo(() => {
+    if (true) {
+      return (
+        <Flex
+          alignItems="center"
+          minHeight="calc(5 * var(--banner-height))"
+        >
+
+          <Text
+            margin="auto"
+            padding="0 10%"
+            color="white.50"
+            fontSize="0.8em"
+            fontWeight="100"
+            textAlign="center"
+          >
+            Deposit your first tokens to see your history.
+          </Text>
+        </Flex>
+      )
+    }
+  }, [])
+
+  if (!accountId) return null
+
+  return (
+    <>
+      <Flex
+        position="relative"
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        minHeight="var(--banner-height)"
+        borderColor="border"
+        borderTop="var(--border)"
+        borderBottom="var(--border)"
+      >
+        <Text>History</Text>
+      </Flex>
+      {Content}
+    </>
+  )
+}
+
+
 interface WalletsPanelExpandedProps {
   isLocked: boolean
   toggleIsLocked: () => void
@@ -314,6 +363,7 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
         isLocked={props.isLocked}
         toggleIsLocked={props.toggleIsLocked}
       />
+      <HistorySection />
       <DepositWithdrawButtons />
     </Flex>
   )
@@ -329,7 +379,7 @@ export function WalletsPanel() {
           toggleIsLocked={toggleIsLocked}
         />
       )}
-      panelCollapsedDisplayTexts={["Renegade Account", "Deposit"]}
+      panelCollapsedDisplayTexts={["Renegade Account", "History"]}
       isOpenConnectKitModal={open}
       flipDirection={false}
     />
