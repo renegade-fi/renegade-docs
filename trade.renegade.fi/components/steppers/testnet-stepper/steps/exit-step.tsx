@@ -1,3 +1,5 @@
+import { useRouter } from "next/navigation"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -8,10 +10,8 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
-
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useRouter } from "next/navigation"
 import { useAccount } from "wagmi"
+
 import { useStepper } from "../testnet-stepper"
 
 export function ExitStep() {
@@ -20,7 +20,7 @@ export function ExitStep() {
   const { address } = useAccount()
   const { onClose, ticker } = useStepper()
   const formattedAddress = address ? address.slice(0, 6) + "..." : ""
-  if (ticker === 'USDC') {
+  if (ticker === "USDC") {
     router.prefetch("/USDC")
   }
   return (

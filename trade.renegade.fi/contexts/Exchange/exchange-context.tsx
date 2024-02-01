@@ -55,7 +55,7 @@ function ExchangeProvider({ children }: PropsWithChildren) {
               if (
                 !prev[key] ||
                 prev[key].midpointPrice?.toFixed(decimals || 2) !==
-                priceReport.midpointPrice?.toFixed(decimals || 2)
+                  priceReport.midpointPrice?.toFixed(decimals || 2)
               ) {
                 return {
                   ...prev,

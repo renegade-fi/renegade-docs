@@ -1,5 +1,5 @@
-import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 import { useEffect } from "react"
+import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 import { useAccount } from "wagmi"
 
 import { useStepper } from "../testnet-stepper"
@@ -7,7 +7,6 @@ import { useStepper } from "../testnet-stepper"
 export function LoadingStep() {
   const { onNext } = useStepper()
   const { address } = useAccount()
-
 
   useEffect(() => {
     const handleFund = async () => {

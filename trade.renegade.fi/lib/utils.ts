@@ -1,9 +1,7 @@
 import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
-
-import {
-  DISPLAYED_TICKERS,
-} from "@/lib/tokens"
 import { isAddress } from "viem"
+
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
 export function safeLocalStorageGetItem(key: string): string | null {
   if (typeof window !== "undefined") {
@@ -46,7 +44,11 @@ export function findBalanceByTicker(
   return foundBalance
 }
 
-export function getToken({ address, ticker, input }: {
+export function getToken({
+  address,
+  ticker,
+  input,
+}: {
   address?: string
   ticker?: string
   input?: string

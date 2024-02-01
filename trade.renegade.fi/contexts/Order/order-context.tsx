@@ -1,23 +1,22 @@
 "use client"
 
-import { useToast } from "@chakra-ui/react"
-import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
-import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
   createContext,
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react"
-
-import { renegade } from "@/app/providers"
+import { useParams, useRouter } from "next/navigation"
 import { CounterpartyOrder } from "@/contexts/Renegade/types"
-import {
-  getToken
-} from "@/lib/utils"
+import { useToast } from "@chakra-ui/react"
+import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useLocalStorage } from "usehooks-ts"
+
+import { getToken } from "@/lib/utils"
+import { renegade } from "@/app/providers"
+
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -32,7 +31,7 @@ function OrderProvider({ children }: PropsWithChildren) {
   //     ? Direction.BUY
   //     : Direction.SELL
   // )
-  const [direction, setDirection] = useLocalStorage('direction', Direction.BUY)
+  const [direction, setDirection] = useLocalStorage("direction", Direction.BUY)
   const handleSetDirection = (direction: Direction) => {
     setDirection(direction)
   }
@@ -119,10 +118,12 @@ function OrderProvider({ children }: PropsWithChildren) {
           if (!toast.isActive(toastId)) {
             toast({
               id: toastId,
-              title: `MPC ${mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
-                }`,
-              description: `A handshake with a counterparty has ${mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
-                }.`,
+              title: `MPC ${
+                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+              }`,
+              description: `A handshake with a counterparty has ${
+                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+              }.`,
               status: "info",
               duration: 5000,
               isClosable: true,

@@ -71,7 +71,7 @@ export function ConfirmStep() {
       amount: BigInt(baseTokenAmount),
     })
     renegade.task
-      .modifyOrPlaceOrder(accountId, order)
+      .placeOrder(accountId, order)
       .then(([taskId]) => setTask(taskId, TaskType.PlaceOrder))
       .then(() => {
         const o = safeLocalStorageGetItem(`order-details-${accountId}`)

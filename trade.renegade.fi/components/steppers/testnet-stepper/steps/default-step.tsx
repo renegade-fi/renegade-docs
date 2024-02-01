@@ -8,10 +8,9 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Repeat2 } from "lucide-react"
-
+import { useAccount } from "wagmi"
 
 import { useStepper } from "../testnet-stepper"
-import { useAccount } from "wagmi"
 
 export function DefaultStep() {
   const { address } = useAccount()
