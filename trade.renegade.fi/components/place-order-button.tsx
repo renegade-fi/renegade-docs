@@ -7,32 +7,32 @@ import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
+import { toast } from "sonner"
+import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { findBalanceByTicker } from "@/lib/utils"
+import { findBalanceByTicker, safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
+import { renegade } from "@/app/providers"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
   const balances = useBalance()
-  const {
-    isOpen: placeOrderIsOpen,
-    onOpen: onOpenPlaceOrder,
-    onClose: onClosePlaceOrder,
-  } = useDisclosure()
+  const { isOpen: placeOrderIsOpen, onClose: onClosePlaceOrder } =
+    useDisclosure()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
     onClose: onCloseSignIn,
   } = useDisclosure()
   const { getPriceData } = useExchange()
-  const isLocked = useIsLocked()
-  const { baseTicker, quoteTicker, baseTokenAmount, direction } = useOrder()
+  const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
+    useOrder()
   const { accountId } = useRenegade()
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
@@ -42,6 +42,56 @@ export function PlaceOrderButton() {
     onOpenSignIn,
     signInText: "Sign in to Place Orders",
   })
+  const timestampMap = useMemo(() => {
+    const o = safeLocalStorageGetItem("timestampMap")
+    const parsed = o ? JSON.parse(o) : {}
+    return parsed
+  }, [])
+
+  const handlePlaceOrder = async () => {
+    if (!accountId) return
+    const id = uuidv4() as OrderId
+    const order = new Order({
+      id,
+      baseToken: base,
+      quoteToken: quote,
+      side: direction,
+      type: "midpoint",
+      amount: BigInt(baseTokenAmount),
+    })
+    renegade.task
+      .placeOrder(accountId, order)
+      .then(() => {
+        const o = safeLocalStorageGetItem(`order-details-${accountId}`)
+        const parseO: LocalOrder[] = o ? JSON.parse(o) : []
+        const newO = [
+          ...parseO,
+          {
+            id,
+            base: order.baseToken.address,
+            quote: order.quoteToken.address,
+            side: direction,
+            amount: baseTokenAmount,
+          },
+        ]
+        safeLocalStorageSetItem(
+          `order-details-${accountId}`,
+          JSON.stringify(newO)
+        )
+        timestampMap[id] = order.timestamp
+        safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
+      })
+      .then(() =>
+        toast.message(
+          `Started to place order to ${direction === "buy" ? "Buy" : "Sell"
+          } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
+          {
+            description: "Check the history tab for the status of the task",
+          }
+        )
+      )
+      .catch(() => toast.error("Error placing order, please try again"))
+  }
 
   const hasInsufficientBalance = useMemo(() => {
     const baseBalance = findBalanceByTicker(balances, baseTicker)
@@ -69,12 +119,10 @@ export function PlaceOrderButton() {
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = `Place Order for ${
-      baseTokenAmount || ""
-    } ${baseTicker}`
+    placeOrderButtonContent = `Place Order for ${baseTokenAmount || ""
+      } ${baseTicker}`
   }
-  const isDisabled =
-    accountId && (!baseTokenAmount || hasInsufficientBalance || isLocked)
+  const isDisabled = accountId && (!baseTokenAmount || hasInsufficientBalance)
 
   return (
     <>
@@ -91,9 +139,9 @@ export function PlaceOrderButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-                borderColor: "white.60",
-                color: "white",
-              }
+              borderColor: "white.60",
+              color: "white",
+            }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -101,7 +149,6 @@ export function PlaceOrderButton() {
         transition="0.15s"
         backgroundColor="transparent"
         isDisabled={isDisabled}
-        isLoading={isLocked}
         loadingText="Please wait for task completion"
         onClick={() => {
           if (shouldUse) {
@@ -109,7 +156,9 @@ export function PlaceOrderButton() {
           } else if (isDisabled) {
             return
           } else {
-            onOpenPlaceOrder()
+            // TODO: Make sure task gets added to history section
+            handlePlaceOrder()
+            // onOpenPlaceOrder()
           }
         }}
         rightIcon={<ArrowForwardIcon />}

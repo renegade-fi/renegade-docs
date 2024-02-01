@@ -13,6 +13,9 @@ import {
   OrderId,
   TaskId,
 } from "@renegade-fi/renegade-js"
+import { toast } from "sonner"
+import { useLocalStorage } from "usehooks-ts"
+import { useAccount } from "wagmi"
 
 import { renegade } from "@/app/providers"
 
@@ -24,8 +27,7 @@ import {
   TaskState,
   TaskType,
 } from "./types"
-import { useLocalStorage } from "usehooks-ts"
-import { useAccount } from "wagmi"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -34,10 +36,9 @@ const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
 function RenegadeProvider({ children }: React.PropsWithChildren) {
   // Create balance, order, fee, an account states.
   const [accountId, setAccountId] = React.useState<AccountId>()
-  const [, setBalances] = React.useState<Record<BalanceId, Balance>>({})
+  const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [fees] = React.useState<Record<FeeId, Fee>>({})
-  const [, setOrders] = React.useState<Record<OrderId, Order>>({})
-  const [isLocked, setIsLocked] = React.useState<boolean>(false)
+  const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -71,7 +72,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [taskId])
 
-
   const accountCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
     if (accountCallbackId.current || !accountId) return
@@ -93,7 +93,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
 
   // TODO: This logic should probably be moved to SDK
   // TODO: Should only do if wallet is connected
-  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
+  const [seed, setSeed] = useLocalStorage<string | undefined>("seed", undefined)
   const attemptedAutoSignin = React.useRef<AccountId>()
   const initAccount = React.useCallback(async () => {
     if (!seed || attemptedAutoSignin.current || accountId) return
@@ -115,7 +115,10 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
           refreshAccount(_accountId)
         })
     } catch (error) {
-      console.error("Tried to automatically sign in user, but failed with error: ", error)
+      console.error(
+        "Tried to automatically sign in user, but failed with error: ",
+        error
+      )
       setAccountId(undefined)
       setSeed(undefined)
       if (attemptedAutoSignin.current) {
@@ -124,7 +127,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId, seed, setAccountId, setSeed])
 
-  const [shouldAutoLogin] = useLocalStorage<boolean>('shouldAutoLogin', false)
+  const [shouldAutoLogin] = useLocalStorage<boolean>("shouldAutoLogin", false)
   React.useEffect(() => {
     if (shouldAutoLogin) {
       initAccount()
@@ -158,8 +161,28 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         attemptedAutoSignin.current = accountId
         setAccountId(accountId)
         refreshAccount(accountId)
+
+        const funded = safeLocalStorageGetItem(`funded_${accountId}`)
+        if (funded) return
+
+        // If the account has not been funded, fund it
         fetch(`/api/fund?address=${address}`, {
-          method: 'GET',
+          method: "GET",
+        }).then((response) => {
+          if (response.ok) {
+            return response.text().then(() => {
+              toast.success("Your account has been funded with test funds.", {
+                description: "Try depositing some funds to start trading.",
+                duration: 10000,
+              })
+              safeLocalStorageSetItem(`funded_${accountId}`, "true")
+              return
+            })
+          } else {
+            toast.error(
+              "Funding failed: An unexpected error occurred. Please try again."
+            )
+          }
         })
       })
   }
@@ -210,7 +233,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
     setOrders(renegade.getOrders(accountId))
-    setIsLocked(renegade.getIsLocked(accountId))
   }
 
   function setTask(newTaskId?: TaskId, taskType?: TaskType) {
@@ -226,10 +248,11 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     <RenegadeContext.Provider
       value={{
         accountId,
+        balances,
         counterparties,
         fees,
-        isLocked,
         orderBook,
+        orders,
         refreshAccount,
         setAccount,
         setTask,

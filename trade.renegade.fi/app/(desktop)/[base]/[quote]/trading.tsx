@@ -10,6 +10,7 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
+import { toast } from "sonner"
 
 interface SelectableProps {
   text: string
@@ -78,18 +79,18 @@ function TradingInner() {
       return [
         // @ts-ignore
         ref.current.offsetParent.offsetLeft +
-          ref.current.offsetLeft +
-          ref.current.offsetWidth / 2,
+        ref.current.offsetLeft +
+        ref.current.offsetWidth / 2,
         // @ts-ignore
         ref.current.offsetParent.offsetTop +
-          ref.current.offsetTop +
-          ref.current.offsetHeight / 2 +
-          (baseTokenAmount ? -15 : 10),
+        ref.current.offsetTop +
+        ref.current.offsetHeight / 2 +
+        (baseTokenAmount ? -15 : 10),
       ]
     }
     buySellSelectableCoords.current = getRefCoords(buySellSelectableRef)
 
-    return () => {}
+    return () => { }
   }, [baseTokenAmount, buySellSelectableRef])
 
   return (
@@ -133,7 +134,16 @@ function TradingInner() {
                   passive: false,
                 })
               }
-              onKeyPress={(e) => e.key === "-" && e.preventDefault()}
+              onKeyPress={(e) => {
+                if (e.key === ".") {
+                  toast.error("Please try again using an integer value", {
+                    description: "Decimal values are not allowed.",
+                  });
+                  e.preventDefault();
+                } else if (e.key === "-") {
+                  e.preventDefault();
+                }
+              }}
               placeholder="0.00"
               type="number"
               value={baseTokenAmount || ""}

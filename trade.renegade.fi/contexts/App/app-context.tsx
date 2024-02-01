@@ -8,6 +8,7 @@ import {
   useState,
 } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+
 import { TestnetStepper } from "@/components/steppers/testnet-stepper/testnet-stepper"
 
 export enum ViewEnum {
