@@ -154,7 +154,8 @@ export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL)
       let ticker = Token.findTickerByAddress(token.address.toLowerCase())
       if (ticker !== undefined) {
         TICKER_TO_LOGO_URL[ticker] = data.tokens.find(
-          (token: any) => token.address.toLowerCase() === token.address.toLowerCase()
+          (token: any) =>
+            token.address.toLowerCase() === token.address.toLowerCase()
         ).logoURI
       }
     }

@@ -1,9 +1,9 @@
 "use client"
 
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon
-} from "@chakra-ui/icons"
+import Link from "next/link"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
+import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
   Button,
@@ -13,13 +13,12 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import Link from "next/link"
 
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
 
 function DepositInner() {
+  const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -43,11 +42,14 @@ function DepositInner() {
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
             <div>
-              <Link href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}>
+              <Link
+                href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}
+              >
                 <Button
                   position="absolute"
                   top="-24px"
                   fontWeight="600"
+                  onClick={() => setView(ViewEnum.TRADING)}
                   variant="link"
                 >
                   <ChevronLeftIcon />
@@ -70,7 +72,7 @@ function DepositInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={(e) => setBaseTokenAmount(parseFloat(e.target.value))}
+              onChange={(e) => setBaseTokenAmount(e.target.value)}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,

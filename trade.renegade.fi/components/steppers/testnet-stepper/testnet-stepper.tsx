@@ -1,11 +1,5 @@
-import {
-  Fade,
-  Flex,
-  Modal,
-  ModalContent,
-  ModalOverlay
-} from "@chakra-ui/react"
 import React, { createContext, useContext, useState } from "react"
+import { Fade, Flex, Modal, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
 import { ApprovalStep } from "@/components/steppers/testnet-stepper/steps/approval-step"
 import { DefaultStep } from "@/components/steppers/testnet-stepper/steps/default-step"
@@ -16,12 +10,7 @@ const TestnetStepperInner = () => {
   const { step, onClose } = useStepper()
 
   return (
-    <Modal
-      isCentered
-      isOpen
-      onClose={onClose}
-      size="sm"
-    >
+    <Modal isCentered isOpen onClose={onClose} size="sm">
       <ModalOverlay
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
@@ -74,11 +63,11 @@ const StepperContext = createContext<{
   step: Step
   ticker: string
 }>({
-  onBack: () => { },
-  onClose: () => { },
-  onNext: () => { },
-  setStep: () => { },
-  setTicker: () => { },
+  onBack: () => {},
+  onClose: () => {},
+  onNext: () => {},
+  setStep: () => {},
+  setTicker: () => {},
   step: Step.DEFAULT,
   ticker: "WETH",
 })
@@ -125,9 +114,7 @@ const StepperProvider = ({
 
 export function TestnetStepper({ onClose }: { onClose: () => void }) {
   return (
-    <StepperProvider
-      onClose={onClose}
-    >
+    <StepperProvider onClose={onClose}>
       <TestnetStepperInner />
     </StepperProvider>
   )

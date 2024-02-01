@@ -1,6 +1,6 @@
 "use client"
 
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useEffect } from "react"
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
@@ -18,9 +18,11 @@ import {
 import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { IntercomProvider } from "react-use-intercom"
+import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
 import { WagmiConfig, createConfig } from "wagmi"
-import { stylusDevnetEc2 } from "@/lib/stylus"
+
+import { stylusDevnetEc2 } from "@/lib/chain"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -201,6 +203,12 @@ export function Providers({
 }: PropsWithChildren & {
   icons?: Record<string, string>
 }) {
+  useEffect(() => {
+    async function loadUtils() {
+      await renegade.init()
+    }
+    loadUtils()
+  }, [])
   return (
     <>
       <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
@@ -221,7 +229,10 @@ export function Providers({
               >
                 <RenegadeProvider>
                   <ExchangeProvider>
-                    <AppProvider tokenIcons={icons}>{children}</AppProvider>
+                    <AppProvider tokenIcons={icons}>
+                      <Toaster position="bottom-center" />
+                      {children}
+                    </AppProvider>
                   </ExchangeProvider>
                 </RenegadeProvider>
               </ConnectKitProvider>

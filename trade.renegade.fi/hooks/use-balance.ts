@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react"
+import { renegade } from "@/app/providers"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Balance, BalanceId } from "@renegade-fi/renegade-js"
-
-import { renegade } from "@/app/providers"
+import { useEffect, useState } from "react"
 
 export const useBalance = () => {
-  const [balances, setBalances] = useState<Record<BalanceId, Balance>>({})
-  const { accountId } = useRenegade()
+  const { accountId, balances: initialBalances } = useRenegade()
+  const [balances, setBalances] = useState<Record<BalanceId, Balance>>(initialBalances || {})
 
   useEffect(() => {
     if (!accountId) return
