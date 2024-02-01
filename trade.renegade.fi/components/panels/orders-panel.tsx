@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
@@ -9,17 +10,16 @@ import { OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 
-import { renegade } from "@/app/providers"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
 import {
   safeLocalStorageGetItem
 } from "@/lib/utils"
+import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { renegade } from "@/app/providers"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -382,7 +382,6 @@ function CounterpartiesPanel() {
       minHeight="var(--banner-height)"
       borderColor="border"
       borderTop="var(--border)"
-      borderBottom="var(--border)"
     >
       <Text>Counterparties:&nbsp;</Text>
       <Text>{Object.keys(counterparties).length + 1}</Text>

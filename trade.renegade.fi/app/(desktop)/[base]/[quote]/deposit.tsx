@@ -15,9 +15,9 @@ import {
 } from "@chakra-ui/react"
 import Link from "next/link"
 
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
 
 function DepositInner() {
   const {

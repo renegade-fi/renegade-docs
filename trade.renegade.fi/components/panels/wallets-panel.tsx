@@ -191,6 +191,27 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const showDeposit = useMemo(() => {
     return !formattedBalances.some(([_, bal]) => bal > BigInt(0))
   }, [formattedBalances])
+  // const balancesToShow = useMemo(() => {
+  //   const result: Array<[string, bigint]> = []
+  //   for (const b of Object.values(balances)) {
+  //     result.push([b.mint.address, b.amount])
+  //   }
+  //   for (const [base] of DISPLAYED_TICKERS) {
+  //     if (result.length >= 5) break
+  //     if (
+  //       !result.some(
+  //         ([address]) => address === getToken({ ticker: base }).address
+  //       )
+  //     ) {
+  //       result.push([getToken({ ticker: base }).address, BigInt(0)])
+  //     }
+  //   }
+  //   return result
+  // }, [balances])
+
+  // const showDeposit = useMemo(() => {
+  //   return !balancesToShow.some(([_, bal]) => bal > BigInt(0))
+  // }, [balancesToShow])
 
   const Content = useMemo(() => {
     if (accountId && !showDeposit) {
@@ -204,6 +225,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             }}
           >
             {formattedBalances.map(([address, amount]) => (
+              // {balancesToShow.map(([address, amount]) => (
               <Box key={address} width="100%">
                 <TokenBalance tokenAddr={"0x" + address} amount={amount} />
               </Box>
@@ -257,6 +279,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     address,
     isSigningIn,
     formattedBalances,
+    // balancesToShow,
     setView,
     showDeposit,
   ])
@@ -305,11 +328,7 @@ function HistorySection() {
   const Content = useMemo(() => {
     if (true) {
       return (
-        <Flex
-          alignItems="center"
-          minHeight="calc(5 * var(--banner-height))"
-        >
-
+        <Flex alignItems="center" height="30vh">
           <Text
             margin="auto"
             padding="0 10%"
@@ -345,7 +364,6 @@ function HistorySection() {
     </>
   )
 }
-
 
 interface WalletsPanelExpandedProps {
   isLocked: boolean

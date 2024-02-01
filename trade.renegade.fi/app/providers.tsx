@@ -1,10 +1,10 @@
 "use client"
 
+import { PropsWithChildren } from "react"
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
-import { stylusDevnetEc2 } from "@/lib/stylus"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -17,12 +17,12 @@ import {
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
-import { PropsWithChildren } from "react"
 import { IntercomProvider } from "react-use-intercom"
-import { Toaster } from 'sonner'
+import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
-import { createConfig, WagmiConfig } from "wagmi"
+import { WagmiConfig, createConfig } from "wagmi"
 
+import { stylusDevnetEc2 } from "@/lib/stylus"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -227,13 +227,14 @@ export function Providers({
                       <Toaster
                         toastOptions={{
                           style: {
-                            background: 'black',
-                            borderColor: '#262626',
-                            color: 'inherit',
+                            background: "black",
+                            borderColor: "#262626",
+                            color: "inherit",
                           },
                         }}
                       />
-                      {children}</AppProvider>
+                      {children}
+                    </AppProvider>
                   </ExchangeProvider>
                 </RenegadeProvider>
               </ConnectKitProvider>
