@@ -20,7 +20,7 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { IntercomProvider } from "react-use-intercom"
 import { createPublicClient, http } from "viem"
 import { WagmiConfig, createConfig } from "wagmi"
-import { stylusDevnet, stylusDevnetEc2, stylusTestnet } from "@/lib/stylus"
+import { stylusDevnetEc2 } from "@/lib/stylus"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
