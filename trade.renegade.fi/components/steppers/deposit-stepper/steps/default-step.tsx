@@ -25,7 +25,6 @@ export function DefaultStep() {
   const { address } = useAccount()
 
   const handleDeposit = async () => {
-    console.log("🚀 ~ DefaultStep ~ accountId:", accountId)
     if (!accountId || !address) return
     renegade.task
       .deposit(

@@ -1,26 +1,25 @@
-import Image from "next/image"
-import { env } from "@/env.mjs"
-import backgroundPattern from "@/icons/background_pattern.png"
 import { Renegade } from "@renegade-fi/renegade-js"
+import Image from "next/image"
 
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import { getToken } from "@/lib/utils"
+import { Main } from "@/app/(desktop)/[base]/[quote]/main"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { Main } from "@/app/(desktop)/[base]/[quote]/main"
+import { env } from "@/env.mjs"
+import backgroundPattern from "@/icons/background_pattern.png"
+import { getToken } from "@/lib/utils"
 
-export function generateStaticParams() {
-  return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(
-    ([base, quote]) => {
-      return {
-        base,
-        quote,
-      }
-    }
-  )
-}
+// export function generateStaticParams() {
+//   return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(
+//     ([base, quote]) => {
+//       return {
+//         base,
+//         quote,
+//       }
+//     }
+//   )
+// }
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -36,10 +35,9 @@ export default async function Page({
 }: {
   params: { base: string; quote: string }
 }) {
-  // TODO: Network is hardcoded until PriceReporter token addresses are standardized
   const report = await renegade.queryExchangeHealthStates(
-    getToken({ input: base, network: "goerli" }),
-    getToken({ input: quote, network: "goerli" })
+    getToken({ input: base }),
+    getToken({ input: quote })
   )
   return (
     <div

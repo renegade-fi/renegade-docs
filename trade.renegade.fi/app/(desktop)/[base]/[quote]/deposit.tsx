@@ -1,9 +1,12 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useButton } from "@/hooks/use-button"
+import { useIsLocked } from "@/hooks/use-is-locked"
 import {
   ArrowForwardIcon,
   ChevronDownIcon,
@@ -18,15 +21,10 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-
-import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 
 function DepositInner() {
-  const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -78,24 +76,17 @@ function DepositInner() {
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
             <div>
-              <Button
-                position="absolute"
-                top="-24px"
-                fontWeight="600"
-                onClick={() => {
-                  const replace = `/${
-                    baseTicker === "USDC" ? "WETH" : baseTicker
-                  }/USDC`
-                  if (pathname !== replace) {
-                    router.replace(replace)
-                  }
-                  setView(ViewEnum.TRADING)
-                }}
-                variant="link"
-              >
-                <ChevronLeftIcon />
-                Back to Trading
-              </Button>
+              <Link href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}>
+                <Button
+                  position="absolute"
+                  top="-24px"
+                  fontWeight="600"
+                  variant="link"
+                >
+                  <ChevronLeftIcon />
+                  Back to Trading
+                </Button>
+              </Link>
               <Text color="white.50" fontSize="34px">
                 Let&apos;s get started by depositing{" "}
               </Text>
@@ -145,9 +136,9 @@ function DepositInner() {
             isDisabled
               ? { backgroundColor: "transparent" }
               : {
-                  borderColor: "white.60",
-                  color: "white",
-                }
+                borderColor: "white.60",
+                color: "white",
+              }
           }
           transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
           visibility={baseTokenAmount ? "visible" : "hidden"}

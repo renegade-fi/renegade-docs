@@ -117,12 +117,10 @@ function OrderProvider({ children }: PropsWithChildren) {
           if (!toast.isActive(toastId)) {
             toast({
               id: toastId,
-              title: `MPC ${
-                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
-              }`,
-              description: `A handshake with a counterparty has ${
-                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
-              }.`,
+              title: `MPC ${mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+                }`,
+              description: `A handshake with a counterparty has ${mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+                }.`,
               status: "info",
               duration: 5000,
               isClosable: true,

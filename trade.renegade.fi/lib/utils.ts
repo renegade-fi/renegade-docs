@@ -2,10 +2,7 @@ import { env } from "@/env.mjs"
 import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 
 import {
-  ADDR_TO_TICKER,
   DISPLAYED_TICKERS,
-  KATANA_ADDRESS_TO_TICKER,
-  STYLUS_ADDRESS_TO_TICKER,
 } from "@/lib/tokens"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -36,11 +33,12 @@ export function findBalanceByTicker(
   balances: Record<BalanceId, Balance>,
   ticker: string
 ) {
-  const addressToFind = getToken({ ticker, network: getNetwork() }).address
+  const addressToFind = Token.findAddressByTicker(ticker)
   const foundBalance =
     Object.entries(balances)
       .map(([, balance]) => balance)
-      .find((balance) => balance.mint.address === addressToFind) ??
+      // TODO: 0x prefix issue
+      .find((balance) => `0x${balance.mint.address}` === addressToFind) ??
     new Balance({
       mint: getToken({ ticker, network: getNetwork() }),
       amount: BigInt(0),
@@ -67,34 +65,32 @@ export function getNetwork() {
   return undefined
 }
 
+// TODO: Unnecessary abstraction layer
 export function getToken(token: {
   address?: string
   ticker?: string
   input?: string
+  // TODO: Remove network parameter
   network?: string
 }) {
-  const network = token.network ?? getNetwork()
   if (token.input && token.input.length > 6) {
-    return new Token({ address: token.input, network })
+    return new Token({ address: token.input })
   } else if (token.input && token.input.length <= 6) {
-    return new Token({ ticker: token.input, network })
+    return new Token({ ticker: token.input })
   } else if (token.address) {
-    return new Token({ address: token.address, network })
+    return new Token({ address: token.address })
   } else {
-    return new Token({ ticker: token.ticker, network })
+    return new Token({ ticker: token.ticker })
   }
 }
 
+// TODO: Move to Token object in SDK as static method
 export function getTickerFromToken(token: Token) {
+  console.log("🚀 ~ getTickerFromToken ~ token:", token)
   try {
-    if (getNetwork() === "katana") {
-      return KATANA_ADDRESS_TO_TICKER[`0x${token.address}`]
-    } else if (getNetwork() === "stylus") {
-      return STYLUS_ADDRESS_TO_TICKER[`0x${token.address}`]
-    } else {
-      return ADDR_TO_TICKER[`0x${token.address}`]
-    }
+    // TODO: Should just keep prefix in SDK
+    return Token.findTickerByAddress(`0x${token.address}`)
   } catch (error) {
-    throw new Error(`Could not get ticker from token: ${token}`)
+    throw new Error(`Could not get ticker from token: ${token.serialize()}`)
   }
 }
