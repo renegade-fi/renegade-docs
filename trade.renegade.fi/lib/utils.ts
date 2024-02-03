@@ -4,6 +4,7 @@ import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 import {
   DISPLAYED_TICKERS,
 } from "@/lib/tokens"
+import { isAddress } from "viem"
 
 export function safeLocalStorageGetItem(key: string): string | null {
   if (typeof window !== "undefined") {
@@ -22,8 +23,8 @@ export async function getTokenBannerData(renegade: Renegade) {
   return await Promise.all(
     DISPLAYED_TICKERS.map(([baseTicker, quoteTicker]) =>
       renegade.queryExchangeHealthStates(
-        getToken({ ticker: baseTicker, network: "goerli" }),
-        getToken({ ticker: quoteTicker, network: "goerli" })
+        getToken({ ticker: baseTicker }),
+        getToken({ ticker: quoteTicker })
       )
     )
   ).then((res) => res.map((e) => e.Median))
@@ -40,7 +41,7 @@ export function findBalanceByTicker(
       // TODO: 0x prefix issue
       .find((balance) => `0x${balance.mint.address}` === addressToFind) ??
     new Balance({
-      mint: getToken({ ticker, network: getNetwork() }),
+      mint: getToken({ ticker }),
       amount: BigInt(0),
     })
   return foundBalance
@@ -66,21 +67,19 @@ export function getNetwork() {
 }
 
 // TODO: Find better abstraction logic for constructing token from address or ticker, unknown until runtime
-export function getToken(token: {
+export function getToken({ address, ticker, input }: {
   address?: string
   ticker?: string
   input?: string
-  // TODO: Remove network parameter
-  network?: string
 }) {
-  if (token.input && token.input.length > 6) {
-    return new Token({ address: token.input })
-  } else if (token.input && token.input.length <= 6) {
-    return new Token({ ticker: token.input })
-  } else if (token.address) {
-    return new Token({ address: token.address })
+  if (address && isAddress(address)) {
+    return new Token({ address })
+  } else if (ticker) {
+    return new Token({ ticker })
+  } else if (input && isAddress(input)) {
+    return new Token({ address: input })
   } else {
-    return new Token({ ticker: token.ticker })
+    return new Token({ ticker: input })
   }
 }
 
