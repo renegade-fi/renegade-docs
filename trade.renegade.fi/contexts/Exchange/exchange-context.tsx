@@ -55,7 +55,7 @@ function ExchangeProvider({ children }: PropsWithChildren) {
               if (
                 !prev[key] ||
                 prev[key].midpointPrice?.toFixed(decimals || 2) !==
-                  priceReport.midpointPrice?.toFixed(decimals || 2)
+                priceReport.midpointPrice?.toFixed(decimals || 2)
               ) {
                 return {
                   ...prev,
@@ -66,8 +66,8 @@ function ExchangeProvider({ children }: PropsWithChildren) {
             })
           },
           exchange,
-          getToken({ ticker: base, network: "goerli" }),
-          getToken({ ticker: quote, network: "goerli" })
+          getToken({ ticker: base }),
+          getToken({ ticker: quote })
         )
         .then((callbackId) => {
           if (callbackId) {

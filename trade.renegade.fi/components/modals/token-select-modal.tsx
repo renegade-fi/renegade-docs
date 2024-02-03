@@ -1,6 +1,3 @@
-import { useMemo, useState } from "react"
-import Image from "next/image"
-import { useApp } from "@/contexts/App/app-context"
 import {
   Box,
   Grid,
@@ -16,12 +13,15 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
+import Image from "next/image"
+import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
-import { getToken } from "@/lib/utils"
+import { useApp } from "@/contexts/App/app-context"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -98,7 +98,7 @@ export function TokenSelectModal({
             {filteredTickers
               .filter(([base]) => (isTrading ? base !== "USDC" : true))
               .map(([ticker]) => {
-                const addr = getToken({ ticker }).address
+                const addr = Token.findAddressByTicker(ticker)
                 const matchingBalance = Object.values(balances).find(
                   ({ mint: { address } }) => address === addr
                 )

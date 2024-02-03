@@ -1,12 +1,5 @@
 "use client"
 
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
 import {
   ArrowForwardIcon,
   ChevronDownIcon,
@@ -22,7 +15,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useButton } from "@/hooks/use-button"
+import { useIsLocked } from "@/hooks/use-is-locked"
 
 function DepositInner() {
   const {
@@ -43,9 +43,7 @@ function DepositInner() {
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
   const isLocked = useIsLocked()
-  const pathname = usePathname()
   const { accountId } = useRenegade()
-  const router = useRouter()
   const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
     connectText: "Connect Wallet to Deposit",
     onOpenSignIn,
