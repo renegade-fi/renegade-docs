@@ -39,13 +39,13 @@ function OrderProvider({ children }: PropsWithChildren) {
     router.push(`/${token}/${quote}`)
   }
   const baseToken = getToken({ input: base })
-  const baseTicker = Token.findTickerByAddress(baseToken.address)
+  const baseTicker = Token.findTickerByAddress(`0x${baseToken.address}`)
   const quote = params.quote?.toString()
   const handleSetQuoteToken = (token: string) => {
     router.push(`/${base}/${token}`)
   }
   const quoteToken = getToken({ input: quote })
-  const quoteTicker = Token.findTickerByAddress(quoteToken.address)
+  const quoteTicker = Token.findTickerByAddress(`0x${quoteToken.address}`)
   const [baseTokenAmount, setBaseTokenAmount] = useState(0)
 
   const [orderBook, setOrderBook] = useState<
