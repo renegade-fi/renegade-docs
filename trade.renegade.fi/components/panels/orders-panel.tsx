@@ -5,7 +5,7 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { OrderId } from "@renegade-fi/renegade-js"
+import { OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -18,9 +18,7 @@ import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-st
 import { useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
 import {
-  getTickerFromToken,
-  getToken,
-  safeLocalStorageGetItem,
+  safeLocalStorageGetItem
 } from "@/lib/utils"
 
 import "simplebar-react/dist/simplebar.min.css"
@@ -46,8 +44,8 @@ function SingleOrder({
   const { tokenIcons } = useApp()
   const { accountId, setTask } = useRenegade()
 
-  const base = getTickerFromToken(getToken({ address: baseAddr }))
-  const quote = getTickerFromToken(getToken({ address: quoteAddr }))
+  const base = Token.findTickerByAddress(`0x${baseAddr}`)
+  const quote = Token.findTickerByAddress(`0x${quoteAddr}`)
 
   const handleCancel = () => {
     if (!accountId) return
@@ -282,17 +280,12 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
-          console.log("🚀 ~ {Object.values ~ counterpartyOrder:", counterpartyOrder)
           if (!orders[counterpartyOrder.id]?.baseToken.address || !orders[counterpartyOrder.id]?.quoteToken.address) return null
-          const baseTicker = getTickerFromToken(
-            getToken({
-              address: "0x" + orders[counterpartyOrder.id]?.baseToken.address,
-            })
+          const baseTicker = Token.findTickerByAddress(
+            `0x${orders[counterpartyOrder.id]?.baseToken.address}`
           )
-          const quoteTicker = getTickerFromToken(
-            getToken({
-              address: "0x" + orders[counterpartyOrder.id]?.quoteToken.address,
-            })
+          const quoteTicker = Token.findTickerByAddress(
+            `0x${orders[counterpartyOrder.id]?.quoteToken.address}`
           )
           const title = orders[counterpartyOrder.id]
             ? `${orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"

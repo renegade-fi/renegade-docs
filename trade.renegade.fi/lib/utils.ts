@@ -65,7 +65,7 @@ export function getNetwork() {
   return undefined
 }
 
-// TODO: Unnecessary abstraction layer
+// TODO: Find better abstraction logic for constructing token from address or ticker, unknown until runtime
 export function getToken(token: {
   address?: string
   ticker?: string

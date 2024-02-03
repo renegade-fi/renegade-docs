@@ -20,10 +20,9 @@ import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { findBalanceByTicker, getTickerFromToken, getToken } from "@/lib/utils"
 
 import { TaskType } from "@/contexts/Renegade/types"
-import { Token, tokenMappings } from "@renegade-fi/renegade-js"
+import { Token } from "@renegade-fi/renegade-js"
 import "simplebar-react/dist/simplebar.min.css"
 
 import { renegade } from "@/app/providers"
@@ -40,7 +39,7 @@ function TokenBalance(props: TokenBalanceProps) {
   const { setTask, accountId } = useRenegade()
   const { address } = useAccount()
 
-  const ticker = getTickerFromToken(getToken({ address: props.tokenAddr }))
+  const ticker = Token.findTickerByAddress(props.tokenAddr)
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
   const isZero = props.amount === BigInt(0)
