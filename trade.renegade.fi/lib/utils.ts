@@ -66,7 +66,6 @@ export function getNetwork() {
   return undefined
 }
 
-// TODO: Find better abstraction logic for constructing token from address or ticker, unknown until runtime
 export function getToken({ address, ticker, input }: {
   address?: string
   ticker?: string
@@ -80,16 +79,5 @@ export function getToken({ address, ticker, input }: {
     return new Token({ address: input })
   } else {
     return new Token({ ticker: input })
-  }
-}
-
-// TODO: Move to Token object in SDK as static method
-export function getTickerFromToken(token: Token) {
-  console.log("🚀 ~ getTickerFromToken ~ token:", token)
-  try {
-    // TODO: Should just keep prefix in SDK
-    return Token.findTickerByAddress(`0x${token.address}`)
-  } catch (error) {
-    throw new Error(`Could not get ticker from token: ${token.serialize()}`)
   }
 }

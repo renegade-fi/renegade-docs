@@ -1,10 +1,10 @@
 "use client"
 
-import { PropsWithChildren, createContext, useContext, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
 import { Token } from "@renegade-fi/renegade-js"
+import { useParams, useRouter } from "next/navigation"
+import { PropsWithChildren, createContext, useContext, useState } from "react"
 
-import { getTickerFromToken, getToken } from "@/lib/utils"
+import { getToken } from "@/lib/utils"
 
 export interface DepositContextValue {
   base: Token
@@ -32,7 +32,7 @@ function DepositProvider({ children }: PropsWithChildren) {
     <DepositStateContext.Provider
       value={{
         base: baseToken,
-        baseTicker: getTickerFromToken(baseToken),
+        baseTicker: Token.findTickerByAddress(baseToken.address),
         baseTokenAmount,
         setBaseTicker: handleSetBaseToken,
         setBaseTokenAmount,
