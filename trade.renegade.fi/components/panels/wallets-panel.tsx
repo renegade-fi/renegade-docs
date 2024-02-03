@@ -1,8 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
@@ -13,19 +10,21 @@ import {
 } from "@chakra-ui/icons"
 import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
 import { useModal as useModalConnectKit } from "connectkit"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import { findBalanceByTicker, getTickerFromToken, getToken } from "@/lib/utils"
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { findBalanceByTicker, getTickerFromToken, getToken } from "@/lib/utils"
 
-import "simplebar-react/dist/simplebar.min.css"
 import { TaskType } from "@/contexts/Renegade/types"
-import { Token } from "@renegade-fi/renegade-js"
+import { Token, tokenMappings } from "@renegade-fi/renegade-js"
+import "simplebar-react/dist/simplebar.min.css"
 
 import { renegade } from "@/app/providers"
 
@@ -152,19 +151,25 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const balances = useBalance()
   const { accountId } = useRenegade()
 
-  const placeholderBalances = useMemo(() => {
-    const result: [string, bigint][] = []
-    for (const [base] of DISPLAYED_TICKERS) {
-      const bal = findBalanceByTicker(balances, base)
-      const address = getToken({ ticker: base }).address
-      result.push([address, bal.amount])
-    }
-    return result
+  // const placeholderBalances = useMemo(() => {
+  //   const result: [string, bigint][] = []
+  //   for (const { ticker: base } of tokenMappings.tokens) {
+  //     const bal = findBalanceByTicker(balances, base)
+  //     const address = getToken({ ticker: base }).address
+  //     result.push([address, bal.amount])
+  //   }
+  //   return result
+  // }, [balances])
+  const formattedBalances: Array<[string, bigint]> = useMemo(() => {
+    return Object.entries(balances).map(([_, b]) => [
+      b.mint.address,
+      b.amount,
+    ])
   }, [balances])
 
   const showDeposit = useMemo(() => {
-    return !placeholderBalances.some(([_, bal]) => bal > BigInt(0))
-  }, [placeholderBalances])
+    return !formattedBalances.some(([_, bal]) => bal > BigInt(0))
+  }, [formattedBalances])
 
   const Content = useMemo(() => {
     if (accountId && !showDeposit) {
@@ -177,7 +182,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               padding: "0 8px",
             }}
           >
-            {placeholderBalances.map(([address, amount]) => (
+            {formattedBalances.map(([address, amount]) => (
               <Box key={address} width="100%">
                 <TokenBalance tokenAddr={"0x" + address} amount={amount} />
               </Box>
@@ -220,8 +225,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
-              : "Connect your Ethereum wallet before signing in."}
+                ? "Sign in to create a Renegade account and view your balances."
+                : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
@@ -230,7 +235,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     accountId,
     address,
     isSigningIn,
-    placeholderBalances,
+    formattedBalances,
     setView,
     showDeposit,
   ])
