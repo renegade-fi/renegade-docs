@@ -39,7 +39,7 @@ function TokenBalance(props: TokenBalanceProps) {
   const { setTask, accountId } = useRenegade()
   const { address } = useAccount()
 
-  const ticker = Token.findTickerByAddress(props.tokenAddr)
+  const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
   const isZero = props.amount === BigInt(0)

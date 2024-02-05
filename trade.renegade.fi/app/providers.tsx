@@ -192,7 +192,7 @@ export const renegade = new Renegade({
   relayerWsPort: 4000,
   useInsecureTransport:
     env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-  verbose: false,
+  verbose: true,
 })
 
 export function Providers({

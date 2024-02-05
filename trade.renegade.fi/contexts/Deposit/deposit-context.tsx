@@ -32,7 +32,7 @@ function DepositProvider({ children }: PropsWithChildren) {
     <DepositStateContext.Provider
       value={{
         base: baseToken,
-        baseTicker: Token.findTickerByAddress(baseToken.address),
+        baseTicker: Token.findTickerByAddress(`0x${baseToken.address}`),
         baseTokenAmount,
         setBaseTicker: handleSetBaseToken,
         setBaseTokenAmount,

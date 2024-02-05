@@ -40,6 +40,7 @@ export default async function RootLayout({
 }) {
   const icons = await TICKER_TO_LOGO_URL_HANDLE
   const prices = await getTokenBannerData(renegade)
+  console.log("🚀 ~ prices:", prices)
   return (
     <html lang="en">
       <body>
