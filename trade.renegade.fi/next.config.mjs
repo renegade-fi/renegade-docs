@@ -16,7 +16,7 @@ const nextConfig = {
     }
     // temporary WalletConnect outdated modules fix
     config.externals.push("pino-pretty", "lokijs", "encoding")
-    patchWasmModuleImport(config, options.isServer)
+    // patchWasmModuleImport(config, options.isServer)
     return config
   },
   images: {
@@ -30,35 +30,35 @@ const nextConfig = {
     ],
   },
 }
-function patchWasmModuleImport(config, isServer) {
-  config.experiments = Object.assign(config.experiments || {}, {
-    asyncWebAssembly: true,
-  })
-  config.module.defaultRules = [
-    {
-      type: "javascript/auto",
-      resolve: {},
-    },
-    {
-      test: /\.json$/i,
-      type: "json",
-    },
-  ]
-  config.optimization.moduleIds = "named"
+// function patchWasmModuleImport(config, isServer) {
+//   config.experiments = Object.assign(config.experiments || {}, {
+//     asyncWebAssembly: true,
+//   })
+//   config.module.defaultRules = [
+//     {
+//       type: "javascript/auto",
+//       resolve: {},
+//     },
+//     {
+//       test: /\.json$/i,
+//       type: "json",
+//     },
+//   ]
+//   config.optimization.moduleIds = "named"
 
-  config.module.rules.push({
-    test: /\.wasm$/,
-    type: "asset/resource",
-  })
+//   config.module.rules.push({
+//     test: /\.wasm$/,
+//     type: "asset/resource",
+//   })
 
-  // TODO: improve this function -> track https://github.com/vercel/next.js/issues/25852
-  if (isServer) {
-    config.output.webassemblyModuleFilename =
-      "./../static/wasm/[modulehash].wasm"
-  } else {
-    config.output.webassemblyModuleFilename = "static/wasm/[modulehash].wasm"
-  }
-}
+//   // TODO: improve this function -> track https://github.com/vercel/next.js/issues/25852
+//   if (isServer) {
+//     config.output.webassemblyModuleFilename =
+//       "./../static/wasm/[modulehash].wasm"
+//   } else {
+//     config.output.webassemblyModuleFilename = "static/wasm/[modulehash].wasm"
+//   }
+// }
 
 // const nextConfig = {
 //   reactStrictMode: true,
