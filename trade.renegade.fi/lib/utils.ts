@@ -1,4 +1,3 @@
-import { env } from "@/env.mjs"
 import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 
 import {
@@ -45,25 +44,6 @@ export function findBalanceByTicker(
       amount: BigInt(0),
     })
   return foundBalance
-}
-
-export function getNetwork() {
-  if (env.NEXT_PUBLIC_CHAIN_ID) {
-    return env.NEXT_PUBLIC_CHAIN_ID
-  } else if (
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME.endsWith(".renegade.fi")
-  ) {
-    const regex = /-([^\.]+)\.renegade\.fi$/
-    const match = env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME.match(regex)
-    if (match) {
-      if (match[1] === "devnet") {
-        return "katana"
-      }
-    } else {
-      return undefined
-    }
-  }
-  return undefined
 }
 
 export function getToken({ address, ticker, input }: {
