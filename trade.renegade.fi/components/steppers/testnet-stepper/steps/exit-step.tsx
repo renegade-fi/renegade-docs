@@ -1,4 +1,3 @@
-import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
@@ -11,11 +10,12 @@ import {
   Text,
 } from "@chakra-ui/react"
 
+import { useLocalStorage } from "usehooks-ts"
 import { useStepper } from "../testnet-stepper"
-import { safeLocalStorageSetItem } from "@/lib/utils"
 
 export function ExitStep() {
   const { onClose, ticker } = useStepper()
+  const [, setDirection] = useLocalStorage('direction', Direction.BUY)
   return (
     <>
       <ModalCloseButton />
@@ -60,7 +60,7 @@ export function ExitStep() {
           backgroundColor="transparent"
           onClick={() => {
             // TODO: Not good enough, should render in deposit/order contexts and set baseToken accordingly
-            safeLocalStorageSetItem("direction", ticker === "USDC" ? "buy" : "sell")
+            setDirection(ticker === "USDC" ? Direction.BUY : Direction.SELL)
             onClose()
           }}
         >
