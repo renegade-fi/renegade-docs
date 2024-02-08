@@ -11,20 +11,21 @@ import { Repeat2 } from "lucide-react"
 
 
 import { useStepper } from "../testnet-stepper"
+import { useAccount } from "wagmi"
 
 export function DefaultStep() {
+  const { address } = useAccount()
   const { accountId } = useRenegade()
   const { setTicker, ticker } = useStepper()
 
   const amount = ticker === "USDC" ? 10000 : 10
 
-  const handleDeposit = async () => {
+  const handleFund = async () => {
     if (!accountId) return
-    // renegade.task
-    //   .deposit(accountId, getToken({ ticker: ticker }), BigInt(amount))
-    //   .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-    //   .then(() => onNext())
+    // TODO: Hit faucet contract
+    // TODO: Should funds get automatically deposited into Renegade Wallet?
   }
+  const formattedAccount = address?.slice(0, 6) + "..."
 
   return (
     <>
@@ -42,7 +43,7 @@ export function DefaultStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Deposit test funds into your Renegade account
+            Fund {formattedAccount} with testnet funds from the Renegade Faucet
           </Text>
           <HStack
             gap="2"
@@ -78,9 +79,9 @@ export function DefaultStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={handleDeposit}
+          onClick={handleFund}
         >
-          Deposit
+          Fund
         </Button>
       </ModalFooter>
     </>
