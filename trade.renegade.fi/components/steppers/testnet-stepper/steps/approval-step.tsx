@@ -1,29 +1,36 @@
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
-import { ArrowForwardIcon } from "@chakra-ui/icons"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import {
   Button,
   Flex,
-  HStack,
   ModalBody,
-  ModalCloseButton,
   ModalFooter,
-  Text,
+  Spacer,
+  Text
 } from "@chakra-ui/react"
 
-import { useStepper } from "../testnet-stepper"
-import { safeLocalStorageSetItem } from "@/lib/utils"
 
-export function ExitStep() {
-  const { onClose, ticker } = useStepper()
+import { useStepper } from "../testnet-stepper"
+
+export function ApprovalStep() {
+  const { accountId } = useRenegade()
+  const { onNext } = useStepper()
+
+  const handleApproval = async () => {
+    if (!accountId) return
+    // TODO: Hit approval contract
+    // TODO: Should funds get automatically deposited into Renegade Wallet?
+    // Move to loading step
+    onNext()
+  }
+
   return (
     <>
-      <ModalCloseButton />
       <ModalBody>
         <Flex
           alignItems="center"
           justifyContent="center"
           flexDirection="column"
+          gap="8px"
           textAlign="center"
         >
           <Text
@@ -32,20 +39,17 @@ export function ExitStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Your account has been funded with
+            Approve the Renegade contract to use your testnet funds
           </Text>
-          <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
-            {`${ticker === "USDC" ? "10,000" : "10"} ${ticker}`}
-          </Text>
+          <Spacer />
         </Flex>
       </ModalBody>
       <ModalFooter justifyContent="center">
         <Button
           padding="20px"
           color="white.80"
-          fontFamily="Favorit"
           fontSize="1.2em"
-          fontWeight="500"
+          fontWeight="200"
           borderWidth="thin"
           borderColor="white.40"
           borderRadius="100px"
@@ -58,16 +62,9 @@ export function ExitStep() {
           }}
           transition="0.15s"
           backgroundColor="transparent"
-          onClick={() => {
-            // TODO: Not good enough, should render in deposit/order contexts and set baseToken accordingly
-            safeLocalStorageSetItem("direction", ticker === "USDC" ? "buy" : "sell")
-            onClose()
-          }}
+          onClick={handleApproval}
         >
-          <HStack spacing="4px">
-            <Text>Trade</Text>
-            <ArrowForwardIcon />
-          </HStack>
+          Approve
         </Button>
       </ModalFooter>
     </>
