@@ -5,13 +5,13 @@ import { useAccount } from "wagmi"
 
 import { useStepper } from "../testnet-stepper"
 
-export function LoadingStep() {
+export function ApprovalLoadingStep() {
   const { onNext } = useStepper()
   const { taskType, taskState } = useRenegade()
   const { address } = useAccount()
 
   useEffect(() => {
-    // TODO: Use faucet contract events 
+    // TODO: Use ERC20 contract events in addition to deposit task state if deposit is included
     setTimeout(() => {
       onNext();
     }, 2000);
@@ -33,7 +33,7 @@ export function LoadingStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Funding in progress...
+            Approval in progress...
           </Text>
           <Spinner />
         </Flex>

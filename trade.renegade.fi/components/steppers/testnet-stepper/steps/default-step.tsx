@@ -16,7 +16,7 @@ import { useAccount } from "wagmi"
 export function DefaultStep() {
   const { address } = useAccount()
   const { accountId } = useRenegade()
-  const { setTicker, ticker } = useStepper()
+  const { setTicker, ticker, onNext } = useStepper()
 
   const amount = ticker === "USDC" ? 10000 : 10
 
@@ -24,6 +24,8 @@ export function DefaultStep() {
     if (!accountId) return
     // TODO: Hit faucet contract
     // TODO: Should funds get automatically deposited into Renegade Wallet?
+    // Move to next step
+    onNext()
   }
   const formattedAccount = address?.slice(0, 6) + "..."
 
