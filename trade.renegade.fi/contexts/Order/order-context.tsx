@@ -6,20 +6,18 @@ import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react"
 
 import { renegade } from "@/app/providers"
 import { CounterpartyOrder } from "@/contexts/Renegade/types"
 import {
-  getToken,
-  safeLocalStorageGetItem,
-  safeLocalStorageSetItem
+  getToken
 } from "@/lib/utils"
+import { useLocalStorage } from "usehooks-ts"
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -29,11 +27,16 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 function OrderProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
-  const [direction, setDirection] = useState<Direction>(
-    safeLocalStorageGetItem("direction") === "buy"
-      ? Direction.BUY
-      : Direction.SELL
-  )
+  // const [direction, setDirection] = useState<Direction>(
+  //   safeLocalStorageGetItem("direction") === "buy"
+  //     ? Direction.BUY
+  //     : Direction.SELL
+  // )
+  const [direction, setDirection] = useLocalStorage('direction', Direction.BUY)
+  const handleSetDirection = (direction: Direction) => {
+    setDirection(direction)
+  }
+
   const base = params.base?.toString()
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}/${quote}`)
@@ -147,10 +150,10 @@ function OrderProvider({ children }: PropsWithChildren) {
     }
   }, [orderBook, toast])
 
-  const handleSetDirection = useCallback((direction: Direction) => {
-    setDirection(direction)
-    safeLocalStorageSetItem("direction", direction)
-  }, [])
+  // const handleSetDirection = useCallback((direction: Direction) => {
+  //   setDirection(direction)
+  //   safeLocalStorageSetItem("direction", direction)
+  // }, [])
 
   return (
     <OrderStateContext.Provider
