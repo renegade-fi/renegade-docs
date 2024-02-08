@@ -15,6 +15,7 @@ export function LoadingStep() {
     if (taskType === TaskType.Deposit && taskState === TaskState.Completed) {
       onNext()
     }
+    // TODO: Use faucet contract events in addition to deposit task state if deposit is included
   }, [address, onNext, taskState, taskType])
 
   return (
@@ -33,7 +34,7 @@ export function LoadingStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Deposit in progress...
+            Funding in progress...
           </Text>
           <Spinner />
         </Flex>

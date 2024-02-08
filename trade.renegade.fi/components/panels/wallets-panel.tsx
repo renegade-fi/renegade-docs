@@ -114,29 +114,47 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { setView } = useApp()
+  const { onOpenAirdropModal, setView } = useApp()
   const { accountId } = useRenegade()
   if (!accountId) return null
   return (
-    <Box
-      display="grid"
+    <Flex
+      flexDirection="row"
       width="100%"
       height="calc(1.5 * var(--banner-height))"
-      color="white.60"
       borderColor="border"
       borderTop="var(--border)"
-      _hover={{
-        color: "white.90",
-      }}
+      borderBottom="var(--border)"
       cursor="pointer"
-      onClick={() => setView(ViewEnum.DEPOSIT)}
-      placeContent="center"
     >
-      <HStack gap="4px">
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+        gap="5px"
+        color="white.90"
+        borderColor="border"
+        borderRight="var(--border)"
+        _hover={{
+          color: "white.60",
+        }}
+        cursor="pointer"
+        onClick={() => setView(ViewEnum.DEPOSIT)}
+      >
         <Text>Deposit</Text>
         <ArrowDownIcon />
-      </HStack>
-    </Box>
+      </Flex>
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        flexGrow="1"
+        gap="5px"
+        onClick={onOpenAirdropModal}
+      >
+        <Text>Airdrop</Text>
+        <ArrowUpIcon />
+      </Flex>
+    </Flex>
   )
 }
 
