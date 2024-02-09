@@ -136,7 +136,7 @@ function DepositWithdrawButtons() {
         borderColor="border"
         borderRight="var(--border)"
         _hover={{
-          color: "white.60",
+          backgroundColor: "#000",
         }}
         cursor="pointer"
         onClick={() => setView(ViewEnum.DEPOSIT)}
@@ -149,6 +149,9 @@ function DepositWithdrawButtons() {
         justifyContent="center"
         flexGrow="1"
         gap="5px"
+        _hover={{
+          backgroundColor: "#000"
+        }}
         onClick={onOpenAirdropModal}
       >
         <Text>Airdrop</Text>
