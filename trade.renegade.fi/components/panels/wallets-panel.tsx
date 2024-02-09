@@ -8,7 +8,7 @@ import {
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
