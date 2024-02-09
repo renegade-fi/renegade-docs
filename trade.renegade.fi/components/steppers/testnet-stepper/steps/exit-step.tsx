@@ -12,10 +12,20 @@ import {
 
 import { useLocalStorage } from "usehooks-ts"
 import { useStepper } from "../testnet-stepper"
+import { useAccount } from "wagmi"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useRouter } from "next/navigation"
 
 export function ExitStep() {
+  const router = useRouter()
+  const { setView } = useApp()
+  const { address } = useAccount()
   const { onClose, ticker } = useStepper()
   const [, setDirection] = useLocalStorage('direction', Direction.BUY)
+  const formattedAddress = address ? address.slice(0, 6) + "..." : ""
+  if (ticker === 'USDC') {
+    router.prefetch("/USDC")
+  }
   return (
     <>
       <ModalCloseButton />
@@ -32,7 +42,7 @@ export function ExitStep() {
             fontSize="1.3em"
             fontWeight="200"
           >
-            Your account has been funded with
+            {formattedAddress} has been funded with
           </Text>
           <Text fontFamily="Aime" fontSize="3em" fontWeight="700">
             {`${ticker === "USDC" ? "10,000" : "10"} ${ticker}`}
@@ -43,9 +53,8 @@ export function ExitStep() {
         <Button
           padding="20px"
           color="white.80"
-          fontFamily="Favorit"
           fontSize="1.2em"
-          fontWeight="500"
+          fontWeight="200"
           borderWidth="thin"
           borderColor="white.40"
           borderRadius="100px"
@@ -61,11 +70,16 @@ export function ExitStep() {
           onClick={() => {
             // TODO: Not good enough, should render in deposit/order contexts and set baseToken accordingly
             setDirection(ticker === "USDC" ? Direction.BUY : Direction.SELL)
-            onClose()
+            if (ticker === "USDC") {
+              router.push("/USDC")
+            } else {
+              setView(ViewEnum.DEPOSIT)
+              onClose()
+            }
           }}
         >
           <HStack spacing="4px">
-            <Text>Trade</Text>
+            <Text>Deposit into Renegade</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>
