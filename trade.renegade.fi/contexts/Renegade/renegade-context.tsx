@@ -24,6 +24,7 @@ import {
   TaskState,
   TaskType,
 } from "./types"
+import { useLocalStorage } from "usehooks-ts"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -69,6 +70,10 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [taskId])
 
+  // TODO: Reset this if fetching fails
+  // const [accountId, setAccountId] = useLocalStorage<AccountId | undefined>('accountId', undefined)
+  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
+
   const accountCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
     if (accountCallbackId.current || !accountId) return
@@ -88,6 +93,50 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId])
 
+  const isRegistered = React.useRef<boolean>(false)
+
+  const count = React.useRef(0)
+  const initAccount = React.useCallback(async () => {
+    if (!seed || isRegistered.current || accountId) return
+    try {
+      isRegistered.current = true
+      count.current += 1
+      console.log("Count: ", count.current)
+      console.log("Initializing account using saved seed: ", seed)
+      const keychain = new Keychain({ seed })
+      // await renegade.unregisterAccount
+      const _accountId = renegade.registerAccount(keychain)
+      console.log("Account ID from relayer: ", _accountId)
+      console.log("Attempting to initialize account: ", _accountId)
+      await renegade.task
+        .initializeAccount(_accountId)
+        .then(([taskId, taskJob]) => {
+          if (taskId !== "DONE") {
+            // Account was not registered with Relayer before
+            throw new Error("Account was not registered with Relayer before")
+          }
+          return taskJob
+        })
+        .then(() => {
+          console.log("Job done, setting account ID: ", _accountId)
+          setAccountId(_accountId)
+          refreshAccount(_accountId)
+          isRegistered.current = true
+        })
+    } catch (error) {
+      console.error("Tried to automatically sign in user, but failed with error: ", error)
+      setAccountId(undefined)
+      setSeed(undefined)
+      // renegade.unregisterAccount(_accountId)
+    }
+  }, [accountId, seed, setAccountId, setSeed])
+
+  // TODO: Not working
+  React.useEffect(() => {
+    initAccount()
+  }, [accountId, initAccount, seed])
+
+
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -95,7 +144,9 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     oldAccountId?: AccountId,
     keychain?: Keychain
   ): Promise<void> {
+    console.log("Manually setting account: ", keychain)
     if (oldAccountId) {
+      console.log("Unregistering old account: ", oldAccountId)
       await renegade.unregisterAccount(oldAccountId)
     }
     if (!keychain) {
@@ -104,6 +155,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
+    console.log("From SDK: ", accountId)
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
@@ -111,6 +163,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         return taskJob
       })
       .then(() => {
+        isRegistered.current = true
         setAccountId(accountId)
         refreshAccount(accountId)
       })
