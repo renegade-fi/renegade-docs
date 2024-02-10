@@ -90,21 +90,21 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId])
 
+  // TODO: This logic should probably be moved to SDK
   const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
-  const attemptedAutoSignin = React.useRef<boolean>(false)
+  const attemptedAutoSignin = React.useRef<AccountId>()
   const initAccount = React.useCallback(async () => {
     if (!seed || attemptedAutoSignin.current || accountId) return
     try {
-      attemptedAutoSignin.current = true
       console.log("Initializing account using saved seed: ", seed)
       const keychain = new Keychain({ seed })
       const _accountId = renegade.registerAccount(keychain)
+      attemptedAutoSignin.current = _accountId
+      // TODO: Will try to automatically create new wallet if relayer restarted
       await renegade.task
         .initializeAccount(_accountId)
         .then(([taskId, taskJob]) => {
-          if (taskId !== "DONE") {
-            throw new Error("Account was not registered with Relayer before")
-          }
+          setTask(taskId, TaskType.InitializeAccount)
           return taskJob
         })
         .then(() => {
@@ -115,7 +115,9 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
       console.error("Tried to automatically sign in user, but failed with error: ", error)
       setAccountId(undefined)
       setSeed(undefined)
-      // TODO: If auto register doesn't work, should unregister from SDK so user can manualy register
+      if (attemptedAutoSignin.current) {
+        await renegade.unregisterAccount(attemptedAutoSignin.current)
+      }
     }
   }, [accountId, seed, setAccountId, setSeed])
 
@@ -149,7 +151,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         return taskJob
       })
       .then(() => {
-        attemptedAutoSignin.current = true
+        attemptedAutoSignin.current = accountId
         setAccountId(accountId)
         refreshAccount(accountId)
       })
