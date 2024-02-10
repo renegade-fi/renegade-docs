@@ -93,49 +93,37 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId])
 
-  const isRegistered = React.useRef<boolean>(false)
-
-  const count = React.useRef(0)
+  const attemptedAutoSignin = React.useRef<boolean>(false)
   const initAccount = React.useCallback(async () => {
-    if (!seed || isRegistered.current || accountId) return
+    if (!seed || attemptedAutoSignin.current || accountId) return
     try {
-      isRegistered.current = true
-      count.current += 1
-      console.log("Count: ", count.current)
+      attemptedAutoSignin.current = true
       console.log("Initializing account using saved seed: ", seed)
       const keychain = new Keychain({ seed })
-      // await renegade.unregisterAccount
       const _accountId = renegade.registerAccount(keychain)
-      console.log("Account ID from relayer: ", _accountId)
-      console.log("Attempting to initialize account: ", _accountId)
       await renegade.task
         .initializeAccount(_accountId)
         .then(([taskId, taskJob]) => {
           if (taskId !== "DONE") {
-            // Account was not registered with Relayer before
             throw new Error("Account was not registered with Relayer before")
           }
           return taskJob
         })
         .then(() => {
-          console.log("Job done, setting account ID: ", _accountId)
           setAccountId(_accountId)
           refreshAccount(_accountId)
-          isRegistered.current = true
         })
     } catch (error) {
       console.error("Tried to automatically sign in user, but failed with error: ", error)
       setAccountId(undefined)
       setSeed(undefined)
-      // renegade.unregisterAccount(_accountId)
+      // TODO: If auto register doesn't work, should unregister from SDK so user can manualy register
     }
   }, [accountId, seed, setAccountId, setSeed])
 
-  // TODO: Not working
   React.useEffect(() => {
     initAccount()
   }, [accountId, initAccount, seed])
-
 
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
@@ -163,7 +151,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         return taskJob
       })
       .then(() => {
-        isRegistered.current = true
+        attemptedAutoSignin.current = true
         setAccountId(accountId)
         refreshAccount(accountId)
       })
