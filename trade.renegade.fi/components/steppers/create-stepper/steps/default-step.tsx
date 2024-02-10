@@ -12,9 +12,11 @@ import {
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { client } from "@/app/providers"
+import { useLocalStorage } from "usehooks-ts"
 
 export function DefaultStep() {
   const { setIsOnboarding, setIsSigningIn } = useApp()
+  const [, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
@@ -43,7 +45,8 @@ export function DefaultStep() {
       if (!valid) {
         throw new Error("Invalid signature")
       }
-      setAccount(accountId, new Keychain({ seed: data }))
+      setAccount(accountId, new Keychain({ seed: data })).then(() => setSeed(data))
+      // setSeed(data)
       setIsOnboarding(false)
       onClose()
     },
