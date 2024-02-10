@@ -24,6 +24,7 @@ import {
 
 import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { useLocalStorage } from "usehooks-ts"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -161,7 +162,7 @@ export function SignInButton() {
         cursor={isSigningIn ? "default" : "pointer"}
         isLoading={isSigningIn}
         loadingText="Signing in"
-        onClick={isSigningIn ? () => {} : buttonOnClick}
+        onClick={isSigningIn ? () => { } : buttonOnClick}
         variant="wallet-connect"
       >
         {buttonText}
@@ -180,6 +181,7 @@ function DisconnectWalletButton() {
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
   const { accountId, setAccount } = useRenegade()
+  const [, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
   if (!address || !accountId) {
     return null
   }
@@ -206,6 +208,7 @@ function DisconnectWalletButton() {
       background="white.10"
       onClick={() => {
         setAccount(accountId, undefined)
+        setSeed(undefined)
         disconnect()
       }}
       variant="wallet-connect"

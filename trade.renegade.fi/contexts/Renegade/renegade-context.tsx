@@ -70,9 +70,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [taskId])
 
-  // TODO: Reset this if fetching fails
-  // const [accountId, setAccountId] = useLocalStorage<AccountId | undefined>('accountId', undefined)
-  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
 
   const accountCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
@@ -93,6 +90,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId])
 
+  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
   const attemptedAutoSignin = React.useRef<boolean>(false)
   const initAccount = React.useCallback(async () => {
     if (!seed || attemptedAutoSignin.current || accountId) return
