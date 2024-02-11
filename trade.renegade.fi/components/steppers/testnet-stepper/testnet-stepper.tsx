@@ -7,11 +7,10 @@ import {
 } from "@chakra-ui/react"
 import React, { createContext, useContext, useState } from "react"
 
+import { ApprovalStep } from "@/components/steppers/testnet-stepper/steps/approval-step"
 import { DefaultStep } from "@/components/steppers/testnet-stepper/steps/default-step"
 import { ExitStep } from "@/components/steppers/testnet-stepper/steps/exit-step"
 import { LoadingStep } from "@/components/steppers/testnet-stepper/steps/loading-step"
-import { ApprovalStep } from "@/components/steppers/testnet-stepper/steps/approval-step"
-import { ApprovalLoadingStep } from "@/components/steppers/testnet-stepper/steps/approval-loading-step"
 
 const TestnetStepperInner = () => {
   const { step, onClose } = useStepper()
@@ -49,12 +48,6 @@ const TestnetStepperInner = () => {
           </Fade>
           <Fade
             transition={{ enter: { duration: 0.25 } }}
-            in={step === Step.APPROVAL_LOADING}
-          >
-            {step === Step.APPROVAL_LOADING && <ApprovalLoadingStep />}
-          </Fade>
-          <Fade
-            transition={{ enter: { duration: 0.25 } }}
             in={step === Step.EXIT}
           >
             {step === Step.EXIT && <ExitStep />}
@@ -69,7 +62,6 @@ export enum Step {
   DEFAULT,
   LOADING,
   APPROVAL,
-  APPROVAL_LOADING,
   EXIT,
 }
 
