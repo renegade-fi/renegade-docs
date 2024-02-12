@@ -45,12 +45,16 @@ export async function GET(request: Request) {
         const wethAmount = parseEther("1")
         const usdcAmount = parseUnits("3000", 18)
 
-        // TODO: Parallelize
+        const transactionCount = await publicClient.getTransactionCount({
+            address: account.address,
+        })
+
         // Fund with ETH
         const hash = await walletClient.sendTransaction({
             account,
             to: recipient,
             value: ethAmount,
+            nonce: transactionCount,
         })
         const transaction = await publicClient.waitForTransactionReceipt({
             hash
@@ -64,6 +68,7 @@ export async function GET(request: Request) {
             abi,
             functionName: "transfer",
             args: [recipient, wethAmount],
+            nonce: transactionCount + 1
         })
 
         const wethHash = await walletClient.writeContract(wethRequest)
@@ -79,6 +84,7 @@ export async function GET(request: Request) {
             abi,
             functionName: "transfer",
             args: [recipient, usdcAmount],
+            nonce: transactionCount + 2
         })
 
         const usdcHash = await walletClient.writeContract(usdcRequest)
