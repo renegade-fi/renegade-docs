@@ -14,6 +14,7 @@ import {
     useDisclosure
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
+import { useState } from "react"
 import { useAccount } from "wagmi"
 
 const MAX_INT = BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639935")
@@ -43,16 +44,25 @@ export default function DepositButton() {
     const { address } = useAccount()
     const { data: allowance } = useErc20Allowance({
         address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-        args: [address ? address : "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`]
-        , watch: true
+        args: [address ? address : "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`],
+        watch: true
     })
     const needsApproval = allowance === BigInt(0)
 
     const { config } = usePrepareErc20Approve({
         address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-        args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT]
+        args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
+        onSettled: () => {
+            console.log("settled")
+            setIsLoading(false)
+        },
+        onSuccess: () => {
+            console.log("success")
+            setIsLoading(false)
+        }
     })
-    const { write: approve, isLoading } = useErc20Approve(config)
+    const { write: approve } = useErc20Approve(config)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleApprove = async () => {
         if (!accountId || !approve) return
@@ -63,6 +73,7 @@ export default function DepositButton() {
         if (shouldUse) {
             buttonOnClick()
         } else if (needsApproval) {
+            setIsLoading(true)
             handleApprove()
         } else {
             onOpenStepper()

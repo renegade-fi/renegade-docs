@@ -151,11 +151,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
-        if (taskId !== "DONE") {
-          fetch(`http://localhost:3001/api/fund?address=${address}`, {
-            method: 'GET',
-          })
-        }
         setTask(taskId, TaskType.InitializeAccount)
         return taskJob
       })
@@ -163,6 +158,9 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         attemptedAutoSignin.current = accountId
         setAccountId(accountId)
         refreshAccount(accountId)
+        fetch(`/api/fund?address=${address}`, {
+          method: 'GET',
+        })
       })
   }
 

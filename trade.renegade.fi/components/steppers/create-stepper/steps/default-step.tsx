@@ -46,7 +46,6 @@ export function DefaultStep() {
         throw new Error("Invalid signature")
       }
       setAccount(accountId, new Keychain({ seed: data })).then(() => setSeed(data))
-      // setSeed(data)
       setIsOnboarding(false)
       onClose()
     },
