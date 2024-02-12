@@ -4,7 +4,7 @@ import { parseAbi } from 'viem'
 
 const abi = parseAbi([
   'function approve(address spender, uint256 amount) returns (bool)',
-  'function allowance(address owner, address spender) returns (uint256)',
+  'function allowance(address owner, address spender) view returns (uint256)',
   'event Approval(address indexed owner, address indexed spender, uint256 amount)',
 ])
 

@@ -25,6 +25,7 @@ import {
   TaskType,
 } from "./types"
 import { useLocalStorage } from "usehooks-ts"
+import { useAccount } from "wagmi"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -91,6 +92,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
   }, [accountId])
 
   // TODO: This logic should probably be moved to SDK
+  // TODO: Should only do if wallet is connected
   const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
   const attemptedAutoSignin = React.useRef<AccountId>()
   const initAccount = React.useCallback(async () => {
@@ -104,6 +106,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
       await renegade.task
         .initializeAccount(_accountId)
         .then(([taskId, taskJob]) => {
+          // TODO: Should I attempt to fund in this scenario
           setTask(taskId, TaskType.InitializeAccount)
           return taskJob
         })
@@ -121,10 +124,11 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId, seed, setAccountId, setSeed])
 
-  React.useEffect(() => {
-    initAccount()
-  }, [accountId, initAccount, seed])
+  // React.useEffect(() => {
+  //   initAccount()
+  // }, [accountId, initAccount, seed])
 
+  const { address } = useAccount()
   // Define the setAccount handler. This handler unregisters the previous
   // account ID, registers the new account ID, and starts an initializeAccount
   // task.
@@ -147,6 +151,11 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
+        if (taskId !== "DONE") {
+          fetch(`http://localhost:3001/api/fund?address=${address}`, {
+            method: 'GET',
+          })
+        }
         setTask(taskId, TaskType.InitializeAccount)
         return taskJob
       })
