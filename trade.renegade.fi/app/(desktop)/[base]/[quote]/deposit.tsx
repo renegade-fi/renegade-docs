@@ -1,9 +1,8 @@
 "use client"
 
 import {
-  ArrowForwardIcon,
   ChevronDownIcon,
-  ChevronLeftIcon,
+  ChevronLeftIcon
 } from "@chakra-ui/icons"
 import {
   Box,
@@ -17,12 +16,8 @@ import {
 import Link from "next/link"
 
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { DepositStepper } from "@/components/steppers/deposit-stepper/deposit-stepper"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
+import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
 
 function DepositInner() {
   const {
@@ -30,34 +25,8 @@ function DepositInner() {
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const {
-    isOpen: stepperIsOpen,
-    onOpen: onOpenStepper,
-    onClose: onCloseStepper,
-  } = useDisclosure()
-  const {
-    isOpen: signInIsOpen,
-    onOpen: onOpenSignIn,
-    onClose: onCloseSignIn,
-  } = useDisclosure()
   const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
     useDeposit()
-  const isLocked = useIsLocked()
-  const { accountId } = useRenegade()
-  const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
-    connectText: "Connect Wallet to Deposit",
-    onOpenSignIn,
-    signInText: "Sign in to Deposit",
-  })
-
-  const handleClick = () => {
-    if (shouldUse) {
-      buttonOnClick()
-    } else {
-      onOpenStepper()
-    }
-  }
-  const isDisabled = accountId && (isLocked || !baseTokenAmount)
 
   return (
     <>
@@ -121,41 +90,8 @@ function DepositInner() {
             </HStack>
           </HStack>
         </Box>
-        <Button
-          padding="20px"
-          color="white.80"
-          fontSize="1.2em"
-          fontWeight="200"
-          opacity={baseTokenAmount ? 1 : 0}
-          borderWidth="thin"
-          borderColor="white.40"
-          borderRadius="100px"
-          _hover={
-            isDisabled
-              ? { backgroundColor: "transparent" }
-              : {
-                borderColor: "white.60",
-                color: "white",
-              }
-          }
-          transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-          visibility={baseTokenAmount ? "visible" : "hidden"}
-          cursor={cursor}
-          transition="0.15s"
-          backgroundColor="transparent"
-          isDisabled={isDisabled}
-          isLoading={isLocked}
-          loadingText="Please wait for task completion"
-          onClick={handleClick}
-          rightIcon={<ArrowForwardIcon />}
-        >
-          {shouldUse
-            ? buttonText
-            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
-        </Button>
+        <DepositButton />
       </Flex>
-      {stepperIsOpen && <DepositStepper onClose={onCloseStepper} />}
-      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
         onClose={onCloseTokenMenu}

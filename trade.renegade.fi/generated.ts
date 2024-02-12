@@ -1,12 +1,18 @@
 import {
   UseContractEventConfig,
+  UseContractReadConfig,
   UseContractWriteConfig,
   UsePrepareContractWriteConfig,
   useContractEvent,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
 } from "wagmi"
-import { PrepareWriteContractResult, WriteContractMode } from "wagmi/actions"
+import {
+  PrepareWriteContractResult,
+  ReadContractResult,
+  WriteContractMode,
+} from "wagmi/actions"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // erc20
@@ -24,7 +30,7 @@ export const erc20ABI = [
     outputs: [{ type: "bool" }],
   },
   {
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
     inputs: [
       { name: "owner", type: "address" },
@@ -47,6 +53,44 @@ export const erc20ABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link erc20ABI}__.
+ */
+export function useErc20Read<
+  TFunctionName extends string,
+  TSelectData = ReadContractResult<typeof erc20ABI, TFunctionName>
+>(
+  config: Omit<
+    UseContractReadConfig<typeof erc20ABI, TFunctionName, TSelectData>,
+    "abi"
+  > = {} as any
+) {
+  return useContractRead({ abi: erc20ABI, ...config } as UseContractReadConfig<
+    typeof erc20ABI,
+    TFunctionName,
+    TSelectData
+  >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link erc20ABI}__ and `functionName` set to `"allowance"`.
+ */
+export function useErc20Allowance<
+  TFunctionName extends "allowance",
+  TSelectData = ReadContractResult<typeof erc20ABI, TFunctionName>
+>(
+  config: Omit<
+    UseContractReadConfig<typeof erc20ABI, TFunctionName, TSelectData>,
+    "abi" | "functionName"
+  > = {} as any
+) {
+  return useContractRead({
+    abi: erc20ABI,
+    functionName: "allowance",
+    ...config,
+  } as UseContractReadConfig<typeof erc20ABI, TFunctionName, TSelectData>)
+}
 
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link erc20ABI}__.
@@ -97,31 +141,6 @@ export function useErc20Approve<TMode extends WriteContractMode = undefined>(
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link erc20ABI}__ and `functionName` set to `"allowance"`.
- */
-export function useErc20Allowance<TMode extends WriteContractMode = undefined>(
-  config: TMode extends "prepared"
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof erc20ABI,
-          "allowance"
-        >["request"]["abi"],
-        "allowance",
-        TMode
-      > & { functionName?: "allowance" }
-    : UseContractWriteConfig<typeof erc20ABI, "allowance", TMode> & {
-        abi?: never
-        functionName?: "allowance"
-      } = {} as any
-) {
-  return useContractWrite<typeof erc20ABI, "allowance", TMode>({
-    abi: erc20ABI,
-    functionName: "allowance",
-    ...config,
-  } as any)
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link erc20ABI}__.
  */
 export function usePrepareErc20Write<TFunctionName extends string>(
@@ -150,22 +169,6 @@ export function usePrepareErc20Approve(
     functionName: "approve",
     ...config,
   } as UsePrepareContractWriteConfig<typeof erc20ABI, "approve">)
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link erc20ABI}__ and `functionName` set to `"allowance"`.
- */
-export function usePrepareErc20Allowance(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof erc20ABI, "allowance">,
-    "abi" | "functionName"
-  > = {} as any
-) {
-  return usePrepareContractWrite({
-    abi: erc20ABI,
-    functionName: "allowance",
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof erc20ABI, "allowance">)
 }
 
 /**
