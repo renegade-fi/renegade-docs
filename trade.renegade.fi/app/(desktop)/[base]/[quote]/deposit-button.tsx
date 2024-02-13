@@ -41,13 +41,15 @@ export default function DepositButton() {
     const isDisabled = accountId && (isLocked || !baseTokenAmount)
 
     const { address } = useAccount()
-    const { data: allowance } = useErc20Allowance({
+    const { data: allowance, error, isError } = useErc20Allowance({
         address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
         args: [address ? address : "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`],
         watch: true
     })
+    console.log("🚀 ~ DepositButton ~ isError:", isError)
+    console.log("🚀 ~ DepositButton ~ error:", error)
     console.log("🚀 ~ DepositButton ~ allowance:", allowance)
-    const needsApproval = allowance === BigInt(0)
+    const needsApproval = !allowance || allowance === BigInt(0)
     console.log("🚀 ~ DepositButton ~ needsApproval:", needsApproval)
 
     const { config } = usePrepareErc20Approve({
