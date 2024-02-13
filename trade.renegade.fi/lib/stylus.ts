@@ -48,13 +48,13 @@ export const stylusDevnetEc2 = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["https://35.183.100.90:8547"],
+      http: ["http://35.183.100.90:8547"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],
     },
     public: {
-      http: ["https://35.183.100.90:8547"],
+      http: ["http://35.183.100.90:8547"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],

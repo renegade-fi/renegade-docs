@@ -39,11 +39,18 @@ export async function GET(request: Request) {
             transport: http(),
         });
 
-        // TODO: Check if already funded?
-
         const ethAmount = parseEther("0.1")
         const wethAmount = parseEther("1")
         const usdcAmount = parseUnits("3000", 18)
+
+        const balance = await publicClient.getBalance({
+            address: recipient,
+        })
+        if (balance >= ethAmount) {
+            return new Response("Already funded", {
+                status: 200,
+            })
+        }
 
         const transactionCount = await publicClient.getTransactionCount({
             address: account.address,
