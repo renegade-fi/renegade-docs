@@ -46,7 +46,9 @@ export default function DepositButton() {
         args: [address ? address : "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`],
         watch: true
     })
+    console.log("🚀 ~ DepositButton ~ allowance:", allowance)
     const needsApproval = allowance === BigInt(0)
+    console.log("🚀 ~ DepositButton ~ needsApproval:", needsApproval)
 
     const { config } = usePrepareErc20Approve({
         address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
