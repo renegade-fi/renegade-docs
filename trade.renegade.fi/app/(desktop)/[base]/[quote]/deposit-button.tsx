@@ -14,8 +14,7 @@ import {
     useDisclosure
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
-import { useState } from "react"
-import { useAccount } from "wagmi"
+import { useAccount, useWaitForTransaction } from "wagmi"
 
 const MAX_INT = BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639935")
 
@@ -52,17 +51,11 @@ export default function DepositButton() {
     const { config } = usePrepareErc20Approve({
         address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
         args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
-        onSettled: () => {
-            console.log("settled")
-            setIsLoading(false)
-        },
-        onSuccess: () => {
-            console.log("success")
-            setIsLoading(false)
-        }
     })
-    const { write: approve } = useErc20Approve(config)
-    const [isLoading, setIsLoading] = useState(false)
+    const { write: approve, isLoading: approveIsLoading, data: approveData } = useErc20Approve(config,)
+    const { isLoading: txIsLoading } = useWaitForTransaction({
+        hash: approveData?.hash,
+    })
 
     const handleApprove = async () => {
         if (!accountId || !approve) return
@@ -73,7 +66,7 @@ export default function DepositButton() {
         if (shouldUse) {
             buttonOnClick()
         } else if (needsApproval) {
-            setIsLoading(true)
+            // setIsLoading(true)
             handleApprove()
         } else {
             onOpenStepper()
@@ -105,9 +98,7 @@ export default function DepositButton() {
                 transition="0.15s"
                 backgroundColor="transparent"
                 isDisabled={isDisabled}
-                // isLoading={isLocked}
-                // loadingText="Please wait for task completion"
-                isLoading={isLoading}
+                isLoading={approveIsLoading || txIsLoading}
                 loadingText="Approving"
                 onClick={handleClick}
                 rightIcon={<ArrowForwardIcon />}

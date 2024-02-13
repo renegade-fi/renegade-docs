@@ -124,9 +124,12 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId, seed, setAccountId, setSeed])
 
-  // React.useEffect(() => {
-  //   initAccount()
-  // }, [accountId, initAccount, seed])
+  const [shouldAutoLogin] = useLocalStorage<boolean>('shouldAutoLogin', false)
+  React.useEffect(() => {
+    if (shouldAutoLogin) {
+      initAccount()
+    }
+  }, [initAccount, shouldAutoLogin])
 
   const { address } = useAccount()
   // Define the setAccount handler. This handler unregisters the previous
@@ -136,9 +139,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     oldAccountId?: AccountId,
     keychain?: Keychain
   ): Promise<void> {
-    console.log("Manually setting account: ", keychain)
     if (oldAccountId) {
-      console.log("Unregistering old account: ", oldAccountId)
       await renegade.unregisterAccount(oldAccountId)
     }
     if (!keychain) {
@@ -147,7 +148,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
     // Register and initialize the new account.
     const accountId = renegade.registerAccount(keychain)
-    console.log("From SDK: ", accountId)
     await renegade.task
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
