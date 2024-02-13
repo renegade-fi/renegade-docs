@@ -1,6 +1,5 @@
 "use client"
 
-import { v4 as uuidv4 } from "uuid"
 import { useMemo } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
@@ -9,6 +8,8 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
+import { toast } from "sonner"
+import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { findBalanceByTicker } from "@/lib/utils"
@@ -18,16 +19,12 @@ import { useIsLocked } from "@/hooks/use-is-locked"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 import { renegade } from "@/app/providers"
-import { toast } from "sonner"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
   const balances = useBalance()
-  const {
-    isOpen: placeOrderIsOpen,
-    onOpen: onOpenPlaceOrder,
-    onClose: onClosePlaceOrder,
-  } = useDisclosure()
+  const { isOpen: placeOrderIsOpen, onClose: onClosePlaceOrder } =
+    useDisclosure()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -35,14 +32,8 @@ export function PlaceOrderButton() {
   } = useDisclosure()
   const { getPriceData } = useExchange()
   const isLocked = useIsLocked()
-  const {
-    base,
-    baseTicker,
-    baseTokenAmount,
-    direction,
-    quote,
-    quoteTicker,
-  } = useOrder()
+  const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
+    useOrder()
   const { accountId } = useRenegade()
 
   const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
@@ -96,8 +87,9 @@ export function PlaceOrderButton() {
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = `Place Order for ${baseTokenAmount || ""
-      } ${baseTicker}`
+    placeOrderButtonContent = `Place Order for ${
+      baseTokenAmount || ""
+    } ${baseTicker}`
   }
   const isDisabled =
     accountId && (!baseTokenAmount || hasInsufficientBalance || isLocked)
@@ -117,9 +109,9 @@ export function PlaceOrderButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}

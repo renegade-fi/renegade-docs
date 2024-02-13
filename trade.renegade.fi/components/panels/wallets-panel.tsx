@@ -1,7 +1,11 @@
 "use client"
 
+import { useMemo } from "react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -9,22 +13,17 @@ import {
   UnlockIcon,
 } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
-import { TaskType } from "@/contexts/Renegade/types"
-import { Token } from "@renegade-fi/renegade-js"
 import "simplebar-react/dist/simplebar.min.css"
-
 import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
@@ -151,7 +150,7 @@ function DepositWithdrawButtons() {
         flexGrow="1"
         gap="5px"
         _hover={{
-          backgroundColor: "#000"
+          backgroundColor: "#000",
         }}
         onClick={onOpenAirdropModal}
       >
@@ -182,10 +181,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   //   return result
   // }, [balances])
   const formattedBalances: Array<[string, bigint]> = useMemo(() => {
-    return Object.entries(balances).map(([_, b]) => [
-      b.mint.address,
-      b.amount,
-    ])
+    return Object.entries(balances).map(([_, b]) => [b.mint.address, b.amount])
   }, [balances])
 
   const showDeposit = useMemo(() => {
@@ -268,8 +264,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-                ? "Sign in to create a Renegade account and view your balances."
-                : "Connect your Ethereum wallet before signing in."}
+              ? "Sign in to create a Renegade account and view your balances."
+              : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )

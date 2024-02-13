@@ -12,9 +12,7 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import SimpleBar from "simplebar-react"
 
-import {
-  safeLocalStorageGetItem
-} from "@/lib/utils"
+import { safeLocalStorageGetItem } from "@/lib/utils"
 import { useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
@@ -280,7 +278,11 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
-          if (!orders[counterpartyOrder.id]?.baseToken.address || !orders[counterpartyOrder.id]?.quoteToken.address) return null
+          if (
+            !orders[counterpartyOrder.id]?.baseToken.address ||
+            !orders[counterpartyOrder.id]?.quoteToken.address
+          )
+            return null
           const baseTicker = Token.findTickerByAddress(
             `0x${orders[counterpartyOrder.id]?.baseToken.address}`
           )
@@ -288,12 +290,14 @@ function OrderBookPanel() {
             `0x${orders[counterpartyOrder.id]?.quoteToken.address}`
           )
           const title = orders[counterpartyOrder.id]
-            ? `${orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-            } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-            } ${quoteTicker}`
+            ? `${
+                orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
+              } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${
+                orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
+              } ${quoteTicker}`
             : `Unknown order hash: ${counterpartyOrder.id
-              .split("-")[0]
-              .toString()}`
+                .split("-")[0]
+                .toString()}`
 
           const status =
             counterpartyOrder.id in orders
@@ -301,10 +305,10 @@ function OrderBookPanel() {
               : counterpartyOrder.state === "Cancelled" &&
                 !(counterpartyOrder.id in orders) &&
                 savedOrders.some(({ id }) => id === counterpartyOrder.id)
-                ? "MATCHED"
-                : counterpartyOrder.state === "Cancelled"
-                  ? "VERIFIED"
-                  : counterpartyOrder.state.toUpperCase()
+              ? "MATCHED"
+              : counterpartyOrder.state === "Cancelled"
+              ? "VERIFIED"
+              : counterpartyOrder.state.toUpperCase()
 
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
 
@@ -312,8 +316,8 @@ function OrderBookPanel() {
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
-                ? "red"
-                : "white.60"
+              ? "red"
+              : "white.60"
 
           return (
             <Flex

@@ -13,6 +13,8 @@ import {
   OrderId,
   TaskId,
 } from "@renegade-fi/renegade-js"
+import { useLocalStorage } from "usehooks-ts"
+import { useAccount } from "wagmi"
 
 import { renegade } from "@/app/providers"
 
@@ -24,8 +26,6 @@ import {
   TaskState,
   TaskType,
 } from "./types"
-import { useLocalStorage } from "usehooks-ts"
-import { useAccount } from "wagmi"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -71,7 +71,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [taskId])
 
-
   const accountCallbackId = React.useRef<CallbackId>()
   React.useEffect(() => {
     if (accountCallbackId.current || !accountId) return
@@ -93,7 +92,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
 
   // TODO: This logic should probably be moved to SDK
   // TODO: Should only do if wallet is connected
-  const [seed, setSeed] = useLocalStorage<string | undefined>('seed', undefined)
+  const [seed, setSeed] = useLocalStorage<string | undefined>("seed", undefined)
   const attemptedAutoSignin = React.useRef<AccountId>()
   const initAccount = React.useCallback(async () => {
     if (!seed || attemptedAutoSignin.current || accountId) return
@@ -115,7 +114,10 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
           refreshAccount(_accountId)
         })
     } catch (error) {
-      console.error("Tried to automatically sign in user, but failed with error: ", error)
+      console.error(
+        "Tried to automatically sign in user, but failed with error: ",
+        error
+      )
       setAccountId(undefined)
       setSeed(undefined)
       if (attemptedAutoSignin.current) {
@@ -124,7 +126,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     }
   }, [accountId, seed, setAccountId, setSeed])
 
-  const [shouldAutoLogin] = useLocalStorage<boolean>('shouldAutoLogin', false)
+  const [shouldAutoLogin] = useLocalStorage<boolean>("shouldAutoLogin", false)
   React.useEffect(() => {
     if (shouldAutoLogin) {
       initAccount()
@@ -159,7 +161,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         setAccountId(accountId)
         refreshAccount(accountId)
         fetch(`/api/fund?address=${address}`, {
-          method: 'GET',
+          method: "GET",
         })
       })
   }

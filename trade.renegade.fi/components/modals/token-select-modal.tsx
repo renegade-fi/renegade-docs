@@ -1,3 +1,6 @@
+import { useMemo, useState } from "react"
+import Image from "next/image"
+import { useApp } from "@/contexts/App/app-context"
 import {
   Box,
   Grid,
@@ -14,14 +17,11 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
-import Image from "next/image"
-import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 
-import { useApp } from "@/contexts/App/app-context"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
 import "simplebar-react/dist/simplebar.min.css"
 

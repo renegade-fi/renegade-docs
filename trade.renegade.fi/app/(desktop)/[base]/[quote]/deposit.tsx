@@ -1,9 +1,8 @@
 "use client"
 
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon
-} from "@chakra-ui/icons"
+import Link from "next/link"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
+import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
   Button,
@@ -13,11 +12,9 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import Link from "next/link"
 
-import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
 
 function DepositInner() {
   const {
@@ -43,7 +40,9 @@ function DepositInner() {
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
             <div>
-              <Link href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}>
+              <Link
+                href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}
+              >
                 <Button
                   position="absolute"
                   top="-24px"
