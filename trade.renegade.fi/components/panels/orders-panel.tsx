@@ -290,14 +290,12 @@ function OrderBookPanel() {
             `0x${orders[counterpartyOrder.id]?.quoteToken.address}`
           )
           const title = orders[counterpartyOrder.id]
-            ? `${
-                orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-              } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${
-                orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-              } ${quoteTicker}`
+            ? `${orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
+            } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
+            } ${quoteTicker}`
             : `Unknown order hash: ${counterpartyOrder.id
-                .split("-")[0]
-                .toString()}`
+              .split("-")[0]
+              .toString()}`
 
           const status =
             counterpartyOrder.id in orders
@@ -305,10 +303,10 @@ function OrderBookPanel() {
               : counterpartyOrder.state === "Cancelled" &&
                 !(counterpartyOrder.id in orders) &&
                 savedOrders.some(({ id }) => id === counterpartyOrder.id)
-              ? "MATCHED"
-              : counterpartyOrder.state === "Cancelled"
-              ? "VERIFIED"
-              : counterpartyOrder.state.toUpperCase()
+                ? "MATCHED"
+                : counterpartyOrder.state === "Cancelled"
+                  ? "VERIFIED"
+                  : counterpartyOrder.state.toUpperCase()
 
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
 
@@ -316,8 +314,8 @@ function OrderBookPanel() {
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
-              ? "red"
-              : "white.60"
+                ? "red"
+                : "white.60"
 
           return (
             <Flex
@@ -402,11 +400,8 @@ function OrdersAndCounterpartiesPanelExpanded(
 ) {
   return (
     <Flex
-      alignItems="center"
-      justifyContent="center"
       flexDirection="column"
       width={expandedPanelWidth}
-      borderColor="border"
       borderLeft="var(--border)"
       backdropFilter="blur(8px)"
     >

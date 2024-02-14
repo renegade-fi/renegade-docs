@@ -9,11 +9,12 @@ import { TaskType } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  CheckIcon,
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
+import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
+import { Token, tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
@@ -25,6 +26,7 @@ import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
 import "simplebar-react/dist/simplebar.min.css"
 import { renegade } from "@/app/providers"
+import { useTasks } from "@/hooks/use-tasks"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -120,7 +122,7 @@ function DepositWithdrawButtons() {
     <Flex
       flexDirection="row"
       width="100%"
-      height="calc(1.5 * var(--banner-height))"
+      minHeight="var(--banner-height)"
       color="white.60"
       borderColor="border"
       borderTop="var(--border)"
@@ -171,43 +173,16 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const balances = useBalance()
   const { accountId } = useRenegade()
 
-  // const placeholderBalances = useMemo(() => {
-  //   const result: [string, bigint][] = []
-  //   for (const { ticker: base } of tokenMappings.tokens) {
-  //     const bal = findBalanceByTicker(balances, base)
-  //     const address = getToken({ ticker: base }).address
-  //     result.push([address, bal.amount])
-  //   }
-  //   return result
-  // }, [balances])
-  const formattedBalances: Array<[string, bigint]> = useMemo(() => {
-    return Object.entries(balances).map(([_, b]) => [b.mint.address, b.amount])
+  const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
+    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(([_, b]) => [b.mint.address, b.amount])
+    const placeholders: Array<[string, bigint]> = tokenMappings.tokens.filter((t) => !nonzero.some(([a]) => a === t.address)).map((t) => [t.address.replace("0x", ""), BigInt(0)])
+    return [...nonzero, ...placeholders]
   }, [balances])
 
   const showDeposit = useMemo(() => {
-    return !formattedBalances.some(([_, bal]) => bal > BigInt(0))
-  }, [formattedBalances])
-  // const balancesToShow = useMemo(() => {
-  //   const result: Array<[string, bigint]> = []
-  //   for (const b of Object.values(balances)) {
-  //     result.push([b.mint.address, b.amount])
-  //   }
-  //   for (const [base] of DISPLAYED_TICKERS) {
-  //     if (result.length >= 5) break
-  //     if (
-  //       !result.some(
-  //         ([address]) => address === getToken({ ticker: base }).address
-  //       )
-  //     ) {
-  //       result.push([getToken({ ticker: base }).address, BigInt(0)])
-  //     }
-  //   }
-  //   return result
-  // }, [balances])
+    return !Object.values(balances).some((b) => b.amount > BigInt(0))
+  }, [balances])
 
-  // const showDeposit = useMemo(() => {
-  //   return !balancesToShow.some(([_, bal]) => bal > BigInt(0))
-  // }, [balancesToShow])
 
   const Content = useMemo(() => {
     if (accountId && !showDeposit) {
@@ -215,13 +190,12 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         <>
           <SimpleBar
             style={{
-              height: "calc(100% - (2.5 * var(--banner-height)))",
               width: "100%",
+              height: "calc(100% - 30vh - (3 * var(--banner-height)))",
               padding: "0 8px",
             }}
           >
             {formattedBalances.map(([address, amount]) => (
-              // {balancesToShow.map(([address, amount]) => (
               <Box key={address} width="100%">
                 <TokenBalance tokenAddr={"0x" + address} amount={amount} />
               </Box>
@@ -264,8 +238,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
-              : "Connect your Ethereum wallet before signing in."}
+                ? "Sign in to create a Renegade account and view your balances."
+                : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
@@ -275,7 +249,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     address,
     isSigningIn,
     formattedBalances,
-    // balancesToShow,
     setView,
     showDeposit,
   ])
@@ -320,25 +293,76 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 
 function HistorySection() {
   const { accountId } = useRenegade()
+  const tasks = useTasks()
+  const formatTask = (type?: string) => {
+    switch (type) {
+      case "UpdateWallet":
+        return "Update Wallet"
+      default:
+        return type
+    }
+  }
 
   const Content = useMemo(() => {
     if (true) {
       return (
-        <Flex alignItems="center" height="30vh">
-          <Text
-            margin="auto"
-            padding="0 10%"
-            color="white.50"
-            fontSize="0.8em"
-            fontWeight="100"
-            textAlign="center"
-          >
-            Deposit your first tokens to see your history.
-          </Text>
-        </Flex>
+        <SimpleBar
+          style={{
+            minHeight: "30vh",
+            width: "100%",
+          }}
+        >
+          {tasks.map((task) => {
+            const textColor =
+              task.status?.state === "Completed"
+                ? "green" : "white"
+
+            const rightIcon = task.status?.state === "Completed" ? <CheckIcon height='4' /> : <Spinner size='xs' />
+            return (
+              <Flex
+                key={task.id}
+                alignItems='center'
+                flexDirection="row"
+                width="100%"
+                padding="4%"
+                borderBottom="var(--secondary-border)"
+              >
+                <Flex flexDirection="column">
+                  <Flex alignItems="center" gap='2'>
+                    <Text
+                      color={textColor}
+                      fontFamily="Favorit Extended"
+                      fontWeight="500"
+                    >
+                      {formatTask(task.status?.task_type)}
+                    </Text>
+                    <Text
+                      color="white.60"
+                      fontFamily="Favorit Expanded"
+                      fontSize="0.7em"
+                      fontWeight="500"
+                    >
+                      a few seconds ago
+                    </Text>
+                  </Flex>
+                  <Flex alignItems='center' gap='2'>
+                    <Text color="white.80" fontSize="0.8em">
+                      {task.status?.state}
+                    </Text>
+                    {task.status?.state !== "Completed" && (
+                      <>
+                        {rightIcon}
+                      </>
+                    )}
+                  </Flex>
+                </Flex>
+              </Flex>
+            )
+          })}
+        </SimpleBar>
       )
     }
-  }, [])
+  }, [tasks])
 
   if (!accountId) return null
 

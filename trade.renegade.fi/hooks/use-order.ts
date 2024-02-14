@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Order, OrderId } from "@renegade-fi/renegade-js"
+import { useEffect, useState } from "react"
 
 import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
-import { renegade } from "@/app/providers"
 
 export const useOrders = () => {
   const { accountId } = useRenegade()
@@ -17,16 +16,16 @@ export const useOrders = () => {
         ? existingOrders.split(",")
         : []
 
-      const fetchedOrders = await renegade
-        .queryWallet(accountId)
-        .then(() => renegade.getOrders(accountId))
-      setOrders(fetchedOrders)
+      // const fetchedOrders = await renegade
+      //   .queryWallet(accountId)
+      //   .then(() => renegade.getOrders(accountId))
+      // setOrders(fetchedOrders)
 
-      const uniqueNewOrderIds = Object.keys(fetchedOrders).filter(
-        (orderId) => !existingOrdersArray.includes(orderId)
-      )
+      // const uniqueNewOrderIds = Object.keys(fetchedOrders).filter(
+      //   (orderId) => !existingOrdersArray.includes(orderId)
+      // )
 
-      existingOrdersArray.push(...uniqueNewOrderIds)
+      // existingOrdersArray.push(...uniqueNewOrderIds)
       const updatedOrders = existingOrdersArray.join(",")
 
       safeLocalStorageSetItem(`orders-${accountId}`, updatedOrders)
