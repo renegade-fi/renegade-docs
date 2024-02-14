@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Order, OrderId } from "@renegade-fi/renegade-js"
-import { useEffect, useState } from "react"
 
 import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 

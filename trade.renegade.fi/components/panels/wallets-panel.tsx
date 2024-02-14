@@ -25,8 +25,8 @@ import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
 import "simplebar-react/dist/simplebar.min.css"
-import { renegade } from "@/app/providers"
 import { useTasks } from "@/hooks/use-tasks"
+import { renegade } from "@/app/providers"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -174,15 +174,18 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { accountId } = useRenegade()
 
   const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
-    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(([_, b]) => [b.mint.address, b.amount])
-    const placeholders: Array<[string, bigint]> = tokenMappings.tokens.filter((t) => !nonzero.some(([a]) => a === t.address)).map((t) => [t.address.replace("0x", ""), BigInt(0)])
+    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(
+      ([_, b]) => [b.mint.address, b.amount]
+    )
+    const placeholders: Array<[string, bigint]> = tokenMappings.tokens
+      .filter((t) => !nonzero.some(([a]) => a === t.address))
+      .map((t) => [t.address.replace("0x", ""), BigInt(0)])
     return [...nonzero, ...placeholders]
   }, [balances])
 
   const showDeposit = useMemo(() => {
     return !Object.values(balances).some((b) => b.amount > BigInt(0))
   }, [balances])
-
 
   const Content = useMemo(() => {
     if (accountId && !showDeposit) {
@@ -238,20 +241,13 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-                ? "Sign in to create a Renegade account and view your balances."
-                : "Connect your Ethereum wallet before signing in."}
+              ? "Sign in to create a Renegade account and view your balances."
+              : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
     }
-  }, [
-    accountId,
-    address,
-    isSigningIn,
-    formattedBalances,
-    setView,
-    showDeposit,
-  ])
+  }, [accountId, address, isSigningIn, formattedBalances, setView, showDeposit])
 
   return (
     <>
@@ -314,21 +310,25 @@ function HistorySection() {
         >
           {tasks.map((task) => {
             const textColor =
-              task.status?.state === "Completed"
-                ? "green" : "white"
+              task.status?.state === "Completed" ? "green" : "white"
 
-            const rightIcon = task.status?.state === "Completed" ? <CheckIcon height='4' /> : <Spinner size='xs' />
+            const rightIcon =
+              task.status?.state === "Completed" ? (
+                <CheckIcon height="4" />
+              ) : (
+                <Spinner size="xs" />
+              )
             return (
               <Flex
                 key={task.id}
-                alignItems='center'
+                alignItems="center"
                 flexDirection="row"
                 width="100%"
                 padding="4%"
                 borderBottom="var(--secondary-border)"
               >
                 <Flex flexDirection="column">
-                  <Flex alignItems="center" gap='2'>
+                  <Flex alignItems="center" gap="2">
                     <Text
                       color={textColor}
                       fontFamily="Favorit Extended"
@@ -345,15 +345,11 @@ function HistorySection() {
                       a few seconds ago
                     </Text>
                   </Flex>
-                  <Flex alignItems='center' gap='2'>
+                  <Flex alignItems="center" gap="2">
                     <Text color="white.80" fontSize="0.8em">
                       {task.status?.state}
                     </Text>
-                    {task.status?.state !== "Completed" && (
-                      <>
-                        {rightIcon}
-                      </>
-                    )}
+                    {task.status?.state !== "Completed" && <>{rightIcon}</>}
                   </Flex>
                 </Flex>
               </Flex>

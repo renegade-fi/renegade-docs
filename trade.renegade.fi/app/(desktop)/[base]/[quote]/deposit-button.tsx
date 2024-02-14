@@ -1,11 +1,3 @@
-import { ArrowForwardIcon } from "@chakra-ui/icons"
-import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { toast } from "sonner"
-import { useAccount, useWaitForTransaction } from "wagmi"
-
-import { renegade } from "@/app/providers"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
@@ -14,8 +6,16 @@ import {
   useErc20Approve,
   usePrepareErc20Approve,
 } from "@/generated"
+import { ArrowForwardIcon } from "@chakra-ui/icons"
+import { Button, useDisclosure } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
+import { toast } from "sonner"
+import { useAccount, useWaitForTransaction } from "wagmi"
+
 import { useButton } from "@/hooks/use-button"
 import { useIsLocked } from "@/hooks/use-is-locked"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { renegade } from "@/app/providers"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -74,12 +74,13 @@ export default function DepositButton() {
       handleApprove()
     } else {
       if (!accountId || !address) return
-      await renegade.task.deposit(
-        accountId,
-        new Token({ address: Token.findAddressByTicker(baseTicker) }),
-        BigInt(baseTokenAmount),
-        address
-      )
+      await renegade.task
+        .deposit(
+          accountId,
+          new Token({ address: Token.findAddressByTicker(baseTicker) }),
+          BigInt(baseTokenAmount),
+          address
+        )
         .then(() => toast.info("Deposit task added to queue"))
         .catch((error) => toast.error(`Error depositing: ${error}`))
     }
@@ -100,9 +101,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -118,8 +119,8 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : needsApproval
-            ? `Approve ${baseTicker}`
-            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+          ? `Approve ${baseTicker}`
+          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
