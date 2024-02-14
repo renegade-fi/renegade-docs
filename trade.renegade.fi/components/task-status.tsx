@@ -149,9 +149,7 @@ export const TaskStatus = () => {
     [TaskState.Proving]: "Generating ZK Proof",
     [TaskState.SubmittingTx]: "Submitting Transaction",
     [TaskState.FindingOpening]: "Finding New Merkle Opening",
-    // TODO: Make sure this works for CreateNewWalletTask
-    // @ts-ignore
-    [TaskState.FindingMerkleOpening]: "Finding New Merkle Opening",
+    FindingMerkleOpening: "Finding New Merkle Opening",
     [TaskState.UpdatingValidityProofs]: "Updating Validity Proofs",
     [TaskState.Completed]: "Completed",
   }[taskState || TaskState.Proving] // If taskState is undefined, we won't use this displayedTaskState anyway.

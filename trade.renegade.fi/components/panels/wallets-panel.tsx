@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
+import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -178,7 +178,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       ([_, b]) => [b.mint.address, b.amount]
     )
     const placeholders: Array<[string, bigint]> = tokenMappings.tokens
-      .filter((t) => !nonzero.some(([a]) => a === t.address))
+      .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
       .map((t) => [t.address.replace("0x", ""), BigInt(0)])
     return [...nonzero, ...placeholders]
   }, [balances])
@@ -298,6 +298,14 @@ function HistorySection() {
         return type
     }
   }
+  const TASK_TO_NAME = {
+    // [TaskState.Queued]: "Queued",
+    [TaskState.Proving]: "Proving",
+    [TaskState.SubmittingTx]: "Submitting Transaction",
+    [TaskState.FindingOpening]: "Validating",
+    [TaskState.UpdatingValidityProofs]: "Validating",
+    [TaskState.Completed]: "Completed",
+  }
 
   const Content = useMemo(() => {
     if (true) {
@@ -314,9 +322,9 @@ function HistorySection() {
 
             const rightIcon =
               task.status?.state === "Completed" ? (
-                <CheckIcon height="4" />
+                <CheckIcon color="white.60" height="4" />
               ) : (
-                <Spinner size="xs" />
+                <Spinner color="white.60" size="xs" />
               )
             return (
               <Flex
@@ -346,10 +354,10 @@ function HistorySection() {
                     </Text>
                   </Flex>
                   <Flex alignItems="center" gap="2">
-                    <Text color="white.80" fontSize="0.8em">
-                      {task.status?.state}
-                    </Text>
                     {task.status?.state !== "Completed" && <>{rightIcon}</>}
+                    <Text color="white.80" fontSize="0.8em">
+                      {TASK_TO_NAME[task.status?.state as TaskState]}
+                    </Text>
                   </Flex>
                 </Flex>
               </Flex>

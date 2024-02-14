@@ -225,6 +225,7 @@ export function Providers({
                   <ExchangeProvider>
                     <AppProvider tokenIcons={icons}>
                       <Toaster
+                        position="bottom-center"
                         toastOptions={{
                           style: {
                             background: "black",
