@@ -56,7 +56,7 @@ export function PlaceOrderButton() {
       amount: BigInt(baseTokenAmount),
     })
     renegade.task
-      .modifyOrPlaceOrder(accountId, order)
+      .placeOrder(accountId, order)
       .then(() => toast.info("Order task added to queue"))
       .catch(() => toast.error("Error placing order, please try again"))
   }

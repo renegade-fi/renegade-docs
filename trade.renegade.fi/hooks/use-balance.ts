@@ -1,8 +1,8 @@
-import { renegade } from "@/app/providers"
+import { useEffect, useState } from "react"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Balance, BalanceId } from "@renegade-fi/renegade-js"
-import { useEffect, useState } from "react"
 
+import { renegade } from "@/app/providers"
 
 export const useBalance = () => {
   const [balances, setBalances] = useState<Record<BalanceId, Balance>>({})

@@ -298,74 +298,72 @@ function HistorySection() {
         return type
     }
   }
-  const TASK_TO_NAME = {
-    // [TaskState.Queued]: "Queued",
-    [TaskState.Proving]: "Proving",
-    [TaskState.SubmittingTx]: "Submitting Transaction",
-    [TaskState.FindingOpening]: "Validating",
-    [TaskState.UpdatingValidityProofs]: "Validating",
-    [TaskState.Completed]: "Completed",
-  }
 
   const Content = useMemo(() => {
-    if (true) {
-      return (
-        <SimpleBar
-          style={{
-            minHeight: "30vh",
-            width: "100%",
-          }}
-        >
-          {tasks.map((task) => {
-            const textColor =
-              task.status?.state === "Completed" ? "green" : "white"
+    const TASK_TO_NAME = {
+      // [TaskState.Queued]: "Queued",
+      [TaskState.Proving]: "Proving",
+      [TaskState.SubmittingTx]: "Submitting Transaction",
+      [TaskState.FindingOpening]: "Validating",
+      [TaskState.UpdatingValidityProofs]: "Validating",
+      [TaskState.Completed]: "Completed",
+    }
+    return (
+      <SimpleBar
+        style={{
+          minHeight: "30vh",
+          width: "100%",
+        }}
+      >
+        {tasks.map((task) => {
+          const textColor =
+            task.status?.state === "Completed" ? "green" : "white"
 
-            const rightIcon =
-              task.status?.state === "Completed" ? (
-                <CheckIcon color="white.60" height="4" />
-              ) : (
-                <Spinner color="white.60" size="xs" />
-              )
-            return (
-              <Flex
-                key={task.id}
-                alignItems="center"
-                flexDirection="row"
-                width="100%"
-                padding="4%"
-                borderBottom="var(--secondary-border)"
-              >
-                <Flex flexDirection="column">
-                  <Flex alignItems="center" gap="2">
-                    <Text
-                      color={textColor}
-                      fontFamily="Favorit Extended"
-                      fontWeight="500"
-                    >
-                      {formatTask(task.status?.task_type)}
-                    </Text>
-                    <Text
-                      color="white.60"
-                      fontFamily="Favorit Expanded"
-                      fontSize="0.7em"
-                      fontWeight="500"
-                    >
-                      a few seconds ago
-                    </Text>
-                  </Flex>
-                  <Flex alignItems="center" gap="2">
-                    {task.status?.state !== "Completed" && <>{rightIcon}</>}
-                    <Text color="white.80" fontSize="0.8em">
-                      {TASK_TO_NAME[task.status?.state as TaskState]}
-                    </Text>
-                  </Flex>
+          const rightIcon =
+            task.status?.state === "Completed" ? (
+              <CheckIcon color="white.60" height="4" />
+            ) : (
+              <Spinner color="white.60" size="xs" />
+            )
+          return (
+            <Flex
+              key={task.id}
+              alignItems="center"
+              flexDirection="row"
+              width="100%"
+              padding="4%"
+              borderBottom="var(--secondary-border)"
+            >
+              <Flex flexDirection="column">
+                <Flex alignItems="center" gap="2">
+                  <Text
+                    color={textColor}
+                    fontFamily="Favorit Extended"
+                    fontWeight="500"
+                  >
+                    {formatTask(task.status?.task_type)}
+                  </Text>
+                  <Text
+                    color="white.60"
+                    fontFamily="Favorit Expanded"
+                    fontSize="0.7em"
+                    fontWeight="500"
+                  >
+                    a few seconds ago
+                  </Text>
+                </Flex>
+                <Flex alignItems="center" gap="2">
+                  {task.status?.state !== "Completed" && <>{rightIcon}</>}
+                  <Text color="white.80" fontSize="0.8em">
+                    {TASK_TO_NAME[task.status?.state as TaskState]}
+                  </Text>
                 </Flex>
               </Flex>
-            )
-          })}
-        </SimpleBar>
-      )
-    }
+            </Flex>
+          )
+        })}
+      </SimpleBar>
+    )
   }, [tasks])
 
   if (!accountId) return null
