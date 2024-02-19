@@ -33,7 +33,6 @@ export interface RenegadeContextType {
   balances: Record<BalanceId, Balance>
   counterparties: Record<PeerId, Counterparty>
   fees: Record<FeeId, Fee>
-  isLocked: boolean
   orderBook: Record<OrderId, CounterpartyOrder>
   orders: Record<OrderId, Order>
   refreshAccount: (accountId?: AccountId) => void

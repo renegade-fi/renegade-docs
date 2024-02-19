@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-
 import { renegade } from "@/app/providers"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useEffect, useState } from "react"
+
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<
     {
       id?: string | undefined
       status?:
-        | {
-            task_type?: string | undefined
-            state?: string | undefined
-          }
-        | undefined
+      | {
+        task_type?: string | undefined
+        state?: string | undefined
+      }
+      | undefined
       committed?: boolean | undefined
     }[]
   >([])

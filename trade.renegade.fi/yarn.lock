@@ -1721,10 +1721,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@renegade-fi/renegade-js@^0.4.8":
-  version "0.4.8"
-  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.4.8.tgz#879dfbbac7f0c28d5ffebd0e11f183cce7fb885a"
-  integrity sha512-KIXpUm7TjPkCBRFu2mj9+DZeaXGfJB+rOE5LvXrWVPDmHP5cu5Q2wiBTXxLIpjEqMuLcA6S/bdnvgNJhmu9kVw==
+"@renegade-fi/renegade-js@^0.4.9":
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.4.9.tgz#3b138f2b2787aa2ab5497e5399e81f9eafecfa82"
+  integrity sha512-AXOVNzijd7AZfXUeChhIR7hCzsKTKY0mP3X7d+TcPRMZ28GcFz3sySoAVIP3XE4YsDQ9R+e/5D1j0Psks9dfLA==
   dependencies:
     "@noble/hashes" "^1.3.0"
     axios "^1.3.5"

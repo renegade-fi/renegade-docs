@@ -37,7 +37,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [fees] = React.useState<Record<FeeId, Fee>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
-  const [isLocked, setIsLocked] = React.useState<boolean>(false)
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -212,7 +211,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     if (!accountId) return
     setBalances(renegade.getBalances(accountId))
     setOrders(renegade.getOrders(accountId))
-    setIsLocked(renegade.getIsLocked(accountId))
   }
 
   function setTask(newTaskId?: TaskId, taskType?: TaskType) {
@@ -231,7 +229,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         balances,
         counterparties,
         fees,
-        isLocked,
         orderBook,
         orders,
         refreshAccount,
