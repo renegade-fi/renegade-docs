@@ -1,6 +1,6 @@
 "use client"
 
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useEffect } from "react"
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
@@ -102,8 +102,7 @@ const components = {
   Text: {
     variants: {
       "status-green": {
-        fontSize: "0.85em",
-        fontWeight: "700",
+        fontSize: "0.85em", fontWeight: "700",
         color: "green",
         textShadow: "0 0 5px green",
       },
@@ -196,6 +195,13 @@ export const renegade = new Renegade({
     env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
   verbose: false,
 })
+// eslint-disable-next-line react-hooks/rules-of-hooks
+useEffect(() => {
+  async function loadUtils() {
+    await renegade.init()
+  }
+  loadUtils()
+}, [])
 
 export function Providers({
   children,
