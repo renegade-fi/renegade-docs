@@ -195,13 +195,6 @@ export const renegade = new Renegade({
     env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
   verbose: false,
 })
-// eslint-disable-next-line react-hooks/rules-of-hooks
-useEffect(() => {
-  async function loadUtils() {
-    await renegade.init()
-  }
-  loadUtils()
-}, [])
 
 export function Providers({
   children,
@@ -209,6 +202,12 @@ export function Providers({
 }: PropsWithChildren & {
   icons?: Record<string, string>
 }) {
+  useEffect(() => {
+    async function loadUtils() {
+      await renegade.init()
+    }
+    loadUtils()
+  }, [])
   return (
     <>
       <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
