@@ -1721,14 +1721,13 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@renegade-fi/renegade-js@^0.4.10":
-  version "0.4.10"
-  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.4.10.tgz#180941edbae8dede3b31b4b9d9b916ad909d06e5"
-  integrity sha512-ON0q+SopM0Wj2TkNWh+asbbtEplGMaONUO3UU1pZPn0XS+vaGedwjZW1ir/2mogkmozvmVCxJgOYSmdlRyacIg==
+"@renegade-fi/renegade-js@^0.4.12":
+  version "0.4.12"
+  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.4.12.tgz#ebcd756fa85a214fac21f29e4c5af763b40c4382"
+  integrity sha512-6BJ54LXjGUkssnyCD+W4YraEX8z96Ea08xPLg1i8Hi6/ewcvjS/cpb1pe6qZ+wYT52HZxGVaL671N+CBGIPVyg==
   dependencies:
     "@noble/hashes" "^1.3.0"
     axios "^1.3.5"
-    ffjavascript "^0.2.60"
     isomorphic-fetch "^3.0.0"
     isomorphic-ws "^5.0.0"
     uuid "^9.0.0"
@@ -4184,15 +4183,6 @@ fetch-blob@^3.1.2, fetch-blob@^3.1.4:
   dependencies:
     node-domexception "^1.0.0"
     web-streams-polyfill "^3.0.3"
-
-ffjavascript@^0.2.60:
-  version "0.2.60"
-  resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.60.tgz#4d8ae613d6bf4e98b3cc29ba10c626f5853854cf"
-  integrity sha512-T/9bnEL5xAZRDbQoEMf+pM9nrhK+C3JyZNmqiWub26EQorW7Jt+jR54gpqDhceA4Nj0YctPQwYnl8xa52/A26A==
-  dependencies:
-    wasmbuilder "0.0.16"
-    wasmcurves "0.2.2"
-    web-worker "^1.2.0"
 
 file-entry-cache@^6.0.1:
   version "6.0.1"
@@ -7001,18 +6991,6 @@ wagmi@^1.4.12:
     abitype "0.8.7"
     use-sync-external-store "^1.2.0"
 
-wasmbuilder@0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/wasmbuilder/-/wasmbuilder-0.0.16.tgz#f34c1f2c047d2f6e1065cbfec5603988f16d8549"
-  integrity sha512-Qx3lEFqaVvp1cEYW7Bfi+ebRJrOiwz2Ieu7ZG2l7YyeSJIok/reEQCQCuicj/Y32ITIJuGIM9xZQppGx5LrQdA==
-
-wasmcurves@0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/wasmcurves/-/wasmcurves-0.2.2.tgz#ca444f6a6f6e2a5cbe6629d98ff478a62b4ccb2b"
-  integrity sha512-JRY908NkmKjFl4ytnTu5ED6AwPD+8VJ9oc94kdq7h5bIwbj0L4TDJ69mG+2aLs2SoCmGfqIesMWTEJjtYsoQXQ==
-  dependencies:
-    wasmbuilder "0.0.16"
-
 watchpack@2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/watchpack/-/watchpack-2.4.0.tgz#fa33032374962c78113f93c7f2fb4c54c9862a5d"
@@ -7032,11 +7010,6 @@ web-streams-polyfill@^3.0.3:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.3.2.tgz#32e26522e05128203a7de59519be3c648004343b"
   integrity sha512-3pRGuxRF5gpuZc0W+EpwQRmCD7gRqcDOMt688KmdlDAgAyaB1XlN0zq2njfDNm44XVdIouE7pZ6GzbdyH47uIQ==
-
-web-worker@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/web-worker/-/web-worker-1.2.0.tgz#5d85a04a7fbc1e7db58f66595d7a3ac7c9c180da"
-  integrity sha512-PgF341avzqyx60neE9DD+XS26MMNMoUQRz9NOZwW32nPQrF6p77f1htcnjBSEV8BGMKZ16choqUG4hyI0Hx7mA==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
