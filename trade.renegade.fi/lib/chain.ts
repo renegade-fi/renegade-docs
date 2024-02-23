@@ -29,12 +29,6 @@ export const stylusDevnet = defineChain({
       url: "https://stylus-testnet-explorer.arbitrum.io/",
     },
   },
-  contracts: {
-    multicall2: {
-      address: "0x42aaE78422EF3e8E6d0D88e58E25CA7C7Ecb9D5a",
-      blockCreated: 26,
-    },
-  },
 })
 
 export const stylusDevnetEc2 = defineChain({
@@ -48,13 +42,13 @@ export const stylusDevnetEc2 = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["http://35.183.100.90:8547"],
+      http: ["https://35.183.100.90/"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],
     },
     public: {
-      http: ["http://35.183.100.90:8547"],
+      http: ["https://35.183.100.90/"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],

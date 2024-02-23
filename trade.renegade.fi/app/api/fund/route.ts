@@ -11,7 +11,7 @@ import {
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 
-import { stylusDevnetEc2 } from "@/lib/stylus"
+import { stylusDevnetEc2 } from "@/lib/chain"
 
 const abi = parseAbi([
   "function transfer(address to, uint256 amount) returns (bool)",

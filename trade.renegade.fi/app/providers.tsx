@@ -22,7 +22,7 @@ import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
 import { WagmiConfig, createConfig } from "wagmi"
 
-import { stylusDevnetEc2 } from "@/lib/stylus"
+import { stylusDevnetEc2 } from "@/lib/chain"
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)

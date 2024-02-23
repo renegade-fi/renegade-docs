@@ -15,8 +15,10 @@ import {
 
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 
 function DepositInner() {
+  const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -47,6 +49,7 @@ function DepositInner() {
                   position="absolute"
                   top="-24px"
                   fontWeight="600"
+                  onClick={() => setView(ViewEnum.TRADING)}
                   variant="link"
                 >
                   <ChevronLeftIcon />

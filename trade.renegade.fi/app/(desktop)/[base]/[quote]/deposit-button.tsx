@@ -46,6 +46,7 @@ export default function DepositButton() {
     ],
     watch: true,
   })
+  console.log("🚀 ~ DepositButton ~ allowance:", allowance)
   const needsApproval = !allowance || allowance === BigInt(0)
 
   const { config } = usePrepareErc20Approve({
@@ -101,9 +102,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-                borderColor: "white.60",
-                color: "white",
-              }
+              borderColor: "white.60",
+              color: "white",
+            }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -119,8 +120,8 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : needsApproval
-          ? `Approve ${baseTicker}`
-          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+            ? `Approve ${baseTicker}`
+            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
