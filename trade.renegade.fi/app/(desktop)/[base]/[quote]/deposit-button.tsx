@@ -15,7 +15,6 @@ import { formatUnits, parseUnits } from "viem"
 import { useAccount, useWaitForTransaction } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { renegade } from "@/app/providers"
 
@@ -25,7 +24,6 @@ const MAX_INT = BigInt(
 
 export default function DepositButton() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const isLocked = useIsLocked()
   const { accountId } = useRenegade()
   const {
     isOpen: signInIsOpen,
@@ -82,7 +80,7 @@ export default function DepositButton() {
   const needsApproval = allowance === BigInt(0) && !txIsSuccess
 
   const isDisabled =
-    (accountId && (isLocked || !baseTokenAmount)) ||
+    (accountId && !baseTokenAmount) ||
     hasRpcConnectionError ||
     hasInsufficientBalance
 

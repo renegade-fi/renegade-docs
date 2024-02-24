@@ -1,6 +1,5 @@
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
-
 export const useOrders = () => {
   // const { accountId } = useRenegade()
   // const [orders, setOrders] = useState<Record<OrderId, Order>>({})

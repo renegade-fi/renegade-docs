@@ -1,6 +1,5 @@
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
-
 export const useBalance = () => {
   // const [balances, setBalances] = useState<Record<BalanceId, Balance>>({})
   // const { accountId } = useRenegade()

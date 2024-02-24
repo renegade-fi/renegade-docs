@@ -6,7 +6,7 @@ import { getTokenBannerData } from "@/lib/utils"
 import { MobileBody } from "./body"
 import { MobileNav } from "./main-nav"
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,

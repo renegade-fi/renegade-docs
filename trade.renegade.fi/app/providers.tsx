@@ -102,7 +102,8 @@ const components = {
   Text: {
     variants: {
       "status-green": {
-        fontSize: "0.85em", fontWeight: "700",
+        fontSize: "0.85em",
+        fontWeight: "700",
         color: "green",
         textShadow: "0 0 5px green",
       },

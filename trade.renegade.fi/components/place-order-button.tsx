@@ -15,7 +15,6 @@ import { useAccount as useAccountWagmi } from "wagmi"
 import { findBalanceByTicker } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useButton } from "@/hooks/use-button"
-import { useIsLocked } from "@/hooks/use-is-locked"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 import { renegade } from "@/app/providers"
@@ -31,7 +30,6 @@ export function PlaceOrderButton() {
     onClose: onCloseSignIn,
   } = useDisclosure()
   const { getPriceData } = useExchange()
-  const isLocked = useIsLocked()
   const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
     useOrder()
   const { accountId } = useRenegade()
@@ -91,8 +89,7 @@ export function PlaceOrderButton() {
       baseTokenAmount || ""
     } ${baseTicker}`
   }
-  const isDisabled =
-    accountId && (!baseTokenAmount || hasInsufficientBalance || isLocked)
+  const isDisabled = accountId && (!baseTokenAmount || hasInsufficientBalance)
 
   return (
     <>
@@ -119,7 +116,6 @@ export function PlaceOrderButton() {
         transition="0.15s"
         backgroundColor="transparent"
         isDisabled={isDisabled}
-        isLoading={isLocked}
         loadingText="Please wait for task completion"
         onClick={() => {
           if (shouldUse) {
