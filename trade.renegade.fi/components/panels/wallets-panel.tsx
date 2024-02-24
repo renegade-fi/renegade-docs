@@ -174,13 +174,27 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { accountId } = useRenegade()
 
   const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
+    const wethAddress = Token.findAddressByTicker("WETH").replace("0x", "")
+    const usdcAddress = Token.findAddressByTicker("USDC").replace("0x", "")
+
     const nonzero: Array<[string, bigint]> = Object.entries(balances).map(
       ([_, b]) => [b.mint.address, b.amount]
     )
     const placeholders: Array<[string, bigint]> = tokenMappings.tokens
       .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
       .map((t) => [t.address.replace("0x", ""), BigInt(0)])
-    return [...nonzero, ...placeholders]
+
+    const combined = [...nonzero, ...placeholders]
+
+    combined.sort((a, b) => {
+      if (a[0] === wethAddress) return -1
+      if (b[0] === wethAddress) return 1
+      if (a[0] === usdcAddress) return -1
+      if (b[0] === usdcAddress) return 1
+      return 0
+    })
+
+    return combined
   }, [balances])
 
   const showDeposit = useMemo(() => {
