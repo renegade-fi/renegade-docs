@@ -46,8 +46,7 @@ export default function DepositButton() {
     ],
     watch: true,
   })
-  console.log("🚀 ~ DepositButton ~ allowance:", allowance)
-  const needsApproval = !allowance || allowance === BigInt(0)
+  console.log(`${baseTicker} allowance: `, allowance)
 
   const { config } = usePrepareErc20Approve({
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
@@ -58,9 +57,13 @@ export default function DepositButton() {
     isLoading: approveIsLoading,
     data: approveData,
   } = useErc20Approve(config)
-  const { isLoading: txIsLoading } = useWaitForTransaction({
-    hash: approveData?.hash,
-  })
+  const { isLoading: txIsLoading, isSuccess: txIsSuccess } =
+    useWaitForTransaction({
+      hash: approveData?.hash,
+    })
+
+  // TODO: if !approval, error connecting to sequencer
+  const needsApproval = allowance === BigInt(0) && !txIsSuccess
 
   const handleApprove = async () => {
     if (!accountId || !approve) return
@@ -71,7 +74,6 @@ export default function DepositButton() {
     if (shouldUse) {
       buttonOnClick()
     } else if (needsApproval) {
-      // setIsLoading(true)
       handleApprove()
     } else {
       if (!accountId || !address) return
@@ -102,9 +104,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -120,8 +122,8 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : needsApproval
-            ? `Approve ${baseTicker}`
-            : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+          ? `Approve ${baseTicker}`
+          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
