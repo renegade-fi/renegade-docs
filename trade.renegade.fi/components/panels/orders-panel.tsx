@@ -6,14 +6,14 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { OrderId, Token } from "@renegade-fi/renegade-js"
+import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import SimpleBar from "simplebar-react"
 
 import { safeLocalStorageGetItem } from "@/lib/utils"
-import { useGlobalOrders } from "@/hooks/use-global-orders"
+import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
@@ -278,40 +278,9 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
-          if (
-            !orders[counterpartyOrder.id]?.baseToken.address ||
-            !orders[counterpartyOrder.id]?.quoteToken.address
-          )
-            return null
-          const baseTicker = Token.findTickerByAddress(
-            `0x${orders[counterpartyOrder.id]?.baseToken.address}`
-          )
-          const quoteTicker = Token.findTickerByAddress(
-            `0x${orders[counterpartyOrder.id]?.quoteToken.address}`
-          )
-          const title = orders[counterpartyOrder.id]
-            ? `${
-                orders[counterpartyOrder.id].side === "buy" ? "Buy" : "Sell"
-              } ${orders[counterpartyOrder.id].amount} ${baseTicker} ${
-                orders[counterpartyOrder.id].side === "buy" ? "with" : "for"
-              } ${quoteTicker}`
-            : `Unknown order hash: ${counterpartyOrder.id
-                .split("-")[0]
-                .toString()}`
-
-          const status =
-            counterpartyOrder.id in orders
-              ? "ACTIVE"
-              : counterpartyOrder.state === "Cancelled" &&
-                !(counterpartyOrder.id in orders) &&
-                savedOrders.some(({ id }) => id === counterpartyOrder.id)
-              ? "MATCHED"
-              : counterpartyOrder.state === "Cancelled"
-              ? "VERIFIED"
-              : counterpartyOrder.state.toUpperCase()
-
+          const title = formatTitle(orders, counterpartyOrder)
+          const status = formatStatus(orders, counterpartyOrder, savedOrders)
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
-
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
@@ -432,4 +401,42 @@ export function OrdersAndCounterpartiesPanel() {
       flipDirection={true}
     />
   )
+}
+
+const formatTitle = (orders: Record<OrderId, Order>, order: GlobalOrder) => {
+  if (order.id in orders) {
+    const baseTicker = Token.findTickerByAddress(
+      `0x${orders[order.id].baseToken.address}`
+    )
+    const quoteTicker = Token.findTickerByAddress(
+      `0x${orders[order.id].quoteToken.address}`
+    )
+    const side = orders[order.id].side === "buy" ? "Buy" : "Sell"
+    return `${side} ${orders[order.id].amount} ${baseTicker} for ${quoteTicker}`
+  }
+  return `Unknown order hash: ${order.id.split("-")[0].toString()}`
+}
+
+const formatStatus = (
+  orders: Record<OrderId, Order>,
+  counterpartyOrder: GlobalOrder,
+  savedOrders: LocalOrder[]
+): string => {
+  if (counterpartyOrder.id in orders) {
+    return "ACTIVE"
+  }
+
+  if (
+    counterpartyOrder.state === "Cancelled" &&
+    savedOrders.some(({ id }) => id === counterpartyOrder.id)
+  ) {
+    return "MATCHED"
+  }
+
+  if (counterpartyOrder.state === "Cancelled") {
+    return "CANCELLED"
+  }
+
+  // Default case for other states
+  return counterpartyOrder.state.toUpperCase()
 }
