@@ -20,6 +20,13 @@ import {
 
 export const erc20ABI = [
   {
+    stateMutability: "view",
+    type: "function",
+    inputs: [{ name: "owner", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ type: "uint256" }],
+  },
+  {
     stateMutability: "nonpayable",
     type: "function",
     inputs: [
@@ -71,6 +78,25 @@ export function useErc20Read<
     TFunctionName,
     TSelectData
   >)
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link erc20ABI}__ and `functionName` set to `"balanceOf"`.
+ */
+export function useErc20BalanceOf<
+  TFunctionName extends "balanceOf",
+  TSelectData = ReadContractResult<typeof erc20ABI, TFunctionName>
+>(
+  config: Omit<
+    UseContractReadConfig<typeof erc20ABI, TFunctionName, TSelectData>,
+    "abi" | "functionName"
+  > = {} as any
+) {
+  return useContractRead({
+    abi: erc20ABI,
+    functionName: "balanceOf",
+    ...config,
+  } as UseContractReadConfig<typeof erc20ABI, TFunctionName, TSelectData>)
 }
 
 /**

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
@@ -15,7 +16,6 @@ import {
 
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
 
 function DepositInner() {
   const { setView } = useApp()
@@ -72,7 +72,7 @@ function DepositInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={(e) => setBaseTokenAmount(parseFloat(e.target.value))}
+              onChange={(e) => setBaseTokenAmount(e.target.value)}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,

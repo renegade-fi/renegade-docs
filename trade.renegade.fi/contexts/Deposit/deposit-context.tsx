@@ -9,9 +9,9 @@ import { getToken } from "@/lib/utils"
 export interface DepositContextValue {
   base: Token
   baseTicker: string
-  baseTokenAmount: number
+  baseTokenAmount: string
   setBaseTicker: (ticker: string) => void
-  setBaseTokenAmount: (amount: number) => void
+  setBaseTokenAmount: (amount: string) => void
 }
 
 const DepositStateContext = createContext<DepositContextValue | undefined>(
@@ -26,7 +26,7 @@ function DepositProvider({ children }: PropsWithChildren) {
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}`)
   }
-  const [baseTokenAmount, setBaseTokenAmount] = useState(0)
+  const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   return (
     <DepositStateContext.Provider

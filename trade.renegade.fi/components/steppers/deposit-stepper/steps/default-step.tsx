@@ -34,7 +34,7 @@ export function DefaultStep() {
         address
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-      .then(() => setBaseTokenAmount(0))
+      .then(() => setBaseTokenAmount(""))
       .then(() => onClose())
       .catch((e) => {
         if (

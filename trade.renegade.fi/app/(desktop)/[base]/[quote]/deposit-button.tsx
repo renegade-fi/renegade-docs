@@ -4,12 +4,14 @@ import { env } from "@/env.mjs"
 import {
   useErc20Allowance,
   useErc20Approve,
+  useErc20BalanceOf,
   usePrepareErc20Approve,
 } from "@/generated"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
 import { toast } from "sonner"
+import { formatUnits, parseUnits } from "viem"
 import { useAccount, useWaitForTransaction } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
@@ -35,9 +37,18 @@ export default function DepositButton() {
     onOpenSignIn,
     signInText: "Sign in to Deposit",
   })
-  const isDisabled = accountId && (isLocked || !baseTokenAmount)
 
   const { address } = useAccount()
+
+  // Get L1 ERC20 balance
+  const { data: l1Balance } = useErc20BalanceOf({
+    address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+    args: [address ?? "0x"],
+  })
+  // TODO: Adjust decimals
+  console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
+
+  // Get L1 ERC20 Allowance
   const { data: allowance } = useErc20Allowance({
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
     args: [
@@ -48,6 +59,7 @@ export default function DepositButton() {
   })
   console.log(`${baseTicker} allowance: `, allowance)
 
+  // L1 ERC20 Approval
   const { config } = usePrepareErc20Approve({
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
     args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
@@ -63,7 +75,16 @@ export default function DepositButton() {
     })
 
   // TODO: if !approval, error connecting to sequencer
+  const hasRpcConnectionError = !allowance
+  const hasInsufficientBalance = l1Balance
+    ? l1Balance < parseUnits(baseTokenAmount, 18)
+    : false
   const needsApproval = allowance === BigInt(0) && !txIsSuccess
+
+  const isDisabled =
+    (accountId && (isLocked || !baseTokenAmount)) ||
+    hasRpcConnectionError ||
+    hasInsufficientBalance
 
   const handleApprove = async () => {
     if (!accountId || !approve) return
@@ -73,6 +94,8 @@ export default function DepositButton() {
   const handleClick = async () => {
     if (shouldUse) {
       buttonOnClick()
+    } else if (isDisabled) {
+      return
     } else if (needsApproval) {
       handleApprove()
     } else {
@@ -123,6 +146,10 @@ export default function DepositButton() {
           ? buttonText
           : needsApproval
           ? `Approve ${baseTicker}`
+          : hasRpcConnectionError
+          ? "Error connecting to sequencer"
+          : hasInsufficientBalance
+          ? "Insufficient balance"
           : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
