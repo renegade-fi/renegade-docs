@@ -53,7 +53,7 @@ function SingleOrder({
         toast.message(
           `Started to cancel order to ${
             side === "buy" ? "Buy" : "Sell"
-          } {amount} {base}`,
+          } ${amount} ${base}`,
           {
             description: "Check the history tab for the status of the task",
           }
