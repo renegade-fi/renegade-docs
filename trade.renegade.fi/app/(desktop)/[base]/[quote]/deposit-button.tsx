@@ -72,7 +72,6 @@ export default function DepositButton() {
       hash: approveData?.hash,
     })
 
-  // TODO: if !approval, error connecting to sequencer
   const hasRpcConnectionError = !allowance
   const hasInsufficientBalance = l1Balance
     ? l1Balance < parseUnits(baseTokenAmount, 18)
@@ -105,7 +104,12 @@ export default function DepositButton() {
           BigInt(baseTokenAmount),
           address
         )
-        .then(() => toast.info("Deposit task added to queue"))
+        .then(() =>
+          toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
+            description: "Check the history tab for the status of the task",
+          })
+        )
+
         .catch((error) => toast.error(`Error depositing: ${error}`))
     }
   }

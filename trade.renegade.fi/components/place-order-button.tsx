@@ -55,7 +55,16 @@ export function PlaceOrderButton() {
     })
     renegade.task
       .placeOrder(accountId, order)
-      .then(() => toast.info("Order task added to queue"))
+      .then(() =>
+        toast.message(
+          `Started to place order to ${
+            direction === "buy" ? "Buy" : "Sell"
+          } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
+          {
+            description: "Check the history tab for the status of the task",
+          }
+        )
+      )
       .catch(() => toast.error("Error placing order, please try again"))
   }
 

@@ -3,7 +3,6 @@
 import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
@@ -11,6 +10,7 @@ import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import SimpleBar from "simplebar-react"
+import { toast } from "sonner"
 
 import { safeLocalStorageGetItem } from "@/lib/utils"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
@@ -40,7 +40,7 @@ function SingleOrder({
   matched,
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
-  const { accountId, setTask } = useRenegade()
+  const { accountId } = useRenegade()
 
   const base = Token.findTickerByAddress(`0x${baseAddr}`)
   const quote = Token.findTickerByAddress(`0x${quoteAddr}`)
@@ -49,7 +49,17 @@ function SingleOrder({
     if (!accountId) return
     renegade.task
       .cancelOrder(accountId, id)
-      .then(([taskId]) => setTask(taskId, TaskType.CancelOrder))
+      .then(() =>
+        toast.message(
+          `Started to cancel order to ${
+            side === "buy" ? "Buy" : "Sell"
+          } {amount} {base}`,
+          {
+            description: "Check the history tab for the status of the task",
+          }
+        )
+      )
+      .catch((error) => toast.error(`Error cancelling order: ${error}`))
   }
 
   return (
