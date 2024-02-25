@@ -13,6 +13,7 @@ import {
   OrderId,
   TaskId,
 } from "@renegade-fi/renegade-js"
+import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { useAccount } from "wagmi"
 
@@ -161,6 +162,22 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         refreshAccount(accountId)
         fetch(`/api/fund?address=${address}`, {
           method: "GET",
+        }).then((response) => {
+          if (response.status === 208) {
+            return
+          } else if (response.ok) {
+            return response.text().then(() => {
+              toast.success("Your account has been funded with test funds.", {
+                description: "Try depositing some funds to start trading.",
+                duration: 10000,
+              })
+              return
+            })
+          } else {
+            toast.error(
+              "Funding failed: An unexpected error occurred. Please try again."
+            )
+          }
         })
       })
   }

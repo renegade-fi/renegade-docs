@@ -59,7 +59,7 @@ export async function GET(request: Request) {
     })
     if (balance >= ethAmount) {
       return new Response("Already funded", {
-        status: 200,
+        status: 208,
       })
     }
 

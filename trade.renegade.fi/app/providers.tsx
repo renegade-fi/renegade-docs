@@ -230,16 +230,7 @@ export function Providers({
                 <RenegadeProvider>
                   <ExchangeProvider>
                     <AppProvider tokenIcons={icons}>
-                      <Toaster
-                        position="bottom-center"
-                        toastOptions={{
-                          style: {
-                            background: "black",
-                            borderColor: "#262626",
-                            color: "inherit",
-                          },
-                        }}
-                      />
+                      <Toaster position="bottom-center" />
                       {children}
                     </AppProvider>
                   </ExchangeProvider>
