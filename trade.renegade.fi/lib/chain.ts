@@ -1,5 +1,31 @@
 import { defineChain } from "viem"
 
+export const stylusDevnetEc2 = defineChain({
+  id: 412346,
+  name: "Arbitrum Stylus Testnet",
+  network: "Arbitrum Stylus Testnet",
+  testnet: true,
+  nativeCurrency: {
+    decimals: 18,
+    name: "Ether",
+    symbol: "ETH",
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://sequencer.renegade.fi/"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
+    },
+    public: {
+      http: ["https://sequencer.renegade.fi/"],
+      webSocket: [
+        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
+      ],
+    },
+  },
+})
+
 export const stylusDevnetLocal = defineChain({
   id: 412346,
   name: "Stylus Devnet",
@@ -27,32 +53,6 @@ export const stylusDevnetLocal = defineChain({
     default: {
       name: "Explorer",
       url: "https://stylus-testnet-explorer.arbitrum.io/",
-    },
-  },
-})
-
-export const stylusDevnetEc2 = defineChain({
-  id: 412346,
-  name: "Arbitrum Stylus Testnet",
-  network: "Arbitrum Stylus Testnet",
-  testnet: true,
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://sequencer.renegade.fi/"],
-      webSocket: [
-        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
-      ],
-    },
-    public: {
-      http: ["https://sequencer.renegade.fi/"],
-      webSocket: [
-        "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
-      ],
     },
   },
 })
