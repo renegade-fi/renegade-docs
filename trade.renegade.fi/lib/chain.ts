@@ -33,8 +33,8 @@ export const stylusDevnetLocal = defineChain({
 
 export const stylusDevnetEc2 = defineChain({
   id: 412346,
-  name: "Renegade Testnet",
-  network: "Arbitrum Stylus",
+  name: "Arbitrum Stylus Testnet",
+  network: "Arbitrum Stylus Testnet",
   testnet: true,
   nativeCurrency: {
     decimals: 18,
