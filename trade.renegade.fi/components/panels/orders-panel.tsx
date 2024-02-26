@@ -51,8 +51,7 @@ function SingleOrder({
       .cancelOrder(accountId, id)
       .then(() =>
         toast.message(
-          `Started to cancel order to ${
-            side === "buy" ? "Buy" : "Sell"
+          `Started to cancel order to ${side === "buy" ? "Buy" : "Sell"
           } ${amount} ${base}`,
           {
             description: "Check the history tab for the status of the task",
@@ -289,14 +288,25 @@ function OrderBookPanel() {
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
-          const status = formatStatus(orders, counterpartyOrder, savedOrders)
+          // const status = formatStatus(orders, counterpartyOrder, savedOrders)
+          const status =
+            counterpartyOrder.id in orders
+              ? "ACTIVE"
+              : counterpartyOrder.state === "Cancelled" &&
+                !(counterpartyOrder.id in orders) &&
+                savedOrders.some(({ id }) => id === counterpartyOrder.id)
+                ? "MATCHED"
+                : counterpartyOrder.state === "Cancelled"
+                  ? "VERIFIED"
+                  : counterpartyOrder.state.toUpperCase()
+
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
-              ? "red"
-              : "white.60"
+                ? "red"
+                : "white.60"
 
           return (
             <Flex
