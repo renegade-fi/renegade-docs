@@ -72,10 +72,18 @@ export default function DepositButton() {
       hash: approveData?.hash,
     })
 
-  const hasRpcConnectionError = !allowance
+  const hasRpcConnectionError = typeof allowance === "undefined"
+  console.log(
+    "🚀 ~ DepositButton ~ hasRpcConnectionError:",
+    hasRpcConnectionError
+  )
   const hasInsufficientBalance = l1Balance
     ? l1Balance < parseUnits(baseTokenAmount, 18)
     : false
+  console.log(
+    "🚀 ~ DepositButton ~ hasInsufficientBalance:",
+    hasInsufficientBalance
+  )
   const needsApproval = allowance === BigInt(0) && !txIsSuccess
 
   const isDisabled =
@@ -129,9 +137,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-                borderColor: "white.60",
-                color: "white",
-              }
+              borderColor: "white.60",
+              color: "white",
+            }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -147,12 +155,12 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : needsApproval
-          ? `Approve ${baseTicker}`
-          : hasRpcConnectionError
-          ? "Error connecting to sequencer"
-          : hasInsufficientBalance
-          ? "Insufficient balance"
-          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+            ? `Approve ${baseTicker}`
+            : hasRpcConnectionError
+              ? "Error connecting to sequencer"
+              : hasInsufficientBalance
+                ? "Insufficient balance"
+                : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
