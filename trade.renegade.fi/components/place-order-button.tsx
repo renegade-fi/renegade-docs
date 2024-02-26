@@ -12,12 +12,13 @@ import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { findBalanceByTicker } from "@/lib/utils"
+import { findBalanceByTicker, safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 import { renegade } from "@/app/providers"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
@@ -41,6 +42,11 @@ export function PlaceOrderButton() {
     onOpenSignIn,
     signInText: "Sign in to Place Orders",
   })
+  const timestampMap = useMemo(() => {
+    const o = safeLocalStorageGetItem("timestampMap")
+    const parsed = o ? JSON.parse(o) : {}
+    return parsed
+  }, [])
 
   const handlePlaceOrder = async () => {
     if (!accountId) return
@@ -55,10 +61,29 @@ export function PlaceOrderButton() {
     })
     renegade.task
       .placeOrder(accountId, order)
+      .then(() => {
+        const o = safeLocalStorageGetItem(`order-details-${accountId}`)
+        const parseO: LocalOrder[] = o ? JSON.parse(o) : []
+        const newO = [
+          ...parseO,
+          {
+            id,
+            base: order.baseToken.address,
+            quote: order.quoteToken.address,
+            side: direction,
+            amount: baseTokenAmount,
+          },
+        ]
+        safeLocalStorageSetItem(
+          `order-details-${accountId}`,
+          JSON.stringify(newO)
+        )
+        timestampMap[id] = order.timestamp
+        safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
+      })
       .then(() =>
         toast.message(
-          `Started to place order to ${
-            direction === "buy" ? "Buy" : "Sell"
+          `Started to place order to ${direction === "buy" ? "Buy" : "Sell"
           } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
           {
             description: "Check the history tab for the status of the task",
@@ -94,9 +119,8 @@ export function PlaceOrderButton() {
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = `Place Order for ${
-      baseTokenAmount || ""
-    } ${baseTicker}`
+    placeOrderButtonContent = `Place Order for ${baseTokenAmount || ""
+      } ${baseTicker}`
   }
   const isDisabled = accountId && (!baseTokenAmount || hasInsufficientBalance)
 
@@ -115,9 +139,9 @@ export function PlaceOrderButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-                borderColor: "white.60",
-                color: "white",
-              }
+              borderColor: "white.60",
+              color: "white",
+            }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}

@@ -146,7 +146,7 @@ function DepositWithdrawButtons() {
         <Text>Deposit</Text>
         <ArrowDownIcon />
       </Flex>
-      <Flex
+      {/* <Flex
         alignItems="center"
         justifyContent="center"
         flexGrow="1"
@@ -158,7 +158,7 @@ function DepositWithdrawButtons() {
       >
         <Text>Airdrop</Text>
         <ArrowUpIcon />
-      </Flex>
+      </Flex> */}
     </Flex>
   )
 }
@@ -255,8 +255,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
-              : "Connect your Ethereum wallet before signing in."}
+                ? "Sign in to create a Renegade account and view your balances."
+                : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
