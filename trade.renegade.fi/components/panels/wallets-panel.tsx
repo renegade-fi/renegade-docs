@@ -115,7 +115,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { onOpenAirdropModal, setView } = useApp()
+  const { setView } = useApp()
   const { accountId } = useRenegade()
   if (!accountId) return null
   return (
