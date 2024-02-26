@@ -437,26 +437,26 @@ const formatTitle = (orders: Record<OrderId, Order>, order: GlobalOrder) => {
   return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }
 
-const formatStatus = (
-  orders: Record<OrderId, Order>,
-  counterpartyOrder: GlobalOrder,
-  savedOrders: LocalOrder[]
-): string => {
-  if (counterpartyOrder.id in orders) {
-    return "ACTIVE"
-  }
+// const formatStatus = (
+//   orders: Record<OrderId, Order>,
+//   counterpartyOrder: GlobalOrder,
+//   savedOrders: LocalOrder[]
+// ): string => {
+//   if (counterpartyOrder.id in orders) {
+//     return "ACTIVE"
+//   }
 
-  if (
-    counterpartyOrder.state === "Cancelled" &&
-    savedOrders.some(({ id }) => id === counterpartyOrder.id)
-  ) {
-    return "MATCHED"
-  }
+//   if (
+//     counterpartyOrder.state === "Cancelled" &&
+//     savedOrders.some(({ id }) => id === counterpartyOrder.id)
+//   ) {
+//     return "MATCHED"
+//   }
 
-  if (counterpartyOrder.state === "Cancelled") {
-    return "CANCELLED"
-  }
+//   if (counterpartyOrder.state === "Cancelled") {
+//     return "CANCELLED"
+//   }
 
-  // Default case for other states
-  return counterpartyOrder.state.toUpperCase()
-}
+//   // Default case for other states
+//   return counterpartyOrder.state.toUpperCase()
+// }
