@@ -161,27 +161,29 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         attemptedAutoSignin.current = accountId
         setAccountId(accountId)
         refreshAccount(accountId)
+
         const funded = safeLocalStorageGetItem(`funded_${accountId}`)
-        if (funded) {
-          fetch(`/api/fund?address=${address}`, {
-            method: "GET",
-          }).then((response) => {
-            if (response.ok) {
-              return response.text().then(() => {
-                toast.success("Your account has been funded with test funds.", {
-                  description: "Try depositing some funds to start trading.",
-                  duration: 10000,
-                })
-                safeLocalStorageSetItem(`funded_${accountId}`, "true")
-                return
+        if (funded) return
+
+        // If the account has not been funded, fund it
+        fetch(`/api/fund?address=${address}`, {
+          method: "GET",
+        }).then((response) => {
+          if (response.ok) {
+            return response.text().then(() => {
+              toast.success("Your account has been funded with test funds.", {
+                description: "Try depositing some funds to start trading.",
+                duration: 10000,
               })
-            } else {
-              toast.error(
-                "Funding failed: An unexpected error occurred. Please try again."
-              )
-            }
-          })
-        }
+              safeLocalStorageSetItem(`funded_${accountId}`, "true")
+              return
+            })
+          } else {
+            toast.error(
+              "Funding failed: An unexpected error occurred. Please try again."
+            )
+          }
+        })
       })
   }
 
