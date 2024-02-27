@@ -5,8 +5,8 @@ import { Order, OrderId } from "@renegade-fi/renegade-js"
 import { useEffect, useState } from "react"
 
 export const useOrders = () => {
-  const { accountId } = useRenegade()
-  const [orders, setOrders] = useState<Record<OrderId, Order>>({})
+  const { accountId, orders: initialOrders } = useRenegade()
+  const [orders, setOrders] = useState<Record<OrderId, Order>>(initialOrders || {})
 
   useEffect(() => {
     if (!accountId) return
