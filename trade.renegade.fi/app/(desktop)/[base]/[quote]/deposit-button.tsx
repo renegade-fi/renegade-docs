@@ -117,7 +117,6 @@ export default function DepositButton() {
             description: "Check the history tab for the status of the task",
           })
         )
-
         .catch((error) => toast.error(`Error depositing: ${error}`))
     }
   }

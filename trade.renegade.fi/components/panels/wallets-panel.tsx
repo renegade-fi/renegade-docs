@@ -1,11 +1,8 @@
 "use client"
 
-import { useMemo } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState, TaskType } from "@/contexts/Renegade/types"
+import { TaskState } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -16,17 +13,21 @@ import {
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
 import { Token, tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useBalance } from "@/hooks/use-balance"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 
-import "simplebar-react/dist/simplebar.min.css"
-import { useTasks } from "@/hooks/use-tasks"
 import { renegade } from "@/app/providers"
+import { useTasks } from "@/hooks/use-tasks"
+import "simplebar-react/dist/simplebar.min.css"
+import { toast } from "sonner"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -37,7 +38,7 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const router = useRouter()
-  const { setTask, accountId } = useRenegade()
+  const { accountId } = useRenegade()
   const { address } = useAccount()
 
   const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
@@ -106,7 +107,12 @@ function TokenBalance(props: TokenBalanceProps) {
                 BigInt(1),
                 address
               )
-              .then(([taskId]) => setTask(taskId, TaskType.Withdrawal))
+              .then(() =>
+                toast.message(`Started to withdraw 1 ${Token.findTickerByAddress(props.tokenAddr)}`, {
+                  description: "Check the history tab for the status of the task",
+                })
+              )
+              .catch((error) => toast.error(`Error withdrawing: ${error}`))
           }
         }}
       />
