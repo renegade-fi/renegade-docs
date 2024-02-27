@@ -27,6 +27,7 @@ import {
   TaskState,
   TaskType,
 } from "./types"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined
@@ -160,25 +161,27 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         attemptedAutoSignin.current = accountId
         setAccountId(accountId)
         refreshAccount(accountId)
-        fetch(`/api/fund?address=${address}`, {
-          method: "GET",
-        }).then((response) => {
-          if (response.status === 208) {
-            return
-          } else if (response.ok) {
-            return response.text().then(() => {
-              toast.success("Your account has been funded with test funds.", {
-                description: "Try depositing some funds to start trading.",
-                duration: 10000,
+        const funded = safeLocalStorageGetItem(`funded_${accountId}`)
+        if (funded) {
+          fetch(`/api/fund?address=${address}`, {
+            method: "GET",
+          }).then((response) => {
+            if (response.ok) {
+              return response.text().then(() => {
+                toast.success("Your account has been funded with test funds.", {
+                  description: "Try depositing some funds to start trading.",
+                  duration: 10000,
+                })
+                safeLocalStorageSetItem(`funded_${accountId}`, "true")
+                return
               })
-              return
-            })
-          } else {
-            toast.error(
-              "Funding failed: An unexpected error occurred. Please try again."
-            )
-          }
-        })
+            } else {
+              toast.error(
+                "Funding failed: An unexpected error occurred. Please try again."
+              )
+            }
+          })
+        }
       })
   }
 

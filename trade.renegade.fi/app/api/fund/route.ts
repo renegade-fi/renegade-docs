@@ -54,15 +54,6 @@ export async function GET(request: Request) {
     const wethAmount = parseEther("1")
     const usdcAmount = parseUnits("3000", 18)
 
-    const balance = await publicClient.getBalance({
-      address: recipient,
-    })
-    if (balance >= ethAmount) {
-      return new Response("Already funded", {
-        status: 208,
-      })
-    }
-
     const transactionCount = await publicClient.getTransactionCount({
       address: account.address,
     })
