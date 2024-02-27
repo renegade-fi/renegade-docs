@@ -1,6 +1,4 @@
-import { useMemo, useState } from "react"
-import Image from "next/image"
-import { useApp } from "@/contexts/App/app-context"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import {
   Box,
   Grid,
@@ -17,13 +15,18 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
+import Image from "next/image"
+import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
+import { useErc20BalanceOf } from "@/generated"
 import "simplebar-react/dist/simplebar.min.css"
+import { formatUnits } from "viem/utils"
+import { useAccount } from "wagmi"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
@@ -38,8 +41,6 @@ export function TokenSelectModal({
   setToken,
   isTrading,
 }: TokenSelectModalProps) {
-  const balances = useBalance()
-  const { tokenIcons } = useApp()
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const filteredTickers = useMemo(() => {
@@ -98,58 +99,17 @@ export function TokenSelectModal({
             {filteredTickers
               .filter(([base]) => (isTrading ? base !== "USDC" : true))
               .map(([ticker]) => {
-                const addr = Token.findAddressByTicker(ticker)
-                const matchingBalance = Object.values(balances).find(
-                  ({ mint: { address } }) => address === addr
-                )
-                const balanceAmount = matchingBalance
-                  ? matchingBalance.amount.toString()
-                  : "0"
+
                 return (
-                  <Grid
-                    className="wrapper"
+                  <Row
                     key={ticker}
-                    position="relative"
-                    alignItems="center"
-                    gridTemplateColumns="2fr 1fr"
-                    overflow="hidden"
-                    height={ROW_HEIGHT}
-                    _hover={{
-                      backgroundColor: "white.10",
+                    ticker={ticker}
+                    tokenName={TICKER_TO_NAME[ticker]}
+                    onRowClick={() => {
+                      onClose();
+                      setToken(ticker);
                     }}
-                    cursor="pointer"
-                    transition="0.1s"
-                    onClick={() => {
-                      onClose()
-                      setToken(ticker)
-                    }}
-                    paddingX="5"
-                  >
-                    <GridItem>
-                      <HStack alignItems="center" gap="4">
-                        <Image
-                          alt={ticker}
-                          height={32}
-                          src={tokenIcons[ticker]}
-                          width={32}
-                          priority
-                        />
-                        <VStack alignItems="start" gap="0">
-                          <Text>{TICKER_TO_NAME[ticker]}</Text>
-                          <Text color="white.60" fontSize="0.7em">
-                            {ticker}
-                          </Text>
-                        </VStack>
-                      </HStack>
-                    </GridItem>
-                    <GridItem>
-                      <Box key={ticker} textAlign="right">
-                        <Text color="white.50" fontFamily="Favorit Mono">
-                          {balanceAmount}
-                        </Text>
-                      </Box>
-                    </GridItem>
-                  </Grid>
+                  />
                 )
               })}
           </SimpleBar>
@@ -158,3 +118,86 @@ export function TokenSelectModal({
     </Modal>
   )
 }
+
+interface RowProps {
+  ticker: string;
+  tokenName: string;
+  onRowClick: () => void;
+}
+
+
+const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
+  const { address } = useAccount()
+  const { tokenIcons, view } = useApp()
+  const balances = useBalance()
+  const { data: erc20Balance } = useErc20BalanceOf({
+    address: Token.findAddressByTicker(ticker) as `0x${string}`,
+    args: [address ?? "0x"], // Ensure `address` is defined in your context or passed as a prop
+  })
+
+
+  const balanceAmount = useMemo(() => {
+    let result = "0";
+
+    const addr = Token.findAddressByTicker(ticker)
+    if (view === ViewEnum.TRADING) {
+      const matchingBalance = Object.values(balances).find(
+        ({ mint: { address } }) => `0x${address}` === addr
+      );
+      result = matchingBalance ? matchingBalance.amount.toString() : "0";
+    } else if (view === ViewEnum.DEPOSIT) {
+      result = erc20Balance ? formatUnits(erc20Balance, 18) : "0"; // Adjust the decimals as needed
+    }
+
+    // Check if result has decimals and truncate to 2 decimals without rounding
+    if (result.includes('.')) {
+      const [integerPart, decimalPart] = result.split('.');
+      result = `${integerPart}.${decimalPart.substring(0, 2)}`;
+    }
+
+    return result;
+  }, [balances, erc20Balance, ticker, view]);
+  return (
+    <Grid
+      className="wrapper"
+      key={ticker}
+      position="relative"
+      alignItems="center"
+      gridTemplateColumns="2fr 1fr"
+      overflow="hidden"
+      height={ROW_HEIGHT}
+      _hover={{
+        backgroundColor: "white.10",
+      }}
+      cursor="pointer"
+      transition="0.1s"
+      onClick={onRowClick}
+      paddingX="5"
+    >
+      <GridItem>
+        <HStack alignItems="center" gap="4">
+          <Image
+            alt={ticker}
+            height={32}
+            src={tokenIcons[ticker]}
+            width={32}
+            priority
+          />
+          <VStack alignItems="start" gap="0">
+            <Text>{tokenName}</Text>
+            <Text color="white.60" fontSize="0.7em">
+              {ticker}
+            </Text>
+          </VStack>
+        </HStack>
+      </GridItem>
+      <GridItem>
+        <Box textAlign="right">
+          <Text color="white.50" fontFamily="Favorit Mono">
+            {balanceAmount}
+          </Text>
+        </Box>
+      </GridItem>
+    </Grid>
+  );
+};
