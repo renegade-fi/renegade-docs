@@ -1,5 +1,3 @@
-import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
@@ -11,8 +9,10 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi"
 
-import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { client } from "@/app/providers"
+import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
 export function DefaultStep() {
   const { setIsOnboarding, setIsSigningIn } = useApp()
@@ -20,40 +20,38 @@ export function DefaultStep() {
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const { accountId, setAccount } = useRenegade()
-  const { isLoading, signMessage } = useSignMessageWagmi({
-    message: "Unlock your Renegade account.\nTestnet v0",
-    async onSuccess(data, variables) {
-      setIsSigningIn(true)
-      // If Cloudflare is down, Smart Contract accounts cannot be verified
-      // EOA accounts can be verified using verifyMessage util
-      const valid = await client
-        .verifyMessage({
-          address: address ?? `0x`,
-          message: variables.message,
-          signature: data,
-        })
-        .then((res) => {
-          if (!res) {
-            return verifyMessage({
-              address: address ?? `0x`,
-              message: variables.message,
-              signature: data,
-            })
-          }
-          return res
-        })
-      if (!valid) {
-        throw new Error("Invalid signature")
-      }
-      setAccount(accountId, new Keychain({ seed: data })).then(() =>
-        setSeed(data)
-      )
-      setIsOnboarding(false)
-      onClose()
-    },
-    onError() {
-      setIsSigningIn(false)
-    },
+  const { signMessage, status } = useSignMessageWagmi({
+    mutation: {
+      async onSuccess(data, variables) {
+        setIsSigningIn(true)
+        // If Cloudflare is down, Smart Contract accounts cannot be verified
+        // EOA accounts can be verified using verifyMessage util
+        const valid = await client
+          .verifyMessage({
+            address: address ?? `0x`,
+            message: variables.message,
+            signature: data,
+          })
+          .then((res) => {
+            if (!res) {
+              return verifyMessage({
+                address: address ?? `0x`,
+                message: variables.message,
+                signature: data,
+              })
+            }
+            return res
+          })
+        if (!valid) {
+          throw new Error("Invalid signature")
+        }
+        setAccount(accountId, new Keychain({ seed: data })).then(() =>
+          setSeed(data)
+        )
+        setIsOnboarding(false)
+        onClose()
+      },
+    }
   })
   const { disconnect } = useDisconnectWagmi()
 
@@ -68,22 +66,24 @@ export function DefaultStep() {
           <div>
             <Button
               width="100%"
-              height={isLoading ? "56px" : "40px"}
+              height={status === 'pending' ? "56px" : "40px"}
               color="white.90"
               fontWeight="800"
               transition="0.2s"
-              isLoading={isLoading}
+              isLoading={status === 'pending'}
               loadingText="Signing in to Renegade"
               onClick={() => {
-                signMessage()
+                signMessage({
+                  message: "Unlock your Renegade account.\nTestnet v0",
+                })
               }}
             >
               <Text>Sign in to Renegade</Text>
             </Button>
             <Flex
               justifyContent="center"
-              height={isLoading ? "0px" : "auto"}
-              opacity={isLoading ? 0 : 1}
+              height={status === 'pending' ? "0px" : "auto"}
+              opacity={status === 'pending' ? 0 : 1}
               transition="0.2s"
             >
               <Button
