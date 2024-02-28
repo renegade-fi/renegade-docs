@@ -1,10 +1,5 @@
 "use client"
 
-import { PropsWithChildren, useEffect } from "react"
-import { AppProvider } from "@/contexts/App/app-context"
-import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
-import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
-import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -16,13 +11,25 @@ import {
   type ThemeConfig,
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
+import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
-import { WagmiConfig, createConfig } from "wagmi"
+import { createConfig, WagmiProvider } from "wagmi"
 
+import { AppProvider } from "@/contexts/App/app-context"
+import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
+import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
+import { env } from "@/env.mjs"
 import { stylusDevnetEc2 } from "@/lib/chain"
+
+/*
+ * ┌────────────────────────┐
+ * │    Chakra Config       |
+ * └────────────────────────┘
+ */
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(menuAnatomy.keys)
@@ -170,18 +177,28 @@ const components = {
 }
 const theme = extendTheme({ config, styles, colors, components })
 
+/*
+ * ┌────────────────────────┐
+ * │    Wallet Config       |
+ * └────────────────────────┘
+ */
 const wagmiConfig = createConfig(
   getDefaultConfig({
-    alchemyId: "",
-    walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
-    appName: "Renegade | On-Chain Dark Pool",
     appDescription:
       "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
-    appUrl: "https://renegade.fi",
+    appName: "Renegade | On-Chain Dark Pool",
     appIcon: "https://www.renegade.fi/glyph_light.svg",
+    appUrl: "https://renegade.fi",
     chains: [stylusDevnetEc2],
+    ssr: true,
+    transports: {
+      [stylusDevnetEc2.id]: http()
+    },
+    walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
 )
+
+const queryClient = new QueryClient()
 
 export const client = createPublicClient({
   chain: stylusDevnetEc2,
@@ -215,28 +232,33 @@ export function Providers({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <WagmiConfig config={wagmiConfig}>
-              <ConnectKitProvider
-                mode="dark"
-                customTheme={{
-                  "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
-                  "--ck-overlay-backdrop-filter": "blur(8px)",
-                  "--ck-font-family": "Favorit Extended",
-                  "--ck-border-radius": "10px",
-                  "--ck-body-background": "#1e1e1e",
-                  "--ck-spinner-color": "#ffffff",
-                }}
-              >
-                <RenegadeProvider>
-                  <ExchangeProvider>
-                    <AppProvider tokenIcons={icons}>
-                      <Toaster position="bottom-center" />
-                      {children}
-                    </AppProvider>
-                  </ExchangeProvider>
-                </RenegadeProvider>
-              </ConnectKitProvider>
-            </WagmiConfig>
+            <WagmiProvider config={wagmiConfig}>
+              <QueryClientProvider client={queryClient}>
+
+
+
+                <ConnectKitProvider
+                  mode="dark"
+                  customTheme={{
+                    "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+                    "--ck-overlay-backdrop-filter": "blur(8px)",
+                    "--ck-font-family": "Favorit Extended",
+                    "--ck-border-radius": "10px",
+                    "--ck-body-background": "#1e1e1e",
+                    "--ck-spinner-color": "#ffffff",
+                  }}
+                >
+                  <RenegadeProvider>
+                    <ExchangeProvider>
+                      <AppProvider tokenIcons={icons}>
+                        <Toaster position="bottom-center" />
+                        {children}
+                      </AppProvider>
+                    </ExchangeProvider>
+                  </RenegadeProvider>
+                </ConnectKitProvider>
+              </QueryClientProvider>
+            </WagmiProvider>
           </ChakraProvider>
         </CacheProvider>
       </IntercomProvider>

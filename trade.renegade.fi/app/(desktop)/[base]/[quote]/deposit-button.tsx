@@ -1,22 +1,23 @@
+import { ArrowForwardIcon } from "@chakra-ui/icons"
+import { Button, useDisclosure } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { toast } from "sonner"
+import { formatUnits, parseUnits } from "viem"
+import { useAccount, useBlockNumber } from 'wagmi'
+
+import { renegade } from "@/app/providers"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import {
-  useErc20Allowance,
-  useErc20Approve,
-  useErc20BalanceOf,
-  usePrepareErc20Approve,
+  useReadErc20Allowance,
+  useReadErc20BalanceOf,
+  useWriteErc20Approve
 } from "@/generated"
-import { ArrowForwardIcon } from "@chakra-ui/icons"
-import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { toast } from "sonner"
-import { formatUnits, parseUnits } from "viem"
-import { useAccount, useWaitForTransaction } from "wagmi"
-
 import { useButton } from "@/hooks/use-button"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { renegade } from "@/app/providers"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -39,7 +40,7 @@ export default function DepositButton() {
   const { address } = useAccount()
 
   // Get L1 ERC20 balance
-  const { data: l1Balance } = useErc20BalanceOf({
+  const { data: l1Balance, queryKey: l1BalanceQueryKey } = useReadErc20BalanceOf({
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
     args: [address ?? "0x"],
   })
@@ -47,30 +48,22 @@ export default function DepositButton() {
   console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
 
   // Get L1 ERC20 Allowance
-  const { data: allowance } = useErc20Allowance({
+  const { data: allowance, queryKey: allowanceQueryKey } = useReadErc20Allowance({
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-    args: [
-      address ? address : "0x",
-      env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
-    ],
-    watch: true,
+    args: [address ?? "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`],
   })
   console.log(`${baseTicker} allowance: `, allowance)
 
+  const queryClient = useQueryClient()
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: l1BalanceQueryKey })
+    queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+  }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient])
+
+
   // L1 ERC20 Approval
-  const { config } = usePrepareErc20Approve({
-    address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-    args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
-  })
-  const {
-    write: approve,
-    isLoading: approveIsLoading,
-    data: approveData,
-  } = useErc20Approve(config)
-  const { isLoading: txIsLoading, isSuccess: txIsSuccess } =
-    useWaitForTransaction({
-      hash: approveData?.hash,
-    })
+  const { writeContract: approve, status: approveStatus } = useWriteErc20Approve()
 
   const hasRpcConnectionError = typeof allowance === "undefined"
   console.log(
@@ -84,7 +77,7 @@ export default function DepositButton() {
     "🚀 ~ DepositButton ~ hasInsufficientBalance:",
     hasInsufficientBalance
   )
-  const needsApproval = allowance === BigInt(0) && !txIsSuccess
+  const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
 
   const isDisabled =
     (accountId && !baseTokenAmount) ||
@@ -92,8 +85,11 @@ export default function DepositButton() {
     hasInsufficientBalance
 
   const handleApprove = async () => {
-    if (!accountId || !approve) return
-    approve()
+    if (!accountId) return
+    approve({
+      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
+    })
   }
 
   const handleClick = async () => {
@@ -146,7 +142,7 @@ export default function DepositButton() {
         transition="0.15s"
         backgroundColor="transparent"
         isDisabled={isDisabled}
-        isLoading={approveIsLoading || txIsLoading}
+        isLoading={approveStatus === "pending"}
         loadingText="Approving"
         onClick={handleClick}
         rightIcon={<ArrowForwardIcon />}
