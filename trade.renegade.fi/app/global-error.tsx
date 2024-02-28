@@ -23,7 +23,7 @@ export default function GlobalError({ }: {
         handlePing();
     }, []);
 
-    const message = connected ? "Thanks for being patient while we fix this." : "Refresh the page to try again.";
+    const message = connected ? "Refresh the page to try again" : "Thanks for being patient while we fix this.";
 
     return (
         <html>
