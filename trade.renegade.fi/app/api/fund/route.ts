@@ -51,8 +51,8 @@ export async function GET(request: Request) {
     })
 
     const ethAmount = parseEther("0.1")
-    const wethAmount = parseEther("1")
-    const usdcAmount = parseUnits("3000", 18)
+    const wethAmount = parseEther("10")
+    const usdcAmount = parseUnits("10000", 18)
 
     const transactionCount = await publicClient.getTransactionCount({
       address: account.address,
