@@ -18,15 +18,15 @@ import { Token } from "@renegade-fi/renegade-js"
 import Image from "next/image"
 import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
+import { formatUnits } from "viem/utils"
+import { useAccount } from "wagmi"
 
+import { useReadErc20BalanceOf } from "@/generated"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
 import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
-import { useErc20BalanceOf } from "@/generated"
 import "simplebar-react/dist/simplebar.min.css"
-import { formatUnits } from "viem/utils"
-import { useAccount } from "wagmi"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
@@ -130,9 +130,9 @@ const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
   const { address } = useAccount()
   const { tokenIcons, view } = useApp()
   const balances = useBalance()
-  const { data: erc20Balance } = useErc20BalanceOf({
+  const { data: erc20Balance } = useReadErc20BalanceOf({
     address: Token.findAddressByTicker(ticker) as `0x${string}`,
-    args: [address ?? "0x"], // Ensure `address` is defined in your context or passed as a prop
+    args: [address ?? "0x"],
   })
 
 
