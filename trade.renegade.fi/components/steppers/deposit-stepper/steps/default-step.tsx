@@ -19,7 +19,7 @@ import { renegade } from "@/app/providers"
 import { ErrorType, useStepper } from "../deposit-stepper"
 
 export function DefaultStep() {
-  const { baseTicker, baseTokenAmount, setBaseTokenAmount } = useDeposit()
+  const { baseTicker, baseTokenAmount } = useDeposit()
   const { setTask, accountId } = useRenegade()
   const { onClose, setError } = useStepper()
   const { address } = useAccount()
@@ -34,7 +34,6 @@ export function DefaultStep() {
         address
       )
       .then(([taskId]) => setTask(taskId, TaskType.Deposit))
-      .then(() => setBaseTokenAmount(""))
       .then(() => onClose())
       .catch((e) => {
         if (

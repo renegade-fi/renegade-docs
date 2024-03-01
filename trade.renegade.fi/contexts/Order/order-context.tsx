@@ -26,11 +26,6 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 function OrderProvider({ children }: PropsWithChildren) {
   const params = useParams()
   const router = useRouter()
-  // const [direction, setDirection] = useState<Direction>(
-  //   safeLocalStorageGetItem("direction") === "buy"
-  //     ? Direction.BUY
-  //     : Direction.SELL
-  // )
   const [direction, setDirection] = useLocalStorage("direction", Direction.BUY)
   const handleSetDirection = (direction: Direction) => {
     setDirection(direction)
@@ -48,7 +43,7 @@ function OrderProvider({ children }: PropsWithChildren) {
   }
   const quoteToken = getToken({ input: quote })
   const quoteTicker = Token.findTickerByAddress(`0x${quoteToken.address}`)
-  const [baseTokenAmount, setBaseTokenAmount] = useState(0)
+  const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   const [orderBook, setOrderBook] = useState<
     Record<OrderId, CounterpartyOrder>
@@ -118,12 +113,10 @@ function OrderProvider({ children }: PropsWithChildren) {
           if (!toast.isActive(toastId)) {
             toast({
               id: toastId,
-              title: `MPC ${
-                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
-              }`,
-              description: `A handshake with a counterparty has ${
-                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
-              }.`,
+              title: `MPC ${mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+                }`,
+              description: `A handshake with a counterparty has ${mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+                }.`,
               status: "info",
               duration: 5000,
               isClosable: true,
@@ -151,10 +144,12 @@ function OrderProvider({ children }: PropsWithChildren) {
     }
   }, [orderBook, toast])
 
-  // const handleSetDirection = useCallback((direction: Direction) => {
-  //   setDirection(direction)
-  //   safeLocalStorageSetItem("direction", direction)
-  // }, [])
+  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || (!isNaN(parseFloat(value)) && isFinite(parseFloat(value)) && parseFloat(value) >= 0)) {
+      setBaseTokenAmount(value);
+    }
+  };
 
   return (
     <OrderStateContext.Provider
@@ -166,7 +161,7 @@ function OrderProvider({ children }: PropsWithChildren) {
         quote: quoteToken,
         quoteTicker,
         setBaseToken: handleSetBaseToken,
-        setBaseTokenAmount,
+        setBaseTokenAmount: handleSetBaseTokenAmount,
         setDirection: handleSetDirection,
         setQuoteToken: handleSetQuoteToken,
       }}

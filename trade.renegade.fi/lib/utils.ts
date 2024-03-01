@@ -1,5 +1,5 @@
 import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
-import { isAddress } from "viem"
+import { formatUnits, isAddress, parseUnits } from "viem"
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
@@ -27,6 +27,24 @@ export async function getTokenBannerData(renegade: Renegade) {
   ).then((res) => res.map((e) => e.Median))
 }
 
+export function formatAmount(amount: bigint, token: Token) {
+  const decimals = token.decimals
+  if (!decimals) throw new Error(`Decimals not found for 0x${token.address}`)
+  let formatted = formatUnits(amount, decimals)
+  if (formatted.includes('.')) {
+    const [integerPart, decimalPart] = formatted.split('.')
+    formatted = `${integerPart}.${decimalPart.substring(0, 2)}`
+  }
+  return formatted
+}
+
+export function parseAmount(amount: string, token: Token) {
+  const decimals = token.decimals
+  if (!decimals) throw new Error(`Decimals not found for 0x${token.address}`)
+  // TODO: Should try to fetch decimals from on chain
+  return parseUnits(amount, decimals)
+}
+
 export function findBalanceByTicker(
   balances: Record<BalanceId, Balance>,
   ticker: string
@@ -35,7 +53,6 @@ export function findBalanceByTicker(
   const foundBalance =
     Object.entries(balances)
       .map(([, balance]) => balance)
-      // TODO: 0x prefix issue
       .find((balance) => `0x${balance.mint.address}` === addressToFind) ??
     new Balance({
       mint: getToken({ ticker }),

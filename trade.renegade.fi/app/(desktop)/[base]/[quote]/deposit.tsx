@@ -72,7 +72,7 @@ function DepositInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={(e) => setBaseTokenAmount(e.target.value)}
+              onChange={setBaseTokenAmount}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,
@@ -80,7 +80,7 @@ function DepositInner() {
               }
               placeholder="0.00"
               type="number"
-              value={baseTokenAmount || ""}
+              value={baseTokenAmount}
             />
             <HStack userSelect="none" onClick={onOpenTokenMenu}>
               <Text variant="trading-body-button">{baseTicker}</Text>

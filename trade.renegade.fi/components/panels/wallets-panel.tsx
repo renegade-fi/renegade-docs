@@ -28,6 +28,7 @@ import { renegade } from "@/app/providers"
 import { useTasks } from "@/hooks/use-tasks"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
+import { formatAmount } from "@/lib/utils"
 
 interface TokenBalanceProps {
   tokenAddr: string
@@ -41,8 +42,9 @@ function TokenBalance(props: TokenBalanceProps) {
   const { accountId } = useRenegade()
   const { address } = useAccount()
 
+  const formattedAmount = formatAmount(props.amount, new Token({ address: props.tokenAddr }))
   const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
-  const usdPrice = useUSDPrice(ticker, Number(props.amount))
+  const usdPrice = useUSDPrice(ticker, parseFloat(formatAmount(props.amount, new Token({ address: props.tokenAddr }))))
 
   const isZero = props.amount === BigInt(0)
 
@@ -73,7 +75,7 @@ function TokenBalance(props: TokenBalanceProps) {
           lineHeight="1"
           opacity={isZero ? "40%" : undefined}
         >
-          {props.amount.toString()} {ticker}
+          {formattedAmount} {ticker}
         </Text>
         <Box
           color="white.40"

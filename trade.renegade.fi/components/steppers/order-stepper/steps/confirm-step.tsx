@@ -41,7 +41,6 @@ export function ConfirmStep() {
     direction,
     quote,
     quoteTicker,
-    setBaseTokenAmount,
   } = useOrder()
   const { setTask, accountId } = useRenegade()
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
@@ -93,7 +92,6 @@ export function ConfirmStep() {
         timestampMap[id] = order.timestamp
         safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
       })
-      .then(() => setBaseTokenAmount(0))
       .then(() => onClose())
       .catch((e) => {
         if (
@@ -117,7 +115,7 @@ export function ConfirmStep() {
       direction === "buy"
         ? currentPriceReport.midpointPrice * 1.2
         : currentPriceReport.midpointPrice * 0.8
-    return unit * baseTokenAmount
+    return unit * parseFloat(baseTokenAmount)
   }, [baseTokenAmount, currentPriceReport, direction])
 
   return (
@@ -195,9 +193,8 @@ export function ConfirmStep() {
           }}
         >
           <HStack spacing="4px">
-            <Text>{`${
-              direction === "buy" ? "Buy" : "Sell"
-            } ${baseTicker}`}</Text>
+            <Text>{`${direction === "buy" ? "Buy" : "Sell"
+              } ${baseTicker}`}</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>

@@ -17,6 +17,7 @@ import { useAccount, useWaitForTransaction } from "wagmi"
 import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { renegade } from "@/app/providers"
+import { parseAmount } from "@/lib/utils"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -43,7 +44,6 @@ export default function DepositButton() {
     address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
     args: [address ?? "0x"],
   })
-  // TODO: Adjust decimals
   console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
 
   // Get L1 ERC20 Allowance
@@ -74,14 +74,14 @@ export default function DepositButton() {
 
   const hasRpcConnectionError = typeof allowance === "undefined"
   console.log(
-    "🚀 ~ DepositButton ~ hasRpcConnectionError:",
+    "RPC connection error: ",
     hasRpcConnectionError
   )
   const hasInsufficientBalance = l1Balance
     ? l1Balance < parseUnits(baseTokenAmount, 18)
     : false
   console.log(
-    "🚀 ~ DepositButton ~ hasInsufficientBalance:",
+    "Has insufficient balance: ",
     hasInsufficientBalance
   )
   const needsApproval = allowance === BigInt(0) && !txIsSuccess
@@ -105,11 +105,13 @@ export default function DepositButton() {
       handleApprove()
     } else {
       if (!accountId || !address) return
+      const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
+      const amount = parseAmount(baseTokenAmount, token)
       await renegade.task
         .deposit(
           accountId,
-          new Token({ address: Token.findAddressByTicker(baseTicker) }),
-          BigInt(baseTokenAmount),
+          token,
+          amount,
           address
         )
         .then(() =>
