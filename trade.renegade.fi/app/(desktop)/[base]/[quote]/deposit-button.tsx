@@ -1,23 +1,27 @@
-import { ArrowForwardIcon } from "@chakra-ui/icons"
-import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { toast } from "sonner"
-import { formatUnits, parseUnits } from "viem"
-import { useAccount, useBlockNumber } from 'wagmi'
-
-import { renegade } from "@/app/providers"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import {
   useReadErc20Allowance,
   useReadErc20BalanceOf,
-  useWriteErc20Approve
+  useWriteErc20Approve,
 } from "@/generated"
+import { ArrowForwardIcon } from "@chakra-ui/icons"
+import { Button, useDisclosure } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
+import { useQueryClient } from "@tanstack/react-query"
+import { useEffect } from "react"
+import { toast } from "sonner"
+import {
+  parseUnits
+} from "viem"
+import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
+
+import { renegade } from "@/app/providers"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useButton } from "@/hooks/use-button"
+import { stylusDevnetEc2 } from "@/lib/chain"
+import { signPermit2 } from "@/lib/permit2"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -40,19 +44,24 @@ export default function DepositButton() {
   const { address } = useAccount()
 
   // Get L1 ERC20 balance
-  const { data: l1Balance, queryKey: l1BalanceQueryKey } = useReadErc20BalanceOf({
-    address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-    args: [address ?? "0x"],
-  })
+  const { data: l1Balance, queryKey: l1BalanceQueryKey } =
+    useReadErc20BalanceOf({
+      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      args: [address ?? "0x"],
+    })
   // TODO: Adjust decimals
-  console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
+  // console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
 
   // Get L1 ERC20 Allowance
-  const { data: allowance, queryKey: allowanceQueryKey } = useReadErc20Allowance({
-    address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-    args: [address ?? "0x", env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`],
-  })
-  console.log(`${baseTicker} allowance: `, allowance)
+  const { data: allowance, queryKey: allowanceQueryKey } =
+    useReadErc20Allowance({
+      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      args: [
+        address ?? "0x",
+        env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
+      ],
+    })
+  // console.log(`${baseTicker} allowance on Permit2 contract: `, allowance)
 
   const queryClient = useQueryClient()
   const { data: blockNumber } = useBlockNumber({ watch: true })
@@ -61,22 +70,16 @@ export default function DepositButton() {
     queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
   }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient])
 
-
   // L1 ERC20 Approval
-  const { writeContract: approve, status: approveStatus } = useWriteErc20Approve()
+  const { writeContract: approve, status: approveStatus } =
+    useWriteErc20Approve()
+
+  const { data: walletClient } = useWalletClient()
 
   const hasRpcConnectionError = typeof allowance === "undefined"
-  console.log(
-    "🚀 ~ DepositButton ~ hasRpcConnectionError:",
-    hasRpcConnectionError
-  )
   const hasInsufficientBalance = l1Balance
     ? l1Balance < parseUnits(baseTokenAmount, 18)
     : false
-  console.log(
-    "🚀 ~ DepositButton ~ hasInsufficientBalance:",
-    hasInsufficientBalance
-  )
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
 
   const isDisabled =
@@ -88,9 +91,44 @@ export default function DepositButton() {
     if (!accountId) return
     approve({
       address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
-      args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`, MAX_INT],
+      args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
     })
   }
+
+  const handleSignAndDeposit = async () => {
+    if (!accountId || !walletClient) return
+    const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
+    const amount = parseUnits(baseTokenAmount, 18)
+
+    // Generate Permit2 Signature
+    const { signature, nonce, deadline } = await signPermit2({
+      amount,
+      chainId: stylusDevnetEc2.id,
+      spender: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
+      permit2Address: env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
+      token,
+      walletClient,
+    })
+
+    // Deposit
+    await renegade.task
+      .deposit(
+        accountId,
+        token,
+        amount,
+        walletClient.account.address,
+        nonce,
+        deadline,
+        signature
+      )
+      .then(() =>
+        toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
+          description: "Check the history tab for the status of the task",
+        })
+      )
+      .catch((error) => toast.error(`Error depositing: ${error}`))
+  }
+
 
   const handleClick = async () => {
     if (shouldUse) {
@@ -100,21 +138,9 @@ export default function DepositButton() {
     } else if (needsApproval) {
       handleApprove()
     } else {
-      if (!accountId || !address) return
-      await renegade.task
-        .deposit(
-          accountId,
-          new Token({ address: Token.findAddressByTicker(baseTicker) }),
-          BigInt(baseTokenAmount),
-          address
-        )
-        .then(() =>
-          toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
-            description: "Check the history tab for the status of the task",
-          })
-        )
-        .catch((error) => toast.error(`Error depositing: ${error}`))
+      handleSignAndDeposit()
     }
+
   }
 
   return (
