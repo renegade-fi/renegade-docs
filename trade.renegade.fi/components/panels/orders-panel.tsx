@@ -1,6 +1,5 @@
 "use client"
 
-import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -9,15 +8,16 @@ import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { toast } from "sonner"
 
-import { safeLocalStorageGetItem } from "@/lib/utils"
-import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
+import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
+import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
+import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -200,7 +200,7 @@ function OrdersPanel(props: OrdersPanelProps) {
           ({ amount, baseToken, orderId, quoteToken, side }) => (
             <Box key={orderId} width="100%">
               <SingleOrder
-                amount={amount.toString()}
+                amount={formatAmount(amount, baseToken)}
                 baseAddr={baseToken.address}
                 id={orderId}
                 quoteAddr={quoteToken.address}
@@ -288,7 +288,6 @@ function OrderBookPanel() {
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
-          // const status = formatStatus(orders, counterpartyOrder, savedOrders)
           const status =
             counterpartyOrder.id in orders
               ? "ACTIVE"
@@ -432,7 +431,11 @@ const formatTitle = (orders: Record<OrderId, Order>, order: GlobalOrder) => {
       `0x${orders[order.id].quoteToken.address}`
     )
     const side = orders[order.id].side === "buy" ? "Buy" : "Sell"
-    return `${side} ${orders[order.id].amount} ${baseTicker} for ${quoteTicker}`
+    const formattedAmount = formatAmount(
+      orders[order.id].amount,
+      new Token({ address: orders[order.id].baseToken.address })
+    )
+    return `${side} ${formattedAmount} ${baseTicker} for ${quoteTicker}`
   }
   return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }

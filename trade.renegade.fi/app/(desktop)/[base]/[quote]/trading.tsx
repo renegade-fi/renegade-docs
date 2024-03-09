@@ -1,16 +1,15 @@
 "use client"
 
-import React, { createRef, useEffect, useRef, useState } from "react"
 import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
+import React, { createRef, useEffect, useRef, useState } from "react"
 
-import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
-import { toast } from "sonner"
+import { useUSDPrice } from "@/hooks/use-usd-price"
 
 interface SelectableProps {
   text: string
@@ -128,22 +127,12 @@ function TradingInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={(e) => setBaseTokenAmount(parseFloat(e.target.value))}
+              onChange={setBaseTokenAmount}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,
                 })
               }
-              onKeyPress={(e) => {
-                if (e.key === ".") {
-                  toast.error("Please try again using an integer value", {
-                    description: "Decimal values are not allowed.",
-                  });
-                  e.preventDefault();
-                } else if (e.key === "-") {
-                  e.preventDefault();
-                }
-              }}
               placeholder="0.00"
               type="number"
               value={baseTokenAmount || ""}
