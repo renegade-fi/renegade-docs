@@ -40,6 +40,8 @@ export function findBalanceByTicker(
     new Balance({
       mint: getToken({ ticker }),
       amount: BigInt(0),
+      relayer_fee_balance: BigInt(0),
+      protocol_fee_balance: BigInt(0),
     })
   return foundBalance
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
@@ -8,17 +7,18 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
+import { useMemo } from "react"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { findBalanceByTicker, safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
-import { useBalance } from "@/hooks/use-balance"
-import { useButton } from "@/hooks/use-button"
+import { renegade } from "@/app/providers"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
-import { renegade } from "@/app/providers"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { useBalance } from "@/hooks/use-balance"
+import { useButton } from "@/hooks/use-button"
+import { findBalanceByTicker, formatAmount, parseAmount, safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
@@ -42,22 +42,18 @@ export function PlaceOrderButton() {
     onOpenSignIn,
     signInText: "Sign in to Place Orders",
   })
-  const timestampMap = useMemo(() => {
-    const o = safeLocalStorageGetItem("timestampMap")
-    const parsed = o ? JSON.parse(o) : {}
-    return parsed
-  }, [])
 
   const handlePlaceOrder = async () => {
     if (!accountId) return
     const id = uuidv4() as OrderId
+    const parsedAmount = parseAmount(baseTokenAmount, base)
     const order = new Order({
       id,
       baseToken: base,
       quoteToken: quote,
       side: direction,
       type: "midpoint",
-      amount: BigInt(baseTokenAmount),
+      amount: parsedAmount,
     })
     renegade.task
       .placeOrder(accountId, order)
@@ -78,8 +74,6 @@ export function PlaceOrderButton() {
           `order-details-${accountId}`,
           JSON.stringify(newO)
         )
-        timestampMap[id] = order.timestamp
-        safeLocalStorageSetItem("timestampMap", JSON.stringify(timestampMap))
       })
       .then(() =>
         toast.message(
@@ -94,21 +88,15 @@ export function PlaceOrderButton() {
   }
 
   const hasInsufficientBalance = useMemo(() => {
-    const baseBalance = findBalanceByTicker(balances, baseTicker)
-    const quoteBalance = findBalanceByTicker(balances, quoteTicker)
+    const baseBalance = findBalanceByTicker(balances, baseTicker).amount
+    const quoteBalance = findBalanceByTicker(balances, quoteTicker).amount
+    const price = priceReport?.midpointPrice ? priceReport.midpointPrice * parseFloat(baseTokenAmount) : 0
     if (direction === Direction.SELL) {
-      return baseBalance.amount < baseTokenAmount
+      return baseBalance < parseAmount(baseTokenAmount, base)
     }
-    if (!priceReport?.midpointPrice) return false
-    return quoteBalance.amount < priceReport?.midpointPrice
-  }, [
-    balances,
-    baseTicker,
-    baseTokenAmount,
-    direction,
-    priceReport?.midpointPrice,
-    quoteTicker,
-  ])
+    // TODO: Check this
+    return parseFloat(formatAmount(quoteBalance, quote)) < price
+  }, [balances, base, baseTicker, baseTokenAmount, direction, priceReport?.midpointPrice, quote, quoteTicker])
 
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: string
@@ -156,9 +144,7 @@ export function PlaceOrderButton() {
           } else if (isDisabled) {
             return
           } else {
-            // TODO: Make sure task gets added to history section
             handlePlaceOrder()
-            // onOpenPlaceOrder()
           }
         }}
         rightIcon={<ArrowForwardIcon />}
