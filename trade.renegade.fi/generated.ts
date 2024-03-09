@@ -117,6 +117,6 @@ export const useWatchErc20Event = /*#__PURE__*/ createUseWatchContractEvent({
  */
 export const useWatchErc20ApprovalEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
-  abi: erc20Abi,
-  eventName: 'Approval',
-})
+    abi: erc20Abi,
+    eventName: 'Approval',
+  })
