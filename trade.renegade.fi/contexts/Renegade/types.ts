@@ -2,8 +2,6 @@ import {
   AccountId,
   Balance,
   BalanceId,
-  Fee,
-  FeeId,
   Keychain,
   Order,
   OrderId,
@@ -32,7 +30,6 @@ export interface RenegadeContextType {
   accountId: AccountId | undefined
   balances: Record<BalanceId, Balance>
   counterparties: Record<PeerId, Counterparty>
-  fees: Record<FeeId, Fee>
   orderBook: Record<OrderId, CounterpartyOrder>
   orders: Record<OrderId, Order>
   refreshAccount: (accountId?: AccountId) => void

@@ -1,6 +1,5 @@
 "use client"
 
-import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -9,22 +8,23 @@ import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { toast } from "sonner"
 
-import { safeLocalStorageGetItem } from "@/lib/utils"
-import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
+import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
+import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
+import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
 
 import "simplebar-react/dist/simplebar.min.css"
 
 dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
-  amount: string
+  amount: bigint
   baseAddr: string
   id: OrderId
   quoteAddr: string
@@ -44,6 +44,7 @@ function SingleOrder({
 
   const base = Token.findTickerByAddress(`0x${baseAddr}`)
   const quote = Token.findTickerByAddress(`0x${quoteAddr}`)
+  const formattedAmount = formatAmount(amount, new Token({ address: baseAddr }))
 
   const handleCancel = () => {
     if (!accountId) return
@@ -52,7 +53,7 @@ function SingleOrder({
       .then(() =>
         toast.message(
           `Started to cancel order to ${side === "buy" ? "Buy" : "Sell"
-          } ${amount} ${base}`,
+          } ${formattedAmount} ${base}`,
           {
             description: "Check the history tab for the status of the task",
           }
@@ -97,7 +98,7 @@ function SingleOrder({
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
         <Text fontSize="1.1em" lineHeight="1">
-          {amount} {base}
+          {formattedAmount} {base}
         </Text>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
           {side.toUpperCase()}
@@ -187,7 +188,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         {filteredMatchedOrders.map((order) => (
           <Box key={order.id} width="100%">
             <SingleOrder
-              amount={order.amount}
+              amount={BigInt(order.amount)}
               baseAddr={order.base}
               id={order.id as OrderId}
               quoteAddr={order.quote}
@@ -200,7 +201,7 @@ function OrdersPanel(props: OrdersPanelProps) {
           ({ amount, baseToken, orderId, quoteToken, side }) => (
             <Box key={orderId} width="100%">
               <SingleOrder
-                amount={amount.toString()}
+                amount={amount}
                 baseAddr={baseToken.address}
                 id={orderId}
                 quoteAddr={quoteToken.address}
@@ -288,7 +289,6 @@ function OrderBookPanel() {
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
-          // const status = formatStatus(orders, counterpartyOrder, savedOrders)
           const status =
             counterpartyOrder.id in orders
               ? "ACTIVE"
@@ -432,7 +432,11 @@ const formatTitle = (orders: Record<OrderId, Order>, order: GlobalOrder) => {
       `0x${orders[order.id].quoteToken.address}`
     )
     const side = orders[order.id].side === "buy" ? "Buy" : "Sell"
-    return `${side} ${orders[order.id].amount} ${baseTicker} for ${quoteTicker}`
+    const formattedAmount = formatAmount(
+      orders[order.id].amount,
+      new Token({ address: orders[order.id].baseToken.address })
+    )
+    return `${side} ${formattedAmount} ${baseTicker} for ${quoteTicker}`
   }
   return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }
