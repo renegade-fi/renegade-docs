@@ -1,5 +1,8 @@
 "use client"
 
+import { useMemo } from "react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskState } from "@/contexts/Renegade/types"
@@ -13,26 +16,24 @@ import {
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
 import { Token, tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { formatAmount } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
-import { useUSDPrice } from "@/hooks/use-usd-price"
-
-import { renegade } from "@/app/providers"
 import { useTasks } from "@/hooks/use-tasks"
+import { useUSDPrice } from "@/hooks/use-usd-price"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { renegade } from "@/app/providers"
+
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 
 interface TokenBalanceProps {
   tokenAddr: string
   userAddr?: string
-  amount: bigint
+  amount: string
 }
 function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
@@ -44,7 +45,7 @@ function TokenBalance(props: TokenBalanceProps) {
   const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
   const usdPrice = useUSDPrice(ticker, Number(props.amount))
 
-  const isZero = props.amount === BigInt(0)
+  const isZero = props.amount === "0"
 
   return (
     <Flex
@@ -108,9 +109,15 @@ function TokenBalance(props: TokenBalanceProps) {
                 address
               )
               .then(() =>
-                toast.message(`Started to withdraw 1 ${Token.findTickerByAddress(props.tokenAddr)}`, {
-                  description: "Check the history tab for the status of the task",
-                })
+                toast.message(
+                  `Started to withdraw 1 ${Token.findTickerByAddress(
+                    props.tokenAddr
+                  )}`,
+                  {
+                    description:
+                      "Check the history tab for the status of the task",
+                  }
+                )
               )
               .catch((error) => toast.error(`Error withdrawing: ${error}`))
           }
@@ -179,18 +186,19 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const balances = useBalance()
   const { accountId } = useRenegade()
 
-  const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
-    const wethAddress = Token.findAddressByTicker("WETH").replace("0x", "")
-    const usdcAddress = Token.findAddressByTicker("USDC").replace("0x", "")
-
-    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(
-      ([_, b]) => [b.mint.address, b.amount]
-    )
-    const placeholders: Array<[string, bigint]> = tokenMappings.tokens
+  const formattedBalances = useMemo(() => {
+    const nonzero = Object.entries(balances).map(([_, b]) => [
+      b.mint.address,
+      formatAmount(b.amount, new Token({ address: b.mint.address })),
+    ])
+    const placeholders = tokenMappings.tokens
       .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
-      .map((t) => [t.address.replace("0x", ""), BigInt(0)])
+      .map((t) => [t.address.replace("0x", ""), "0"])
 
     const combined = [...nonzero, ...placeholders]
+
+    const wethAddress = Token.findAddressByTicker("WETH").replace("0x", "")
+    const usdcAddress = Token.findAddressByTicker("USDC").replace("0x", "")
 
     combined.sort((a, b) => {
       if (a[0] === wethAddress) return -1
@@ -261,8 +269,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-                ? "Sign in to create a Renegade account and view your balances."
-                : "Connect your Ethereum wallet before signing in."}
+              ? "Sign in to create a Renegade account and view your balances."
+              : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
