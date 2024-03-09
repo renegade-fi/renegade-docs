@@ -13,9 +13,9 @@ import { privateKeyToAccount } from "viem/accounts"
 
 import { stylusDevnetEc2 } from "@/lib/chain"
 
+// TODO: Make sure mint works
 const abi = parseAbi([
-  "function transfer(address to, uint256 amount) returns (bool)",
-  "event Transfer(address indexed from, address indexed to, uint256 amount)",
+  "function mint(address _address, uint256 value) external"
 ])
 
 export async function GET(request: Request) {
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 
     const ethAmount = parseEther("0.1")
     const wethAmount = parseEther("10")
-    const usdcAmount = parseUnits("10000", 18)
+    const usdcAmount = parseUnits("100000", 18)
 
     const transactionCount = await publicClient.getTransactionCount({
       address: account.address,
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
       account,
       address: Token.findAddressByTicker("WETH") as `0x${string}`,
       abi,
-      functionName: "transfer",
+      functionName: "mint",
       args: [recipient, wethAmount],
       nonce: transactionCount + 1,
     })
@@ -100,7 +100,7 @@ export async function GET(request: Request) {
       account,
       address: Token.findAddressByTicker("USDC") as `0x${string}`,
       abi,
-      functionName: "transfer",
+      functionName: "mint",
       args: [recipient, usdcAmount],
       nonce: transactionCount + 2,
     })
