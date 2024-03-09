@@ -19,7 +19,7 @@ import { useModal as useModalConnectKit } from "connectkit"
 import SimpleBar from "simplebar-react"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
-import { formatAmount } from "@/lib/utils"
+import { formatAmount, parseAmount } from "@/lib/utils"
 import { useBalance } from "@/hooks/use-balance"
 import { useTasks } from "@/hooks/use-tasks"
 import { useUSDPrice } from "@/hooks/use-usd-price"
@@ -33,7 +33,7 @@ import { toast } from "sonner"
 interface TokenBalanceProps {
   tokenAddr: string
   userAddr?: string
-  amount: string
+  amount: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
@@ -42,10 +42,19 @@ function TokenBalance(props: TokenBalanceProps) {
   const { accountId } = useRenegade()
   const { address } = useAccount()
 
+  const formattedAmount = formatAmount(
+    props.amount,
+    new Token({ address: props.tokenAddr })
+  )
   const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
-  const usdPrice = useUSDPrice(ticker, Number(props.amount))
+  const usdPrice = useUSDPrice(
+    ticker,
+    parseFloat(
+      formatAmount(props.amount, new Token({ address: props.tokenAddr }))
+    )
+  )
 
-  const isZero = props.amount === "0"
+  const isZero = props.amount === BigInt(0)
 
   return (
     <Flex
@@ -74,7 +83,7 @@ function TokenBalance(props: TokenBalanceProps) {
           lineHeight="1"
           opacity={isZero ? "40%" : undefined}
         >
-          {props.amount.toString()} {ticker}
+          {formattedAmount} {ticker}
         </Text>
         <Box
           color="white.40"
@@ -101,13 +110,9 @@ function TokenBalance(props: TokenBalanceProps) {
         cursor="pointer"
         onClick={() => {
           if (accountId && address) {
+            const token = new Token({ address: props.tokenAddr })
             renegade.task
-              .withdraw(
-                accountId,
-                new Token({ address: props.tokenAddr }),
-                BigInt(1),
-                address
-              )
+              .withdraw(accountId, token, parseAmount("1", token), address)
               .then(() =>
                 toast.message(
                   `Started to withdraw 1 ${Token.findTickerByAddress(
@@ -186,19 +191,18 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const balances = useBalance()
   const { accountId } = useRenegade()
 
-  const formattedBalances = useMemo(() => {
-    const nonzero = Object.entries(balances).map(([_, b]) => [
-      b.mint.address,
-      formatAmount(b.amount, new Token({ address: b.mint.address })),
-    ])
-    const placeholders = tokenMappings.tokens
-      .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
-      .map((t) => [t.address.replace("0x", ""), "0"])
-
-    const combined = [...nonzero, ...placeholders]
-
+  const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
     const wethAddress = Token.findAddressByTicker("WETH").replace("0x", "")
     const usdcAddress = Token.findAddressByTicker("USDC").replace("0x", "")
+
+    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(
+      ([_, b]) => [b.mint.address, b.amount]
+    )
+    const placeholders: Array<[string, bigint]> = tokenMappings.tokens
+      .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
+      .map((t) => [t.address.replace("0x", ""), BigInt(0)])
+
+    const combined = [...nonzero, ...placeholders]
 
     combined.sort((a, b) => {
       if (a[0] === wethAddress) return -1

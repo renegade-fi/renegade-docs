@@ -11,7 +11,7 @@ export interface DepositContextValue {
   baseTicker: string
   baseTokenAmount: string
   setBaseTicker: (ticker: string) => void
-  setBaseTokenAmount: (amount: string) => void
+  setBaseTokenAmount: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const DepositStateContext = createContext<DepositContextValue | undefined>(
@@ -28,6 +28,13 @@ function DepositProvider({ children }: PropsWithChildren) {
   }
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
+  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === '' || (!isNaN(parseFloat(value)) && isFinite(parseFloat(value)) && parseFloat(value) >= 0)) {
+      setBaseTokenAmount(value);
+    }
+  };
+
   return (
     <DepositStateContext.Provider
       value={{
@@ -35,7 +42,7 @@ function DepositProvider({ children }: PropsWithChildren) {
         baseTicker: Token.findTickerByAddress(`0x${baseToken.address}`),
         baseTokenAmount,
         setBaseTicker: handleSetBaseToken,
-        setBaseTokenAmount,
+        setBaseTokenAmount: handleSetBaseTokenAmount,
       }}
     >
       {children}

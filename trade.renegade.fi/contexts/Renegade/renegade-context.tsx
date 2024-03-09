@@ -6,8 +6,6 @@ import {
   Balance,
   BalanceId,
   CallbackId,
-  Fee,
-  FeeId,
   Keychain,
   Order,
   OrderId,
@@ -37,7 +35,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
   // Create balance, order, fee, an account states.
   const [accountId, setAccountId] = React.useState<AccountId>()
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
-  const [fees] = React.useState<Record<FeeId, Fee>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
 
   // Create task states.
@@ -250,7 +247,6 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         accountId,
         balances,
         counterparties,
-        fees,
         orderBook,
         orders,
         refreshAccount,
