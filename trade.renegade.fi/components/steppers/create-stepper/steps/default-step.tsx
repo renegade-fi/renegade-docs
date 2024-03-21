@@ -13,6 +13,9 @@ import { client } from "@/app/providers"
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { stylusDevnetEc2 } from "@/lib/chain"
+
+const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:";
 
 export function DefaultStep() {
   const { setIsOnboarding, setIsSigningIn } = useApp()
@@ -74,7 +77,7 @@ export function DefaultStep() {
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
-                  message: "Unlock your Renegade account.\nTestnet v0",
+                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${stylusDevnetEc2.id}`,
                 })
               }}
             >

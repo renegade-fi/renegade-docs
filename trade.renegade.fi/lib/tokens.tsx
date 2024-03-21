@@ -1,4 +1,3 @@
-import { StaticImageData } from "next/image"
 import inchLogo from "@/icons/tokens/1inch.png"
 import audioLogo from "@/icons/tokens/audio.png"
 import axsLogo from "@/icons/tokens/axs.png"
@@ -34,7 +33,8 @@ import truLogo from "@/icons/tokens/tru.png"
 import usdtLogo from "@/icons/tokens/usdt.png"
 import wbtcLogo from "@/icons/tokens/wbtc.png"
 import wethLogo from "@/icons/tokens/weth.png"
-import { Token, tokenMappings } from "@renegade-fi/renegade-js"
+import { tokenMappings } from "@renegade-fi/renegade-js"
+import { StaticImageData } from "next/image"
 
 const TOKENLIST_URL =
   "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
@@ -76,62 +76,14 @@ const LOGO_URL_OVERRIDES: { [key in string]: StaticImageData } = {
   AUDIO: audioLogo,
   RAD: radLogo,
 }
-export const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: {
-  [key: string]: [string, number]
-} = {
-  USDC: ["USD Coin", 1],
-  WETH: ["Ethereum", 4],
-  WBTC: ["Bitcoin", 5],
-  BNB: ["Binance Coin", 3],
-  MATIC: ["Polygon", -1],
-  LDO: ["Lido DAO", 1],
-  CBETH: ["Coinbase Staked ETH", 4],
-  LINK: ["Chainlink", 1],
-  UNI: ["Uniswap", 1],
-  CRV: ["Curve", -1],
-  DYDX: ["dYdX Exchange", 1],
-  AAVE: ["AAVE", 2],
-  // FTM: ["Fantom", -1],
-  // GNO: ["Gnosis", 2],
-  // USDT: ["Tether", 1],
-  // BUSD: ["Binance USD", 1],
-  // BAND: ["Band Protocol", 1],
-  // SUSHI: ["SushiSwap", 1],
-  // "1INCH": ["1inch ", -1],
-  // BAL: ["Balancer", 1],
-  // HFT: ["HashFlow", -1],
-  // PERP: ["Perp Protocol", -1],
-  // WOO: ["WOO Network", -1],
-  // ZRX: ["0x", -1],
-  // COMP: ["Compound", 2],
-  // MKR: ["MakerDAO", 3],
-  // YFI: ["Yearn Finance", 4],
-  // SPELL: ["Spell Token", -4],
-  // TRU: ["TrueFi", -2],
-  // MPL: ["Maple", 1],
-  // SNX: ["Synthetix", 1],
-  // REP: ["Augur", 1],
-  // TORN: ["Tornado Cash", 1],
-  // REN: ["Republic", -2],
-  // STG: ["Stargate", -1],
-  // QNT: ["Quant", 3],
-  // LRC: ["Loopring", -1],
-  // BOBA: ["BOBA Network", -1],
-  // APE: ["ApeCoin", 1],
-  // AXS: ["Axie Infinity", 1],
-  // ENJ: ["Enjin", -1],
-  // RARE: ["SuperRare", -1],
-  // SHIB: ["Shiba Inu", -6],
-  // PEOPLE: ["ConstitutionDAO", -2],
-  // OMG: ["OMG Network", 1],
-  // GRT: ["The Graph", -2],
-  // ENS: ["Ethereum Name Service", 2],
-  // MANA: ["Decentraland", -1],
-  // GALA: ["Gala", -2],
-  // RAD: ["Radicle", 1],
-  // AUDIO: ["Audius", -1],
-  // BAT: ["Basic Attention Token", -1],
-}
+
+const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: { [key: string]: [string, number] } = {};
+
+tokenMappings.tokens.forEach(token => {
+  // Assuming you want to use the 'decimals' value from the tokens as the default decimal
+  // If you have a different rule for default decimals, apply it here
+  TICKER_TO_NAME_AND_DEFAULT_DECIMALS[token.ticker] = [token.name, 2];
+});
 
 export const DISPLAYED_TICKERS: [string, string][] = Object.keys(
   TICKER_TO_NAME_AND_DEFAULT_DECIMALS
@@ -150,25 +102,18 @@ export const TICKER_TO_LOGO_URL_HANDLE = fetch(TOKENLIST_URL)
   .then((data) => {
     let TICKER_TO_LOGO_URL: { [key in string]: string } = {}
     // Process all logos from TrustWallet
-    for (const token of tokenMappings.tokens) {
-      let ticker = Token.findTickerByAddress(token.address.toLowerCase())
-      if (ticker !== undefined) {
-        TICKER_TO_LOGO_URL[ticker] = data.tokens.find(
-          (token: any) =>
-            token.address.toLowerCase() === token.address.toLowerCase()
-        ).logoURI
-      }
+    for (const token of data.tokens) {
+      TICKER_TO_LOGO_URL[token.symbol] = token.logoURI
     }
     // Put in some manual overrides, for unaesthetic or missing logos
     for (const ticker in LOGO_URL_OVERRIDES) {
-      //   TICKER_TO_LOGO_URL[ticker] = LOGO_URL_OVERRIDES[ticker];
       TICKER_TO_LOGO_URL[ticker] = LOGO_URL_OVERRIDES[ticker].src
     }
-    // // Warn about missing logos
-    // for (const ticker in TICKER_TO_ADDR) {
-    //   if (TICKER_TO_LOGO_URL[ticker] === undefined) {
-    //     console.warn("Missing logo:", ticker)
-    //   }
-    // }
+    // Warn about missing logos
+    for (const ticker in TICKER_TO_NAME_AND_DEFAULT_DECIMALS) {
+      if (TICKER_TO_LOGO_URL[ticker] === undefined) {
+        console.warn("Missing logo:", ticker)
+      }
+    }
     return TICKER_TO_LOGO_URL
   })

@@ -22,6 +22,8 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 import { useButton } from "@/hooks/use-button"
 import { stylusDevnetEc2 } from "@/lib/chain"
 import { signPermit2 } from "@/lib/permit2"
+import { useLocalStorage } from "usehooks-ts"
+import { Direction } from "@/contexts/Order/types"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -95,6 +97,7 @@ export default function DepositButton() {
     })
   }
 
+  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   const handleSignAndDeposit = async () => {
     if (!accountId || !walletClient) return
     const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
@@ -125,7 +128,13 @@ export default function DepositButton() {
         toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
           description: "Check the history tab for the status of the task",
         })
-      )
+      ).then(() => {
+        if (token.ticker === 'USDC') {
+          setDirection(Direction.BUY)
+        } else {
+          setDirection(Direction.SELL)
+        }
+      })
       .catch((error) => toast.error(`Error depositing: ${error}`))
   }
 
@@ -175,12 +184,12 @@ export default function DepositButton() {
       >
         {shouldUse
           ? buttonText
-          : needsApproval
-            ? `Approve ${baseTicker}`
-            : hasRpcConnectionError
-              ? "Error connecting to sequencer"
-              : hasInsufficientBalance
-                ? "Insufficient balance"
+          : hasInsufficientBalance
+            ? "Insufficient balance"
+            : needsApproval
+              ? `Approve ${baseTicker}`
+              : hasRpcConnectionError
+                ? "Error connecting to chain"
                 : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}

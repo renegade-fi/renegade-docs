@@ -26,9 +26,9 @@ import { env } from "@/env.mjs"
 import { stylusDevnetEc2 } from "@/lib/chain"
 
 /*
- * ┌────────────────────────┐
- * │    Chakra Config       |
- * └────────────────────────┘
+ * ┌─────────────────────┐
+ * │    Chakra Config    |
+ * └─────────────────────┘
  */
 
 const { definePartsStyle, defineMultiStyleConfig } =
@@ -178,9 +178,9 @@ const components = {
 const theme = extendTheme({ config, styles, colors, components })
 
 /*
- * ┌────────────────────────┐
- * │    Wallet Config       |
- * └────────────────────────┘
+ * ┌─────────────────────┐
+ * │    Wallet Config    |
+ * └─────────────────────┘
  */
 const wagmiConfig = createConfig(
   getDefaultConfig({
