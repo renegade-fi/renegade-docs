@@ -273,8 +273,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             {accountId
               ? "Deposit tokens into your Renegade Account to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
-              : "Connect your Ethereum wallet before signing in."}
+                ? "Sign in to create a Renegade account and view your balances."
+                : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
       )
@@ -333,7 +333,7 @@ function HistorySection() {
 
   const Content = useMemo(() => {
     const TASK_TO_NAME = {
-      // [TaskState.Queued]: "Queued",
+      "Queued": "Queued",
       [TaskState.Proving]: "Proving",
       [TaskState.SubmittingTx]: "Submitting Transaction",
       [TaskState.FindingOpening]: "Validating",
@@ -354,6 +354,8 @@ function HistorySection() {
           const rightIcon =
             task.status?.state === "Completed" ? (
               <CheckIcon color="white.60" height="4" />
+            ) : task.status?.state === "Queued" ? (
+              <></>
             ) : (
               <Spinner color="white.60" size="xs" />
             )

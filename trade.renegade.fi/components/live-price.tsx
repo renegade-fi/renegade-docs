@@ -49,14 +49,16 @@ export const LivePrices = ({
 
   const baseDefaultDecimals = TICKER_TO_DEFAULT_DECIMALS[baseTicker] || 0
   const trailingDecimals = useMemo(() => {
-    if (quoteTicker !== "USDC") {
+    if (["USDC", "WETH", "WBTC"].includes(baseTicker)) {
+      return 2
+    } else if (quoteTicker !== "USDC") {
       return 2
     } else if (baseDefaultDecimals >= 3) {
       return 2
     } else {
       return Math.abs(baseDefaultDecimals) + 2
     }
-  }, [baseDefaultDecimals, quoteTicker])
+  }, [baseDefaultDecimals, baseTicker, quoteTicker])
 
   const callbackIdRef = useRef(false)
   useEffect(() => {
@@ -98,11 +100,11 @@ export const LivePrices = ({
 
   let price = currentPriceReport.midpointPrice
     ? currentPriceReport.midpointPrice
-    : priceProp
-    ? priceProp
     : baseTicker === "USDC"
-    ? 1
-    : 0
+      ? 1
+      : priceProp
+        ? priceProp
+        : 0
 
   // If the caller supplied a scaleBy prop, scale the price appropriately
   if (scaleBy !== undefined) {
@@ -113,7 +115,8 @@ export const LivePrices = ({
   let priceStr = price.toFixed(trailingDecimals)
   if (
     (!Object.keys(currentPriceReport).length || scaleBy === 0) &&
-    baseDefaultDecimals > 0
+    baseDefaultDecimals > 0 &&
+    baseTicker !== "USDC"
   ) {
     const leadingDecimals = priceStr.split(".")[0].length
     priceStr =
@@ -176,9 +179,9 @@ export const LivePrices = ({
         sx={
           isMobile
             ? {
-                writingMode: "vertical-rl",
-                textOrientation: "sideways",
-              }
+              writingMode: "vertical-rl",
+              textOrientation: "sideways",
+            }
             : undefined
         }
         alignItems="center"

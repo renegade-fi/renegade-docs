@@ -2,8 +2,8 @@ import { defineChain } from "viem"
 
 export const stylusDevnetEc2 = defineChain({
   id: 412346,
-  name: "Arbitrum Stylus Testnet",
-  network: "Arbitrum Stylus Testnet",
+  name: "Renegade Testnet",
+  network: "Renegade Testnet",
   testnet: true,
   nativeCurrency: {
     decimals: 18,
@@ -24,6 +24,13 @@ export const stylusDevnetEc2 = defineChain({
       ],
     },
   },
+  blockExplorers: {
+    default: {
+      name: "Explorer",
+      url: "https://explorer.renegade.fi/",
+    },
+  },
+
 })
 
 export const stylusDevnetLocal = defineChain({
