@@ -23,7 +23,7 @@ import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
-import { stylusDevnetEc2 } from "@/lib/chain"
+import { stylusDevnetEc2 } from "@/lib/viem"
 
 /*
  * ┌─────────────────────┐

@@ -20,8 +20,8 @@ import {
   useWriteErc20Approve,
 } from "@/generated"
 import { useButton } from "@/hooks/use-button"
-import { stylusDevnetEc2 } from "@/lib/chain"
 import { signPermit2 } from "@/lib/permit2"
+import { stylusDevnetEc2 } from "@/lib/viem"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"

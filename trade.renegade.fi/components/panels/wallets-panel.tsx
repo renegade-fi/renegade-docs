@@ -16,7 +16,11 @@ import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
-import { useAccount, useAccount as useAccountWagmi } from "wagmi"
+import {
+  useAccount,
+  useAccount as useAccountWagmi,
+  useWalletClient,
+} from "wagmi"
 
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { renegade } from "@/app/providers"
@@ -55,6 +59,21 @@ function TokenBalance(props: TokenBalanceProps) {
 
   const isZero = props.amount === BigInt(0)
 
+  const { data: walletClient } = useWalletClient()
+  const handleAddToWallet = async (address: string) => {
+    if (!walletClient) return
+    const token = new Token({ address })
+    await walletClient.watchAsset({
+      type: "ERC20",
+      options: {
+        address,
+        decimals: token.decimals || 18,
+        // TODO: Deploy new contracts with actual ticker
+        symbol: "DUMMY",
+      },
+    })
+  }
+
   return (
     <Flex
       alignItems="center"
@@ -76,6 +95,8 @@ function TokenBalance(props: TokenBalanceProps) {
         marginLeft="5px"
         padding="10px 0 10px 0"
         fontFamily="Favorit"
+        cursor="pointer"
+        onClick={() => handleAddToWallet(props.tokenAddr)}
       >
         <Text
           fontSize="1.1em"
