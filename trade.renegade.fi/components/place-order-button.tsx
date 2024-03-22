@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
@@ -7,18 +8,23 @@ import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
-import { useMemo } from "react"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { renegade } from "@/app/providers"
+import {
+  findBalanceByTicker,
+  formatAmount,
+  parseAmount,
+  safeLocalStorageGetItem,
+  safeLocalStorageSetItem,
+} from "@/lib/utils"
+import { useBalance } from "@/hooks/use-balance"
+import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { useBalance } from "@/hooks/use-balance"
-import { useButton } from "@/hooks/use-button"
-import { findBalanceByTicker, formatAmount, parseAmount, safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { renegade } from "@/app/providers"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
@@ -77,7 +83,8 @@ export function PlaceOrderButton() {
       })
       .then(() =>
         toast.message(
-          `Started to place order to ${direction === "buy" ? "Buy" : "Sell"
+          `Started to place order to ${
+            direction === "buy" ? "Buy" : "Sell"
           } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
           {
             description: "Check the history tab for the status of the task",
@@ -90,13 +97,24 @@ export function PlaceOrderButton() {
   const hasInsufficientBalance = useMemo(() => {
     const baseBalance = findBalanceByTicker(balances, baseTicker).amount
     const quoteBalance = findBalanceByTicker(balances, quoteTicker).amount
-    const price = priceReport?.midpointPrice ? priceReport.midpointPrice * parseFloat(baseTokenAmount) : 0
+    const price = priceReport?.midpointPrice
+      ? priceReport.midpointPrice * parseFloat(baseTokenAmount)
+      : 0
     if (direction === Direction.SELL) {
       return baseBalance < parseAmount(baseTokenAmount, base)
     }
     // TODO: Check this
     return parseFloat(formatAmount(quoteBalance, quote)) < price
-  }, [balances, base, baseTicker, baseTokenAmount, direction, priceReport?.midpointPrice, quote, quoteTicker])
+  }, [
+    balances,
+    base,
+    baseTicker,
+    baseTokenAmount,
+    direction,
+    priceReport?.midpointPrice,
+    quote,
+    quoteTicker,
+  ])
 
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: string
@@ -107,8 +125,9 @@ export function PlaceOrderButton() {
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = `Place Order for ${baseTokenAmount || ""
-      } ${baseTicker}`
+    placeOrderButtonContent = `Place Order for ${
+      baseTokenAmount || ""
+    } ${baseTicker}`
   }
   const isDisabled = accountId && (!baseTokenAmount || hasInsufficientBalance)
 
@@ -127,9 +146,9 @@ export function PlaceOrderButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}

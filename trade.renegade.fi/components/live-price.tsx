@@ -101,10 +101,10 @@ export const LivePrices = ({
   let price = currentPriceReport.midpointPrice
     ? currentPriceReport.midpointPrice
     : baseTicker === "USDC"
-      ? 1
-      : priceProp
-        ? priceProp
-        : 0
+    ? 1
+    : priceProp
+    ? priceProp
+    : 0
 
   // If the caller supplied a scaleBy prop, scale the price appropriately
   if (scaleBy !== undefined) {
@@ -179,9 +179,9 @@ export const LivePrices = ({
         sx={
           isMobile
             ? {
-              writingMode: "vertical-rl",
-              textOrientation: "sideways",
-            }
+                writingMode: "vertical-rl",
+                textOrientation: "sideways",
+              }
             : undefined
         }
         alignItems="center"

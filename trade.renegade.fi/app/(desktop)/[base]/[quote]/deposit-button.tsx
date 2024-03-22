@@ -1,4 +1,6 @@
+import { useEffect } from "react"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
+import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import {
@@ -10,20 +12,16 @@ import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
 import { useQueryClient } from "@tanstack/react-query"
-import { useEffect } from "react"
 import { toast } from "sonner"
-import {
-  parseUnits
-} from "viem"
+import { useLocalStorage } from "usehooks-ts"
+import { parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
-import { renegade } from "@/app/providers"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useButton } from "@/hooks/use-button"
 import { stylusDevnetEc2 } from "@/lib/chain"
 import { signPermit2 } from "@/lib/permit2"
-import { useLocalStorage } from "usehooks-ts"
-import { Direction } from "@/contexts/Order/types"
+import { useButton } from "@/hooks/use-button"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { renegade } from "@/app/providers"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -128,8 +126,9 @@ export default function DepositButton() {
         toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
           description: "Check the history tab for the status of the task",
         })
-      ).then(() => {
-        if (token.ticker === 'USDC') {
+      )
+      .then(() => {
+        if (token.ticker === "USDC") {
           setDirection(Direction.BUY)
         } else {
           setDirection(Direction.SELL)
@@ -137,7 +136,6 @@ export default function DepositButton() {
       })
       .catch((error) => toast.error(`Error depositing: ${error}`))
   }
-
 
   const handleClick = async () => {
     if (shouldUse) {
@@ -149,7 +147,6 @@ export default function DepositButton() {
     } else {
       handleSignAndDeposit()
     }
-
   }
 
   return (
@@ -167,9 +164,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -185,12 +182,12 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : hasInsufficientBalance
-            ? "Insufficient balance"
-            : needsApproval
-              ? `Approve ${baseTicker}`
-              : hasRpcConnectionError
-                ? "Error connecting to chain"
-                : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+          ? "Insufficient balance"
+          : needsApproval
+          ? `Approve ${baseTicker}`
+          : hasRpcConnectionError
+          ? "Error connecting to chain"
+          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>

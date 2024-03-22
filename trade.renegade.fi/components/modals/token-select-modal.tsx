@@ -1,4 +1,7 @@
+import { useMemo, useState } from "react"
+import Image from "next/image"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useReadErc20BalanceOf } from "@/generated"
 import {
   Box,
   Grid,
@@ -15,16 +18,13 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
-import Image from "next/image"
-import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 import { formatUnits } from "viem/utils"
 import { useAccount } from "wagmi"
 
-import { useReadErc20BalanceOf } from "@/generated"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -99,15 +99,14 @@ export function TokenSelectModal({
             {filteredTickers
               .filter(([base]) => (isTrading ? base !== "USDC" : true))
               .map(([ticker]) => {
-
                 return (
                   <Row
                     key={ticker}
                     ticker={ticker}
                     tokenName={TICKER_TO_NAME[ticker]}
                     onRowClick={() => {
-                      onClose();
-                      setToken(ticker);
+                      onClose()
+                      setToken(ticker)
                     }}
                   />
                 )
@@ -120,11 +119,10 @@ export function TokenSelectModal({
 }
 
 interface RowProps {
-  ticker: string;
-  tokenName: string;
-  onRowClick: () => void;
+  ticker: string
+  tokenName: string
+  onRowClick: () => void
 }
-
 
 const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
   const { address } = useAccount()
@@ -135,28 +133,27 @@ const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
     args: [address ?? "0x"],
   })
 
-
   const balanceAmount = useMemo(() => {
-    let result = "0";
+    let result = "0"
 
     const addr = Token.findAddressByTicker(ticker)
     if (view === ViewEnum.TRADING) {
       const matchingBalance = Object.values(balances).find(
         ({ mint: { address } }) => `0x${address}` === addr
-      );
-      result = matchingBalance ? matchingBalance.amount.toString() : "0";
+      )
+      result = matchingBalance ? matchingBalance.amount.toString() : "0"
     } else if (view === ViewEnum.DEPOSIT) {
-      result = erc20Balance ? formatUnits(erc20Balance, 18) : "0"; // Adjust the decimals as needed
+      result = erc20Balance ? formatUnits(erc20Balance, 18) : "0" // Adjust the decimals as needed
     }
 
     // Check if result has decimals and truncate to 2 decimals without rounding
-    if (result.includes('.')) {
-      const [integerPart, decimalPart] = result.split('.');
-      result = `${integerPart}.${decimalPart.substring(0, 2)}`;
+    if (result.includes(".")) {
+      const [integerPart, decimalPart] = result.split(".")
+      result = `${integerPart}.${decimalPart.substring(0, 2)}`
     }
 
-    return result;
-  }, [balances, erc20Balance, ticker, view]);
+    return result
+  }, [balances, erc20Balance, ticker, view])
   return (
     <Grid
       className="wrapper"
@@ -199,5 +196,5 @@ const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
         </Box>
       </GridItem>
     </Grid>
-  );
-};
+  )
+}

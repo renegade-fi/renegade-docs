@@ -1,15 +1,15 @@
 "use client"
 
+import React, { createRef, useEffect, useRef, useState } from "react"
 import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
-import React, { createRef, useEffect, useRef, useState } from "react"
 
+import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
 
 interface SelectableProps {
   text: string
@@ -78,18 +78,18 @@ function TradingInner() {
       return [
         // @ts-ignore
         ref.current.offsetParent.offsetLeft +
-        ref.current.offsetLeft +
-        ref.current.offsetWidth / 2,
+          ref.current.offsetLeft +
+          ref.current.offsetWidth / 2,
         // @ts-ignore
         ref.current.offsetParent.offsetTop +
-        ref.current.offsetTop +
-        ref.current.offsetHeight / 2 +
-        (baseTokenAmount ? -15 : 10),
+          ref.current.offsetTop +
+          ref.current.offsetHeight / 2 +
+          (baseTokenAmount ? -15 : 10),
       ]
     }
     buySellSelectableCoords.current = getRefCoords(buySellSelectableRef)
 
-    return () => { }
+    return () => {}
   }, [baseTokenAmount, buySellSelectableRef])
 
   return (

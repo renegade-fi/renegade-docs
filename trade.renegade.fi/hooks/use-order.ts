@@ -1,12 +1,15 @@
-import { renegade } from "@/app/providers"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
-import { Order, OrderId } from "@renegade-fi/renegade-js"
 import { useEffect, useState } from "react"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { Order, OrderId } from "@renegade-fi/renegade-js"
+
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { renegade } from "@/app/providers"
 
 export const useOrders = () => {
   const { accountId, orders: initialOrders } = useRenegade()
-  const [orders, setOrders] = useState<Record<OrderId, Order>>(initialOrders || {})
+  const [orders, setOrders] = useState<Record<OrderId, Order>>(
+    initialOrders || {}
+  )
 
   useEffect(() => {
     if (!accountId) return

@@ -30,7 +30,6 @@ export const stylusDevnetEc2 = defineChain({
       url: "https://explorer.renegade.fi/",
     },
   },
-
 })
 
 export const stylusDevnetLocal = defineChain({
