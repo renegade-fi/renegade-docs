@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { Box, Flex, Text } from "@chakra-ui/react"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { useEffect, useMemo, useRef, useState } from "react"
 
+import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 
 import { BannerSeparator } from "./banner-separator"

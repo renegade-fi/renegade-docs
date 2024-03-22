@@ -1,11 +1,11 @@
 "use client"
 
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Box } from "@chakra-ui/react"
 
-import { TaskStatus } from "@/components/task-status"
 import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 import { TradingBody } from "@/app/(desktop)/[base]/[quote]/trading"
+import { TaskStatus } from "@/components/task-status"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 
 export function Main() {
   const { view } = useApp()

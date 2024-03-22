@@ -1,9 +1,10 @@
 "use client"
 
-import React from "react"
-import Image from "next/image"
-import logoDark from "@/icons/logo_dark.svg"
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
+import Image from "next/image"
+import React from "react"
+
+import logoDark from "@/icons/logo_dark.svg"
 
 interface FooterState {
   logoRef: React.RefObject<HTMLDivElement>

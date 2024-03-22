@@ -1,13 +1,13 @@
-import Image from "next/image"
-import { env } from "@/env.mjs"
-import backgroundPattern from "@/icons/background_pattern.png"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
+import Image from "next/image"
 
+import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
+import { env } from "@/env.mjs"
+import backgroundPattern from "@/icons/background_pattern.png"
 
 // export function generateStaticParams() {
 //   return DISPLAYED_TICKERS.map(([base, quote]) => {

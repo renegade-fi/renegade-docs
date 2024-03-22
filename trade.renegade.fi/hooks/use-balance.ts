@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Balance, BalanceId } from "@renegade-fi/renegade-js"
+import { useEffect, useState } from "react"
 
 import { renegade } from "@/app/providers"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
 export const useBalance = () => {
   const { accountId, balances: initialBalances } = useRenegade()

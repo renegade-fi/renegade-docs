@@ -1,6 +1,3 @@
-import { useRouter } from "next/navigation"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -12,9 +9,12 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
+import { useRouter } from "next/navigation"
 
-import { findBalanceByTicker } from "@/lib/utils"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { useBalance } from "@/hooks/use-balance"
+import { findBalanceByTicker } from "@/lib/utils"
 
 import { useStepper } from "../deposit-stepper"
 

@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
-import { RenegadeContext } from "@/contexts/Renegade/renegade-context"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import React from "react"
+
+import { RenegadeContext } from "@/contexts/Renegade/renegade-context"
 
 import { BannerSeparator } from "../banner-separator"
 import { PulsingConnection } from "../pulsing-connection-indicator"

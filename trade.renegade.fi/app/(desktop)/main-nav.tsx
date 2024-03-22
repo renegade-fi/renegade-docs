@@ -1,10 +1,5 @@
 "use client"
 
-import React, { createRef, useEffect, useState } from "react"
-import Image from "next/image"
-import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import glyphDark from "@/icons/glyph_dark.svg"
 import {
   Box,
   Button,
@@ -16,6 +11,8 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { ConnectKitButton } from "connectkit"
+import Image from "next/image"
+import React, { createRef, useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 import {
   useAccount as useAccountWagmi,
@@ -23,8 +20,11 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi"
 
-import { useButton } from "@/hooks/use-button"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useButton } from "@/hooks/use-button"
+import glyphDark from "@/icons/glyph_dark.svg"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { useEffect, useMemo, useRef, useState } from "react"
+
+import { useExchange } from "@/contexts/Exchange/exchange-context"
 
 export const useUSDPrice = (base: string, amount: number) => {
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>({})

@@ -1,11 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState } from "@/contexts/Renegade/types"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -16,19 +10,24 @@ import {
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
 import { Token, tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
+import "simplebar-react/dist/simplebar.min.css"
+import { toast } from "sonner"
 import { useAccount, useAccount as useAccountWagmi } from "wagmi"
 
-import { formatAmount, parseAmount } from "@/lib/utils"
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { renegade } from "@/app/providers"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskState } from "@/contexts/Renegade/types"
 import { useBalance } from "@/hooks/use-balance"
 import { useTasks } from "@/hooks/use-tasks"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
-import { renegade } from "@/app/providers"
-
-import "simplebar-react/dist/simplebar.min.css"
-import { toast } from "sonner"
+import { formatAmount, parseAmount } from "@/lib/utils"
 
 interface TokenBalanceProps {
   tokenAddr: string

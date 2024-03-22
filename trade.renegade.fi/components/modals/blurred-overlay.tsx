@@ -1,8 +1,9 @@
 "use client"
 
+import { Flex, Text, keyframes } from "@chakra-ui/react"
+
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
-import { Flex, Text, keyframes } from "@chakra-ui/react"
 
 interface BlurredOverlayProps {
   activeModal?: "buy-sell" | "base-token" | "quote-token"

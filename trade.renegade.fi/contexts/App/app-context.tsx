@@ -7,6 +7,7 @@ import {
   useEffect,
   useState,
 } from "react"
+
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
 export enum ViewEnum {

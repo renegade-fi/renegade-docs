@@ -1,5 +1,3 @@
-import React, { createContext, useContext, useEffect, useState } from "react"
-import { useApp } from "@/contexts/App/app-context"
 import {
   Fade,
   Modal,
@@ -8,9 +6,11 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 
 import { DefaultStep } from "@/components/steppers/create-stepper/steps/default-step"
 import { LoadingStep } from "@/components/steppers/create-stepper/steps/loading-step"
+import { useApp } from "@/contexts/App/app-context"
 
 const CreateStepperInner = () => {
   const { step, onClose } = useStepper()

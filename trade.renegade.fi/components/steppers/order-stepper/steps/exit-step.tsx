@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react"
-import { useOrder } from "@/contexts/Order/order-context"
 import {
   Button,
   Divider,
@@ -9,6 +7,9 @@ import {
   ModalFooter,
   Text,
 } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
+
+import { useOrder } from "@/contexts/Order/order-context"
 
 import { useStepper } from "../order-stepper"
 

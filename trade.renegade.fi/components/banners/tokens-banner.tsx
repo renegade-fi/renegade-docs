@@ -1,12 +1,12 @@
 "use client"
 
-import Link from "next/link"
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import Link from "next/link"
 
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
 export function TokensBanner({
   prices,

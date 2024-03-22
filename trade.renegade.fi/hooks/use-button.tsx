@@ -1,7 +1,8 @@
-import { useMemo } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { useModal as useModalConnectKit } from "connectkit"
+import { useMemo } from "react"
 import { useAccount as useAccountWagmi } from "wagmi"
+
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 
 export const useButton = ({
   connectText,

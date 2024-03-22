@@ -1,6 +1,6 @@
-import { env } from "@/env.mjs"
 import { Renegade, Token } from "@renegade-fi/renegade-js"
 
+import { env } from "@/env.mjs"
 import { getTokenBannerData } from "@/lib/utils"
 
 import { MobileBody } from "./body"

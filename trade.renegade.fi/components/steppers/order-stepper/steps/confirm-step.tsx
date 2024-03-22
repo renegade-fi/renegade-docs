@@ -1,8 +1,3 @@
-import { useEffect, useMemo, useState } from "react"
-import { useExchange } from "@/contexts/Exchange/exchange-context"
-import { useOrder } from "@/contexts/Order/order-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -15,10 +10,15 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { Exchange, Order, OrderId, PriceReport } from "@renegade-fi/renegade-js"
+import { useEffect, useMemo, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
+import { useExchange } from "@/contexts/Exchange/exchange-context"
+import { useOrder } from "@/contexts/Order/order-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 import { ErrorType, useStepper } from "../order-stepper"
 

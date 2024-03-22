@@ -1,25 +1,24 @@
 "use client"
 
-import React, { useMemo } from "react"
-import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
+import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 
-import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
-import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
+import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
-
-import "simplebar-react/dist/simplebar.min.css"
+import { useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
+import { useOrders } from "@/hooks/use-order"
+import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
 
 dayjs.extend(relativeTime)
 

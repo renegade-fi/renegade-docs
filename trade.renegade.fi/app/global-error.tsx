@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { env } from "@/env.mjs"
 
+import { env } from "@/env.mjs"
 import "@/styles/fonts.css"
 
 const RELAYER_HOSTNAME =

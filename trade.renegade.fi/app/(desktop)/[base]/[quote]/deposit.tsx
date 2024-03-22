@@ -1,8 +1,5 @@
 "use client"
 
-import Link from "next/link"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -13,9 +10,12 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import Link from "next/link"
 
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
+import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 
 function DepositInner() {
   const { setView } = useApp()

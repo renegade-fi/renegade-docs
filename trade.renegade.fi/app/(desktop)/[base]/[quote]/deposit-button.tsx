@@ -1,4 +1,15 @@
+import { ArrowForwardIcon } from "@chakra-ui/icons"
+import { Button, useDisclosure } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/renegade-js"
+import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
+import { toast } from "sonner"
+import { useLocalStorage } from "usehooks-ts"
+import { parseUnits } from "viem"
+import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
+
+import { renegade } from "@/app/providers"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { Direction } from "@/contexts/Order/types"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
@@ -8,20 +19,9 @@ import {
   useReadErc20BalanceOf,
   useWriteErc20Approve,
 } from "@/generated"
-import { ArrowForwardIcon } from "@chakra-ui/icons"
-import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { useLocalStorage } from "usehooks-ts"
-import { parseUnits } from "viem"
-import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
-
+import { useButton } from "@/hooks/use-button"
 import { stylusDevnetEc2 } from "@/lib/chain"
 import { signPermit2 } from "@/lib/permit2"
-import { useButton } from "@/hooks/use-button"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { renegade } from "@/app/providers"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"

@@ -1,3 +1,4 @@
+import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
 import {
   PropsWithChildren,
   createContext,
@@ -7,10 +8,9 @@ import {
   useRef,
   useState,
 } from "react"
-import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
 
-import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
+import { getToken } from "@/lib/utils"
 
 import { ExchangeContextValue } from "./types"
 
