@@ -1,5 +1,5 @@
-import React from "react"
 import { Box, Flex, keyframes } from "@chakra-ui/react"
+import React from "react"
 
 function pulseAnimation(scale: number) {
   return keyframes`

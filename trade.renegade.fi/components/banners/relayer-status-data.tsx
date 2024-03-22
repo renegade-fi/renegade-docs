@@ -1,7 +1,7 @@
-import { env } from "@/env.mjs"
 import { Renegade } from "@renegade-fi/renegade-js"
 
 import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
+import { env } from "@/env.mjs"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,

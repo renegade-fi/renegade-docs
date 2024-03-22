@@ -1,7 +1,3 @@
-import { useMemo, useState } from "react"
-import Image from "next/image"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useReadErc20BalanceOf } from "@/generated"
 import {
   Box,
   Grid,
@@ -18,15 +14,18 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
+import Image from "next/image"
+import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
+import "simplebar-react/dist/simplebar.min.css"
 import { formatUnits } from "viem/utils"
 import { useAccount } from "wagmi"
 
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useReadErc20BalanceOf } from "@/generated"
 import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
-
-import "simplebar-react/dist/simplebar.min.css"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {

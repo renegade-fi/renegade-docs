@@ -1,28 +1,28 @@
 "use client"
 
-import { PropsWithChildren, useEffect } from "react"
-import { AppProvider } from "@/contexts/App/app-context"
-import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
-import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
-import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
   ChakraProvider,
   ColorModeScript,
+  type ThemeConfig,
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
-  type ThemeConfig,
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
+import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
+import { AppProvider } from "@/contexts/App/app-context"
+import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
+import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
+import { env } from "@/env.mjs"
 import { stylusDevnetEc2 } from "@/lib/chain"
 
 /*

@@ -1,4 +1,3 @@
-import React, { createContext, useContext, useEffect, useState } from "react"
 import {
   Fade,
   Flex,
@@ -7,6 +6,7 @@ import {
   ModalContent,
   ModalOverlay,
 } from "@chakra-ui/react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 
 import { ErrorStep } from "@/components/steppers/order-stepper/steps/error-step"
 

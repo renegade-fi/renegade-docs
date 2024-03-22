@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { useApp } from "@/contexts/App/app-context"
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
+import React, { useEffect, useState } from "react"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { useApp } from "@/contexts/App/app-context"
 import { usePrevious } from "@/hooks/use-previous"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))"
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))"

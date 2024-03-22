@@ -1,6 +1,3 @@
-import { useDeposit } from "@/contexts/Deposit/deposit-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskType } from "@/contexts/Renegade/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -13,8 +10,11 @@ import {
 } from "@chakra-ui/react"
 import { useAccount } from "wagmi"
 
-import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
+import { useDeposit } from "@/contexts/Deposit/deposit-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskType } from "@/contexts/Renegade/types"
+import { getToken } from "@/lib/utils"
 
 import { ErrorType, useStepper } from "../deposit-stepper"
 

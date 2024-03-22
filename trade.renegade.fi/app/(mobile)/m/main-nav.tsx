@@ -1,10 +1,11 @@
 "use client"
 
-import React from "react"
-import Image from "next/image"
-import glyphDark from "@/icons/glyph_dark.svg"
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons"
 import { Box, Flex, Link, Spacer, Text } from "@chakra-ui/react"
+import Image from "next/image"
+import React from "react"
+
+import glyphDark from "@/icons/glyph_dark.svg"
 
 const headerHeight = "calc(2 * var(--banner-height))"
 

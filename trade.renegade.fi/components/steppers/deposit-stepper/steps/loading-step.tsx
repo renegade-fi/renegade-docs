@@ -1,7 +1,8 @@
+import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 import { useEffect } from "react"
+
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { TaskState, TaskType } from "@/contexts/Renegade/types"
-import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
 
 import { useStepper } from "../deposit-stepper"
 

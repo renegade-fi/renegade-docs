@@ -1,14 +1,14 @@
-import Image from "next/image"
-import { env } from "@/env.mjs"
-import backgroundPattern from "@/icons/background_pattern.png"
 import { Renegade } from "@renegade-fi/renegade-js"
+import Image from "next/image"
 
-import { getToken } from "@/lib/utils"
+import { Main } from "@/app/(desktop)/[base]/[quote]/main"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { Main } from "@/app/(desktop)/[base]/[quote]/main"
+import { env } from "@/env.mjs"
+import backgroundPattern from "@/icons/background_pattern.png"
+import { getToken } from "@/lib/utils"
 
 // export function generateStaticParams() {
 //   return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(

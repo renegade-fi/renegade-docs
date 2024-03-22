@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import {
   Exchange,
@@ -9,6 +8,7 @@ import {
   PriceReport,
   Token,
 } from "@renegade-fi/renegade-js"
+import React from "react"
 
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"

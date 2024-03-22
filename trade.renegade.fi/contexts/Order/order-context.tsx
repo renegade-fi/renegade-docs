@@ -1,5 +1,8 @@
 "use client"
 
+import { useToast } from "@chakra-ui/react"
+import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
+import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
   createContext,
@@ -8,14 +11,11 @@ import {
   useRef,
   useState,
 } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { CounterpartyOrder } from "@/contexts/Renegade/types"
-import { useToast } from "@chakra-ui/react"
-import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useLocalStorage } from "usehooks-ts"
 
-import { getToken } from "@/lib/utils"
 import { renegade } from "@/app/providers"
+import { CounterpartyOrder } from "@/contexts/Renegade/types"
+import { getToken } from "@/lib/utils"
 
 import { Direction, OrderContextValue } from "./types"
 

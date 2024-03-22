@@ -1,5 +1,3 @@
-import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
@@ -11,9 +9,11 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi"
 
-import { stylusDevnetEc2 } from "@/lib/chain"
-import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { client } from "@/app/providers"
+import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { stylusDevnetEc2 } from "@/lib/chain"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 

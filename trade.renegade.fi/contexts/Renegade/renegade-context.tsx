@@ -15,8 +15,8 @@ import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { useAccount } from "wagmi"
 
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 import {
   Counterparty,

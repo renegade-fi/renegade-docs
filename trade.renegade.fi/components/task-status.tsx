@@ -1,6 +1,3 @@
-import { useEffect, useRef, useState } from "react"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import {
   Box,
   CircularProgress,
@@ -8,7 +5,10 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react"
+import { useEffect, useRef, useState } from "react"
 
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { TaskState, TaskType } from "@/contexts/Renegade/types"
 import { useOrders } from "@/hooks/use-order"
 
 const TASK_TO_LATENCY = {

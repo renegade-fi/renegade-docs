@@ -1,17 +1,23 @@
 "use client"
 
-import { useMemo } from "react"
-import { useExchange } from "@/contexts/Exchange/exchange-context"
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
+import { useMemo } from "react"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
+import { renegade } from "@/app/providers"
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { useExchange } from "@/contexts/Exchange/exchange-context"
+import { useOrder } from "@/contexts/Order/order-context"
+import { Direction } from "@/contexts/Order/types"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useBalance } from "@/hooks/use-balance"
+import { useButton } from "@/hooks/use-button"
 import {
   findBalanceByTicker,
   formatAmount,
@@ -19,12 +25,6 @@ import {
   safeLocalStorageGetItem,
   safeLocalStorageSetItem,
 } from "@/lib/utils"
-import { useBalance } from "@/hooks/use-balance"
-import { useButton } from "@/hooks/use-button"
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
-import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { renegade } from "@/app/providers"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
