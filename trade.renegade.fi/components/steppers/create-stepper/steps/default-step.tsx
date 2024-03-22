@@ -13,7 +13,7 @@ import { client } from "@/app/providers"
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { stylusDevnetEc2 } from "@/lib/chain"
+import { stylusDevnetEc2 } from "@/lib/viem"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 

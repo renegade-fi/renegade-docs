@@ -11,7 +11,7 @@ import {
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 
-import { stylusDevnetEc2 } from "@/lib/chain"
+import { stylusDevnetEc2 } from "@/lib/viem"
 
 // TODO: Make sure mint works
 const abi = parseAbi([
