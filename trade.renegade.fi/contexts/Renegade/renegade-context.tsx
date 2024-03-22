@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { useAccount } from "wagmi"
 
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { renegade } from "@/app/providers"
 
 import {
@@ -25,7 +26,6 @@ import {
   TaskState,
   TaskType,
 } from "./types"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 
 const RenegadeContext = React.createContext<RenegadeContextType | undefined>(
   undefined

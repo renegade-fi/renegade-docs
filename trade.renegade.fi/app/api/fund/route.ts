@@ -15,7 +15,7 @@ import { stylusDevnetEc2 } from "@/lib/chain"
 
 // TODO: Make sure mint works
 const abi = parseAbi([
-  "function mint(address _address, uint256 value) external"
+  "function mint(address _address, uint256 value) external",
 ])
 
 export async function GET(request: Request) {

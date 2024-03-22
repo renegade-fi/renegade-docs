@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useMemo } from "react"
 import { useApp } from "@/contexts/App/app-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
@@ -8,16 +9,15 @@ import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import { toast } from "sonner"
 
-import { renegade } from "@/app/providers"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
 import { useOrders } from "@/hooks/use-order"
-import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
+import { renegade } from "@/app/providers"
 
 import "simplebar-react/dist/simplebar.min.css"
 
@@ -51,7 +51,8 @@ function SingleOrder({
       .cancelOrder(accountId, id)
       .then(() =>
         toast.message(
-          `Started to cancel order to ${side === "buy" ? "Buy" : "Sell"
+          `Started to cancel order to ${
+            side === "buy" ? "Buy" : "Sell"
           } ${amount} ${base}`,
           {
             description: "Check the history tab for the status of the task",
@@ -294,18 +295,18 @@ function OrderBookPanel() {
               : counterpartyOrder.state === "Cancelled" &&
                 !(counterpartyOrder.id in orders) &&
                 savedOrders.some(({ id }) => id === counterpartyOrder.id)
-                ? "MATCHED"
-                : counterpartyOrder.state === "Cancelled"
-                  ? "VERIFIED"
-                  : counterpartyOrder.state.toUpperCase()
+              ? "MATCHED"
+              : counterpartyOrder.state === "Cancelled"
+              ? "VERIFIED"
+              : counterpartyOrder.state.toUpperCase()
 
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
               : status === "CANCELLED"
-                ? "red"
-                : "white.60"
+              ? "red"
+              : "white.60"
 
           return (
             <Flex

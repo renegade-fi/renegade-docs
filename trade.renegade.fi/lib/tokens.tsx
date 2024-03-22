@@ -1,3 +1,4 @@
+import { StaticImageData } from "next/image"
 import inchLogo from "@/icons/tokens/1inch.png"
 import audioLogo from "@/icons/tokens/audio.png"
 import axsLogo from "@/icons/tokens/axs.png"
@@ -34,7 +35,6 @@ import usdtLogo from "@/icons/tokens/usdt.png"
 import wbtcLogo from "@/icons/tokens/wbtc.png"
 import wethLogo from "@/icons/tokens/weth.png"
 import { tokenMappings } from "@renegade-fi/renegade-js"
-import { StaticImageData } from "next/image"
 
 const TOKENLIST_URL =
   "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"
@@ -77,13 +77,14 @@ const LOGO_URL_OVERRIDES: { [key in string]: StaticImageData } = {
   RAD: radLogo,
 }
 
-const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: { [key: string]: [string, number] } = {};
+const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: { [key: string]: [string, number] } =
+  {}
 
-tokenMappings.tokens.forEach(token => {
+tokenMappings.tokens.forEach((token) => {
   // Assuming you want to use the 'decimals' value from the tokens as the default decimal
   // If you have a different rule for default decimals, apply it here
-  TICKER_TO_NAME_AND_DEFAULT_DECIMALS[token.ticker] = [token.name, 2];
-});
+  TICKER_TO_NAME_AND_DEFAULT_DECIMALS[token.ticker] = [token.name, 2]
+})
 
 export const DISPLAYED_TICKERS: [string, string][] = Object.keys(
   TICKER_TO_NAME_AND_DEFAULT_DECIMALS

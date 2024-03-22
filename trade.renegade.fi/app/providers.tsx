@@ -1,5 +1,10 @@
 "use client"
 
+import { PropsWithChildren, useEffect } from "react"
+import { AppProvider } from "@/contexts/App/app-context"
+import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
+import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
+import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -11,18 +16,13 @@ import {
   type ThemeConfig,
 } from "@chakra-ui/react"
 import { Renegade } from "@renegade-fi/renegade-js"
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
-import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { createPublicClient, http } from "viem"
-import { createConfig, WagmiProvider } from "wagmi"
+import { WagmiProvider, createConfig } from "wagmi"
 
-import { AppProvider } from "@/contexts/App/app-context"
-import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
-import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
-import { env } from "@/env.mjs"
 import { stylusDevnetEc2 } from "@/lib/chain"
 
 /*
@@ -192,7 +192,7 @@ const wagmiConfig = createConfig(
     chains: [stylusDevnetEc2],
     ssr: true,
     transports: {
-      [stylusDevnetEc2.id]: http()
+      [stylusDevnetEc2.id]: http(),
     },
     walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
@@ -234,9 +234,6 @@ export function Providers({
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
             <WagmiProvider config={wagmiConfig}>
               <QueryClientProvider client={queryClient}>
-
-
-
                 <ConnectKitProvider
                   mode="dark"
                   customTheme={{

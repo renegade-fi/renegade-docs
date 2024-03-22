@@ -1,3 +1,5 @@
+import { useApp } from "@/contexts/App/app-context"
+import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
 import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
@@ -9,13 +11,11 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi"
 
-import { client } from "@/app/providers"
-import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { stylusDevnetEc2 } from "@/lib/chain"
+import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { client } from "@/app/providers"
 
-const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:";
+const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
 export function DefaultStep() {
   const { setIsOnboarding, setIsSigningIn } = useApp()
@@ -54,7 +54,7 @@ export function DefaultStep() {
         setIsOnboarding(false)
         onClose()
       },
-    }
+    },
   })
   const { disconnect } = useDisconnectWagmi()
 
@@ -69,11 +69,11 @@ export function DefaultStep() {
           <div>
             <Button
               width="100%"
-              height={status === 'pending' ? "56px" : "40px"}
+              height={status === "pending" ? "56px" : "40px"}
               color="white.90"
               fontWeight="800"
               transition="0.2s"
-              isLoading={status === 'pending'}
+              isLoading={status === "pending"}
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
@@ -85,8 +85,8 @@ export function DefaultStep() {
             </Button>
             <Flex
               justifyContent="center"
-              height={status === 'pending' ? "0px" : "auto"}
-              opacity={status === 'pending' ? 0 : 1}
+              height={status === "pending" ? "0px" : "auto"}
+              opacity={status === "pending" ? 0 : 1}
               transition="0.2s"
             >
               <Button

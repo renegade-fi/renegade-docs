@@ -29,11 +29,16 @@ function DepositProvider({ children }: PropsWithChildren) {
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || (!isNaN(parseFloat(value)) && isFinite(parseFloat(value)) && parseFloat(value) >= 0)) {
-      setBaseTokenAmount(value);
+    const value = e.target.value
+    if (
+      value === "" ||
+      (!isNaN(parseFloat(value)) &&
+        isFinite(parseFloat(value)) &&
+        parseFloat(value) >= 0)
+    ) {
+      setBaseTokenAmount(value)
     }
-  };
+  }
 
   return (
     <DepositStateContext.Provider

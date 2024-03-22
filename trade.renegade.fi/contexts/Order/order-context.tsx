@@ -113,10 +113,12 @@ function OrderProvider({ children }: PropsWithChildren) {
           if (!toast.isActive(toastId)) {
             toast({
               id: toastId,
-              title: `MPC ${mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
-                }`,
-              description: `A handshake with a counterparty has ${mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
-                }.`,
+              title: `MPC ${
+                mpcEvent.type === "HandshakeCompleted" ? "Finished" : "Started"
+              }`,
+              description: `A handshake with a counterparty has ${
+                mpcEvent.type === "HandshakeCompleted" ? "completed" : "begun"
+              }.`,
               status: "info",
               duration: 5000,
               isClosable: true,
@@ -145,11 +147,16 @@ function OrderProvider({ children }: PropsWithChildren) {
   }, [orderBook, toast])
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '' || (!isNaN(parseFloat(value)) && isFinite(parseFloat(value)) && parseFloat(value) >= 0)) {
-      setBaseTokenAmount(value);
+    const value = e.target.value
+    if (
+      value === "" ||
+      (!isNaN(parseFloat(value)) &&
+        isFinite(parseFloat(value)) &&
+        parseFloat(value) >= 0)
+    ) {
+      setBaseTokenAmount(value)
     }
-  };
+  }
 
   return (
     <OrderStateContext.Provider

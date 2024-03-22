@@ -34,14 +34,8 @@ export interface LocalOrder {
 export function ConfirmStep() {
   const { onClose, setMidpoint, setError } = useStepper()
   const { getPriceData } = useExchange()
-  const {
-    base,
-    baseTicker,
-    baseTokenAmount,
-    direction,
-    quote,
-    quoteTicker,
-  } = useOrder()
+  const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
+    useOrder()
   const { setTask, accountId } = useRenegade()
   const [currentPriceReport, setCurrentPriceReport] = useState<PriceReport>()
 
@@ -185,8 +179,9 @@ export function ConfirmStep() {
           }}
         >
           <HStack spacing="4px">
-            <Text>{`${direction === "buy" ? "Buy" : "Sell"
-              } ${baseTicker}`}</Text>
+            <Text>{`${
+              direction === "buy" ? "Buy" : "Sell"
+            } ${baseTicker}`}</Text>
             <ArrowForwardIcon />
           </HStack>
         </Button>
