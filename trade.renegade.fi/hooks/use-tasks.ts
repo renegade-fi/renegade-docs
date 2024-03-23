@@ -7,12 +7,8 @@ export const useTasks = () => {
   const [tasks, setTasks] = useState<
     {
       id?: string | undefined
-      status?:
-        | {
-            task_type?: string | undefined
-            state?: string | undefined
-          }
-        | undefined
+      state?: string | undefined
+      description?: string | undefined
       committed?: boolean | undefined
     }[]
   >([])
