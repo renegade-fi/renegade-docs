@@ -54,7 +54,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
     const handleTaskListener = async () => {
       await renegade
         .registerTaskCallback((message: string) => {
-          const taskUpdate = JSON.parse(message).state
+          const taskUpdate = JSON.parse(message).status.state
           setTaskState(taskUpdate as TaskState)
         }, taskId)
         .then((callbackId) => (taskCallbackId.current = callbackId))

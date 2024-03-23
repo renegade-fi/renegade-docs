@@ -342,23 +342,14 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 function HistorySection() {
   const { accountId } = useRenegade()
   const tasks = useTasks()
-  const formatTask = (type?: string) => {
-    switch (type) {
-      case "UpdateWallet":
-        return "Update Wallet"
-      default:
-        return type
-    }
-  }
-
   const Content = useMemo(() => {
     const TASK_TO_NAME = {
       Queued: "Queued",
-      [TaskState.Proving]: "Proving",
-      [TaskState.SubmittingTx]: "Submitting Transaction",
-      [TaskState.FindingOpening]: "Validating",
-      [TaskState.UpdatingValidityProofs]: "Validating",
-      [TaskState.Completed]: "Completed",
+      Proving: "Proving",
+      "Submitting Tx": "Submitting Transaction",
+      "Finding Opening": "Validating",
+      "Updating Validity Proofs": "Validating",
+      Completed: "Completed",
     }
     return (
       <SimpleBar
@@ -368,13 +359,12 @@ function HistorySection() {
         }}
       >
         {tasks.map((task) => {
-          const textColor =
-            task.status?.state === "Completed" ? "green" : "white"
+          const textColor = task.state === "Completed" ? "green" : "white"
 
           const rightIcon =
-            task.status?.state === "Completed" ? (
+            task.state === "Completed" ? (
               <CheckIcon color="white.60" height="4" />
-            ) : task.status?.state === "Queued" ? (
+            ) : task.state === "Queued" ? (
               <></>
             ) : (
               <Spinner color="white.60" size="xs" />
@@ -395,7 +385,7 @@ function HistorySection() {
                     fontFamily="Favorit Extended"
                     fontWeight="500"
                   >
-                    {formatTask(task.status?.task_type)}
+                    {task.description}
                   </Text>
                   <Text
                     color="white.60"
@@ -407,9 +397,9 @@ function HistorySection() {
                   </Text>
                 </Flex>
                 <Flex alignItems="center" gap="2">
-                  {task.status?.state !== "Completed" && <>{rightIcon}</>}
+                  {task.state !== "Completed" && <>{rightIcon}</>}
                   <Text color="white.80" fontSize="0.8em">
-                    {TASK_TO_NAME[task.status?.state as TaskState]}
+                    {TASK_TO_NAME[task.state as TaskState]}
                   </Text>
                 </Flex>
               </Flex>

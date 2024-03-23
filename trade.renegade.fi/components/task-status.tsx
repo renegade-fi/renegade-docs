@@ -14,70 +14,69 @@ import { useOrders } from "@/hooks/use-order"
 const TASK_TO_LATENCY = {
   [TaskType.InitializeAccount]: {
     [TaskState.Proving]: 41000,
-    [TaskState.SubmittingTx]: 4000,
-    // @ts-ignore
-    FindingMerkleOpening: 4000,
-    [TaskState.FindingOpening]: 4000,
-    [TaskState.UpdatingValidityProofs]: 0,
+    [TaskState["Submitting Tx"]]: 4000,
+    [TaskState["Finding Opening"]]: 4000,
+    [TaskState["Updating Validity Proofs"]]: 0,
     [TaskState.Completed]: 0,
   },
   [TaskType.Deposit]: {
     [TaskState.Proving]: 22000,
-    [TaskState.SubmittingTx]: 1000,
-    [TaskState.FindingOpening]: 1000,
-    [TaskState.UpdatingValidityProofs]: 48000,
+    [TaskState["Submitting Tx"]]: 1000,
+    [TaskState["Finding Opening"]]: 1000,
+    [TaskState["Updating Validity Proofs"]]: 48000,
     [TaskState.Completed]: 0,
   },
   [TaskType.Withdrawal]: {
     [TaskState.Proving]: 22000,
-    [TaskState.SubmittingTx]: 1000,
-    [TaskState.FindingOpening]: 1000,
-    [TaskState.UpdatingValidityProofs]: 48000,
+    [TaskState["Submitting Tx"]]: 1000,
+    [TaskState["Finding Opening"]]: 1000,
+    [TaskState["Updating Validity Proofs"]]: 48000,
     [TaskState.Completed]: 0,
   },
   [TaskType.PlaceOrder]: {
     [TaskState.Proving]: 22000,
-    [TaskState.SubmittingTx]: 1000,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 48000,
+    [TaskState["Submitting Tx"]]: 1000,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 48000,
     [TaskState.Completed]: 0,
   },
   [TaskType.ModifyOrder]: {
     [TaskState.Proving]: 22000,
-    [TaskState.SubmittingTx]: 1000,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 48000,
+    [TaskState["Submitting Tx"]]: 1000,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 48000,
     [TaskState.Completed]: 0,
   },
   [TaskType.CancelOrder]: {
     [TaskState.Proving]: 22000,
-    [TaskState.SubmittingTx]: 1000,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 48000,
+    [TaskState["Submitting Tx"]]: 1000,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 48000,
     [TaskState.Completed]: 0,
   },
   [TaskType.ApproveFee]: {
     [TaskState.Proving]: 0,
-    [TaskState.SubmittingTx]: 0,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 0,
+    [TaskState["Submitting Tx"]]: 0,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 0,
     [TaskState.Completed]: 0,
   },
   [TaskType.ModifyFee]: {
     [TaskState.Proving]: 0,
-    [TaskState.SubmittingTx]: 0,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 0,
+    [TaskState["Submitting Tx"]]: 0,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 0,
     [TaskState.Completed]: 0,
   },
   [TaskType.RevokeFee]: {
     [TaskState.Proving]: 0,
-    [TaskState.SubmittingTx]: 0,
-    [TaskState.FindingOpening]: 0,
-    [TaskState.UpdatingValidityProofs]: 0,
+    [TaskState["Submitting Tx"]]: 0,
+    [TaskState["Finding Opening"]]: 0,
+    [TaskState["Updating Validity Proofs"]]: 0,
     [TaskState.Completed]: 0,
   },
 }
+console.log("🚀 ~ TASK_TO_LATENCY:", TASK_TO_LATENCY)
 
 export const TaskStatus = () => {
   const orders = useOrders()
@@ -127,7 +126,7 @@ export const TaskStatus = () => {
   }
   // If we're updating validity proofs, and there are no orders, this operation will completely immediately.
   if (
-    taskState === TaskState.UpdatingValidityProofs &&
+    taskState === TaskState["Updating Validity Proofs"] &&
     Object.keys(orders).length === 0
   ) {
     progress = 100
@@ -147,10 +146,9 @@ export const TaskStatus = () => {
 
   const displayedTaskState = {
     [TaskState.Proving]: "Generating ZK Proof",
-    [TaskState.SubmittingTx]: "Submitting Transaction",
-    [TaskState.FindingOpening]: "Finding New Merkle Opening",
-    FindingMerkleOpening: "Finding New Merkle Opening",
-    [TaskState.UpdatingValidityProofs]: "Updating Validity Proofs",
+    [TaskState["Submitting Tx"]]: "Submitting Transaction",
+    [TaskState["Finding Opening"]]: "Finding New Merkle Opening",
+    [TaskState["Updating Validity Proofs"]]: "Updating Validity Proofs",
     [TaskState.Completed]: "Completed",
   }[taskState || TaskState.Proving] // If taskState is undefined, we won't use this displayedTaskState anyway.
 
