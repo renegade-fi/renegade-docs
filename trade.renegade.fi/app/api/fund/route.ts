@@ -3,15 +3,33 @@ import {
   createPublicClient,
   createWalletClient,
   formatEther,
-  formatUnits,
   http,
   parseAbi,
-  parseEther,
-  parseUnits,
+  parseEther
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 
+import { formatAmount, parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
+
+const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
+  {
+    ticker: "WETH",
+    amount: "10"
+  },
+  {
+    ticker: "USDC",
+    amount: "100000"
+  },
+  {
+    ticker: "WBTC",
+    amount: "3"
+  },
+  {
+    ticker: "DYDX",
+    amount: "3"
+  }
+]
 
 // TODO: Make sure mint works
 const abi = parseAbi([
@@ -51,10 +69,8 @@ export async function GET(request: Request) {
     })
 
     const ethAmount = parseEther("0.1")
-    const wethAmount = parseEther("10")
-    const usdcAmount = parseUnits("100000", 18)
 
-    const transactionCount = await publicClient.getTransactionCount({
+    let transactionCount = await publicClient.getTransactionCount({
       address: account.address,
     })
 
@@ -74,47 +90,30 @@ export async function GET(request: Request) {
       )} ETH. Transaction hash: ${transaction.transactionHash}`
     )
 
-    // Fund with WETH
-    const { request: wethRequest } = await publicClient.simulateContract({
-      account,
-      address: Token.findAddressByTicker("WETH") as `0x${string}`,
-      abi,
-      functionName: "mint",
-      args: [recipient, wethAmount],
-      nonce: transactionCount + 1,
-    })
+    for (const { ticker, amount } of TOKENS_TO_FUND) {
+      const token = new Token({ ticker })
+      const tokenAmount = parseAmount(amount, token)
 
-    const wethHash = await walletClient.writeContract(wethRequest)
-    const wethTransaction = await publicClient.waitForTransactionReceipt({
-      hash: wethHash,
-    })
-    console.log(
-      `Funded ${recipient} with ${formatUnits(
-        wethAmount,
-        18
-      )} WETH. Transaction hash: ${wethTransaction.transactionHash}`
-    )
+      const { request: tokenRequest } = await publicClient.simulateContract({
+        account,
+        address: Token.findAddressByTicker(ticker) as `0x${string}`,
+        abi,
+        functionName: "mint",
+        args: [recipient, tokenAmount],
+        nonce: ++transactionCount,
+      });
 
-    // Fund with UDSC
-    const { request: usdcRequest } = await publicClient.simulateContract({
-      account,
-      address: Token.findAddressByTicker("USDC") as `0x${string}`,
-      abi,
-      functionName: "mint",
-      args: [recipient, usdcAmount],
-      nonce: transactionCount + 2,
-    })
-
-    const usdcHash = await walletClient.writeContract(usdcRequest)
-    const usdcTransaction = await publicClient.waitForTransactionReceipt({
-      hash: usdcHash,
-    })
-    console.log(
-      `Funded ${recipient} with ${formatUnits(
-        usdcAmount,
-        18
-      )} USDC. Transaction hash: ${usdcTransaction.transactionHash}`
-    )
+      const tokenHash = await walletClient.writeContract(tokenRequest);
+      const tokenTransaction = await publicClient.waitForTransactionReceipt({
+        hash: tokenHash,
+      });
+      console.log(
+        `Funded ${recipient} with ${formatAmount(
+          tokenAmount,
+          token
+        )} ${ticker}. Transaction hash: ${tokenTransaction.transactionHash}`
+      );
+    }
 
     return new Response("Success!", {
       status: 200,
