@@ -34,7 +34,11 @@ function AppProvider({
   const { accountId } = useRenegade()
   const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
   const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
-  const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+  const [view, setView] = useState<ViewEnum>(() =>
+    window.location.pathname.split("/").length === 2
+      ? ViewEnum.DEPOSIT
+      : ViewEnum.TRADING
+  )
 
   useEffect(() => {
     let timeout = setTimeout(() => {
