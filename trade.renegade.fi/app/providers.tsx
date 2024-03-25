@@ -182,7 +182,7 @@ const theme = extendTheme({ config, styles, colors, components })
  * │    Wallet Config    |
  * └─────────────────────┘
  */
-const wagmiConfig = createConfig(
+export const wagmiConfig = createConfig(
   getDefaultConfig({
     appDescription:
       "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",

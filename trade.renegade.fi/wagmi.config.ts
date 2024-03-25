@@ -1,5 +1,5 @@
 import { defineConfig } from "@wagmi/cli"
-import { react } from "@wagmi/cli/plugins"
+import { actions, react } from "@wagmi/cli/plugins"
 import { parseAbi } from "viem"
 
 const abi = parseAbi([
@@ -17,5 +17,5 @@ export default defineConfig({
       abi,
     },
   ],
-  plugins: [react()],
+  plugins: [actions(), react()],
 })

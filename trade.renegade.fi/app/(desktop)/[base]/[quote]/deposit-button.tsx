@@ -21,6 +21,7 @@ import {
 } from "@/generated"
 import { useButton } from "@/hooks/use-button"
 import { signPermit2 } from "@/lib/permit2"
+import { parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
 
 const MAX_INT = BigInt(
@@ -49,8 +50,6 @@ export default function DepositButton() {
       address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
       args: [address ?? "0x"],
     })
-  // TODO: Adjust decimals
-  // console.log("Balance on L1: ", formatUnits(l1Balance ?? BigInt(0), 18))
 
   // Get L1 ERC20 Allowance
   const { data: allowance, queryKey: allowanceQueryKey } =
@@ -61,7 +60,6 @@ export default function DepositButton() {
         env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
       ],
     })
-  // console.log(`${baseTicker} allowance on Permit2 contract: `, allowance)
 
   const queryClient = useQueryClient()
   const { data: blockNumber } = useBlockNumber({ watch: true })
@@ -78,8 +76,9 @@ export default function DepositButton() {
 
   const hasRpcConnectionError = typeof allowance === "undefined"
   const hasInsufficientBalance = l1Balance
-    ? l1Balance < parseUnits(baseTokenAmount, 18)
-    : false
+    ? l1Balance <
+      parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
+    : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
 
   const isDisabled =

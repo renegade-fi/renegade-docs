@@ -5,7 +5,7 @@ import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
 import React, { createRef, useEffect, useRef, useState } from "react"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
 import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
@@ -172,7 +172,6 @@ function TradingInner() {
       </Flex>
       <TokenSelectModal
         isOpen={tokenMenuIsOpen}
-        isTrading
         onClose={onCloseTokenMenu}
         setToken={setBaseToken}
       />
