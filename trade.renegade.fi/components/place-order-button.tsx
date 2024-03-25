@@ -91,7 +91,7 @@ export function PlaceOrderButton() {
           }
         )
       )
-      .catch(() => toast.error("Error placing order, please try again"))
+      .catch((e) => toast.error(`Error placing order: ${e.message}`))
   }
 
   const hasInsufficientBalance = useMemo(() => {
