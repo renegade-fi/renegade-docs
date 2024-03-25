@@ -10,24 +10,20 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
-import { useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
-import { formatUnits } from "viem/utils"
-import { useAccount, useBlockNumber } from "wagmi"
 
-import { wagmiConfig } from "@/app/providers"
 import { useApp } from "@/contexts/App/app-context"
-import { readErc20BalanceOf, useReadErc20BalanceOf } from "@/generated"
+import { useBalance } from "@/hooks/use-balance"
 import { useDebounce } from "@/hooks/use-debounce"
 import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
+import { formatAmount } from "@/lib/utils"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
@@ -42,39 +38,23 @@ export function TokenSelectModal({
 }: TokenSelectModalProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
-
-  const { address } = useAccount()
-
-  const [tickerBalances, setTickerBalances] = useState<
-    { base: string; balance: bigint }[]
-  >([])
-
-  useEffect(() => {
-    const fetchBalances = async () => {
-      const result: { base: string; balance: bigint }[] = []
-      for (const [ticker] of DISPLAYED_TICKERS) {
-        const balance = await readErc20BalanceOf(wagmiConfig, {
-          address: Token.findAddressByTicker(ticker) as `0x${string}`,
-          args: [address ?? "0x"],
-        })
-        result.push({ base: ticker, balance: balance })
-      }
-      const sortedResult = result.sort((a, b) => {
-        if (a.balance > b.balance) return -1
-        if (a.balance < b.balance) return 1
-        return 0
-      })
-      setTickerBalances(sortedResult)
-    }
-    fetchBalances()
-  }, [address])
-
+  const balances = useBalance()
   const filteredTickers = useMemo(() => {
-    return tickerBalances.filter(({ base }) =>
-      base.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+    return DISPLAYED_TICKERS.filter(([ticker]) =>
+      ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     )
-  }, [debouncedSearchTerm, tickerBalances])
-
+  }, [debouncedSearchTerm])
+  const filteredTickersWithBalances = useMemo(() => {
+    const result: { ticker: string; balance: bigint | undefined }[] = []
+    for (const [ticker] of filteredTickers) {
+      const balance = Object.values(balances).find(
+        ({ mint: { address } }) =>
+          `0x${address}` === Token.findAddressByTicker(ticker)
+      )
+      result.push({ ticker, balance: balance?.amount })
+    }
+    return result
+  }, [balances, filteredTickers])
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
       <ModalOverlay
@@ -107,7 +87,7 @@ export function TokenSelectModal({
         </ModalHeader>
         <ModalBody padding="0">
           <ModalCloseButton />
-          {filteredTickers.length === 0 && searchTerm ? (
+          {filteredTickersWithBalances.length === 0 && (
             <Box display="grid" minHeight="80%" placeContent="center">
               <Text
                 color="white.50"
@@ -117,30 +97,28 @@ export function TokenSelectModal({
                 No results found
               </Text>
             </Box>
-          ) : filteredTickers.length === 0 ? (
-            <Box display="grid" minHeight="80%" placeContent="center">
-              <Spinner />
-            </Box>
-          ) : (
-            <SimpleBar
-              style={{
-                height: "100%",
-              }}
-            >
-              {filteredTickers.map(({ base }) => {
+          )}
+          <SimpleBar
+            style={{
+              height: "100%",
+            }}
+          >
+            {filteredTickersWithBalances
+              .filter(({ ticker }) => ticker !== "USDC")
+              .map(({ ticker, balance }) => {
                 return (
                   <Row
-                    key={base}
-                    ticker={base}
+                    key={ticker}
+                    balance={balance}
+                    ticker={ticker}
                     onRowClick={() => {
                       onClose()
-                      setToken(base)
+                      setToken(ticker)
                     }}
                   />
                 )
               })}
-            </SimpleBar>
-          )}
+          </SimpleBar>
         </ModalBody>
       </ModalContent>
     </Modal>
@@ -148,27 +126,16 @@ export function TokenSelectModal({
 }
 
 interface RowProps {
+  balance?: bigint
   ticker: string
   onRowClick: () => void
 }
 
-const Row = ({ ticker, onRowClick }: RowProps) => {
-  const { address } = useAccount()
+const Row = ({ ticker, onRowClick, balance }: RowProps) => {
   const { tokenIcons } = useApp()
-  const { data: erc20Balance, queryKey } = useReadErc20BalanceOf({
-    address: Token.findAddressByTicker(ticker) as `0x${string}`,
-    args: [address ?? "0x"],
-  })
-  const queryClient = useQueryClient()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey })
-  }, [queryClient, queryKey, blockNumber])
 
   const balanceAmount = useMemo(() => {
-    let result = "0"
-
-    result = erc20Balance ? formatUnits(erc20Balance, 18) : "0" // Adjust the decimals as needed
+    let result = balance ? formatAmount(balance, new Token({ ticker })) : "0"
 
     // Check if result has decimals and truncate to 2 decimals without rounding
     if (result.includes(".")) {
@@ -177,7 +144,7 @@ const Row = ({ ticker, onRowClick }: RowProps) => {
     }
 
     return result
-  }, [erc20Balance])
+  }, [balance, ticker])
   return (
     <Grid
       className="wrapper"

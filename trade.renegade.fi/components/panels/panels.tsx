@@ -95,7 +95,6 @@ interface PanelProps {
     toggleIsLocked: () => void
   ) => React.ReactElement
   panelCollapsedDisplayTexts: string[]
-  isOpenGlobalModal: boolean
   isOpenConnectKitModal: boolean
   flipDirection: boolean
 }
@@ -121,10 +120,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
   }
 
   componentDidUpdate(prevProps: PanelProps) {
-    if (
-      (!this.props.isOpenGlobalModal && prevProps.isOpenGlobalModal) ||
-      (!this.props.isOpenConnectKitModal && prevProps.isOpenConnectKitModal)
-    ) {
+    if (!this.props.isOpenConnectKitModal && prevProps.isOpenConnectKitModal) {
       this.setState({ isModalJustClosed: true })
       setTimeout(
         () =>
@@ -151,8 +147,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
   onMouseLeave() {
     this.setState({
       isHovering: false,
-      isOpenModalWhenLeft:
-        this.props.isOpenGlobalModal || this.props.isOpenConnectKitModal,
+      isOpenModalWhenLeft: this.props.isOpenConnectKitModal,
     })
   }
 
@@ -171,9 +166,7 @@ export class Panel extends React.Component<PanelProps, PanelState> {
       this.state.isHovering ||
       this.state.isLocked ||
       (this.state.isOpenModalWhenLeft &&
-        (this.props.isOpenGlobalModal ||
-          this.props.isOpenConnectKitModal ||
-          this.state.isModalJustClosed))
+        (this.props.isOpenConnectKitModal || this.state.isModalJustClosed))
     const collapsedTransform = isExpanded
       ? this.props.flipDirection
         ? "translateX(100%)"

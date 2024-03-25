@@ -5,7 +5,7 @@ import {
   formatEther,
   http,
   parseAbi,
-  parseEther
+  parseEther,
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 
@@ -15,20 +15,20 @@ import { stylusDevnetEc2 } from "@/lib/viem"
 const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
   {
     ticker: "WETH",
-    amount: "10"
+    amount: "10",
   },
   {
     ticker: "USDC",
-    amount: "100000"
+    amount: "100000",
   },
   {
     ticker: "WBTC",
-    amount: "3"
+    amount: "3",
   },
   {
     ticker: "DYDX",
-    amount: "3"
-  }
+    amount: "3",
+  },
 ]
 
 // TODO: Make sure mint works
@@ -101,18 +101,18 @@ export async function GET(request: Request) {
         functionName: "mint",
         args: [recipient, tokenAmount],
         nonce: ++transactionCount,
-      });
+      })
 
-      const tokenHash = await walletClient.writeContract(tokenRequest);
+      const tokenHash = await walletClient.writeContract(tokenRequest)
       const tokenTransaction = await publicClient.waitForTransactionReceipt({
         hash: tokenHash,
-      });
+      })
       console.log(
         `Funded ${recipient} with ${formatAmount(
           tokenAmount,
           token
         )} ${ticker}. Transaction hash: ${tokenTransaction.transactionHash}`
-      );
+      )
     }
 
     return new Response("Success!", {

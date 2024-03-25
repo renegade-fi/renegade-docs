@@ -31,3 +31,5 @@
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vscode/
