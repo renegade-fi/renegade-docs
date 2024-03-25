@@ -127,6 +127,7 @@ const Row = ({ ticker, tokenName, onRowClick }: RowProps) => {
   const { address } = useAccount()
   const { tokenIcons, view } = useApp()
   const balances = useBalance()
+  // TODO: Live update
   const { data: erc20Balance } = useReadErc20BalanceOf({
     address: Token.findAddressByTicker(ticker) as `0x${string}`,
     args: [address ?? "0x"],

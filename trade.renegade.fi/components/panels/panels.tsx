@@ -1,12 +1,6 @@
-"use client"
-
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons"
 import { Flex, Text } from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
-
-import { useApp } from "@/contexts/App/app-context"
-import { usePrevious } from "@/hooks/use-previous"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import React from "react"
 
 export const expandedPanelWidth = "calc(6.5 * var(--banner-height))"
 export const collapsedPanelWidth = "calc(1.4 * var(--banner-height))"
@@ -96,92 +90,125 @@ function PanelCollapsed(props: PanelCollapsedProps) {
 }
 
 interface PanelProps {
-  flipDirection: boolean
-  isOpenConnectKitModal: boolean
-  panelCollapsedDisplayTexts: string[]
   panelExpanded: (
     isLocked: boolean,
     toggleIsLocked: () => void
   ) => React.ReactElement
+  panelCollapsedDisplayTexts: string[]
+  isOpenGlobalModal: boolean
+  isOpenConnectKitModal: boolean
+  flipDirection: boolean
 }
-
-export function Panel({
-  flipDirection,
-  panelCollapsedDisplayTexts,
-  panelExpanded,
-}: PanelProps) {
-  const key = `${flipDirection ? "right" : "left"}-panel-isLocked`
-
-  const { isOnboarding, isSigningIn } = useApp()
-  const [isLocked, setIsLocked] = useState(
-    safeLocalStorageGetItem(key) === "true" || false
-  )
-  const [isOpen, setIsOpen] = useState(false)
-
-  const prevIsOnboarding = usePrevious(isOnboarding)
-
-  useEffect(() => {
-    const lockState = safeLocalStorageGetItem(key) === "true"
-    if (prevIsOnboarding && !isOnboarding && !isSigningIn && !lockState) {
-      setIsOpen(false)
+interface PanelState {
+  isHovering: boolean
+  isLocked: boolean
+  isOpenModalWhenLeft: boolean
+  isModalJustClosed: boolean
+}
+export class Panel extends React.Component<PanelProps, PanelState> {
+  constructor(props: PanelProps) {
+    super(props)
+    this.state = {
+      isHovering: false,
+      isLocked:
+        localStorage.getItem(this.getLocalStorageKey()) === "true" || false,
+      isOpenModalWhenLeft: false,
+      isModalJustClosed: false,
     }
-  }, [isOnboarding, isSigningIn, key, prevIsOnboarding])
-
-  const onMouseEnter = () => {
-    setIsOpen(true)
+    this.onMouseEnter = this.onMouseEnter.bind(this)
+    this.onMouseLeave = this.onMouseLeave.bind(this)
+    this.toggleIsLocked = this.toggleIsLocked.bind(this)
   }
 
-  const onMouseLeave = () => {
-    setIsOpen(
-      isOnboarding || isSigningIn || safeLocalStorageGetItem(key) === "true"
+  componentDidUpdate(prevProps: PanelProps) {
+    if (
+      (!this.props.isOpenGlobalModal && prevProps.isOpenGlobalModal) ||
+      (!this.props.isOpenConnectKitModal && prevProps.isOpenConnectKitModal)
+    ) {
+      this.setState({ isModalJustClosed: true })
+      setTimeout(
+        () =>
+          this.setState({
+            isModalJustClosed: false,
+            isOpenModalWhenLeft: false,
+          }),
+        750
+      )
+    }
+  }
+
+  getLocalStorageKey() {
+    return `renegade-is-locked-${this.props.flipDirection ? "right" : "left"}`
+  }
+
+  onMouseEnter() {
+    this.setState({
+      isHovering: true,
+      isOpenModalWhenLeft: false,
+    })
+  }
+
+  onMouseLeave() {
+    this.setState({
+      isHovering: false,
+      isOpenModalWhenLeft:
+        this.props.isOpenGlobalModal || this.props.isOpenConnectKitModal,
+    })
+  }
+
+  toggleIsLocked() {
+    localStorage.setItem(
+      this.getLocalStorageKey(),
+      (!this.state.isLocked).toString()
+    )
+    this.setState({
+      isLocked: !this.state.isLocked,
+    })
+  }
+
+  render() {
+    const isExpanded =
+      this.state.isHovering ||
+      this.state.isLocked ||
+      (this.state.isOpenModalWhenLeft &&
+        (this.props.isOpenGlobalModal ||
+          this.props.isOpenConnectKitModal ||
+          this.state.isModalJustClosed))
+    const collapsedTransform = isExpanded
+      ? this.props.flipDirection
+        ? "translateX(100%)"
+        : "translateX(-100%)"
+      : "translateX(0)"
+    return (
+      <Flex
+        position="relative"
+        justifyContent={this.props.flipDirection ? "right" : "left"}
+        flexGrow="0"
+        flexShrink="0"
+        flexBasis={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
+        transition="flex-basis 0.15s ease"
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+      >
+        <Flex
+          position="absolute"
+          right={this.props.flipDirection ? undefined : "0"}
+          left={this.props.flipDirection ? "0" : undefined}
+          height="100%"
+        >
+          {this.props.panelExpanded(this.state.isLocked, this.toggleIsLocked)}
+        </Flex>
+        <Flex
+          background="black"
+          transform={collapsedTransform}
+          transition="transform 0.15s ease"
+        >
+          <PanelCollapsed
+            displayTexts={this.props.panelCollapsedDisplayTexts}
+            flipDirection={this.props.flipDirection}
+          />
+        </Flex>
+      </Flex>
     )
   }
-
-  const toggleIsLocked = () => {
-    const nextState = safeLocalStorageGetItem(key) === "true" ? "false" : "true"
-    safeLocalStorageSetItem(key, nextState)
-    setIsLocked(nextState === "true")
-  }
-
-  const isExpanded = isLocked || isOpen
-
-  const collapsedTransform = isExpanded
-    ? flipDirection
-      ? "translateX(100%)"
-      : "translateX(-100%)"
-    : "translateX(0)"
-
-  return (
-    <Flex
-      position="relative"
-      justifyContent={flipDirection ? "right" : "left"}
-      flexGrow="0"
-      flexShrink="0"
-      flexBasis={isExpanded ? expandedPanelWidth : collapsedPanelWidth}
-      transition="flex-basis 0.15s ease"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <Flex
-        position="absolute"
-        right={flipDirection ? undefined : "0"}
-        left={flipDirection ? "0" : undefined}
-        height="100%"
-      >
-        {panelExpanded(isLocked, toggleIsLocked)}
-      </Flex>
-      <Flex
-        background="black"
-        transform={collapsedTransform}
-        transition="transform 0.15s ease"
-      >
-        <PanelCollapsed
-          displayTexts={panelCollapsedDisplayTexts}
-          flipDirection={flipDirection}
-        />
-      </Flex>
-    </Flex>
-  )
 }
-
-export default Panel

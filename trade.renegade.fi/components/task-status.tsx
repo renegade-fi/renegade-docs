@@ -76,7 +76,6 @@ const TASK_TO_LATENCY = {
     [TaskState.Completed]: 0,
   },
 }
-console.log("🚀 ~ TASK_TO_LATENCY:", TASK_TO_LATENCY)
 
 export const TaskStatus = () => {
   const orders = useOrders()

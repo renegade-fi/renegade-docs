@@ -19,9 +19,28 @@ function LinkWrapper(props: {
   isMobile?: boolean
   children: React.ReactNode
 }) {
+  if (props.link) {
+    return (
+      <Flex
+        as={Link}
+        alignItems="center"
+        justifyContent="center"
+        flexDirection={props.isMobile ? "column-reverse" : "row"}
+        flexGrow="1"
+        gap="8px"
+        height="100%"
+        _hover={{ textDecoration: "none" }}
+        userSelect="none"
+        cursor={props.link ? undefined : "inherit"}
+        href={props.link}
+        isExternal
+      >
+        {props.children}
+      </Flex>
+    )
+  }
   return (
     <Flex
-      as={props.link ? Link : undefined}
       alignItems="center"
       justifyContent="center"
       flexDirection={props.isMobile ? "column-reverse" : "row"}
@@ -31,8 +50,6 @@ function LinkWrapper(props: {
       _hover={{ textDecoration: "none" }}
       userSelect="none"
       cursor={props.link ? undefined : "inherit"}
-      href={props.link}
-      isExternal
     >
       {props.children}
     </Flex>
