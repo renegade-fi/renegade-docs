@@ -1,4 +1,4 @@
-import { Renegade, Token } from "@renegade-fi/renegade-js"
+import { PriceReporterWs } from "@renegade-fi/renegade-js"
 import Image from "next/image"
 
 import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
@@ -18,24 +18,14 @@ import backgroundPattern from "@/icons/background_pattern.png"
 //   })
 // }
 
-const renegade = new Renegade({
-  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport:
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-  verbose: false,
-})
-
 export default async function Page({
   params: { base, quote },
 }: {
   params: { base: string; quote: string }
 }) {
-  const report = await renegade.queryExchangeHealthStates(
-    new Token({ ticker: base === "USDC" ? "WETH" : base }),
-    new Token({ ticker: "USDC" })
-  )
+  const report = await new PriceReporterWs(
+    env.NEXT_PUBLIC_PRICE_REPORTER_URL
+  ).getExchangePrices(base)
   return (
     <div
       style={{

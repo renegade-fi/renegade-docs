@@ -2,7 +2,7 @@
 
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, Flex, HStack, Text } from "@chakra-ui/react"
-import { ExchangeHealthState, PriceReport } from "@renegade-fi/renegade-js"
+import { Exchange } from "@renegade-fi/renegade-js"
 import Image from "next/image"
 
 import { TokensBanner } from "@/app/(mobile)/m/tokens-banner"
@@ -74,8 +74,8 @@ export function MobileBody({
   prices,
   report,
 }: {
-  prices: (PriceReport | undefined)[]
-  report: ExchangeHealthState
+  prices: number[]
+  report?: Record<Exchange, number>
 }) {
   return (
     <Flex

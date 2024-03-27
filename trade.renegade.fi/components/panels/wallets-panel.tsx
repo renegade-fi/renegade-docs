@@ -109,9 +109,9 @@ function TokenBalance(props: TokenBalanceProps) {
           color="white.40"
           fontSize="0.8em"
           lineHeight="1"
-          opacity={usdPrice === "0.00" ? "40%" : undefined}
+          opacity={!usdPrice ? "40%" : undefined}
         >
-          ${usdPrice}
+          ${usdPrice.toFixed(2)}
         </Box>
       </Flex>
       <ArrowDownIcon

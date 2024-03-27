@@ -1,7 +1,7 @@
 "use client"
 
 import { Box, Stack, Text } from "@chakra-ui/react"
-import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { Exchange } from "@renegade-fi/renegade-js"
 
 import { LivePrices } from "@/components/live-price"
 
@@ -15,11 +15,7 @@ const DISPLAYED_TICKERS = [
   ["LDO", "USDC"],
 ]
 
-export function TokensBanner({
-  prices,
-}: {
-  prices: (PriceReport | undefined)[]
-}) {
+export function TokensBanner({ prices }: { prices: number[] }) {
   return (
     <Box
       width="calc(0.75 * var(--banner-height))"
@@ -48,7 +44,7 @@ export function TokensBanner({
               baseTicker={baseTicker}
               quoteTicker={quoteTicker}
               exchange={Exchange.Median}
-              price={prices[i]?.midpointPrice}
+              initialPrice={prices[i]}
             />
           </Stack>
         )

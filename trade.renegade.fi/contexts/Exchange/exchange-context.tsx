@@ -1,4 +1,4 @@
-import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { CallbackId, Exchange } from "@renegade-fi/renegade-js"
 import {
   PropsWithChildren,
   createContext,
@@ -12,7 +12,7 @@ import {
 import { renegade } from "@/app/providers"
 import { getToken } from "@/lib/utils"
 
-import { ExchangeContextValue } from "./types"
+import { ExchangeContextValue, PriceReport } from "./types"
 
 const UPDATE_THRESHOLD_MS = 1000
 
@@ -39,7 +39,6 @@ function ExchangeProvider({ children }: PropsWithChildren) {
       }
 
       let lastUpdate = 0
-
       const callbackId = await renegade
         .registerPriceReportCallback(
           (message: string) => {
@@ -54,8 +53,8 @@ function ExchangeProvider({ children }: PropsWithChildren) {
             setPriceReport((prev) => {
               if (
                 !prev[key] ||
-                prev[key].midpointPrice?.toFixed(decimals || 2) !==
-                  priceReport.midpointPrice?.toFixed(decimals || 2)
+                prev[key].price?.toFixed(decimals || 2) !==
+                  priceReport.price?.toFixed(decimals || 2)
               ) {
                 return {
                   ...prev,

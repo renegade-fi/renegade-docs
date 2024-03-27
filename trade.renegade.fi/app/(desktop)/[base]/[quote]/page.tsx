@@ -1,4 +1,4 @@
-import { Renegade } from "@renegade-fi/renegade-js"
+import { PriceReporterWs } from "@renegade-fi/renegade-js"
 import Image from "next/image"
 
 import { Main } from "@/app/(desktop)/[base]/[quote]/main"
@@ -8,7 +8,6 @@ import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
 import { env } from "@/env.mjs"
 import backgroundPattern from "@/icons/background_pattern.png"
-import { getToken } from "@/lib/utils"
 
 // export function generateStaticParams() {
 //   return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(
@@ -21,24 +20,14 @@ import { getToken } from "@/lib/utils"
 //   )
 // }
 
-const renegade = new Renegade({
-  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport:
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-  verbose: false,
-})
-
 export default async function Page({
   params: { base, quote },
 }: {
   params: { base: string; quote: string }
 }) {
-  const report = await renegade.queryExchangeHealthStates(
-    getToken({ input: base }),
-    getToken({ input: quote })
-  )
+  const report = await new PriceReporterWs(
+    env.NEXT_PUBLIC_PRICE_REPORTER_URL
+  ).getExchangePrices(base)
   return (
     <div
       style={{

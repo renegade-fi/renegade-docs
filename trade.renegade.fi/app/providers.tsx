@@ -21,6 +21,7 @@ import { WagmiProvider, createConfig } from "wagmi"
 
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
+import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import { stylusDevnetEc2 } from "@/lib/viem"
@@ -247,10 +248,12 @@ export function Providers({
                 >
                   <RenegadeProvider>
                     <ExchangeProvider>
-                      <AppProvider tokenIcons={icons}>
-                        <Toaster position="bottom-center" />
-                        {children}
-                      </AppProvider>
+                      <PriceProvider>
+                        <AppProvider tokenIcons={icons}>
+                          <Toaster position="bottom-center" />
+                          {children}
+                        </AppProvider>
+                      </PriceProvider>
                     </ExchangeProvider>
                   </RenegadeProvider>
                 </ConnectKitProvider>

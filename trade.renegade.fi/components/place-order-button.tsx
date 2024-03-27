@@ -3,7 +3,7 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange, Order, OrderId } from "@renegade-fi/renegade-js"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
@@ -12,12 +12,13 @@ import { renegade } from "@/app/providers"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { OrderStepper } from "@/components/steppers/order-stepper/order-stepper"
 import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
-import { useExchange } from "@/contexts/Exchange/exchange-context"
 import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
+import { usePrice } from "@/contexts/PriceContext/price-context"
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { useBalance } from "@/hooks/use-balance"
 import { useButton } from "@/hooks/use-button"
+import { useUSDPrice } from "@/hooks/use-usd-price"
 import {
   findBalanceByTicker,
   formatAmount,
@@ -36,12 +37,9 @@ export function PlaceOrderButton() {
     onOpen: onOpenSignIn,
     onClose: onCloseSignIn,
   } = useDisclosure()
-  const { getPriceData } = useExchange()
   const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
     useOrder()
   const { accountId } = useRenegade()
-
-  const priceReport = getPriceData(Exchange.Median, baseTicker, quoteTicker)
 
   const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
     connectText: "Connect Wallet to Place Orders",
@@ -94,33 +92,42 @@ export function PlaceOrderButton() {
       .catch((e) => toast.error(`Error placing order: ${e.message}`))
   }
 
+  const costInUsd = useUSDPrice(base.ticker, parseFloat(baseTokenAmount))
   const hasInsufficientBalance = useMemo(() => {
     const baseBalance = findBalanceByTicker(balances, baseTicker).amount
     const quoteBalance = findBalanceByTicker(balances, quoteTicker).amount
-    const price = priceReport?.midpointPrice
-      ? priceReport.midpointPrice * parseFloat(baseTokenAmount)
-      : 0
     if (direction === Direction.SELL) {
       return baseBalance < parseAmount(baseTokenAmount, base)
     }
     // TODO: Check this
-    return parseFloat(formatAmount(quoteBalance, quote)) < price
+
+    return parseFloat(formatAmount(quoteBalance, quote)) < costInUsd
   }, [
     balances,
     base,
     baseTicker,
     baseTokenAmount,
+    costInUsd,
     direction,
-    priceReport?.midpointPrice,
     quote,
     quoteTicker,
   ])
 
+  const [price, setPrice] = useState(0)
+  const { handleSubscribe, handleGetPrice } = usePrice()
+  const priceReport = handleGetPrice(Exchange.Binance, baseTicker, quoteTicker)
+  useEffect(() => {
+    if (!priceReport) return
+    setPrice(priceReport)
+  }, [priceReport])
+  useEffect(() => {
+    handleSubscribe(Exchange.Binance, baseTicker, quoteTicker, 2)
+  }, [baseTicker, quoteTicker, handleSubscribe])
   const isSignedIn = accountId !== undefined
   let placeOrderButtonContent: string
   if (shouldUse) {
     placeOrderButtonContent = buttonText
-  } else if (!priceReport?.midpointPrice) {
+  } else if (!price) {
     placeOrderButtonContent = "No Exchange Data"
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"

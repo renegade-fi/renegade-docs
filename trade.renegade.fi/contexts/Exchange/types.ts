@@ -1,5 +1,16 @@
-import { CallbackId, Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { CallbackId, Exchange } from "@renegade-fi/renegade-js"
 
+export type PriceReport = {
+  type: "PriceReport"
+  baseToken: {
+    addr: string
+  }
+  quoteToken: {
+    addr: string
+  }
+  price: number
+  localTimestamp: number
+}
 export interface ExchangeContextValue {
   onRegisterPriceListener: (
     exchange: Exchange,
