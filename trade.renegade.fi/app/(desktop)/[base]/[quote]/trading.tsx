@@ -10,6 +10,7 @@ import { PlaceOrderButton } from "@/components/place-order-button"
 import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useUSDPrice } from "@/hooks/use-usd-price"
+import { formatPrice } from "@/lib/utils"
 
 interface SelectableProps {
   text: string
@@ -181,6 +182,7 @@ function TradingInner() {
 
 function HelperText({ baseTicker }: { baseTicker: string }) {
   const usdPrice = useUSDPrice(baseTicker, 1)
+  const formattedUsdPrice = formatPrice(usdPrice)
   return (
     <HStack
       marginTop="5px"
@@ -192,7 +194,7 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
     >
       <Text marginRight="4px">
         Trades are end-to-end encrypted and always clear at the real-time
-        midpoint of ${usdPrice}
+        midpoint of ${formattedUsdPrice}
       </Text>
     </HStack>
   )

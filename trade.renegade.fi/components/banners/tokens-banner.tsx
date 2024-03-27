@@ -1,18 +1,14 @@
 "use client"
 
 import { Stack, Text } from "@chakra-ui/react"
-import { Exchange, PriceReport } from "@renegade-fi/renegade-js"
+import { Exchange } from "@renegade-fi/renegade-js"
 import Link from "next/link"
 
 import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
-export function TokensBanner({
-  prices,
-}: {
-  prices: (PriceReport | undefined)[]
-}) {
+export function TokensBanner({ prices }: { prices: number[] }) {
   return (
     <Marquee
       autoFill
@@ -38,8 +34,8 @@ export function TokensBanner({
               <LivePrices
                 baseTicker={baseTicker}
                 quoteTicker={quoteTicker}
-                exchange={Exchange.Median}
-                price={prices[i]?.midpointPrice}
+                exchange={Exchange.Binance}
+                initialPrice={prices[i]}
               />
             </Stack>
           </Link>

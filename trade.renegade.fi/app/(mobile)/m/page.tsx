@@ -1,4 +1,4 @@
-import { Renegade, Token } from "@renegade-fi/renegade-js"
+import { PriceReporterWs, Renegade } from "@renegade-fi/renegade-js"
 
 import { env } from "@/env.mjs"
 import { getTokenBannerData } from "@/lib/utils"
@@ -18,10 +18,9 @@ const renegade = new Renegade({
 })
 export default async function Page() {
   const prices = await getTokenBannerData(renegade)
-  const report = await renegade.queryExchangeHealthStates(
-    new Token({ ticker: "WBTC" }),
-    new Token({ ticker: "USDC" })
-  )
+  const report = await new PriceReporterWs(
+    env.NEXT_PUBLIC_PRICE_REPORTER_URL
+  ).getExchangePrices("WBTC")
   return (
     <div style={{ height: "100vh", overflowY: "hidden" }}>
       <MobileNav />
