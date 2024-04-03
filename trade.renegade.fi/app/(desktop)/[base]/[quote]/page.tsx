@@ -25,9 +25,11 @@ export default async function Page({
 }: {
   params: { base: string; quote: string }
 }) {
-  const report = await new PriceReporterWs(
-    env.NEXT_PUBLIC_PRICE_REPORTER_URL
-  ).getExchangePrices(base)
+  const report = await new PriceReporterWs(env.NEXT_PUBLIC_PRICE_REPORTER_URL)
+    .getExchangePrices(base)
+    .catch(() => {
+      return undefined
+    })
   return (
     <div
       style={{

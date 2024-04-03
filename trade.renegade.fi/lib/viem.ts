@@ -1,7 +1,7 @@
 import { defineChain } from "viem"
 
 export const stylusDevnetEc2 = defineChain({
-  id: 412346,
+  id: 473474,
   name: "Renegade Testnet",
   network: "Renegade Testnet",
   testnet: true,
@@ -33,7 +33,7 @@ export const stylusDevnetEc2 = defineChain({
 })
 
 export const stylusDevnetLocal = defineChain({
-  id: 412346,
+  id: 473474,
   name: "Stylus Devnet",
   network: "Arbitrum Stylus",
   nativeCurrency: {
