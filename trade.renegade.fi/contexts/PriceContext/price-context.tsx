@@ -1,9 +1,9 @@
 import { Exchange, PriceReporterWs, Token } from "@renegade-fi/renegade-js"
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react"
 
@@ -29,8 +29,6 @@ const PriceContext = createContext<{
   ) => number | undefined
 } | null>(null)
 
-const UPDATE_THRESHOLD_MS = 1000
-
 const invalid = ["USDT", "BUSD", "CBETH", "RNG"]
 
 export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,7 +36,7 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
     null
   )
   const [prices, setPrices] = useState<Record<string, number>>({})
-  const [lastUpdate, setLastUpdate] = useState<Record<string, number>>({})
+  const lastUpdateRef = useRef<Record<string, number>>({})
   const [attempted, setAttempted] = useState<Record<string, boolean>>({})
   useEffect(() => {
     const priceReporter = new PriceReporterWs(
@@ -50,41 +48,44 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
-  const handleSubscribe = useCallback(
-    (exchange: Exchange, base: string, quote: string, decimals: number) => {
-      if (!priceReporter || invalid.includes(base)) return
+  const handleSubscribe = (
+    exchange: Exchange,
+    base: string,
+    quote: string,
+    decimals: number
+  ) => {
+    if (!priceReporter || invalid.includes(base)) return
 
-      const topic = getTopic(exchange, base, quote)
-      if (attempted[topic]) return
+    const topic = getTopic(exchange, base, quote)
+    if (attempted[topic]) return
 
-      let lastUpdate = 0
-      const now = Date.now()
-      if (now - lastUpdate <= UPDATE_THRESHOLD_MS) {
-        return
-      }
-      lastUpdate = now
+    priceReporter.subscribeToTokenPair(
+      exchange,
+      new Token({ ticker: base }),
+      new Token({ ticker: quote || "USDT" }),
+      (price) => {
+        const now = Date.now()
+        const lastUpdateTime = lastUpdateRef.current[topic] || 0
 
-      priceReporter.subscribeToTokenPair(
-        exchange,
-        new Token({ ticker: base }),
-        new Token({ ticker: quote || "USDT" }),
-        (price) => {
-          setPrices((prevPrices) => {
-            if (
-              prevPrices[topic]?.toFixed(decimals) !==
-              Number(price).toFixed(decimals)
-            ) {
-              return { ...prevPrices, [topic]: Number(price) }
-            }
-            return prevPrices
-          })
-          setLastUpdate((prev) => ({ ...prev, [topic]: Date.now() }))
+        const randomThreshold = Math.random() * 1000 + 200
+        if (now - lastUpdateTime < randomThreshold) {
+          return
         }
-      )
-      setAttempted((prev) => ({ ...prev, [topic]: true }))
-    },
-    [attempted, priceReporter]
-  )
+
+        setPrices((prevPrices) => {
+          if (
+            prevPrices[topic]?.toFixed(decimals) !==
+            Number(price).toFixed(decimals)
+          ) {
+            return { ...prevPrices, [topic]: Number(price) }
+          }
+          return prevPrices
+        })
+        lastUpdateRef.current[topic] = now
+      }
+    )
+    setAttempted((prev) => ({ ...prev, [topic]: true }))
+  }
 
   const handleGetPrice = (exchange: Exchange, base: string, quote: string) => {
     const topic = getTopic(exchange, base, quote)
@@ -97,7 +98,7 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
     quote: string
   ) => {
     const topic = getTopic(exchange, base, quote)
-    return lastUpdate[topic]
+    return lastUpdateRef.current[topic]
   }
 
   return (
