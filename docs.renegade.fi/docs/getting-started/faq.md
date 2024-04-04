@@ -8,10 +8,9 @@ description: Frequently Asked Questions about Renegade.
 
 ### What is the current status of Renegade?
 
-The project is under active development. As of Feburuary 2023, we have
-implemented core handshakes, SPDZ, and Bulletproofs primitives, and have begun
-work on circuit implementations, interface design, and bridging. A public
-testnet is expected in Q2 2023.
+The project is under active development. As of April 2024, the network is fully
+working end-to-end and is undergoing load testing as we roll out the public
+testnet.
 
 For priority access onto the whitelisted testnet, [sign up
 here](https://renegadefi.typeform.com/access). Otherwise, you can follow along
@@ -37,7 +36,8 @@ more details.
 ### What blockchain is Renegade built on?
 
 Peer discovery and order matching occurs on our independent p2p gossip network.
-Consensus and security is inherited from Ethereum via StarkNet.
+Our smart contracts, including our ZKP verifier, are deployed on [Arbitrum
+Stylus](https://arbitrum.io/stylus).
 
 ### Does Renegade use Trusted Execution Environments?
 
@@ -51,14 +51,16 @@ and has no hardware trust assumptions.
 Order placement and cancellation is &lt;1ms if you are running in super-relayer
 mode (see [Super Relayers](/advanced-concepts/super-relayers)). We are
 constantly optimizing both latency and gas fees, but current estimates are
-~100-500ms to match an order (fully parallelizable over all outstanding
-counterparty orders). Gas costs are ~10 USD to create a new wallet, and ~1 USD
+~500ms to match an order (fully parallelizable over all outstanding
+counterparty orders). Gas costs are ~0.5 USD to create a new wallet, and ~1 USD
 for each deposit/withdraw or positive order match. Certain flags exist to
 maximize privacy, in exchange for higher gas fees.
 
 ### Does Renegade custody assets? Does Renegade need KYC?
 
-No, never. The protocol is open, permissionless, and immutable.
+No, never. The protocol is open, permissionless, and immutable. Traders can
+voluntarily opt-in to match with a subset of counterparties that have passed
+KYC, but this is not required.
 
 ### Is Renegade Hiring?
 

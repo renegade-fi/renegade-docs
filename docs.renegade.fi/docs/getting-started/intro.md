@@ -44,9 +44,11 @@ learn the details of your balances or trades.
 ## Why use Renegade?
 
 In addition to avoiding the counterparty risk that exists in centralized
-exchanges and OTC desks, Renegade solves many problems in current DeFi spot
-markets, ultimately giving you better prices and optimal execution:
+exchanges and OTC desks, Renegade solves many problems in current spot markets,
+ultimately giving you optimal execution:
 
+1. **Midpoint execution**. All trades clear at the real-time Binance midpoint
+   price. There is never any spread or price impact when using Renegade.
 1. **Pre-trade privacy**. Before your trade is matched, no one can see any
    details of your order. Larger trades that would normally move the market
    when rested on an order book or detected in the mempool can now be filled
@@ -57,9 +59,9 @@ markets, ultimately giving you better prices and optimal execution:
 1. **Zero MEV**. Since validators only ever see zero-knowledge proofs of
    valid trades, there is no ability for block producers to front-run, back-run,
    or sandwich your trades.
-1. **Midpoint execution**. All trades clear directly at the real-time aggregate
-   CEX midpoint price. Trades do not need to cross a spread, and there is never
-   any slippage.
+1. **DeFi-native compliance**. Even though Renegade is a fully decentralized
+   exchange, traders can opt-in to only match with a subset of counterparties
+   that have proven their identity.
 
 By default, trades on Renegade are **anonymous crosses** that trade at the
 theoretically-optimal midpoint price. However, Renegade optionally implements
@@ -72,19 +74,17 @@ Given the wide range of information leakage problems that exist in current DeFi
 systems, many different types of traders can see price improvement with
 Renegade:
 
+- **Liquid Token Funds**. Instead of trading against an OTC desk's spread,
+  takers can directly cross their orders against counter-flow at the midpoint
+  price.
 - **Market Makers**. If one market maker is long some asset and another is
   short the same asset, the desks can anonymously net out these two positions
   against each other, balancing inventory without needing to cross a public
   spread.
-- **OTC Takers**. Instead of trading against an OTC desk's spread, takers can
-  directly cross their orders against counter-flow at the midpoint price.
 - **AMM Takers**. Traders who move $5k+ at once through on-chain DEXes often
   incur significant price impact, get sandwiched by MEV searchers, and lose
   money to cross-exchange arbitrage. With Renegade, trades are always
   guaranteed to execute at midpoint prices.
-- **Privacy-Conscious Crypto-Natives**. Renegade maintains complete anonymity,
-  meaning that no third-party can see any details about trade or payments
-  history.
 
 ## Overview of the Docs
 
@@ -106,10 +106,10 @@ finally, for the most precise description of the protocol, see the detailed
 
 ## Get Access to Renegade
 
-Renegade is currently in an internal testnet, with a public testnet expected in
-Q2 2023. The network will be rolled out to whitelisted testnet participants
-over time: [Sign up here](https://renegadefi.typeform.com/access) for priority
-access.
+Renegade is currently in a private testnet, with a public release expected in
+early Q2 2024. The network will be rolled out to whitelisted testnet
+participants over time: [Sign up here](https://renegadefi.typeform.com/access)
+for priority access.
 
 Otherwise, feel free to contact us with any questions or feedback:
 
