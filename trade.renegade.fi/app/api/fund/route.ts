@@ -81,7 +81,7 @@ const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
   },
   {
     ticker: "DYDX",
-    amount: "3",
+    amount: "100",
   },
   {
     ticker: "CRV",

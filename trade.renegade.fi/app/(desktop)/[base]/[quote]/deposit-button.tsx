@@ -30,7 +30,7 @@ const MAX_INT = BigInt(
 
 export default function DepositButton() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const { accountId } = useRenegade()
+  const { accountId, pkRoot } = useRenegade()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -108,6 +108,7 @@ export default function DepositButton() {
       permit2Address: env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
       token,
       walletClient,
+      pkRoot,
     })
 
     // Deposit

@@ -17,14 +17,18 @@ const TOKEN_PERMISSIONS = [
   { name: "amount", type: "uint256" },
 ]
 
-const PERMIT_TRANSFER_FROM_TYPES = {
-  PermitTransferFrom: [
+const DEPOSIT_WITNESS = [{ name: "pkRoot", type: "uint256[4]" }]
+
+const PERMIT_WITNESS_TRANSFER_FROM_TYPES = {
+  PermitWitnessTransferFrom: [
     { name: "permitted", type: "TokenPermissions" },
     { name: "spender", type: "address" },
     { name: "nonce", type: "uint256" },
     { name: "deadline", type: "uint256" },
+    { name: "witness", type: "DepositWitness" },
   ],
   TokenPermissions: TOKEN_PERMISSIONS,
+  DepositWitness: DEPOSIT_WITNESS,
 }
 
 /**
@@ -49,6 +53,7 @@ export async function signPermit2({
   permit2Address,
   token,
   walletClient,
+  pkRoot,
 }: {
   amount: bigint
   chainId: number
@@ -56,7 +61,9 @@ export async function signPermit2({
   permit2Address: Address
   token: Token
   walletClient: WalletClient
+  pkRoot: bigint[]
 }) {
+  console.log("Inside sign Permit2", pkRoot)
   if (!walletClient.account)
     throw new Error("Address not found on wallet client")
 
@@ -76,23 +83,28 @@ export async function signPermit2({
     spender,
     nonce: BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)),
     deadline: BigInt(millisecondsToSeconds(Date.now() + 1000 * 60 * 30)),
+    witness: { pkRoot },
   } as const
 
   // Generate signature
   const signature = await walletClient.signTypedData({
     account: walletClient.account.address,
     domain,
-    types: PERMIT_TRANSFER_FROM_TYPES,
-    primaryType: "PermitTransferFrom",
+    types: PERMIT_WITNESS_TRANSFER_FROM_TYPES,
+    primaryType: "PermitWitnessTransferFrom",
     message,
+  })
+  console.log("Permit2: ", {
+    message,
+    signature,
   })
 
   // Verify signature
   const valid = await verifyTypedData({
     address: walletClient.account.address,
     domain,
-    types: PERMIT_TRANSFER_FROM_TYPES,
-    primaryType: "PermitTransferFrom",
+    types: PERMIT_WITNESS_TRANSFER_FROM_TYPES,
+    primaryType: "PermitWitnessTransferFrom",
     message,
     signature,
   })
@@ -101,8 +113,8 @@ export async function signPermit2({
   // Ensure correct public key is recovered
   const hash = hashTypedData({
     domain,
-    types: PERMIT_TRANSFER_FROM_TYPES,
-    primaryType: "PermitTransferFrom",
+    types: PERMIT_WITNESS_TRANSFER_FROM_TYPES,
+    primaryType: "PermitWitnessTransferFrom",
     message,
   })
   const recoveredPubKey = publicKeyToAddress(
@@ -111,6 +123,11 @@ export async function signPermit2({
       signature,
     })
   )
+  console.log("Permit2 Verification: ", {
+    valid,
+    hash,
+    recoveredPubKey,
+  })
   if (recoveredPubKey !== walletClient.account.address)
     throw new Error("Recovered public key does not match wallet public key")
 

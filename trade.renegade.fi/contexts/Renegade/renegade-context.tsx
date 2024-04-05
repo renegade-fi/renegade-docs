@@ -36,6 +36,8 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
   const [accountId, setAccountId] = React.useState<AccountId>()
   const [balances, setBalances] = React.useState<Record<BalanceId, Balance>>({})
   const [orders, setOrders] = React.useState<Record<OrderId, Order>>({})
+  // Used in Permit2 witness
+  const [pkRoot, setPkRoot] = React.useState<bigint[]>([])
 
   // Create task states.
   const [taskId, setTaskId] = React.useState<TaskId>()
@@ -162,6 +164,8 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
       .then(() => {
         attemptedAutoSignin.current = accountId
         setAccountId(accountId)
+        const pkRoot = keychain.getPkRoot()
+        setPkRoot(pkRoot)
         refreshAccount(accountId)
 
         const funded = safeLocalStorageGetItem(`funded_${accountId}`)
@@ -254,6 +258,7 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         counterparties,
         orderBook,
         orders,
+        pkRoot,
         refreshAccount,
         setAccount,
         setTask,
