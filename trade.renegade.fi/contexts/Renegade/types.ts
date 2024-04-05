@@ -32,6 +32,7 @@ export interface RenegadeContextType {
   counterparties: Record<PeerId, Counterparty>
   orderBook: Record<OrderId, CounterpartyOrder>
   orders: Record<OrderId, Order>
+  pkRoot: bigint[]
   refreshAccount: (accountId?: AccountId) => void
   setAccount: (oldAccountId?: AccountId, keychain?: Keychain) => Promise<void>
   setTask: (newTaskId?: TaskId, taskType?: TaskType) => void
