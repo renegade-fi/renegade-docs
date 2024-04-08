@@ -1,5 +1,5 @@
 import { Renegade } from "@renegade-fi/renegade-js"
-import type { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/react"
 import React from "react"
 
 import { Footer } from "@/app/(desktop)/footer"
@@ -8,20 +8,13 @@ import { Providers } from "@/app/providers"
 import { TokensBanner } from "@/components/banners/tokens-banner"
 import { env } from "@/env.mjs"
 import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
-import { getTokenBannerData } from "@/lib/utils"
+import { constructMetadata, getTokenBannerData } from "@/lib/utils"
 import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
 import "@/styles/index.css"
 
-export const metadata: Metadata = {
-  title: {
-    default: "Trade - Renegade Testnet",
-    template: `%s - Renegade Testnet`,
-  },
-  description:
-    "The on-chain dark pool. MPC-based DEX for anonymous crosses at midpoint prices.",
-}
+export const metadata = constructMetadata()
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -58,6 +51,7 @@ export default async function RootLayout({
             <Footer />
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
