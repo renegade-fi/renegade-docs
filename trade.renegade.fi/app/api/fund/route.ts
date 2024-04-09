@@ -12,6 +12,8 @@ import { privateKeyToAccount } from "viem/accounts"
 import { formatAmount, parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
 
+export const maxDuration = 300
+
 const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
   {
     ticker: "WETH",
