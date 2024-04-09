@@ -1017,6 +1017,33 @@
     preact "^10.16.0"
     sha.js "^2.4.11"
 
+"@datadog/browser-core@5.15.0":
+  version "5.15.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-core/-/browser-core-5.15.0.tgz#b770906216e0ecd09c8d98c349cac1fb264475ad"
+  integrity sha512-vZeHK0aEqyQqJOal8skaGrGi788Tt+MSP+pH/+J56/Bj4tjLggeIw2SPN+j7XSS+3Q5atk1ZRoEMwvHVV7/s7Q==
+
+"@datadog/browser-logs@^5.15.0":
+  version "5.15.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-logs/-/browser-logs-5.15.0.tgz#0a0caf4c518df8d02062929efbc696b780962d9a"
+  integrity sha512-H+ZXAKSVYgcNf7ntiyoYYWlp36s71LTctkRzK/HpWubwmud2yy/hoeMhY0hWV32qSPEGXrlcxOyw6G8IhVEDsQ==
+  dependencies:
+    "@datadog/browser-core" "5.15.0"
+
+"@datadog/browser-rum-core@5.15.0":
+  version "5.15.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum-core/-/browser-rum-core-5.15.0.tgz#216aea17df8e80a05feef47b4d184b520bdb5f31"
+  integrity sha512-f8TghTfjEqEo/AexyfM0OCZ3aUOcN6+xg9XRohVC+kmmboo+7GcMLgNfW9zkEoCJvNOheSFN2xPZbNE6iUD3LA==
+  dependencies:
+    "@datadog/browser-core" "5.15.0"
+
+"@datadog/browser-rum@^5.15.0":
+  version "5.15.0"
+  resolved "https://registry.yarnpkg.com/@datadog/browser-rum/-/browser-rum-5.15.0.tgz#3464ff035fd057544f62821928df7b80a61903d9"
+  integrity sha512-bvY8Pgb92uB9+x7oVQTLq5P/fyMBTn+xoEzYJbMmJCEhKL1QPqtYdiRqTNhOLnemZFJ5OaaFNg9az68xJ/O0gg==
+  dependencies:
+    "@datadog/browser-core" "5.15.0"
+    "@datadog/browser-rum-core" "5.15.0"
+
 "@emotion/babel-plugin@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.11.0.tgz#c2d872b6a7767a9d176d007f5b31f7d504bb5d6c"

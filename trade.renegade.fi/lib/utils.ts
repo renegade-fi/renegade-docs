@@ -2,6 +2,7 @@ import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 import { Metadata } from "next"
 import { formatUnits, isAddress, parseUnits } from "viem"
 
+import { env } from "@/env.mjs"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -122,7 +123,7 @@ export function constructMetadata({
     openGraph: {
       title,
       description,
-      url: process.env.NEXT_PUBLIC_URL || "https://trade.renegade.fi",
+      url: env.NEXT_PUBLIC_URL,
       ...(image && {
         images: [
           {
@@ -140,9 +141,7 @@ export function constructMetadata({
       }),
       creator: "@dubdotco",
     },
-    metadataBase: new URL(
-      process.env.NEXT_PUBLIC_URL || "https://trade.renegade.fi"
-    ),
+    metadataBase: new URL(env.NEXT_PUBLIC_URL),
     ...(noIndex && {
       robots: {
         index: false,
