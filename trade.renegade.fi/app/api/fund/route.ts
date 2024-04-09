@@ -18,16 +18,72 @@ const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
     amount: "10",
   },
   {
+    ticker: "WBTC",
+    amount: "5",
+  },
+  {
+    ticker: "BNB",
+    amount: "100",
+  },
+  {
+    ticker: "MATIC",
+    amount: "100",
+  },
+  {
+    ticker: "LDO",
+    amount: "100",
+  },
+  {
     ticker: "USDC",
     amount: "100000",
   },
   {
-    ticker: "WBTC",
-    amount: "3",
+    ticker: "LINK",
+    amount: "100",
+  },
+  {
+    ticker: "UNI",
+    amount: "100",
+  },
+  {
+    ticker: "SUSHI",
+    amount: "100",
+  },
+  {
+    ticker: "1INCH",
+    amount: "100",
+  },
+  {
+    ticker: "AAVE",
+    amount: "100",
+  },
+  {
+    ticker: "COMP",
+    amount: "100",
+  },
+  {
+    ticker: "MKR",
+    amount: "100",
+  },
+  {
+    ticker: "REN",
+    amount: "100",
+  },
+  {
+    ticker: "MANA",
+    amount: "100",
+  },
+  {
+    ticker: "ENS",
+    amount: "100",
   },
   {
     ticker: "DYDX",
     amount: "3",
+  },
+  {
+    ticker: "CRV",
+    amount: "100",
   },
 ]
 
