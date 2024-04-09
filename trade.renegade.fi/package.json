@@ -19,6 +19,8 @@
     "@chakra-ui/icons": "^2.1.0",
     "@chakra-ui/next-js": "^2.1.5",
     "@chakra-ui/react": "^2.8.0",
+    "@datadog/browser-logs": "^5.15.0",
+    "@datadog/browser-rum": "^5.15.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@renegade-fi/renegade-js": "^0.5.6",

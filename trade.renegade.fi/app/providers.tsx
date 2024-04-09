@@ -10,6 +10,8 @@ import {
   extendTheme,
   keyframes,
 } from "@chakra-ui/react"
+import { datadogLogs } from "@datadog/browser-logs"
+import { datadogRum } from "@datadog/browser-rum"
 import { Renegade } from "@renegade-fi/renegade-js"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
@@ -177,6 +179,7 @@ const components = {
   Menu: defineMultiStyleConfig({ baseStyle: menuStyle }),
 }
 const theme = extendTheme({ config, styles, colors, components })
+console.log("Provider run")
 
 /*
  * ┌─────────────────────┐
@@ -224,8 +227,39 @@ export function Providers({
   useEffect(() => {
     async function loadUtils() {
       await renegade.init()
+
+      datadogRum.init({
+        applicationId: env.NEXT_PUBLIC_DATADOG_APPLICATION_ID,
+        clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
+        site: "us5.datadoghq.com",
+        service: "staging-interface",
+        env: "staging",
+        version: "1.0.0",
+        sessionSampleRate: 100,
+        sessionReplaySampleRate: 100,
+        trackUserInteractions: true,
+        trackResources: true,
+        trackLongTasks: true,
+        defaultPrivacyLevel: "allow",
+        startSessionReplayRecordingManually: true,
+      })
+
+      datadogLogs.init({
+        clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
+        site: "us5.datadoghq.com",
+        service: "staging-interface",
+        env: "staging",
+        forwardErrorsToLogs: true,
+        forwardConsoleLogs: "all",
+        sessionSampleRate: 100,
+      })
+
+      datadogRum.startSessionReplayRecording()
     }
     loadUtils()
+    return () => {
+      datadogRum.stopSessionReplayRecording()
+    }
   }, [])
   return (
     <>
