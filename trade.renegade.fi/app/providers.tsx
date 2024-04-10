@@ -250,7 +250,7 @@ export function Providers({
                     <ExchangeProvider>
                       <PriceProvider>
                         <AppProvider tokenIcons={icons}>
-                          <Toaster position="bottom-center" />
+                          <Toaster expand position="bottom-center" />
                           {children}
                         </AppProvider>
                       </PriceProvider>
