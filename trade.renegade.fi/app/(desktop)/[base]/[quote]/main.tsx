@@ -1,10 +1,7 @@
 "use client"
 
-import { Box } from "@chakra-ui/react"
-
 import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
 import { TradingBody } from "@/app/(desktop)/[base]/[quote]/trading"
-import { TaskStatus } from "@/components/task-status"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 
 export function Main() {
@@ -17,9 +14,6 @@ export function Main() {
   return (
     <>
       <CurrentView />
-      <Box position="absolute" zIndex={1500} right="0" bottom="0">
-        <TaskStatus />
-      </Box>
     </>
   )
 }

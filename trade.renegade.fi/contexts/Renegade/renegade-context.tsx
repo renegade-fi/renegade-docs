@@ -152,6 +152,11 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
       .initializeAccount(accountId)
       .then(([taskId, taskJob]) => {
         setTask(taskId, TaskType.InitializeAccount)
+        toast.promise(taskJob, {
+          loading: "Initializing account...",
+          success: "Account initialized successfully.",
+          error: "Failed to initialize account.",
+        })
         return taskJob
       })
       .then(() => {
