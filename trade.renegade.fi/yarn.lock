@@ -1910,10 +1910,10 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@renegade-fi/renegade-js@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.5.1.tgz#42d301b1e8a38c31e8f8356d2172c8edd6adbc3c"
-  integrity sha512-p/mNKK6CJbPhrmQPrxhlFCUmuqvTevfYNj+DsQ0Hu9PyxWBAUSBtOupPb9L6O7s9f8gePOQ7+bLgi9kAzpAFpA==
+"@renegade-fi/renegade-js@^0.5.2":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.5.2.tgz#f1e39c5b0da745864af8cec7735bfba4b3e085b8"
+  integrity sha512-9CM2AfjtSOZxcNNx52jnUpUCd5dLoVoLP45b7IRU+dMnOzNp+6ARxNCL5YpYDtL0V+5dZ3mzVFM5VLVTyEXF1Q==
   dependencies:
     "@noble/hashes" "^1.3.0"
     axios "^1.3.5"
