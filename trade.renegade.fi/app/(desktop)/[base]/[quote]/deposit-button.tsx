@@ -1,6 +1,6 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
+import { Token, stylusDevnetEc2 } from "@renegade-fi/renegade-js"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -22,7 +22,6 @@ import {
 import { useButton } from "@/hooks/use-button"
 import { signPermit2 } from "@/lib/permit2"
 import { parseAmount } from "@/lib/utils"
-import { stylusDevnetEc2 } from "@/lib/viem"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"

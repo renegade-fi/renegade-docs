@@ -10,7 +10,7 @@ import {
   extendTheme,
   keyframes,
 } from "@chakra-ui/react"
-import { Renegade } from "@renegade-fi/renegade-js"
+import { Renegade, stylusDevnetEc2 } from "@renegade-fi/renegade-js"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { PropsWithChildren, useEffect } from "react"
@@ -24,7 +24,6 @@ import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
-import { stylusDevnetEc2 } from "@/lib/viem"
 
 /*
  * ┌─────────────────────┐
