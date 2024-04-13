@@ -1871,10 +1871,10 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@renegade-fi/renegade-js@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.5.3.tgz#c7b6b79ebf0efa22703af30acfe36702e0680001"
-  integrity sha512-da/N/dnIn2Jv2Nlejx79WltrSX/PkTNTrCa7Qs8JBAyLgmuMLY1nYsSr74bbvsmUmnQ7iSQ4wPLBVeDnjXMuAw==
+"@renegade-fi/renegade-js@^0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@renegade-fi/renegade-js/-/renegade-js-0.5.6.tgz#a5c1ace6a9749d3b1d04c4df99d9756c014a0fe5"
+  integrity sha512-3MHJaHjcRfiqmVLEKBNyhlVR4+6F6i8KYZioFQvpDwViSVTSkEsEY0VZ3MKXYEVzh9hQWVkG54KSi740L/YCoA==
   dependencies:
     "@noble/hashes" "^1.3.0"
     axios "^1.3.5"
@@ -1882,6 +1882,7 @@
     isomorphic-ws "^5.0.0"
     json-bigint "^1.0.0"
     uuid "^9.0.0"
+    viem "^2.9.16"
     ws "^8.13.0"
     zod "^3.22.2"
 
@@ -7156,7 +7157,7 @@ valtio@1.11.2:
     proxy-compare "2.5.1"
     use-sync-external-store "1.2.0"
 
-viem@2.*, viem@2.x:
+viem@2.*, viem@2.x, viem@^2.9.16:
   version "2.9.16"
   resolved "https://registry.yarnpkg.com/viem/-/viem-2.9.16.tgz#2127871db1908a70798eddb820024b5f0ddc9152"
   integrity sha512-FQRfN4G7uKEUs5DYvVrH/kZmTkwcSDpTBxnadpwG1EEP8nHm57WDpSaGN7PwSPVgJ6rMo5MENT5hgnqaNTlb2w==
