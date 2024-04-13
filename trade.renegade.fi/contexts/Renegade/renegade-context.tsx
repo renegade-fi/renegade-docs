@@ -175,17 +175,26 @@ function RenegadeProvider({ children }: React.PropsWithChildren) {
         toast.promise(
           fetch(`/api/fund?address=${address}`, {
             method: "GET",
-          }).then((response) => {
-            if (response.ok) {
-              return response.text().then(() => {
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.text().then((text) => {
+                  throw new Error(
+                    text ||
+                      "Funding failed: An unexpected error occurred. Please try again."
+                  )
+                })
+              }
+              return response.text().then((text) => {
                 safeLocalStorageSetItem(`funded_${accountId}`, "true")
+                console.log("Success:", text)
+                return text
               })
-            } else {
-              throw new Error(
-                "Funding failed: An unexpected error occurred. Please try again."
-              )
-            }
-          }),
+            })
+            .catch((error) => {
+              console.error("Error:", error.message)
+              throw error
+            }),
           {
             loading: "Funding account...",
             success: "Your account has been funded with test funds.",
