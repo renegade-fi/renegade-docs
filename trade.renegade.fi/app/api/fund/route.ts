@@ -1,5 +1,6 @@
 import { Token } from "@renegade-fi/renegade-js"
 import {
+  PrivateKeyAccount,
   createPublicClient,
   createWalletClient,
   formatEther,
@@ -94,10 +95,15 @@ const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
 ])
 
+const publicClient = createPublicClient({
+  chain: stylusDevnetEc2,
+  transport: http(),
+})
+
 export async function GET(request: Request) {
   if (!process.env.DEV_PRIVATE_KEY) {
     return new Response("DEV_PRIVATE_KEY is required", {
-      status: 400,
+      status: 500,
     })
   }
 
@@ -105,72 +111,22 @@ export async function GET(request: Request) {
   const recipient = searchParams.get("address") as `0x${string}`
   if (!recipient) {
     return new Response("Address is required", {
-      status: 400,
+      status: 500,
     })
   }
 
   try {
-    // Account to fund from
+    // Account to fund ETH from
     const account = privateKeyToAccount(
       process.env.DEV_PRIVATE_KEY as `0x${string}`
     )
 
-    const publicClient = createPublicClient({
-      chain: stylusDevnetEc2,
-      transport: http(),
-    })
-
-    const walletClient = createWalletClient({
-      account,
-      chain: stylusDevnetEc2,
-      transport: http(),
-    })
-
     const ethAmount = parseEther("0.1")
+    await fundEth(account, recipient, ethAmount);
 
-    let transactionCount = await publicClient.getTransactionCount({
-      address: account.address,
-    })
-
-    // Fund with ETH
-    const hash = await walletClient.sendTransaction({
-      account,
-      to: recipient,
-      value: ethAmount,
-      nonce: transactionCount,
-    })
-    const transaction = await publicClient.waitForTransactionReceipt({
-      hash,
-    })
-    console.log(
-      `Funded ${recipient} with ${formatEther(
-        ethAmount
-      )} ETH. Transaction hash: ${transaction.transactionHash}`
-    )
-
+    // Loop through each token in TOKENS_TO_FUND and mint them
     for (const { ticker, amount } of TOKENS_TO_FUND) {
-      const token = new Token({ ticker })
-      const tokenAmount = parseAmount(amount, token)
-
-      const { request: tokenRequest } = await publicClient.simulateContract({
-        account,
-        address: Token.findAddressByTicker(ticker) as `0x${string}`,
-        abi,
-        functionName: "mint",
-        args: [recipient, tokenAmount],
-        nonce: ++transactionCount,
-      })
-
-      const tokenHash = await walletClient.writeContract(tokenRequest)
-      const tokenTransaction = await publicClient.waitForTransactionReceipt({
-        hash: tokenHash,
-      })
-      console.log(
-        `Funded ${recipient} with ${formatAmount(
-          tokenAmount,
-          token
-        )} ${ticker}. Transaction hash: ${tokenTransaction.transactionHash}`
-      )
+      await mintTokens(account, ticker, amount, recipient);
     }
 
     return new Response("Success!", {
@@ -180,5 +136,93 @@ export async function GET(request: Request) {
     return new Response(`Error funding ${recipient}: ${error}`, {
       status: 500,
     })
+  }
+}
+
+async function fundEth(
+  account: PrivateKeyAccount,
+  recipient: `0x${string}`,
+  ethAmount: bigint
+): Promise<void> {
+  const walletClient = createWalletClient({
+    account,
+    chain: stylusDevnetEc2,
+    transport: http(),
+  });
+
+  let attempts = 0;
+  while (attempts < 5) {
+    try {
+      const hash = await walletClient.sendTransaction({
+        account,
+        to: recipient,
+        value: ethAmount,
+      });
+
+      const transaction = await publicClient.waitForTransactionReceipt({
+        hash,
+      });
+
+      console.log(
+        `Funded ${recipient} with ${formatEther(ethAmount)} ETH. Transaction hash: ${transaction.transactionHash}`
+      );
+      break; // Exit loop on success
+    } catch (error: any) {
+      if (error?.message?.includes("nonce")) {
+        attempts++;
+        console.log(`Nonce error, retrying... Attempt ${attempts}`);
+        continue; // Retry on nonce error
+      } else {
+        throw error; // Rethrow if error is not nonce related
+      }
+    }
+  }
+}
+
+async function mintTokens(
+  account: PrivateKeyAccount,
+  ticker: string,
+  amount: string,
+  recipient: `0x${string}`
+): Promise<void> {
+  const walletClient = createWalletClient({
+    account,
+    chain: stylusDevnetEc2,
+    transport: http(),
+  });
+
+  const token = new Token({ ticker });
+  const tokenAmount = parseAmount(amount, token);
+
+  let attempts = 0;
+  while (attempts < 5) {
+    try {
+      const { request: tokenRequest } = await publicClient.simulateContract({
+        account,
+        address: Token.findAddressByTicker(ticker) as `0x${string}`,
+        abi,
+        functionName: "mint",
+        args: [recipient, tokenAmount],
+      });
+
+      const hash = await walletClient.writeContract(tokenRequest);
+      const tx = await publicClient.waitForTransactionReceipt({
+        hash,
+        confirmations: 1
+      });
+
+      console.log(
+        `Minted ${formatAmount(tokenAmount, token)} ${ticker} to ${recipient}. Transaction hash: ${tx.transactionHash}`
+      );
+      break; // Exit loop on success
+    } catch (error: any) {
+      if (error?.message?.includes("nonce")) {
+        attempts++;
+        console.log(`Nonce error, retrying... Attempt ${attempts}`);
+        continue; // Retry on nonce error
+      } else {
+        throw error; // Rethrow if error is not nonce related
+      }
+    }
   }
 }
