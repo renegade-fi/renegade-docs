@@ -122,11 +122,11 @@ export async function GET(request: Request) {
     )
 
     const ethAmount = parseEther("0.1")
-    await fundEth(account, recipient, ethAmount);
+    await fundEth(account, recipient, ethAmount)
 
     // Loop through each token in TOKENS_TO_FUND and mint them
     for (const { ticker, amount } of TOKENS_TO_FUND) {
-      await mintTokens(account, ticker, amount, recipient);
+      await mintTokens(account, ticker, amount, recipient)
     }
 
     return new Response("Success!", {
@@ -148,32 +148,34 @@ async function fundEth(
     account,
     chain: stylusDevnetEc2,
     transport: http(),
-  });
+  })
 
-  let attempts = 0;
+  let attempts = 0
   while (attempts < 5) {
     try {
       const hash = await walletClient.sendTransaction({
         account,
         to: recipient,
         value: ethAmount,
-      });
+      })
 
       const transaction = await publicClient.waitForTransactionReceipt({
         hash,
-      });
+      })
 
       console.log(
-        `Funded ${recipient} with ${formatEther(ethAmount)} ETH. Transaction hash: ${transaction.transactionHash}`
-      );
-      break; // Exit loop on success
+        `Funded ${recipient} with ${formatEther(
+          ethAmount
+        )} ETH. Transaction hash: ${transaction.transactionHash}`
+      )
+      break // Exit loop on success
     } catch (error: any) {
       if (error?.message?.includes("nonce")) {
-        attempts++;
-        console.log(`Nonce error, retrying... Attempt ${attempts}`);
-        continue; // Retry on nonce error
+        attempts++
+        console.log(`Nonce error, retrying... Attempt ${attempts}`)
+        continue // Retry on nonce error
       } else {
-        throw error; // Rethrow if error is not nonce related
+        throw error // Rethrow if error is not nonce related
       }
     }
   }
@@ -189,12 +191,12 @@ async function mintTokens(
     account,
     chain: stylusDevnetEc2,
     transport: http(),
-  });
+  })
 
-  const token = new Token({ ticker });
-  const tokenAmount = parseAmount(amount, token);
+  const token = new Token({ ticker })
+  const tokenAmount = parseAmount(amount, token)
 
-  let attempts = 0;
+  let attempts = 0
   while (attempts < 5) {
     try {
       const { request: tokenRequest } = await publicClient.simulateContract({
@@ -203,25 +205,28 @@ async function mintTokens(
         abi,
         functionName: "mint",
         args: [recipient, tokenAmount],
-      });
+      })
 
-      const hash = await walletClient.writeContract(tokenRequest);
+      const hash = await walletClient.writeContract(tokenRequest)
       const tx = await publicClient.waitForTransactionReceipt({
         hash,
-        confirmations: 1
-      });
+        confirmations: 1,
+      })
 
       console.log(
-        `Minted ${formatAmount(tokenAmount, token)} ${ticker} to ${recipient}. Transaction hash: ${tx.transactionHash}`
-      );
-      break; // Exit loop on success
+        `Minted ${formatAmount(
+          tokenAmount,
+          token
+        )} ${ticker} to ${recipient}. Transaction hash: ${tx.transactionHash}`
+      )
+      break // Exit loop on success
     } catch (error: any) {
       if (error?.message?.includes("nonce")) {
-        attempts++;
-        console.log(`Nonce error, retrying... Attempt ${attempts}`);
-        continue; // Retry on nonce error
+        attempts++
+        console.log(`Nonce error, retrying... Attempt ${attempts}`)
+        continue // Retry on nonce error
       } else {
-        throw error; // Rethrow if error is not nonce related
+        throw error // Rethrow if error is not nonce related
       }
     }
   }
