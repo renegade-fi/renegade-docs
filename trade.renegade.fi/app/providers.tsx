@@ -18,8 +18,9 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
-import { createPublicClient, http } from "viem"
+import { Address, createPublicClient, http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
+import { RenegadeProvider as SDKProvider, createConfig as createSDKConfig } from "@sehyunchung/renegade-react"
 
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
@@ -218,6 +219,13 @@ export const renegade = new Renegade({
   verbose: false,
 })
 
+export const renegadeConfig = createSDKConfig({
+  relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+  priceReporterUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+  darkpoolContract: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as Address,
+  permit2Contract: env.NEXT_PUBLIC_PERMIT2_CONTRACT as Address,
+})
+
 export function Providers({
   children,
   icons,
@@ -267,32 +275,34 @@ export function Providers({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <WagmiProvider config={wagmiConfig}>
-              <QueryClientProvider client={queryClient}>
-                <ConnectKitProvider
-                  mode="dark"
-                  customTheme={{
-                    "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
-                    "--ck-overlay-backdrop-filter": "blur(8px)",
-                    "--ck-font-family": "Favorit Extended",
-                    "--ck-border-radius": "10px",
-                    "--ck-body-background": "#1e1e1e",
-                    "--ck-spinner-color": "#ffffff",
-                  }}
-                >
-                  <RenegadeProvider>
-                    <ExchangeProvider>
-                      <PriceProvider>
-                        <AppProvider tokenIcons={icons}>
-                          <Toaster expand position="bottom-center" />
-                          {children}
-                        </AppProvider>
-                      </PriceProvider>
-                    </ExchangeProvider>
-                  </RenegadeProvider>
-                </ConnectKitProvider>
-              </QueryClientProvider>
-            </WagmiProvider>
+            <SDKProvider config={renegadeConfig}>
+              <WagmiProvider config={wagmiConfig}>
+                <QueryClientProvider client={queryClient}>
+                  <ConnectKitProvider
+                    mode="dark"
+                    customTheme={{
+                      "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+                      "--ck-overlay-backdrop-filter": "blur(8px)",
+                      "--ck-font-family": "Favorit Extended",
+                      "--ck-border-radius": "10px",
+                      "--ck-body-background": "#1e1e1e",
+                      "--ck-spinner-color": "#ffffff",
+                    }}
+                  >
+                    <RenegadeProvider>
+                      <ExchangeProvider>
+                        <PriceProvider>
+                          <AppProvider tokenIcons={icons}>
+                            <Toaster expand position="bottom-center" />
+                            {children}
+                          </AppProvider>
+                        </PriceProvider>
+                      </ExchangeProvider>
+                    </RenegadeProvider>
+                  </ConnectKitProvider>
+                </QueryClientProvider>
+              </WagmiProvider>
+            </SDKProvider>
           </ChakraProvider>
         </CacheProvider>
       </IntercomProvider>

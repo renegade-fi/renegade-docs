@@ -2,7 +2,7 @@ import { useModal as useModalConnectKit } from "connectkit"
 import { useMemo } from "react"
 import { useAccount as useAccountWagmi } from "wagmi"
 
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useStatus } from "@sehyunchung/renegade-react"
 
 export const useButton = ({
   connectText,
@@ -13,7 +13,7 @@ export const useButton = ({
   onOpenSignIn: () => void
   signInText?: string
 }) => {
-  const { accountId } = useRenegade()
+  const status = useStatus()
   const { address } = useAccountWagmi()
   const { setOpen } = useModalConnectKit()
 
@@ -24,7 +24,7 @@ export const useButton = ({
         buttonOnClick: () => setOpen(true),
         cursor: "pointer",
       }
-    } else if (!accountId) {
+    } else if (status !== "in relayer") {
       return {
         buttonText: signInText || "Sign in",
         buttonOnClick: onOpenSignIn,
@@ -41,11 +41,11 @@ export const useButton = ({
     else {
       return {
         buttonText: "",
-        buttonOnClick: () => {},
+        buttonOnClick: () => { },
         cursor: "pointer",
       }
     }
-  }, [accountId, address, connectText, onOpenSignIn, setOpen, signInText])
+  }, [address, connectText, onOpenSignIn, setOpen, signInText, status])
 
   const shouldUse = buttonText
 

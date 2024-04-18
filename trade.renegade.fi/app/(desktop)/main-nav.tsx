@@ -22,9 +22,9 @@ import {
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { useButton } from "@/hooks/use-button"
 import glyphDark from "@/icons/glyph_dark.svg"
+import { useStatus } from "@sehyunchung/renegade-react"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -143,7 +143,6 @@ export function SignInButton() {
   const { isSigningIn } = useApp()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data } = useEnsNameWagmi({ address })
-  const { accountId } = useRenegade()
   const signInText = data
     ? `Sign in with ${data}`
     : `Sign in with 0x${address?.slice(2, 6)}`
@@ -152,7 +151,8 @@ export function SignInButton() {
     onOpenSignIn: onOpen,
     signInText,
   })
-  if (!address || accountId) {
+  const status = useStatus()
+  if (!address || status === 'in relayer') {
     return null
   }
 
@@ -162,7 +162,7 @@ export function SignInButton() {
         cursor={isSigningIn ? "default" : "pointer"}
         isLoading={isSigningIn}
         loadingText="Signing in"
-        onClick={isSigningIn ? () => {} : buttonOnClick}
+        onClick={isSigningIn ? () => { } : buttonOnClick}
         variant="wallet-connect"
       >
         {buttonText}
@@ -180,9 +180,9 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi()
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
-  const { accountId, setAccount } = useRenegade()
   const [, setSeed] = useLocalStorage<string | undefined>("seed", undefined)
-  if (!address || !accountId) {
+  const status = useStatus()
+  if (!address || status !== 'in relayer') {
     return null
   }
 
@@ -207,7 +207,6 @@ function DisconnectWalletButton() {
     <Button
       background="white.10"
       onClick={() => {
-        setAccount(accountId, undefined)
         setSeed(undefined)
         disconnect()
       }}

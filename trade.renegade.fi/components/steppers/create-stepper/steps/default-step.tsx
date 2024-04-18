@@ -1,7 +1,5 @@
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
-import { Keychain } from "@renegade-fi/renegade-js"
 import { Unplug } from "lucide-react"
-import { useLocalStorage } from "usehooks-ts"
 import { verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
@@ -12,17 +10,17 @@ import {
 import { client } from "@/app/providers"
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { stylusDevnetEc2 } from "@/lib/viem"
+import { connect, useConfig, waitForTaskCompletion } from "@sehyunchung/renegade-react"
+import { toast } from "sonner"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
 export function DefaultStep() {
   const { setIsOnboarding, setIsSigningIn } = useApp()
-  const [, setSeed] = useLocalStorage<string | undefined>("seed", undefined)
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
-  const { accountId, setAccount } = useRenegade()
+  const config = useConfig()
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
@@ -48,9 +46,26 @@ export function DefaultStep() {
         if (!valid) {
           throw new Error("Invalid signature")
         }
-        setAccount(accountId, new Keychain({ seed: data })).then(() =>
-          setSeed(data)
-        )
+        config.setState({ ...config.state, seed: data })
+        const res = await connect(config)
+        if (typeof res !== 'string' && res.taskId) {
+          toast.promise(
+            waitForTaskCompletion(config, { taskId: res.taskId }).then(() => {
+              console.log("Current Status in toast:", config.state)
+            }),
+            {
+              loading: "Creating or finding wallet.",
+              success: "Wallet created or found",
+              error: "Failed to create or find wallet",
+            })
+        }
+        console.log("Current Status after toast:", config.state)
+        if (config.state.status === 'in relayer') {
+          setIsSigningIn(false)
+        }
+        // setAccount(accountId, new Keychain({ seed: data })).then(() =>
+        //   setSeed(data)
+        // )
         setIsOnboarding(false)
         onClose()
       },
