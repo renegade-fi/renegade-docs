@@ -1,6 +1,7 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
+import { AccountId, Token } from "@renegade-fi/renegade-js"
+import { deposit, getPkRoot, useConfig, waitForTaskCompletion, } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -8,7 +9,6 @@ import { useLocalStorage } from "usehooks-ts"
 import { parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
-import { renegade } from "@/app/providers"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { Direction } from "@/contexts/Order/types"
@@ -23,6 +23,8 @@ import { useButton } from "@/hooks/use-button"
 import { signPermit2 } from "@/lib/permit2"
 import { parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
+import { renegade } from "@/app/providers"
+import { getPkRootScalars } from "@sehyunchung/renegade-react"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -30,7 +32,7 @@ const MAX_INT = BigInt(
 
 export default function DepositButton() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const { accountId, pkRoot } = useRenegade()
+  const { accountId } = useRenegade()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -77,7 +79,7 @@ export default function DepositButton() {
   const hasRpcConnectionError = typeof allowance === "undefined"
   const hasInsufficientBalance = l1Balance
     ? l1Balance <
-      parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
+    parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
     : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
 
@@ -95,10 +97,13 @@ export default function DepositButton() {
   }
 
   const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
+  const config = useConfig()
   const handleSignAndDeposit = async () => {
-    if (!accountId || !walletClient) return
+    if (!walletClient) return
     const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
     const amount = parseUnits(baseTokenAmount, 18)
+
+    const pkRoot = getPkRootScalars(config)
 
     // Generate Permit2 Signature
     const { signature, nonce, deadline } = await signPermit2({
@@ -110,31 +115,45 @@ export default function DepositButton() {
       walletClient,
       pkRoot,
     })
+    const { taskId } = await deposit(config, {
+      fromAddr: walletClient.account.address,
+      mint: `0x${token.address}`,
+      amount,
+      permitNonce: nonce,
+      permitDeadline: deadline,
+      permit: signature
+    })
+
+    toast.promise(waitForTaskCompletion(config, { taskId }), {
+      loading: "Depositing...",
+      success: "Deposit successful",
+      error: "Deposit failed",
+    })
 
     // Deposit
-    await renegade.task
-      .deposit(
-        accountId,
-        token,
-        amount,
-        walletClient.account.address,
-        nonce,
-        deadline,
-        signature
-      )
-      .then(() =>
-        toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
-          description: "Check the history tab for the status of the task",
-        })
-      )
-      .then(() => {
-        if (token.ticker === "USDC") {
-          setDirection(Direction.BUY)
-        } else {
-          setDirection(Direction.SELL)
-        }
-      })
-      .catch((error) => toast.error(`Error depositing: ${error}`))
+    // await renegade.task
+    //   .deposit(
+    //     "f541d5c8-1955-1aad-ea3d-0dde6312ec1c" as AccountId,
+    //     token,
+    //     amount,
+    //     walletClient.account.address,
+    //     nonce,
+    //     deadline,
+    //     signature
+    //   )
+    //   .then(() =>
+    //     toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
+    //       description: "Check the history tab for the status of the task",
+    //     })
+    //   )
+    //   .then(() => {
+    //     if (token.ticker === "USDC") {
+    //       setDirection(Direction.BUY)
+    //     } else {
+    //       setDirection(Direction.SELL)
+    //     }
+    //   })
+    //   .catch((error) => toast.error(`Error depositing: ${error}`))
   }
 
   const handleClick = async () => {
@@ -164,9 +183,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-                borderColor: "white.60",
-                color: "white",
-              }
+              borderColor: "white.60",
+              color: "white",
+            }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -182,12 +201,12 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : hasInsufficientBalance
-          ? "Insufficient balance"
-          : needsApproval
-          ? `Approve ${baseTicker}`
-          : hasRpcConnectionError
-          ? "Error connecting to chain"
-          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+            ? "Insufficient balance"
+            : needsApproval
+              ? `Approve ${baseTicker}`
+              : hasRpcConnectionError
+                ? "Error connecting to chain"
+                : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
