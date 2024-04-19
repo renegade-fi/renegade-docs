@@ -2,31 +2,39 @@
 
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
-import { Order, OrderId, Token } from "@renegade-fi/renegade-js"
+import {
+  Token,
+  UseOrdersReturnType,
+  formatAmount,
+  useNetworkOrders,
+  useOrders,
+  useStatus,
+  useWalletId,
+  cancelOrder,
+  useConfig,
+} from "@sehyunchung/renegade-react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
-import { toast } from "sonner"
 
-import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { LocalOrder } from "@/components/steppers/order-stepper/steps/confirm-step"
 import { useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { useOrders } from "@/hooks/use-order"
-import { formatAmount, safeLocalStorageGetItem } from "@/lib/utils"
+import { safeLocalStorageGetItem } from "@/lib/utils"
+import { Address } from "viem"
+import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
+import { LocalOrder } from "@/contexts/Order/types"
 
 dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
   amount: string
-  baseAddr: string
-  id: OrderId
-  quoteAddr: string
+  baseAddr: Address
+  id: string
+  quoteAddr: Address
   side: string
   matched?: boolean
 }
@@ -39,26 +47,27 @@ function SingleOrder({
   matched,
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
-  const { accountId } = useRenegade()
+  const { executeTaskWithToast } = useTaskCompletionToast()
+  const config = useConfig()
 
-  const base = Token.findTickerByAddress(`0x${baseAddr}`)
-  const quote = Token.findTickerByAddress(`0x${quoteAddr}`)
+  const base = Token.findByAddress(baseAddr).ticker
+  const quote = Token.findByAddress(quoteAddr).ticker
 
-  const handleCancel = () => {
-    if (!accountId) return
-    renegade.task
-      .cancelOrder(accountId, id)
-      .then(() =>
-        toast.message(
-          `Started to cancel order to ${
-            side === "buy" ? "Buy" : "Sell"
-          } ${amount} ${base}`,
-          {
-            description: "Check the history tab for the status of the task",
-          }
-        )
-      )
-      .catch((error) => toast.error(`Error cancelling order: ${error}`))
+  const handleCancel = async () => {
+    const { taskId } = await cancelOrder(config, { id })
+    executeTaskWithToast(taskId, "Cancel Order")
+    // renegade.task
+    //   .cancelOrder(accountId, id)
+    //   .then(() =>
+    //     toast.message(
+    //       `Started to cancel order to ${side === "buy" ? "Buy" : "Sell"
+    //       } ${amount} ${base}`,
+    //       {
+    //         description: "Check the history tab for the status of the task",
+    //       }
+    //     )
+    //   )
+    //   .catch((error) => toast.error(`Error cancelling order: ${error}`))
   }
 
   return (
@@ -136,10 +145,12 @@ interface OrdersPanelProps {
 function OrdersPanel(props: OrdersPanelProps) {
   const globalOrders = useGlobalOrders()
   const orders = useOrders()
-  const { accountId } = useRenegade()
+  const walletId = useWalletId()
+  const status = useStatus()
+  const isConnected = status === "in relayer"
 
   const [filteredOrders, filteredMatchedOrders] = useMemo(() => {
-    const matchedOrders = safeLocalStorageGetItem(`order-details-${accountId}`)
+    const matchedOrders = safeLocalStorageGetItem(`order-details-${walletId}`)
     const parsedMatchedOrders: LocalOrder[] = matchedOrders
       ? JSON.parse(matchedOrders)
       : []
@@ -148,15 +159,15 @@ function OrdersPanel(props: OrdersPanelProps) {
         order.id in globalOrders && globalOrders[order.id].state === "Cancelled"
     )
     const filteredOrders = Object.values(orders).filter(
-      ({ amount, orderId }) =>
+      ({ amount, id: orderId }) =>
         amount > 0 && !filteredMatchedOrders.some(({ id }) => id === orderId)
     )
     return [filteredOrders, filteredMatchedOrders]
-  }, [accountId, globalOrders, orders])
+  }, [globalOrders, orders, walletId])
 
   const Content = useMemo(() => {
     if (
-      !accountId ||
+      !isConnected ||
       !orders ||
       (!filteredOrders.length && !filteredMatchedOrders.length)
     ) {
@@ -169,7 +180,7 @@ function OrdersPanel(props: OrdersPanelProps) {
           fontWeight="100"
           textAlign="center"
         >
-          {accountId
+          {isConnected
             ? "No orders. Submit an order to broadcast it to the dark pool."
             : "Sign in to create a Renegade account and view your orders."}
         </Text>
@@ -188,22 +199,22 @@ function OrdersPanel(props: OrdersPanelProps) {
           <Box key={order.id} width="100%">
             <SingleOrder
               amount={order.amount}
-              baseAddr={order.base}
-              id={order.id as OrderId}
-              quoteAddr={order.quote}
+              baseAddr={order.base as Address}
+              id={order.id}
+              quoteAddr={order.quote as Address}
               side={order.side}
               matched
             />
           </Box>
         ))}
         {filteredOrders.map(
-          ({ amount, baseToken, orderId, quoteToken, side }) => (
+          ({ amount, base_mint, id: orderId, quote_mint, side }) => (
             <Box key={orderId} width="100%">
               <SingleOrder
-                amount={formatAmount(amount, baseToken)}
-                baseAddr={baseToken.address}
+                amount={formatAmount(amount, Token.findByAddress(base_mint))}
+                baseAddr={base_mint}
                 id={orderId}
-                quoteAddr={quoteToken.address}
+                quoteAddr={quote_mint}
                 side={side}
               />
             </Box>
@@ -211,7 +222,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         )}
       </SimpleBar>
     )
-  }, [accountId, orders, filteredMatchedOrders, filteredOrders])
+  }, [isConnected, orders, filteredOrders, filteredMatchedOrders])
 
   return (
     <>
@@ -253,13 +264,13 @@ function OrdersPanel(props: OrdersPanelProps) {
 function OrderBookPanel() {
   const globalOrders = useGlobalOrders()
   const orders = useOrders()
-  const { accountId } = useRenegade()
+  const walletId = useWalletId()
 
   const savedOrders: LocalOrder[] = useMemo(() => {
-    const matchedOrders = safeLocalStorageGetItem(`order-details-${accountId}`)
+    const matchedOrders = safeLocalStorageGetItem(`order-details-${walletId}`)
     const parsed = matchedOrders ? JSON.parse(matchedOrders) : []
     return parsed
-  }, [accountId])
+  }, [walletId])
 
   let panelBody: React.ReactElement
 
@@ -288,16 +299,16 @@ function OrderBookPanel() {
       >
         {Object.values(globalOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
-          const status =
-            counterpartyOrder.id in orders
-              ? "ACTIVE"
-              : counterpartyOrder.state === "Cancelled" &&
-                !(counterpartyOrder.id in orders) &&
-                savedOrders.some(({ id }) => id === counterpartyOrder.id)
-              ? "MATCHED"
-              : counterpartyOrder.state === "Cancelled"
-              ? "VERIFIED"
-              : counterpartyOrder.state.toUpperCase()
+          // const title = `${counterpartyOrder.id}`
+          const status = orders.find(({ id }) => id === counterpartyOrder.id)
+            ? "ACTIVE"
+            : counterpartyOrder.state === "Cancelled" &&
+              !(counterpartyOrder.id in orders) &&
+              savedOrders.some(({ id }) => id === counterpartyOrder.id)
+            ? "MATCHED"
+            : counterpartyOrder.state === "Cancelled"
+            ? "VERIFIED"
+            : counterpartyOrder.state.toUpperCase()
 
           const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
           const textColor =
@@ -364,7 +375,7 @@ function OrderBookPanel() {
 }
 
 function CounterpartiesPanel() {
-  const globalOrders = useGlobalOrders()
+  const globalOrders = useNetworkOrders()
   return (
     <Flex
       position="relative"
@@ -422,21 +433,15 @@ export function OrdersAndCounterpartiesPanel() {
   )
 }
 
-const formatTitle = (orders: Record<OrderId, Order>, order: GlobalOrder) => {
-  if (order.id in orders) {
-    const baseTicker = Token.findTickerByAddress(
-      `0x${orders[order.id].baseToken.address}`
-    )
-    const quoteTicker = Token.findTickerByAddress(
-      `0x${orders[order.id].quoteToken.address}`
-    )
-    const side = orders[order.id].side === "buy" ? "Buy" : "Sell"
-    const formattedAmount = formatAmount(
-      orders[order.id].amount,
-      new Token({ address: orders[order.id].baseToken.address })
-    )
-    return `${side} ${formattedAmount} ${baseTicker} for ${quoteTicker}`
+const formatTitle = (orders: UseOrdersReturnType, order: GlobalOrder) => {
+  const userOrder = orders.find(({ id }) => id === order.id)
+  if (userOrder) {
+    const base = Token.findByAddress(userOrder.base_mint)
+    const quote = Token.findByAddress(userOrder.quote_mint).ticker
+    const formattedAmount = formatAmount(userOrder.amount, base)
+    return `${userOrder.side} ${formattedAmount} ${base.ticker} for ${quote}`
   }
+
   return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useToast } from "@chakra-ui/react"
-import { CallbackId, OrderId, Token } from "@renegade-fi/renegade-js"
+import { CallbackId, OrderId } from "@renegade-fi/renegade-js"
 import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
@@ -15,8 +15,9 @@ import { useLocalStorage } from "usehooks-ts"
 
 import { renegade } from "@/app/providers"
 import { CounterpartyOrder } from "@/contexts/Renegade/types"
-import { getToken } from "@/lib/utils"
+import { Token } from "@sehyunchung/renegade-react"
 
+import { isHex } from "viem"
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -35,14 +36,19 @@ function OrderProvider({ children }: PropsWithChildren) {
   const handleSetBaseToken = (token: string) => {
     router.push(`/${token}/${quote}`)
   }
-  const baseToken = getToken({ input: base })
-  const baseTicker = Token.findTickerByAddress(`0x${baseToken.address}`)
+  // const baseToken = getToken({ input: base })
+  const baseToken = isHex(base)
+    ? Token.findByAddress(base)
+    : Token.findByTicker(base)
+  const baseTicker = baseToken.ticker
   const quote = params.quote?.toString()
   const handleSetQuoteToken = (token: string) => {
     router.push(`/${base}/${token}`)
   }
-  const quoteToken = getToken({ input: quote })
-  const quoteTicker = Token.findTickerByAddress(`0x${quoteToken.address}`)
+  const quoteToken = isHex(quote)
+    ? Token.findByAddress(quote)
+    : Token.findByTicker(quote)
+  const quoteTicker = quoteToken.ticker
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   const [orderBook, setOrderBook] = useState<

@@ -1,4 +1,4 @@
-import { Token } from "@renegade-fi/renegade-js"
+import { Token } from "@sehyunchung/renegade-react"
 
 export enum Direction {
   BUY = "buy",
@@ -16,4 +16,13 @@ export interface OrderContextValue {
   setBaseTokenAmount: (e: React.ChangeEvent<HTMLInputElement>) => void
   setDirection: (direction: Direction) => void
   setQuoteToken: (token: string) => void
+}
+
+export interface LocalOrder {
+  id: string
+  base: string
+  quote: string
+  side: string
+  amount: string
+  timestamp: number
 }

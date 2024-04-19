@@ -2,39 +2,35 @@
 
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   CheckIcon,
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
-import { Token, tokenMappings } from "@renegade-fi/renegade-js"
+import { tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
-import { toast } from "sonner"
-import {
-  useAccount,
-  useAccount as useAccountWagmi,
-  useWalletClient,
-} from "wagmi"
+import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
 
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
-import { renegade } from "@/app/providers"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState } from "@/contexts/Renegade/types"
-import { useBalance } from "@/hooks/use-balance"
-import { useTasks } from "@/hooks/use-tasks"
 import { useUSDPrice } from "@/hooks/use-usd-price"
-import { formatAmount, parseAmount } from "@/lib/utils"
+import {
+  Token,
+  formatAmount,
+  useBalances,
+  useStatus,
+  useTaskQueue,
+} from "@sehyunchung/renegade-react"
+import { Address } from "viem"
 
 interface TokenBalanceProps {
-  tokenAddr: string
+  tokenAddr: Address
   userAddr?: string
   amount: bigint
 }
@@ -42,27 +38,21 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const router = useRouter()
-  const { accountId } = useRenegade()
-  const { address } = useAccount()
+  const token = Token.findByAddress(props.tokenAddr)
 
-  const formattedAmount = formatAmount(
-    props.amount,
-    new Token({ address: props.tokenAddr })
-  )
-  const ticker = Token.findTickerByAddress(`${props.tokenAddr}`)
+  const formattedAmount = formatAmount(props.amount, token)
+  const ticker = token.ticker
   const usdPrice = useUSDPrice(
     ticker,
-    parseFloat(
-      formatAmount(props.amount, new Token({ address: props.tokenAddr }))
-    )
+    parseFloat(formatAmount(props.amount, token))
   )
 
   const isZero = props.amount === BigInt(0)
 
   const { data: walletClient } = useWalletClient()
-  const handleAddToWallet = async (address: string) => {
+  const handleAddToWallet = async (address: Address) => {
     if (!walletClient) return
-    const token = new Token({ address })
+    const token = Token.findByAddress(address)
     await walletClient.watchAsset({
       type: "ERC20",
       options: {
@@ -123,7 +113,7 @@ function TokenBalance(props: TokenBalanceProps) {
           setView(ViewEnum.DEPOSIT)
         }}
       />
-      <ArrowUpIcon
+      {/* <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
@@ -147,15 +137,13 @@ function TokenBalance(props: TokenBalanceProps) {
               .catch((error) => toast.error(`Error withdrawing: ${error}`))
           }
         }}
-      />
+      /> */}
     </Flex>
   )
 }
 
 function DepositWithdrawButtons() {
   const { setView } = useApp()
-  const { accountId } = useRenegade()
-  if (!accountId) return null
   return (
     <Flex
       flexDirection="row"
@@ -208,19 +196,20 @@ interface RenegadeWalletPanelProps {
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
   const { isSigningIn, setView } = useApp()
-  const balances = useBalance()
-  const { accountId } = useRenegade()
+  const balances = useBalances()
+  const status = useStatus()
+  const isConnected = status === "in relayer"
 
-  const formattedBalances = useMemo<Array<[string, bigint]>>(() => {
-    const wethAddress = Token.findAddressByTicker("WETH").replace("0x", "")
-    const usdcAddress = Token.findAddressByTicker("USDC").replace("0x", "")
+  const formattedBalances = useMemo<Array<[Address, bigint]>>(() => {
+    const wethAddress = Token.findByTicker("WETH").address
+    const usdcAddress = Token.findByTicker("USDC").address
 
-    const nonzero: Array<[string, bigint]> = Object.entries(balances).map(
-      ([_, b]) => [b.mint.address, b.amount]
+    const nonzero: Array<[Address, bigint]> = Object.entries(balances).map(
+      ([_, b]) => [b.mint, b.amount]
     )
-    const placeholders: Array<[string, bigint]> = tokenMappings.tokens
-      .filter((t) => !nonzero.some(([a]) => `0x${a}` === t.address))
-      .map((t) => [t.address.replace("0x", ""), BigInt(0)])
+    const placeholders: Array<[Address, bigint]> = tokenMappings.tokens
+      .filter((t) => !nonzero.some(([a]) => a === t.address))
+      .map((t) => [t.address as Address, BigInt(0)])
 
     const combined = [...nonzero, ...placeholders]
 
@@ -240,7 +229,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   }, [balances])
 
   const Content = useMemo(() => {
-    if (accountId && !showDeposit) {
+    if (isConnected && !showDeposit) {
       return (
         <>
           <SimpleBar
@@ -252,7 +241,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           >
             {formattedBalances.map(([address, amount]) => (
               <Box key={address} width="100%">
-                <TokenBalance tokenAddr={"0x" + address} amount={amount} />
+                <TokenBalance tokenAddr={address} amount={amount} />
               </Box>
             ))}
           </SimpleBar>
@@ -269,7 +258,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         >
           <ConnectWalletButton />
           <SignInButton />
-          {accountId && (
+          {isConnected && (
             <Button
               padding="0 15% 0 15%"
               onClick={() => {
@@ -278,7 +267,11 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               variant="wallet-connect"
             >
               <Text>
-                {accountId ? "Deposit" : isSigningIn ? "Signing In" : "Sign In"}
+                {isConnected
+                  ? "Deposit"
+                  : isSigningIn
+                  ? "Signing In"
+                  : "Sign In"}
               </Text>
             </Button>
           )}
@@ -290,7 +283,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             fontWeight="100"
             textAlign="center"
           >
-            {accountId
+            {isConnected
               ? "Deposit tokens into your Renegade Account to get started."
               : address
               ? "Sign in to create a Renegade account and view your balances."
@@ -299,7 +292,14 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
         </Flex>
       )
     }
-  }, [accountId, address, isSigningIn, formattedBalances, setView, showDeposit])
+  }, [
+    address,
+    formattedBalances,
+    isConnected,
+    isSigningIn,
+    setView,
+    showDeposit,
+  ])
 
   return (
     <>
@@ -340,17 +340,9 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 }
 
 function HistorySection() {
-  const { accountId } = useRenegade()
-  const tasks = useTasks()
+  const status = useStatus()
+  const tasks = useTaskQueue()
   const Content = useMemo(() => {
-    const TASK_TO_NAME = {
-      Queued: "Queued",
-      Proving: "Proving",
-      "Submitting Tx": "Submitting Transaction",
-      "Finding Opening": "Validating",
-      "Updating Validity Proofs": "Validating",
-      Completed: "Completed",
-    }
     return (
       <SimpleBar
         style={{
@@ -399,7 +391,7 @@ function HistorySection() {
                 <Flex alignItems="center" gap="2">
                   {task.state !== "Completed" && <>{rightIcon}</>}
                   <Text color="white.80" fontSize="0.8em">
-                    {TASK_TO_NAME[task.state as TaskState]}
+                    {task.state}
                   </Text>
                 </Flex>
               </Flex>
@@ -410,7 +402,7 @@ function HistorySection() {
     )
   }, [tasks])
 
-  if (!accountId) return null
+  if (status !== "in relayer") return null
 
   return (
     <>
