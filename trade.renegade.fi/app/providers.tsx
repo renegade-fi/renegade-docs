@@ -5,29 +5,32 @@ import { CacheProvider } from "@chakra-ui/next-js"
 import {
   ChakraProvider,
   ColorModeScript,
-  type ThemeConfig,
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
+  type ThemeConfig,
 } from "@chakra-ui/react"
 import { datadogLogs } from "@datadog/browser-logs"
 import { datadogRum } from "@datadog/browser-rum"
 import { Renegade } from "@renegade-fi/renegade-js"
+import {
+  chain,
+  createConfig as createSDKConfig,
+  RenegadeProvider as SDKProvider,
+} from "@sehyunchung/renegade-react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
-import { Address, createPublicClient, http } from "viem"
-import { WagmiProvider, createConfig } from "wagmi"
-import { RenegadeProvider as SDKProvider, createConfig as createSDKConfig } from "@sehyunchung/renegade-react"
+import { http } from "viem"
+import { createConfig, WagmiProvider } from "wagmi"
 
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
-import { stylusDevnetEc2 } from "@/lib/viem"
 
 /*
  * ┌─────────────────────┐
@@ -194,21 +197,16 @@ export const wagmiConfig = createConfig(
     appName: "Renegade | On-Chain Dark Pool",
     appIcon: "https://www.renegade.fi/glyph_light.svg",
     appUrl: "https://renegade.fi",
-    chains: [stylusDevnetEc2],
+    chains: [chain],
     ssr: true,
     transports: {
-      [stylusDevnetEc2.id]: http(),
+      [chain.id]: http(),
     },
     walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
 )
 
 const queryClient = new QueryClient()
-
-export const client = createPublicClient({
-  chain: stylusDevnetEc2,
-  transport: http(),
-})
 
 export const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -222,8 +220,7 @@ export const renegade = new Renegade({
 export const renegadeConfig = createSDKConfig({
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   priceReporterUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  darkpoolContract: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as Address,
-  permit2Contract: env.NEXT_PUBLIC_PERMIT2_CONTRACT as Address,
+  ssr: true,
 })
 
 export function Providers({
@@ -275,7 +272,7 @@ export function Providers({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <SDKProvider config={renegadeConfig}>
+            <SDKProvider reconnectOnMount={true} config={renegadeConfig}>
               <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClient}>
                   <ConnectKitProvider
@@ -293,7 +290,11 @@ export function Providers({
                       <ExchangeProvider>
                         <PriceProvider>
                           <AppProvider tokenIcons={icons}>
-                            <Toaster expand position="bottom-center" />
+                            <Toaster
+                              expand
+                              position="bottom-center"
+                              richColors
+                            />
                             {children}
                           </AppProvider>
                         </PriceProvider>

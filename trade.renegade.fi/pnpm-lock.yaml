@@ -33,8 +33,8 @@ dependencies:
     specifier: ^0.5.6
     version: 0.5.6(typescript@5.1.6)
   '@sehyunchung/renegade-react':
-    specifier: link:/Users/s/code/renegade-js-core/packages/react
-    version: link:../../renegade-js-core/packages/react
+    specifier: ^2.0.6
+    version: 2.0.6(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4346,6 +4346,41 @@ packages:
     dependencies:
       '@noble/hashes': 1.3.3
       '@scure/base': 1.1.6
+    dev: false
+
+  /@sehyunchung/renegade-core@1.0.5(@types/react@18.2.77)(react@18.2.0):
+    resolution: {integrity: sha512-CqNpNTHZj6FnaE1tC+Lm9zyurTRKnrrMWTHF9hz/8muFWWpYVbQEoo63D+KPWJUUcftBQJEYIZ7hv3XHICH2sQ==}
+    dependencies:
+      axios: 1.6.8
+      json-bigint: 1.0.0
+      tiny-invariant: 1.3.3
+      zustand: 4.5.2(@types/react@18.2.77)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - debug
+      - immer
+      - react
+    dev: false
+
+  /@sehyunchung/renegade-react@2.0.6(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6):
+    resolution: {integrity: sha512-tRggzRZMLmPRSWJR/uQZRyECfVZ/nELJvPewPX4ENm+2wGtA4qGqZFIQx03NheQGdShvb864Kj1nNQofwcnIgw==}
+    peerDependencies:
+      '@tanstack/react-query': '>=5.0.0'
+      react: '>=18'
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@sehyunchung/renegade-core': 1.0.5(@types/react@18.2.77)(react@18.2.0)
+      '@tanstack/react-query': 5.29.2(react@18.2.0)
+      react: 18.2.0
+      tiny-invariant: 1.3.3
+      typescript: 5.1.6
+    transitivePeerDependencies:
+      - '@types/react'
+      - debug
+      - immer
     dev: false
 
   /@sideway/address@4.1.5:
@@ -11976,6 +12011,26 @@ packages:
     peerDependencies:
       '@types/react': '>=16.8'
       immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.77
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /zustand@4.5.2(@types/react@18.2.77)(react@18.2.0):
+    resolution: {integrity: sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
       '@types/react':

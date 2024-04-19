@@ -13,7 +13,6 @@ import {
 import { ConnectKitButton } from "connectkit"
 import Image from "next/image"
 import React, { createRef, useEffect, useState } from "react"
-import { useLocalStorage } from "usehooks-ts"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
@@ -24,7 +23,11 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 import { useApp } from "@/contexts/App/app-context"
 import { useButton } from "@/hooks/use-button"
 import glyphDark from "@/icons/glyph_dark.svg"
-import { useStatus } from "@sehyunchung/renegade-react"
+import {
+  useStatus,
+  disconnect as disconnectRenegade,
+  useConfig,
+} from "@sehyunchung/renegade-react"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
@@ -152,7 +155,7 @@ export function SignInButton() {
     signInText,
   })
   const status = useStatus()
-  if (!address || status === 'in relayer') {
+  if (!address || status === "in relayer") {
     return null
   }
 
@@ -162,7 +165,7 @@ export function SignInButton() {
         cursor={isSigningIn ? "default" : "pointer"}
         isLoading={isSigningIn}
         loadingText="Signing in"
-        onClick={isSigningIn ? () => { } : buttonOnClick}
+        onClick={isSigningIn ? () => {} : buttonOnClick}
         variant="wallet-connect"
       >
         {buttonText}
@@ -180,9 +183,9 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi()
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
-  const [, setSeed] = useLocalStorage<string | undefined>("seed", undefined)
   const status = useStatus()
-  if (!address || status !== 'in relayer') {
+  const config = useConfig()
+  if (!address || status !== "in relayer") {
     return null
   }
 
@@ -207,8 +210,8 @@ function DisconnectWalletButton() {
     <Button
       background="white.10"
       onClick={() => {
-        setSeed(undefined)
         disconnect()
+        disconnectRenegade(config)
       }}
       variant="wallet-connect"
     >

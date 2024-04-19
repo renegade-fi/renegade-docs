@@ -7,11 +7,16 @@ import {
   useSignMessage as useSignMessageWagmi,
 } from "wagmi"
 
-import { client } from "@/app/providers"
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useApp } from "@/contexts/App/app-context"
-import { stylusDevnetEc2 } from "@/lib/viem"
-import { connect, useConfig, waitForTaskCompletion } from "@sehyunchung/renegade-react"
+import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import {
+  chain,
+  connect,
+  publicClient,
+  useConfig,
+} from "@sehyunchung/renegade-react"
 import { toast } from "sonner"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
@@ -21,13 +26,14 @@ export function DefaultStep() {
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const config = useConfig()
+  const { executeTaskWithToast } = useTaskCompletionToast()
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
         setIsSigningIn(true)
         // If Cloudflare is down, Smart Contract accounts cannot be verified
         // EOA accounts can be verified using verifyMessage util
-        const valid = await client
+        const valid = await publicClient
           .verifyMessage({
             address: address ?? `0x`,
             message: variables.message,
@@ -47,25 +53,48 @@ export function DefaultStep() {
           throw new Error("Invalid signature")
         }
         config.setState({ ...config.state, seed: data })
-        const res = await connect(config)
-        if (typeof res !== 'string' && res.taskId) {
-          toast.promise(
-            waitForTaskCompletion(config, { taskId: res.taskId }).then(() => {
-              console.log("Current Status in toast:", config.state)
-            }),
-            {
-              loading: "Creating or finding wallet.",
-              success: "Wallet created or found",
-              error: "Failed to create or find wallet",
-            })
+        const res = await connect(config, { seed: data })
+        if (res?.taskId) {
+          await executeTaskWithToast(res.taskId, "New Wallet")
         }
         console.log("Current Status after toast:", config.state)
-        if (config.state.status === 'in relayer') {
+        if (config.state.status === "in relayer") {
           setIsSigningIn(false)
+          const funded = safeLocalStorageGetItem(`funded_${address}`)
+          if (funded) return
+
+          // If the account has not been funded, fund it
+          toast.promise(
+            fetch(`/api/fund?address=${address}`, {
+              method: "GET",
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.text().then((text) => {
+                    throw new Error(
+                      text ||
+                        "Funding failed: An unexpected error occurred. Please try again."
+                    )
+                  })
+                }
+                return response.text().then((text) => {
+                  safeLocalStorageSetItem(`funded_${address}`, "true")
+                  console.log("Success:", text)
+                  return text
+                })
+              })
+              .catch((error) => {
+                console.error("Error:", error.message)
+                throw error
+              }),
+            {
+              loading: "Funding account...",
+              success: "Your account has been funded with test funds.",
+              error:
+                "Funding failed: An unexpected error occurred. Please try again.",
+            }
+          )
         }
-        // setAccount(accountId, new Keychain({ seed: data })).then(() =>
-        //   setSeed(data)
-        // )
         setIsOnboarding(false)
         onClose()
       },
@@ -92,7 +121,7 @@ export function DefaultStep() {
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
-                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${stylusDevnetEc2.id}`,
+                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${chain.id}`,
                 })
               }}
             >

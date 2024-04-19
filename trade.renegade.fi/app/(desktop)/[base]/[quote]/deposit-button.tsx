@@ -1,10 +1,14 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { AccountId, Token } from "@renegade-fi/renegade-js"
-import { deposit, getPkRoot, useConfig, waitForTaskCompletion, } from "@sehyunchung/renegade-react"
+import { Token } from "@renegade-fi/renegade-js"
+import {
+  chain,
+  deposit,
+  useConfig,
+  useStatus,
+} from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
-import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
@@ -12,7 +16,6 @@ import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useDeposit } from "@/contexts/Deposit/deposit-context"
 import { Direction } from "@/contexts/Order/types"
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
 import {
   useReadErc20Allowance,
@@ -20,10 +23,9 @@ import {
   useWriteErc20Approve,
 } from "@/generated"
 import { useButton } from "@/hooks/use-button"
+import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 import { signPermit2 } from "@/lib/permit2"
 import { parseAmount } from "@/lib/utils"
-import { stylusDevnetEc2 } from "@/lib/viem"
-import { renegade } from "@/app/providers"
 import { getPkRootScalars } from "@sehyunchung/renegade-react"
 
 const MAX_INT = BigInt(
@@ -32,7 +34,6 @@ const MAX_INT = BigInt(
 
 export default function DepositButton() {
   const { baseTicker, baseTokenAmount } = useDeposit()
-  const { accountId } = useRenegade()
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -71,7 +72,7 @@ export default function DepositButton() {
   }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient])
 
   // L1 ERC20 Approval
-  const { writeContract: approve, status: approveStatus } =
+  const { writeContractAsync: approve, status: approveStatus } =
     useWriteErc20Approve()
 
   const { data: walletClient } = useWalletClient()
@@ -79,25 +80,30 @@ export default function DepositButton() {
   const hasRpcConnectionError = typeof allowance === "undefined"
   const hasInsufficientBalance = l1Balance
     ? l1Balance <
-    parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
+      parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
     : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
+  const status = useStatus()
+  const isConnected = status === "in relayer"
 
   const isDisabled =
-    (accountId && !baseTokenAmount) ||
+    (isConnected && !baseTokenAmount) ||
     hasRpcConnectionError ||
     hasInsufficientBalance
 
+  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
+  const config = useConfig()
+  const { executeTaskWithToast } = useTaskCompletionToast()
   const handleApprove = async () => {
-    if (!accountId) return
-    approve({
+    if (!isConnected) return
+    await approve({
       address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
       args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
+    }).then(() => {
+      handleSignAndDeposit()
     })
   }
 
-  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
-  const config = useConfig()
   const handleSignAndDeposit = async () => {
     if (!walletClient) return
     const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
@@ -108,7 +114,7 @@ export default function DepositButton() {
     // Generate Permit2 Signature
     const { signature, nonce, deadline } = await signPermit2({
       amount,
-      chainId: stylusDevnetEc2.id,
+      chainId: chain.id,
       spender: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
       permit2Address: env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
       token,
@@ -121,42 +127,26 @@ export default function DepositButton() {
       amount,
       permitNonce: nonce,
       permitDeadline: deadline,
-      permit: signature
+      permit: signature,
     })
 
-    toast.promise(waitForTaskCompletion(config, { taskId }), {
-      loading: "Depositing...",
-      success: "Deposit successful",
-      error: "Deposit failed",
+    await executeTaskWithToast(taskId, "Deposit").then(() => {
+      if (token.ticker === "USDC") {
+        setDirection(Direction.BUY)
+      } else {
+        setDirection(Direction.SELL)
+      }
     })
-
-    // Deposit
-    // await renegade.task
-    //   .deposit(
-    //     "f541d5c8-1955-1aad-ea3d-0dde6312ec1c" as AccountId,
-    //     token,
-    //     amount,
-    //     walletClient.account.address,
-    //     nonce,
-    //     deadline,
-    //     signature
-    //   )
-    //   .then(() =>
-    //     toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
-    //       description: "Check the history tab for the status of the task",
-    //     })
-    //   )
-    //   .then(() => {
-    //     if (token.ticker === "USDC") {
-    //       setDirection(Direction.BUY)
-    //     } else {
-    //       setDirection(Direction.SELL)
-    //     }
-    //   })
-    //   .catch((error) => toast.error(`Error depositing: ${error}`))
   }
 
   const handleClick = async () => {
+    console.log("handleClick: ", {
+      shouldUse,
+      isDisabled,
+      needsApproval,
+      hasRpcConnectionError,
+      hasInsufficientBalance,
+    })
     if (shouldUse) {
       buttonOnClick()
     } else if (isDisabled) {
@@ -183,9 +173,9 @@ export default function DepositButton() {
           isDisabled
             ? { backgroundColor: "transparent" }
             : {
-              borderColor: "white.60",
-              color: "white",
-            }
+                borderColor: "white.60",
+                color: "white",
+              }
         }
         transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
         visibility={baseTokenAmount ? "visible" : "hidden"}
@@ -201,12 +191,12 @@ export default function DepositButton() {
         {shouldUse
           ? buttonText
           : hasInsufficientBalance
-            ? "Insufficient balance"
-            : needsApproval
-              ? `Approve ${baseTicker}`
-              : hasRpcConnectionError
-                ? "Error connecting to chain"
-                : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+          ? "Insufficient balance"
+          : needsApproval
+          ? `Approve ${baseTicker}`
+          : hasRpcConnectionError
+          ? "Error connecting to chain"
+          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>

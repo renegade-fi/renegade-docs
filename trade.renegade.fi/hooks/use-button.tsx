@@ -30,18 +30,10 @@ export const useButton = ({
         buttonOnClick: onOpenSignIn,
         cursor: "pointer",
       }
-    }
-    // else if (isLocked) {
-    //   return {
-    //     buttonText: "Please wait for task completion",
-    //     buttonOnClick: () => {},
-    //     cursor: "default",
-    //   }
-    // }
-    else {
+    } else {
       return {
         buttonText: "",
-        buttonOnClick: () => { },
+        buttonOnClick: () => {},
         cursor: "pointer",
       }
     }
