@@ -143,17 +143,13 @@ export default function DepositButton() {
           setDirection(Direction.SELL)
         }
       })
-      .catch((e) => toast.error(`Error depositing: ${e.message}`))
+      .catch((e) => {
+        toast.error(`Error depositing: ${e.message}`)
+        console.error(`Error depositing: ${e.message}`)
+      })
   }
 
   const handleClick = async () => {
-    console.log("handleClick: ", {
-      shouldUse,
-      isDisabled,
-      needsApproval,
-      hasRpcConnectionError,
-      hasInsufficientBalance,
-    })
     if (shouldUse) {
       buttonOnClick()
     } else if (isDisabled) {

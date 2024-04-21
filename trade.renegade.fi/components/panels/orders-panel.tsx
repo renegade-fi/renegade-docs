@@ -3,12 +3,14 @@
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
+  NetworkOrder,
   Token,
   UseOrdersReturnType,
   cancelOrder,
   formatAmount,
   useNetworkOrders,
   useConfig,
+  useNetworkOrders,
   useOrders,
   useStatus,
   useWalletId,
@@ -22,11 +24,9 @@ import "simplebar-react/dist/simplebar.min.css"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useApp } from "@/contexts/App/app-context"
-import { LocalOrder } from "@/contexts/Order/types"
-import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
-import { safeLocalStorageGetItem } from "@/lib/utils"
-import { Address } from "viem"
+import { useMatchedOrders } from "@/hooks/use-matched-orders"
 import { toast } from "sonner"
+import { Address } from "viem"
 
 dayjs.extend(relativeTime)
 
@@ -66,7 +66,10 @@ function SingleOrder({
         )
         console.log(`${walletId} started to cancel order ${id} in ${taskId}`)
       })
-      .catch((e) => toast.error(`Error cancelling order: ${e.message}`))
+      .catch((e) => {
+        toast.error(`Error cancelling order: ${e.message}`)
+        console.error(`Error cancelling order: ${e.message}`)
+      })
   }
 
   return (
@@ -142,34 +145,14 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const globalOrders = useGlobalOrders()
   const orders = useOrders()
-  const walletId = useWalletId()
   const status = useStatus()
   const isConnected = status === "in relayer"
 
-  const [filteredOrders, filteredMatchedOrders] = useMemo(() => {
-    const matchedOrders = safeLocalStorageGetItem(`order-details-${walletId}`)
-    const parsedMatchedOrders: LocalOrder[] = matchedOrders
-      ? JSON.parse(matchedOrders)
-      : []
-    const filteredMatchedOrders = parsedMatchedOrders.filter(
-      (order) =>
-        order.id in globalOrders && globalOrders[order.id].state === "Cancelled"
-    )
-    const filteredOrders = Object.values(orders).filter(
-      ({ amount, id: orderId }) =>
-        amount > 0 && !filteredMatchedOrders.some(({ id }) => id === orderId)
-    )
-    return [filteredOrders, filteredMatchedOrders]
-  }, [globalOrders, orders, walletId])
+  const matchedOrders = useMatchedOrders()
 
   const Content = useMemo(() => {
-    if (
-      !isConnected ||
-      !orders ||
-      (!filteredOrders.length && !filteredMatchedOrders.length)
-    ) {
+    if (!isConnected || (!orders.length && !matchedOrders.length)) {
       return (
         <Text
           margin="auto"
@@ -194,7 +177,7 @@ function OrdersPanel(props: OrdersPanelProps) {
           padding: "0 8px",
         }}
       >
-        {filteredMatchedOrders.map((order) => (
+        {matchedOrders.map((order) => (
           <Box key={order.id} width="100%">
             <SingleOrder
               amount={order.amount}
@@ -206,22 +189,20 @@ function OrdersPanel(props: OrdersPanelProps) {
             />
           </Box>
         ))}
-        {filteredOrders.map(
-          ({ amount, base_mint, id: orderId, quote_mint, side }) => (
-            <Box key={orderId} width="100%">
-              <SingleOrder
-                amount={formatAmount(amount, Token.findByAddress(base_mint))}
-                baseAddr={base_mint}
-                id={orderId}
-                quoteAddr={quote_mint}
-                side={side}
-              />
-            </Box>
-          )
-        )}
+        {orders.map(({ amount, base_mint, id: orderId, quote_mint, side }) => (
+          <Box key={orderId} width="100%">
+            <SingleOrder
+              amount={formatAmount(amount, Token.findByAddress(base_mint))}
+              baseAddr={base_mint}
+              id={orderId}
+              quoteAddr={quote_mint}
+              side={side}
+            />
+          </Box>
+        ))}
       </SimpleBar>
     )
-  }, [isConnected, orders, filteredOrders, filteredMatchedOrders])
+  }, [isConnected, matchedOrders, orders])
 
   return (
     <>
@@ -261,19 +242,14 @@ function OrdersPanel(props: OrdersPanelProps) {
 }
 
 function OrderBookPanel() {
-  const globalOrders = useGlobalOrders()
+  const networkOrders = useNetworkOrders()
   const orders = useOrders()
-  const walletId = useWalletId()
 
-  const savedOrders: LocalOrder[] = useMemo(() => {
-    const matchedOrders = safeLocalStorageGetItem(`order-details-${walletId}`)
-    const parsed = matchedOrders ? JSON.parse(matchedOrders) : []
-    return parsed
-  }, [walletId])
+  const matchedOrders = useMatchedOrders()
 
   let panelBody: React.ReactElement
 
-  if (Object.values(globalOrders).length === 0) {
+  if (Object.values(networkOrders).length === 0) {
     panelBody = (
       <Box display="grid" height="30vh" placeContent="center">
         <Text
@@ -296,14 +272,11 @@ function OrderBookPanel() {
           padding: "0 8px",
         }}
       >
-        {Object.values(globalOrders).map((counterpartyOrder) => {
+        {Object.values(networkOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
-          // const title = `${counterpartyOrder.id}`
           const status = orders.find(({ id }) => id === counterpartyOrder.id)
             ? "ACTIVE"
-            : counterpartyOrder.state === "Cancelled" &&
-              !(counterpartyOrder.id in orders) &&
-              savedOrders.some(({ id }) => id === counterpartyOrder.id)
+            : matchedOrders.some(({ id }) => id === counterpartyOrder.id)
             ? "MATCHED"
             : counterpartyOrder.state === "Cancelled"
             ? "VERIFIED"
@@ -432,7 +405,7 @@ export function OrdersAndCounterpartiesPanel() {
   )
 }
 
-const formatTitle = (orders: UseOrdersReturnType, order: GlobalOrder) => {
+const formatTitle = (orders: UseOrdersReturnType, order: NetworkOrder) => {
   const userOrder = orders.find(({ id }) => id === order.id)
   if (userOrder) {
     const base = Token.findByAddress(userOrder.base_mint)
@@ -443,27 +416,3 @@ const formatTitle = (orders: UseOrdersReturnType, order: GlobalOrder) => {
 
   return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }
-
-// const formatStatus = (
-//   orders: Record<OrderId, Order>,
-//   counterpartyOrder: GlobalOrder,
-//   savedOrders: LocalOrder[]
-// ): string => {
-//   if (counterpartyOrder.id in orders) {
-//     return "ACTIVE"
-//   }
-
-//   if (
-//     counterpartyOrder.state === "Cancelled" &&
-//     savedOrders.some(({ id }) => id === counterpartyOrder.id)
-//   ) {
-//     return "MATCHED"
-//   }
-
-//   if (counterpartyOrder.state === "Cancelled") {
-//     return "CANCELLED"
-//   }
-
-//   // Default case for other states
-//   return counterpartyOrder.state.toUpperCase()
-// }

@@ -1,15 +1,6 @@
 "use client"
 
-import {
-  PropsWithChildren,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react"
-
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { useLocalStorage } from "usehooks-ts"
+import { PropsWithChildren, createContext, useContext, useState } from "react"
 
 export enum ViewEnum {
   TRADING,
@@ -17,10 +8,6 @@ export enum ViewEnum {
 }
 
 export interface AppContextValue {
-  isOnboarding: boolean
-  isSigningIn: boolean
-  setIsOnboarding: (isOnboarding: boolean) => void
-  setIsSigningIn: (isSigningIn: boolean) => void
   setView: (view: ViewEnum) => void
   tokenIcons: Record<string, string>
   view: ViewEnum
@@ -32,32 +19,10 @@ function AppProvider({
   children,
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
-  const { accountId } = useRenegade()
-  const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
-  const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
-  const [view, setView] = useLocalStorage<ViewEnum>("view", ViewEnum.TRADING)
-  // useState<ViewEnum>(() =>
-  //   window.location.pathname.split("/").length === 2
-  //     ? ViewEnum.DEPOSIT
-  //     : ViewEnum.TRADING
-  // )
-
-  useEffect(() => {
-    let timeout = setTimeout(() => {
-      if (accountId) {
-        setIsSigningIn(false)
-      }
-    }, 3000)
-    return () => clearTimeout(timeout)
-  }, [accountId])
-
+  const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
   return (
     <AppStateContext.Provider
       value={{
-        isOnboarding,
-        isSigningIn,
-        setIsOnboarding,
-        setIsSigningIn,
         setView,
         tokenIcons: tokenIcons || {},
         view,

@@ -6,19 +6,13 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react"
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 
 import { DefaultStep } from "@/components/steppers/create-stepper/steps/default-step"
 import { LoadingStep } from "@/components/steppers/create-stepper/steps/loading-step"
-import { useApp } from "@/contexts/App/app-context"
 
 const CreateStepperInner = () => {
   const { step, onClose } = useStepper()
-  const { setIsOnboarding } = useApp()
-
-  useEffect(() => {
-    setIsOnboarding(true)
-  }, [setIsOnboarding])
 
   return (
     <Modal isCentered isOpen onClose={onClose} size="sm">

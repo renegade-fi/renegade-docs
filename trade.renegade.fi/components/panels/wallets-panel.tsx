@@ -18,7 +18,9 @@ import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { useOrder } from "@/contexts/Order/order-context"
 import { useUSDPrice } from "@/hooks/use-usd-price"
+import { fundList, fundWallet } from "@/lib/utils"
 import {
   Token,
   formatAmount,
@@ -26,8 +28,8 @@ import {
   useStatus,
   useTaskQueue,
 } from "@sehyunchung/renegade-react"
+import { toast } from "sonner"
 import { Address } from "viem"
-import { useOrder } from "@/contexts/Order/order-context"
 
 interface TokenBalanceProps {
   tokenAddr: Address
@@ -143,7 +145,7 @@ function TokenBalance(props: TokenBalanceProps) {
 }
 
 function DepositWithdrawButtons() {
-  const { setView } = useApp()
+  const { address } = useAccountWagmi()
   return (
     <Flex
       flexDirection="row"
@@ -167,9 +169,30 @@ function DepositWithdrawButtons() {
           backgroundColor: "#000",
         }}
         cursor="pointer"
-        onClick={() => setView(ViewEnum.DEPOSIT)}
+        onClick={() => {
+          if (!address) return
+
+          toast.promise(
+            fundWallet(
+              [
+                { ticker: "WETH", amount: "10" },
+                { ticker: "USDC", amount: "1000000" },
+              ],
+              address
+            ),
+            {
+              loading: "Funding account...",
+              success: "Your account has been funded with test funds.",
+              error:
+                "Funding failed: An unexpected error occurred. Please try again.",
+            }
+          )
+
+          // Fund additional wallets in background
+          fundWallet(fundList, address)
+        }}
       >
-        <Text>Deposit</Text>
+        <Text>Airdrop</Text>
         <ArrowDownIcon />
       </Flex>
       {/* <Flex
@@ -195,10 +218,11 @@ interface RenegadeWalletPanelProps {
 }
 function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const { address } = useAccountWagmi()
-  const { isSigningIn, setView } = useApp()
+  const { setView } = useApp()
   const balances = useBalances()
   const status = useStatus()
   const isConnected = status === "in relayer"
+  const isSigningIn = status === "creating wallet" || status === "looking up"
 
   const formattedBalances = useMemo<Array<[Address, bigint]>>(() => {
     const wethAddress = Token.findByTicker("WETH").address
