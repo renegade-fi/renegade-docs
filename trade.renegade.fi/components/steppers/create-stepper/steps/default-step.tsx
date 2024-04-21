@@ -55,7 +55,7 @@ export function DefaultStep() {
         config.setState({ ...config.state, seed: data })
         const res = await connect(config, { seed: data })
         if (res?.taskId) {
-          await executeTaskWithToast(res.taskId, "New Wallet")
+          await executeTaskWithToast(res.taskId, "Connecting...")
         }
         console.log("Current Status after toast:", config.state)
         if (config.state.status === "in relayer") {

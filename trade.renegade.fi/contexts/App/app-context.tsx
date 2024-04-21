@@ -9,6 +9,7 @@ import {
 } from "react"
 
 import { useRenegade } from "@/contexts/Renegade/renegade-context"
+import { useLocalStorage } from "usehooks-ts"
 
 export enum ViewEnum {
   TRADING,
@@ -34,11 +35,12 @@ function AppProvider({
   const { accountId } = useRenegade()
   const [isOnboarding, setIsOnboarding] = useState<boolean>(false)
   const [isSigningIn, setIsSigningIn] = useState<boolean>(false)
-  const [view, setView] = useState<ViewEnum>(() =>
-    window.location.pathname.split("/").length === 2
-      ? ViewEnum.DEPOSIT
-      : ViewEnum.TRADING
-  )
+  const [view, setView] = useLocalStorage<ViewEnum>("view", ViewEnum.TRADING)
+  // useState<ViewEnum>(() =>
+  //   window.location.pathname.split("/").length === 2
+  //     ? ViewEnum.DEPOSIT
+  //     : ViewEnum.TRADING
+  // )
 
   useEffect(() => {
     let timeout = setTimeout(() => {

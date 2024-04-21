@@ -7,7 +7,7 @@ import React, { createRef, useEffect, useRef, useState } from "react"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
-import { OrderProvider, useOrder } from "@/contexts/Order/order-context"
+import { useOrder } from "@/contexts/Order/order-context"
 import { Direction } from "@/contexts/Order/types"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 import { formatPrice } from "@/lib/utils"
@@ -43,11 +43,7 @@ const Selectable = React.forwardRef(
 Selectable.displayName = "selectable"
 
 export function TradingBody() {
-  return (
-    <OrderProvider>
-      <TradingInner />
-    </OrderProvider>
-  )
+  return <TradingInner />
 }
 
 function TradingInner() {

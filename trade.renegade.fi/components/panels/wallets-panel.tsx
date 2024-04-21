@@ -10,7 +10,6 @@ import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
 import { tokenMappings } from "@renegade-fi/renegade-js"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
@@ -28,6 +27,7 @@ import {
   useTaskQueue,
 } from "@sehyunchung/renegade-react"
 import { Address } from "viem"
+import { useOrder } from "@/contexts/Order/order-context"
 
 interface TokenBalanceProps {
   tokenAddr: Address
@@ -37,8 +37,8 @@ interface TokenBalanceProps {
 function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
-  const router = useRouter()
   const token = Token.findByAddress(props.tokenAddr)
+  const { setBaseToken } = useOrder()
 
   const formattedAmount = formatAmount(props.amount, token)
   const ticker = token.ticker
@@ -109,7 +109,7 @@ function TokenBalance(props: TokenBalanceProps) {
         height="calc(0.5 * var(--banner-height))"
         cursor="pointer"
         onClick={() => {
-          router.replace(`/${ticker}/USDC`)
+          setBaseToken(ticker)
           setView(ViewEnum.DEPOSIT)
         }}
       />

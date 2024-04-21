@@ -10,22 +10,22 @@ export function middleware(request: NextRequest) {
     return
   }
 
-  const pathname = request.nextUrl.pathname
-  const url = request.nextUrl.clone()
-  if (pathname === "/") {
-    url.pathname = "/WETH/USDC"
-    return NextResponse.redirect(url)
-  }
-  const [, base, quote] = pathname.split("/")
-  if (base === quote) {
-    request.nextUrl.pathname = `/${base}`
-    return NextResponse.redirect(request.nextUrl)
-  }
-  const regex = /[a-z]/
-  if (regex.test(pathname)) {
-    url.pathname = pathname.toUpperCase()
-    return NextResponse.redirect(url)
-  }
+  // const pathname = request.nextUrl.pathname
+  // const url = request.nextUrl.clone()
+  // if (pathname === "/") {
+  //   url.pathname = "/WETH/USDC"
+  //   return NextResponse.redirect(url)
+  // }
+  // const [, base, quote] = pathname.split("/")
+  // if (base === quote) {
+  //   request.nextUrl.pathname = `/${base}`
+  //   return NextResponse.redirect(request.nextUrl)
+  // }
+  // const regex = /[a-z]/
+  // if (regex.test(pathname)) {
+  //   url.pathname = pathname.toUpperCase()
+  //   return NextResponse.redirect(url)
+  // }
   return NextResponse.next()
 }
 export const config = {

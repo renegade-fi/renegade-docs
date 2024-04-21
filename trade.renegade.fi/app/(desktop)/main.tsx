@@ -1,7 +1,7 @@
 "use client"
 
-import { DepositBody } from "@/app/(desktop)/[base]/[quote]/deposit"
-import { TradingBody } from "@/app/(desktop)/[base]/[quote]/trading"
+import { DepositBody } from "@/app/(desktop)/deposit"
+import { TradingBody } from "@/app/(desktop)/trading"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 
 export function Main() {

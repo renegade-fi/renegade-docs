@@ -2,6 +2,7 @@ import { Renegade } from "@renegade-fi/renegade-js"
 
 import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 import { env } from "@/env.mjs"
+import { useEffect, useState } from "react"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -13,17 +14,27 @@ const renegade = new Renegade({
   verbose: false,
 })
 
-export async function RelayerStatusData({
+export function RelayerStatusData({
   baseToken,
   quoteToken,
 }: {
   baseToken: string
   quoteToken: string
 }) {
-  const ping = await renegade
-    ?.ping()
-    .then(() => "live")
-    .catch(() => "dead")
+  const [ping, setPing] = useState("loading")
+
+  useEffect(() => {
+    const fetchPing = async () => {
+      try {
+        await renegade?.ping()
+        setPing("live")
+      } catch (error) {
+        setPing("dead")
+      }
+    }
+
+    fetchPing()
+  }, [])
   return (
     <RelayerStatusBanner
       // @ts-ignore

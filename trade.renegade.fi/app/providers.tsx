@@ -31,6 +31,7 @@ import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
+import { OrderProvider } from "@/contexts/Order/order-context"
 
 /*
  * ┌─────────────────────┐
@@ -290,12 +291,14 @@ export function Providers({
                       <ExchangeProvider>
                         <PriceProvider>
                           <AppProvider tokenIcons={icons}>
-                            <Toaster
-                              expand
-                              position="bottom-center"
-                              richColors
-                            />
-                            {children}
+                            <OrderProvider>
+                              <Toaster
+                                expand
+                                position="bottom-center"
+                                richColors
+                              />
+                              {children}
+                            </OrderProvider>
                           </AppProvider>
                         </PriceProvider>
                       </ExchangeProvider>

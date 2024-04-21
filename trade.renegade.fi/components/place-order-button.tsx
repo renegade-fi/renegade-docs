@@ -9,10 +9,9 @@ import { useAccount as useAccountWagmi } from "wagmi"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
+import { Direction, LocalOrder } from "@/contexts/Order/types"
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { useButton } from "@/hooks/use-button"
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import {
@@ -24,7 +23,7 @@ import {
   useStatus,
   useWalletId,
 } from "@sehyunchung/renegade-react"
-import { LocalOrder } from "@/contexts/Order/types"
+import { toast } from "sonner"
 
 export function PlaceOrderButton() {
   const { address } = useAccountWagmi()
@@ -46,38 +45,54 @@ export function PlaceOrderButton() {
   const config = useConfig()
   const walletId = useWalletId()
   const status = useStatus()
+
   const isConnected = status === "in relayer"
-  const { executeTaskWithToast } = useTaskCompletionToast()
+
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, base)
-    const { taskId } = await createOrder(config, {
+    await createOrder(config, {
       id,
       base: base.address,
       quote: quote.address,
       side: direction,
       amount: parsedAmount,
     })
-    await executeTaskWithToast(taskId, "Create Order").then(() => {
-      const old = safeLocalStorageGetItem(`order-details-${walletId}`)
-      const parseOld: LocalOrder[] = old ? JSON.parse(old) : []
-      const newO = [
-        ...parseOld,
-        {
-          id,
-          base: base.address,
-          quote: quote.address,
-          side: direction,
-          amount: baseTokenAmount,
-          timestamp: Date.now(),
-        },
-      ]
-      safeLocalStorageSetItem(`order-details-${walletId}`, JSON.stringify(newO))
-    })
+      .then(({ taskId }) => {
+        toast.message(
+          `Started to place order to ${
+            direction === "buy" ? "Buy" : "Sell"
+          } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
+          {
+            description: "Check the history tab for the status of the task",
+          }
+        )
+        const old = safeLocalStorageGetItem(`order-details-${walletId}`)
+        const parseOld: LocalOrder[] = old ? JSON.parse(old) : []
+        const newO = [
+          ...parseOld,
+          {
+            id,
+            base: base.address,
+            quote: quote.address,
+            side: direction,
+            amount: baseTokenAmount,
+            timestamp: Date.now(),
+          },
+        ]
+        safeLocalStorageSetItem(
+          `order-details-${walletId}`,
+          JSON.stringify(newO)
+        )
+        console.log(`${walletId} started to place order ${id} in ${taskId}`)
+      })
+      .catch((e) => toast.error(`Error placing order: ${e.message}`))
   }
 
   const costInUsd = useUSDPrice(base.ticker, parseFloat(baseTokenAmount))
+
   const hasInsufficientBalance = useMemo(() => {
+    if (!baseTokenAmount) return false
     const baseBalance =
       balances.find(({ mint }) => mint === base.address)?.amount || BigInt(0)
     const quoteBalance =
@@ -110,6 +125,7 @@ export function PlaceOrderButton() {
       baseTokenAmount || ""
     } ${baseTicker}`
   }
+
   const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)
 
   return (

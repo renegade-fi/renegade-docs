@@ -2,7 +2,6 @@
 
 import { useToast } from "@chakra-ui/react"
 import { CallbackId, OrderId } from "@renegade-fi/renegade-js"
-import { useParams, useRouter } from "next/navigation"
 import {
   PropsWithChildren,
   createContext,
@@ -17,7 +16,6 @@ import { renegade } from "@/app/providers"
 import { CounterpartyOrder } from "@/contexts/Renegade/types"
 import { Token } from "@sehyunchung/renegade-react"
 
-import { isHex } from "viem"
 import { Direction, OrderContextValue } from "./types"
 
 const OrderStateContext = createContext<OrderContextValue | undefined>(
@@ -25,30 +23,17 @@ const OrderStateContext = createContext<OrderContextValue | undefined>(
 )
 
 function OrderProvider({ children }: PropsWithChildren) {
-  const params = useParams()
-  const router = useRouter()
   const [direction, setDirection] = useLocalStorage("direction", Direction.BUY)
   const handleSetDirection = (direction: Direction) => {
     setDirection(direction)
   }
 
-  const base = params.base?.toString()
-  const handleSetBaseToken = (token: string) => {
-    router.push(`/${token}/${quote}`)
-  }
-  // const baseToken = getToken({ input: base })
-  const baseToken = isHex(base)
-    ? Token.findByAddress(base)
-    : Token.findByTicker(base)
-  const baseTicker = baseToken.ticker
-  const quote = params.quote?.toString()
-  const handleSetQuoteToken = (token: string) => {
-    router.push(`/${base}/${token}`)
-  }
-  const quoteToken = isHex(quote)
-    ? Token.findByAddress(quote)
-    : Token.findByTicker(quote)
-  const quoteTicker = quoteToken.ticker
+  // const [base, setBase] = useState<Token>(Token.findByTicker("WETH"))
+  const [base, setBase] = useLocalStorage(
+    "base",
+    Token.findByTicker("WETH").ticker
+  )
+  const [quote, setQuote] = useState<Token>(Token.findByTicker("USDC"))
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   const [orderBook, setOrderBook] = useState<
@@ -167,16 +152,16 @@ function OrderProvider({ children }: PropsWithChildren) {
   return (
     <OrderStateContext.Provider
       value={{
-        base: baseToken,
-        baseTicker,
+        base: Token.findByTicker(base),
+        baseTicker: base,
         baseTokenAmount,
         direction,
-        quote: quoteToken,
-        quoteTicker,
-        setBaseToken: handleSetBaseToken,
+        quote,
+        quoteTicker: quote.ticker,
+        setBaseToken: setBase,
         setBaseTokenAmount: handleSetBaseTokenAmount,
         setDirection: handleSetDirection,
-        setQuoteToken: handleSetQuoteToken,
+        setQuoteToken: setQuote,
       }}
     >
       {children}
