@@ -5,13 +5,13 @@ import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   Token,
   UseOrdersReturnType,
+  cancelOrder,
   formatAmount,
   useNetworkOrders,
+  useConfig,
   useOrders,
   useStatus,
   useWalletId,
-  cancelOrder,
-  useConfig,
 } from "@sehyunchung/renegade-react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
@@ -22,11 +22,11 @@ import "simplebar-react/dist/simplebar.min.css"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useApp } from "@/contexts/App/app-context"
+import { LocalOrder } from "@/contexts/Order/types"
 import { GlobalOrder, useGlobalOrders } from "@/hooks/use-global-orders"
 import { safeLocalStorageGetItem } from "@/lib/utils"
 import { Address } from "viem"
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
-import { LocalOrder } from "@/contexts/Order/types"
+import { toast } from "sonner"
 
 dayjs.extend(relativeTime)
 
@@ -47,27 +47,26 @@ function SingleOrder({
   matched,
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
-  const { executeTaskWithToast } = useTaskCompletionToast()
   const config = useConfig()
+  const walletId = useWalletId()
 
   const base = Token.findByAddress(baseAddr).ticker
   const quote = Token.findByAddress(quoteAddr).ticker
 
   const handleCancel = async () => {
-    const { taskId } = await cancelOrder(config, { id })
-    executeTaskWithToast(taskId, "Cancel Order")
-    // renegade.task
-    //   .cancelOrder(accountId, id)
-    //   .then(() =>
-    //     toast.message(
-    //       `Started to cancel order to ${side === "buy" ? "Buy" : "Sell"
-    //       } ${amount} ${base}`,
-    //       {
-    //         description: "Check the history tab for the status of the task",
-    //       }
-    //     )
-    //   )
-    //   .catch((error) => toast.error(`Error cancelling order: ${error}`))
+    await cancelOrder(config, { id })
+      .then(({ taskId }) => {
+        toast.message(
+          `Started to cancel order to ${
+            side === "buy" ? "Buy" : "Sell"
+          } ${amount} ${base}`,
+          {
+            description: `Check the history tab for the status of the task`,
+          }
+        )
+        console.log(`${walletId} started to cancel order ${id} in ${taskId}`)
+      })
+      .catch((e) => toast.error(`Error cancelling order: ${e.message}`))
   }
 
   return (

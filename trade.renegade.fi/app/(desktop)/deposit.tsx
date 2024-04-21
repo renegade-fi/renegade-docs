@@ -10,9 +10,8 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import Link from "next/link"
 
-import DepositButton from "@/app/(desktop)/[base]/[quote]/deposit-button"
+import DepositButton from "@/app/(desktop)/deposit-button"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
@@ -42,20 +41,16 @@ function DepositInner() {
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
             <div>
-              <Link
-                href={`/${baseTicker === "USDC" ? "WETH" : baseTicker}/USDC`}
+              <Button
+                position="absolute"
+                top="-24px"
+                fontWeight="600"
+                onClick={() => setView(ViewEnum.TRADING)}
+                variant="link"
               >
-                <Button
-                  position="absolute"
-                  top="-24px"
-                  fontWeight="600"
-                  onClick={() => setView(ViewEnum.TRADING)}
-                  variant="link"
-                >
-                  <ChevronLeftIcon />
-                  Back to Trading
-                </Button>
-              </Link>
+                <ChevronLeftIcon />
+                Back to Trading
+              </Button>
               <Text color="white.50" fontSize="34px">
                 Let&apos;s get started by depositing{" "}
               </Text>
@@ -82,7 +77,11 @@ function DepositInner() {
               type="number"
               value={baseTokenAmount}
             />
-            <HStack userSelect="none" onClick={onOpenTokenMenu}>
+            <HStack
+              userSelect="none"
+              cursor="pointer"
+              onClick={onOpenTokenMenu}
+            >
               <Text variant="trading-body-button">{baseTicker}</Text>
               <ChevronDownIcon
                 boxSize="20px"

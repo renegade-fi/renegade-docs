@@ -1,35 +1,17 @@
-import { PriceReporterWs } from "@renegade-fi/renegade-js"
+"use client"
+
 import Image from "next/image"
 
-import { Main } from "@/app/(desktop)/[base]/[quote]/main"
+import { Main } from "@/app/(desktop)/main"
 import { MedianBanner } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import { env } from "@/env.mjs"
+import { useOrder } from "@/contexts/Order/order-context"
 import backgroundPattern from "@/icons/background_pattern.png"
 
-// export function generateStaticParams() {
-//   return DISPLAYED_TICKERS.filter(([base]) => base !== "USDC").map(
-//     ([base, quote]) => {
-//       return {
-//         base,
-//         quote,
-//       }
-//     }
-//   )
-// }
-
-export default async function Page({
-  params: { base, quote },
-}: {
-  params: { base: string; quote: string }
-}) {
-  const report = await new PriceReporterWs(env.NEXT_PUBLIC_PRICE_REPORTER_URL)
-    .getExchangePrices(base)
-    .catch(() => {
-      return undefined
-    })
+export default function Page() {
+  const { base, quote } = useOrder()
   return (
     <div
       style={{
@@ -47,9 +29,8 @@ export default async function Page({
         style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
       />
       <MedianBanner
-        report={report}
-        activeBaseTicker={base}
-        activeQuoteTicker={quote}
+        activeBaseTicker={base.ticker}
+        activeQuoteTicker={quote.ticker}
       />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />
@@ -61,7 +42,10 @@ export default async function Page({
             overflowX: "hidden",
           }}
         >
-          <RelayerStatusData baseToken={base} quoteToken={quote} />
+          <RelayerStatusData
+            baseToken={base.ticker}
+            quoteToken={quote.ticker}
+          />
           <div
             style={{
               display: "flex",

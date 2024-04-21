@@ -6,8 +6,8 @@ const useTaskCompletionToast = () => {
   const config = useConfig()
   const taskNameRef = useRef<string>()
 
-  const executeTaskWithToast = async (taskId: string, taskName: string) => {
-    const toastId = toast.loading(`${taskName} task`)
+  const executeTaskWithToast = async (taskId: string, initialText: string) => {
+    const toastId = toast.loading(initialText)
 
     try {
       await waitForTaskCompletion(config, { id: taskId }, (t) => {
@@ -17,7 +17,6 @@ const useTaskCompletionToast = () => {
         })
       })
 
-      console.log("taskNameRef before success", taskNameRef.current)
       toast.success(`${taskNameRef.current} successful`, {
         id: toastId,
       })

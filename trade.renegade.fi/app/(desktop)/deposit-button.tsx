@@ -6,6 +6,7 @@ import {
   deposit,
   useConfig,
   useStatus,
+  useWalletId,
 } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
@@ -23,10 +24,10 @@ import {
   useWriteErc20Approve,
 } from "@/generated"
 import { useButton } from "@/hooks/use-button"
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 import { signPermit2 } from "@/lib/permit2"
 import { parseAmount } from "@/lib/utils"
 import { getPkRootScalars } from "@sehyunchung/renegade-react"
+import { toast } from "sonner"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -93,7 +94,7 @@ export default function DepositButton() {
 
   const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   const config = useConfig()
-  const { executeTaskWithToast } = useTaskCompletionToast()
+  const walletId = useWalletId()
   const handleApprove = async () => {
     if (!isConnected) return
     await approve({
@@ -121,7 +122,7 @@ export default function DepositButton() {
       walletClient,
       pkRoot,
     })
-    const { taskId } = await deposit(config, {
+    await deposit(config, {
       fromAddr: walletClient.account.address,
       mint: `0x${token.address}`,
       amount,
@@ -129,14 +130,20 @@ export default function DepositButton() {
       permitDeadline: deadline,
       permit: signature,
     })
-
-    await executeTaskWithToast(taskId, "Deposit").then(() => {
-      if (token.ticker === "USDC") {
-        setDirection(Direction.BUY)
-      } else {
-        setDirection(Direction.SELL)
-      }
-    })
+      .then(({ taskId }) => {
+        toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
+          description: "Check the history tab for the status of the task",
+        })
+        console.log(
+          `${walletId} started to deposit ${baseTokenAmount} ${baseTicker} in ${taskId}`
+        )
+        if (token.ticker === "USDC") {
+          setDirection(Direction.BUY)
+        } else {
+          setDirection(Direction.SELL)
+        }
+      })
+      .catch((e) => toast.error(`Error depositing: ${e.message}`))
   }
 
   const handleClick = async () => {

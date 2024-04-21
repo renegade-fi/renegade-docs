@@ -12,10 +12,10 @@ export interface OrderContextValue {
   direction: Direction
   quote: Token
   quoteTicker: string
-  setBaseToken: (token: string) => void
+  setBaseToken: (ticker: string) => void
   setBaseTokenAmount: (e: React.ChangeEvent<HTMLInputElement>) => void
   setDirection: (direction: Direction) => void
-  setQuoteToken: (token: string) => void
+  setQuoteToken: (token: Token) => void
 }
 
 export interface LocalOrder {
