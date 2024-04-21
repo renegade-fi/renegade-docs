@@ -1,7 +1,6 @@
 import { Token } from "@renegade-fi/renegade-js"
 import {
   PrivateKeyAccount,
-  createPublicClient,
   createWalletClient,
   formatEther,
   http,
@@ -12,103 +11,34 @@ import { privateKeyToAccount } from "viem/accounts"
 
 import { formatAmount, parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
+import { publicClient } from "@sehyunchung/renegade-react"
 
 export const maxDuration = 300
-
-const TOKENS_TO_FUND: { ticker: string; amount: string }[] = [
-  {
-    ticker: "WETH",
-    amount: "10",
-  },
-  {
-    ticker: "WBTC",
-    amount: "5",
-  },
-  {
-    ticker: "BNB",
-    amount: "100",
-  },
-  {
-    ticker: "MATIC",
-    amount: "100",
-  },
-  {
-    ticker: "LDO",
-    amount: "100",
-  },
-  {
-    ticker: "USDC",
-    amount: "100000",
-  },
-  {
-    ticker: "LINK",
-    amount: "100",
-  },
-  {
-    ticker: "UNI",
-    amount: "100",
-  },
-  {
-    ticker: "SUSHI",
-    amount: "100",
-  },
-  {
-    ticker: "1INCH",
-    amount: "100",
-  },
-  {
-    ticker: "AAVE",
-    amount: "100",
-  },
-  {
-    ticker: "COMP",
-    amount: "100",
-  },
-  {
-    ticker: "MKR",
-    amount: "100",
-  },
-  {
-    ticker: "REN",
-    amount: "100",
-  },
-  {
-    ticker: "MANA",
-    amount: "100",
-  },
-  {
-    ticker: "ENS",
-    amount: "100",
-  },
-  {
-    ticker: "DYDX",
-    amount: "100",
-  },
-  {
-    ticker: "CRV",
-    amount: "100",
-  },
-]
 
 // TODO: Make sure mint works
 const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
 ])
 
-const publicClient = createPublicClient({
-  chain: stylusDevnetEc2,
-  transport: http(),
-})
-
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   if (!process.env.DEV_PRIVATE_KEY) {
     return new Response("DEV_PRIVATE_KEY is required", {
       status: 500,
     })
   }
 
-  const { searchParams } = new URL(request.url)
-  const recipient = searchParams.get("address") as `0x${string}`
+  const requestData = await request.json()
+  const TOKENS_TO_FUND = requestData.tokens as {
+    ticker: string
+    amount: string
+  }[]
+  if (!TOKENS_TO_FUND || !TOKENS_TO_FUND.length) {
+    return new Response("Tokens are required", {
+      status: 500,
+    })
+  }
+
+  const recipient = requestData.address as `0x${string}`
   if (!recipient) {
     return new Response("Address is required", {
       status: 500,

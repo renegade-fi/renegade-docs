@@ -86,7 +86,10 @@ export function PlaceOrderButton() {
         )
         console.log(`${walletId} started to place order ${id} in ${taskId}`)
       })
-      .catch((e) => toast.error(`Error placing order: ${e.message}`))
+      .catch((e) => {
+        toast.error(`Error placing order: ${e.message}`)
+        console.error(`Error placing order: ${e.message}`)
+      })
   }
 
   const costInUsd = useUSDPrice(base.ticker, parseFloat(baseTokenAmount))

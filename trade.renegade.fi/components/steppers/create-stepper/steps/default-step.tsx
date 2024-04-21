@@ -8,9 +8,8 @@ import {
 } from "wagmi"
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useApp } from "@/contexts/App/app-context"
 import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { fundList, fundWallet, safeLocalStorageGetItem } from "@/lib/utils"
 import {
   chain,
   connect,
@@ -22,7 +21,6 @@ import { toast } from "sonner"
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
 export function DefaultStep() {
-  const { setIsOnboarding, setIsSigningIn } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const config = useConfig()
@@ -30,7 +28,6 @@ export function DefaultStep() {
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
-        setIsSigningIn(true)
         // If Cloudflare is down, Smart Contract accounts cannot be verified
         // EOA accounts can be verified using verifyMessage util
         const valid = await publicClient
@@ -54,39 +51,24 @@ export function DefaultStep() {
         }
         config.setState({ ...config.state, seed: data })
         const res = await connect(config, { seed: data })
+        onClose()
         if (res?.taskId) {
           await executeTaskWithToast(res.taskId, "Connecting...")
         }
         console.log("Current Status after toast:", config.state)
         if (config.state.status === "in relayer") {
-          setIsSigningIn(false)
           const funded = safeLocalStorageGetItem(`funded_${address}`)
           if (funded) return
 
           // If the account has not been funded, fund it
           toast.promise(
-            fetch(`/api/fund?address=${address}`, {
-              method: "GET",
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  return response.text().then((text) => {
-                    throw new Error(
-                      text ||
-                        "Funding failed: An unexpected error occurred. Please try again."
-                    )
-                  })
-                }
-                return response.text().then((text) => {
-                  safeLocalStorageSetItem(`funded_${address}`, "true")
-                  console.log("Success:", text)
-                  return text
-                })
-              })
-              .catch((error) => {
-                console.error("Error:", error.message)
-                throw error
-              }),
+            fundWallet(
+              [
+                { ticker: "WETH", amount: "10" },
+                { ticker: "USDC", amount: "1000000" },
+              ],
+              address!
+            ),
             {
               loading: "Funding account...",
               success: "Your account has been funded with test funds.",
@@ -94,9 +76,10 @@ export function DefaultStep() {
                 "Funding failed: An unexpected error occurred. Please try again.",
             }
           )
+
+          // Fund additional wallets in background
+          fundWallet(fundList, address!)
         }
-        setIsOnboarding(false)
-        onClose()
       },
     },
   })

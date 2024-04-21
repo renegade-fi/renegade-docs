@@ -20,13 +20,12 @@ import {
 } from "wagmi"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useApp } from "@/contexts/App/app-context"
 import { useButton } from "@/hooks/use-button"
 import glyphDark from "@/icons/glyph_dark.svg"
 import {
-  useStatus,
   disconnect as disconnectRenegade,
   useConfig,
+  useStatus,
 } from "@sehyunchung/renegade-react"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
@@ -143,7 +142,6 @@ export function ConnectWalletButton() {
  */
 export function SignInButton() {
   const { address } = useAccountWagmi()
-  const { isSigningIn } = useApp()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data } = useEnsNameWagmi({ address })
   const signInText = data
@@ -155,6 +153,7 @@ export function SignInButton() {
     signInText,
   })
   const status = useStatus()
+  const isSigningIn = status === "creating wallet" || status === "looking up"
   if (!address || status === "in relayer") {
     return null
   }

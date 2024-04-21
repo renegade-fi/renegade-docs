@@ -150,3 +150,103 @@ export function constructMetadata({
     }),
   }
 }
+
+export const fundWallet = async (
+  tokens: { ticker: string; amount: string }[],
+  address: `0x${string}`
+) => {
+  try {
+    const response = await fetch(`/api/fund`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tokens,
+        address,
+      }),
+    })
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error(
+        text ||
+          "Funding failed: An unexpected error occurred. Please try again."
+      )
+    }
+
+    const text = await response.text()
+    safeLocalStorageSetItem(`funded_${address}`, "true")
+    console.log("Funding success:", text)
+  } catch (error) {
+    console.error("Error:", error)
+    throw error
+  }
+}
+
+export const fundList: { ticker: string; amount: string }[] = [
+  {
+    ticker: "WBTC",
+    amount: "5",
+  },
+  {
+    ticker: "BNB",
+    amount: "100",
+  },
+  {
+    ticker: "MATIC",
+    amount: "100",
+  },
+  {
+    ticker: "LDO",
+    amount: "100",
+  },
+  {
+    ticker: "LINK",
+    amount: "100",
+  },
+  {
+    ticker: "UNI",
+    amount: "100",
+  },
+  {
+    ticker: "SUSHI",
+    amount: "100",
+  },
+  {
+    ticker: "1INCH",
+    amount: "100",
+  },
+  {
+    ticker: "AAVE",
+    amount: "100",
+  },
+  {
+    ticker: "COMP",
+    amount: "100",
+  },
+  {
+    ticker: "MKR",
+    amount: "100",
+  },
+  {
+    ticker: "REN",
+    amount: "100",
+  },
+  {
+    ticker: "MANA",
+    amount: "100",
+  },
+  {
+    ticker: "ENS",
+    amount: "100",
+  },
+  {
+    ticker: "DYDX",
+    amount: "100",
+  },
+  {
+    ticker: "CRV",
+    amount: "100",
+  },
+]
