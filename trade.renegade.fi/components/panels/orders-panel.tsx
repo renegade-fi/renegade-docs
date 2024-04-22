@@ -364,7 +364,7 @@ function OrderBookPanel() {
 }
 
 function CounterpartiesPanel() {
-  const { counterparties } = useRenegade()
+  const globalOrders = useGlobalOrders()
   return (
     <Flex
       position="relative"
@@ -375,8 +375,8 @@ function CounterpartiesPanel() {
       borderColor="border"
       borderTop="var(--border)"
     >
-      <Text>Counterparties:&nbsp;</Text>
-      <Text>{Object.keys(counterparties).length + 1}</Text>
+      <Text>Active Orders:&nbsp;</Text>
+      <Text>{Object.keys(globalOrders).length || "..."}</Text>
     </Flex>
   )
 }
