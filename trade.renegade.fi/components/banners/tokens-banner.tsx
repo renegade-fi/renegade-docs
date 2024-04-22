@@ -2,13 +2,14 @@
 
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
-import Link from "next/link"
 
 import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
+import { useLocalStorage } from "usehooks-ts"
 
-export function TokensBanner({ prices }: { prices: number[] }) {
+export function TokensBanner({}: { prices?: number[] }) {
+  const [_, setBaseToken] = useLocalStorage("base", "WETH")
   return (
     <Marquee
       autoFill
@@ -21,27 +22,27 @@ export function TokensBanner({ prices }: { prices: number[] }) {
         height: "var(--banner-height)",
       }}
     >
-      {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker], i) => {
+      {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker]) => {
         if (["USDC", "USDT"].includes(baseTicker)) {
           return null
         }
         return (
-          <Link
-            href={`/${baseTicker}/${quoteTicker}`}
+          <Stack
             key={baseTicker + quoteTicker}
+            alignItems="center"
+            direction="row"
+            marginRight="0.5rem"
+            onClick={() => setBaseToken(baseTicker)}
           >
-            <Stack alignItems="center" direction="row" marginRight="0.5rem">
-              <Text color="white.80" fontFamily="Favorit Expanded">
-                {baseTicker}
-              </Text>
-              <LivePrices
-                baseTicker={baseTicker}
-                quoteTicker={quoteTicker}
-                exchange={Exchange.Binance}
-                initialPrice={prices[i]}
-              />
-            </Stack>
-          </Link>
+            <Text color="white.80" fontFamily="Favorit Expanded">
+              {baseTicker}
+            </Text>
+            <LivePrices
+              baseTicker={baseTicker}
+              quoteTicker={quoteTicker}
+              exchange={Exchange.Binance}
+            />
+          </Stack>
         )
       })}
     </Marquee>

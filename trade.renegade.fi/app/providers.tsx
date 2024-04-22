@@ -28,10 +28,10 @@ import { createConfig, WagmiProvider } from "wagmi"
 
 import { AppProvider } from "@/contexts/App/app-context"
 import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
+import { OrderProvider } from "@/contexts/Order/order-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
 import { env } from "@/env.mjs"
-import { OrderProvider } from "@/contexts/Order/order-context"
 
 /*
  * ┌─────────────────────┐
@@ -184,7 +184,6 @@ const components = {
   Menu: defineMultiStyleConfig({ baseStyle: menuStyle }),
 }
 const theme = extendTheme({ config, styles, colors, components })
-console.log("Provider run")
 
 /*
  * ┌─────────────────────┐

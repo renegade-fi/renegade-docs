@@ -58,7 +58,7 @@ export function PlaceOrderButton() {
       side: direction,
       amount: parsedAmount,
     })
-      .then(({ taskId }) => {
+      .then(() => {
         toast.message(
           `Started to place order to ${
             direction === "buy" ? "Buy" : "Sell"
@@ -84,11 +84,9 @@ export function PlaceOrderButton() {
           `order-details-${walletId}`,
           JSON.stringify(newO)
         )
-        console.log(`${walletId} started to place order ${id} in ${taskId}`)
       })
       .catch((e) => {
-        toast.error(`Error placing order: ${e.message}`)
-        console.error(`Error placing order: ${e.message}`)
+        toast.error(`Error placing order: ${e.response.data ?? e.message}`)
       })
   }
 

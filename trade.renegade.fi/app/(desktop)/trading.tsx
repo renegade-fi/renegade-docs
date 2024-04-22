@@ -89,6 +89,12 @@ function TradingInner() {
     return () => {}
   }, [baseTokenAmount, buySellSelectableRef])
 
+  useEffect(() => {
+    if (baseTicker === "USDC") {
+      setBaseToken("WETH")
+    }
+  }, [baseTicker, setBaseToken])
+
   return (
     <>
       <Flex
