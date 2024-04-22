@@ -22,6 +22,9 @@ export function TokensBanner({ prices }: { prices: number[] }) {
       }}
     >
       {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker], i) => {
+        if (["USDC", "USDT"].includes(baseTicker)) {
+          return null
+        }
         return (
           <Link
             href={`/${baseTicker}/${quoteTicker}`}
