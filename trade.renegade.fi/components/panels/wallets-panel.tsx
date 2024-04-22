@@ -2,6 +2,7 @@
 
 import {
   ArrowDownIcon,
+  ArrowUpIcon,
   CheckIcon,
   LockIcon,
   UnlockIcon,
@@ -115,31 +116,16 @@ function TokenBalance(props: TokenBalanceProps) {
           setView(ViewEnum.DEPOSIT)
         }}
       />
-      {/* <ArrowUpIcon
+      <ArrowUpIcon
         width="calc(0.5 * var(--banner-height))"
         height="calc(0.5 * var(--banner-height))"
         borderRadius="100px"
         cursor="pointer"
         onClick={() => {
-          if (accountId && address) {
-            const token = new Token({ address: props.tokenAddr })
-            renegade.task
-              .withdraw(accountId, token, parseAmount("1", token), address)
-              .then(() =>
-                toast.message(
-                  `Started to withdraw 1 ${Token.findTickerByAddress(
-                    props.tokenAddr
-                  )}`,
-                  {
-                    description:
-                      "Check the history tab for the status of the task",
-                  }
-                )
-              )
-              .catch((error) => toast.error(`Error withdrawing: ${error}`))
-          }
+          setBaseToken(token.ticker)
+          setView(ViewEnum.WITHDRAW)
         }}
-      /> */}
+      />
     </Flex>
   )
 }
@@ -154,7 +140,6 @@ function DepositWithdrawButtons() {
       color="white.60"
       borderColor="border"
       borderTop="var(--border)"
-      borderBottom="var(--border)"
       cursor="pointer"
     >
       <Flex
@@ -222,7 +207,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   const balances = useBalances()
   const status = useStatus()
   const isConnected = status === "in relayer"
-  const isSigningIn = status === "creating wallet" || status === "looking up"
+  const isSigningIn =
+    status === "creating wallet" ||
+    status === "looking up" ||
+    status === "connecting"
 
   const formattedBalances = useMemo<Array<[Address, bigint]>>(() => {
     const wethAddress = Token.findByTicker("WETH").address
@@ -374,54 +362,57 @@ function HistorySection() {
           width: "100%",
         }}
       >
-        {tasks.map((task) => {
-          const textColor = task.state === "Completed" ? "green" : "white"
+        {tasks
+          .filter((task) => !task.description.includes("Fee"))
+          .map((task) => {
+            const textColor = task.state === "Completed" ? "green" : "white"
 
-          const rightIcon =
-            task.state === "Completed" ? (
-              <CheckIcon color="white.60" height="4" />
-            ) : task.state === "Queued" ? (
-              <></>
-            ) : (
-              <Spinner color="white.60" size="xs" />
-            )
-          return (
-            <Flex
-              key={task.id}
-              alignItems="center"
-              flexDirection="row"
-              width="100%"
-              padding="4%"
-              borderBottom="var(--secondary-border)"
-            >
-              <Flex flexDirection="column">
-                <Flex alignItems="center" gap="2">
-                  <Text
-                    color={textColor}
-                    fontFamily="Favorit Extended"
-                    fontWeight="500"
-                  >
-                    {task.description}
-                  </Text>
-                  <Text
-                    color="white.60"
-                    fontFamily="Favorit Expanded"
-                    fontSize="0.7em"
-                    fontWeight="500"
-                  >
-                    a few seconds ago
-                  </Text>
-                </Flex>
-                <Flex alignItems="center" gap="2">
-                  {task.state !== "Completed" && <>{rightIcon}</>}
-                  <Text color="white.80" fontSize="0.8em">
-                    {task.state}
-                  </Text>
+            const rightIcon =
+              task.state === "Completed" ? (
+                <CheckIcon color="white.60" height="4" />
+              ) : task.state === "Queued" ? (
+                <></>
+              ) : (
+                <Spinner color="white.60" size="xs" />
+              )
+            return (
+              <Flex
+                key={task.id}
+                alignItems="center"
+                flexDirection="row"
+                width="100%"
+                padding="4%"
+                borderColor="white.20"
+                borderBottom="var(--secondary-border)"
+              >
+                <Flex flexDirection="column">
+                  <Flex alignItems="center" gap="2">
+                    <Text
+                      color={textColor}
+                      fontFamily="Favorit Extended"
+                      fontWeight="500"
+                    >
+                      {task.description}
+                    </Text>
+                    <Text
+                      color="white.60"
+                      fontFamily="Favorit Expanded"
+                      fontSize="0.7em"
+                      fontWeight="500"
+                    >
+                      a few seconds ago
+                    </Text>
+                  </Flex>
+                  <Flex alignItems="center" gap="2">
+                    {task.state !== "Completed" && <>{rightIcon}</>}
+                    <Text color="white.80" fontSize="0.8em">
+                      {task.state}
+                    </Text>
+                  </Flex>
                 </Flex>
               </Flex>
-            </Flex>
-          )
-        })}
+            )
+          })}
       </SimpleBar>
     )
   }, [tasks])

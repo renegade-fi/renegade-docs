@@ -55,7 +55,6 @@ export function DefaultStep() {
         if (res?.taskId) {
           await executeTaskWithToast(res.taskId, "Connecting...")
         }
-        console.log("Current Status after toast:", config.state)
         if (config.state.status === "in relayer") {
           const funded = safeLocalStorageGetItem(`funded_${address}`)
           if (funded) return

@@ -19,11 +19,11 @@ import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 
-import { useApp } from "@/contexts/App/app-context"
-import { useBalance } from "@/hooks/use-balance"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useDebounce } from "@/hooks/use-debounce"
 import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 import { formatAmount } from "@/lib/utils"
+import { useBalances } from "@sehyunchung/renegade-react"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
@@ -36,9 +36,10 @@ export function TokenSelectModal({
   onClose,
   setToken,
 }: TokenSelectModalProps) {
+  const { view } = useApp()
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
-  const balances = useBalance()
+  const balances = useBalances()
   const filteredTickers = useMemo(() => {
     return DISPLAYED_TICKERS.filter(([ticker]) =>
       ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -47,12 +48,19 @@ export function TokenSelectModal({
   const filteredTickersWithBalances = useMemo(() => {
     const result: { ticker: string; balance: bigint | undefined }[] = []
     for (const [ticker] of filteredTickers) {
-      const balance = Object.values(balances).find(
-        ({ mint: { address } }) =>
-          `0x${address}` === Token.findAddressByTicker(ticker)
+      const balance = balances.find(
+        (b) => b.mint === Token.findAddressByTicker(ticker)
       )
       result.push({ ticker, balance: balance?.amount })
     }
+
+    result.sort((a, b) => {
+      if (!b.balance && !a.balance) return 0 // Both balances are undefined, maintain order
+      if (!b.balance) return -1 // Undefined balances are considered less than any number
+      if (!a.balance) return 1
+      if (b.balance === a.balance) return 0 // Equal balances, maintain order
+      return Number(b.balance) - Number(a.balance)
+    })
     return result
   }, [balances, filteredTickers])
   return (
@@ -104,7 +112,10 @@ export function TokenSelectModal({
             }}
           >
             {filteredTickersWithBalances
-              .filter(({ ticker }) => ticker !== "USDC")
+              .filter(({ ticker }) => {
+                if (view === ViewEnum.TRADING) return ticker !== "USDC"
+                return true
+              })
               .map(({ ticker, balance }) => {
                 return (
                   <Row

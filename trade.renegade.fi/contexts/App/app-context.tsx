@@ -1,10 +1,20 @@
 "use client"
 
-import { PropsWithChildren, createContext, useContext, useState } from "react"
+import { disconnect, useConfig } from "@sehyunchung/renegade-react"
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
+import { useAccount } from "wagmi"
 
 export enum ViewEnum {
   TRADING,
   DEPOSIT,
+  WITHDRAW,
 }
 
 export interface AppContextValue {
@@ -20,6 +30,21 @@ function AppProvider({
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
+  const { address } = useAccount()
+  const config = useConfig()
+  const prevAddressRef = useRef<string>()
+
+  useEffect(() => {
+    if (
+      prevAddressRef.current &&
+      address &&
+      prevAddressRef.current !== address
+    ) {
+      disconnect(config)
+    }
+    prevAddressRef.current = address
+  }, [address, config])
+
   return (
     <AppStateContext.Provider
       value={{

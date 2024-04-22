@@ -153,7 +153,10 @@ export function SignInButton() {
     signInText,
   })
   const status = useStatus()
-  const isSigningIn = status === "creating wallet" || status === "looking up"
+  const isSigningIn =
+    status === "creating wallet" ||
+    status === "looking up" ||
+    status === "connecting"
   if (!address || status === "in relayer") {
     return null
   }

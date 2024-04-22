@@ -8,6 +8,7 @@ import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
 import { useExchangePrice } from "@/hooks/use-price"
+import { useOrder } from "@/contexts/Order/order-context"
 
 function LinkWrapper(props: {
   link?: string
@@ -184,6 +185,16 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
         <PulsingConnection state={pulseState} />
       </Stack>
     </LinkWrapper>
+  )
+}
+
+export function MedianBannerWrapper() {
+  const { baseTicker, quoteTicker } = useOrder()
+  return (
+    <MedianBanner
+      activeBaseTicker={baseTicker}
+      activeQuoteTicker={quoteTicker}
+    />
   )
 }
 

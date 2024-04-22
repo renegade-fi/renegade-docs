@@ -8,12 +8,10 @@ import {
   UseOrdersReturnType,
   cancelOrder,
   formatAmount,
-  useNetworkOrders,
   useConfig,
   useNetworkOrders,
   useOrders,
   useStatus,
-  useWalletId,
 } from "@sehyunchung/renegade-react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
@@ -48,14 +46,13 @@ function SingleOrder({
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
   const config = useConfig()
-  const walletId = useWalletId()
 
   const base = Token.findByAddress(baseAddr).ticker
   const quote = Token.findByAddress(quoteAddr).ticker
 
   const handleCancel = async () => {
     await cancelOrder(config, { id })
-      .then(({ taskId }) => {
+      .then(() => {
         toast.message(
           `Started to cancel order to ${
             side === "buy" ? "Buy" : "Sell"
@@ -64,11 +61,9 @@ function SingleOrder({
             description: `Check the history tab for the status of the task`,
           }
         )
-        console.log(`${walletId} started to cancel order ${id} in ${taskId}`)
       })
       .catch((e) => {
-        toast.error(`Error cancelling order: ${e.message}`)
-        console.error(`Error cancelling order: ${e.message}`)
+        toast.error(`Error cancelling order: ${e.response.data ?? e.message}`)
       })
   }
 

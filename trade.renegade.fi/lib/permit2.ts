@@ -6,7 +6,7 @@ import {
   hashTypedData,
   verifyTypedData,
 } from "viem"
-import { publicKeyToAddress, recoverPublicKey, toBytes } from "viem/utils"
+import { publicKeyToAddress, recoverPublicKey } from "viem/utils"
 
 export function millisecondsToSeconds(milliseconds: number): number {
   return Math.floor(milliseconds / 1000)
@@ -63,7 +63,6 @@ export async function signPermit2({
   walletClient: WalletClient
   pkRoot: bigint[]
 }) {
-  console.log("Inside sign Permit2", pkRoot)
   if (!walletClient.account)
     throw new Error("Address not found on wallet client")
 
@@ -94,11 +93,6 @@ export async function signPermit2({
     primaryType: "PermitWitnessTransferFrom",
     message,
   })
-  console.log("Permit2: ", {
-    pkRoot,
-    message,
-    signature,
-  })
 
   // Verify signature
   const valid = await verifyTypedData({
@@ -124,12 +118,6 @@ export async function signPermit2({
       signature,
     })
   )
-  console.log("Permit2 Verification: ", {
-    valid,
-    hash,
-    signature: toBytes(signature),
-    recoveredPubKey,
-  })
   if (recoveredPubKey !== walletClient.account.address)
     throw new Error("Recovered public key does not match wallet public key")
 

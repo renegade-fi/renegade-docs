@@ -1,8 +1,10 @@
+"use client"
 import { Renegade } from "@renegade-fi/renegade-js"
 
 import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 import { env } from "@/env.mjs"
 import { useEffect, useState } from "react"
+import { useOrder } from "@/contexts/Order/order-context"
 
 const renegade = new Renegade({
   relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -14,14 +16,9 @@ const renegade = new Renegade({
   verbose: false,
 })
 
-export function RelayerStatusData({
-  baseToken,
-  quoteToken,
-}: {
-  baseToken: string
-  quoteToken: string
-}) {
+export function RelayerStatusData() {
   const [ping, setPing] = useState("loading")
+  const { baseTicker, quoteTicker } = useOrder()
 
   useEffect(() => {
     const fetchPing = async () => {
@@ -39,8 +36,8 @@ export function RelayerStatusData({
     <RelayerStatusBanner
       // @ts-ignore
       connectionState={ping}
-      activeBaseTicker={baseToken}
-      activeQuoteTicker={quoteToken}
+      activeBaseTicker={baseTicker}
+      activeQuoteTicker={quoteTicker}
     />
   )
 }

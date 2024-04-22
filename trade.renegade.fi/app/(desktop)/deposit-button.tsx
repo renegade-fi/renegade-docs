@@ -6,7 +6,6 @@ import {
   deposit,
   useConfig,
   useStatus,
-  useWalletId,
 } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
@@ -94,13 +93,13 @@ export default function DepositButton() {
 
   const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   const config = useConfig()
-  const walletId = useWalletId()
   const handleApprove = async () => {
     if (!isConnected) return
     await approve({
       address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
       args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
     }).then(() => {
+      // TODO: May need to await confirmation
       handleSignAndDeposit()
     })
   }
@@ -130,13 +129,10 @@ export default function DepositButton() {
       permitDeadline: deadline,
       permit: signature,
     })
-      .then(({ taskId }) => {
+      .then(() => {
         toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
           description: "Check the history tab for the status of the task",
         })
-        console.log(
-          `${walletId} started to deposit ${baseTokenAmount} ${baseTicker} in ${taskId}`
-        )
         if (token.ticker === "USDC") {
           setDirection(Direction.BUY)
         } else {
@@ -144,8 +140,7 @@ export default function DepositButton() {
         }
       })
       .catch((e) => {
-        toast.error(`Error depositing: ${e.message}`)
-        console.error(`Error depositing: ${e.message}`)
+        toast.error(`Error depositing: ${e.response.data ?? e.message}`)
       })
   }
 
