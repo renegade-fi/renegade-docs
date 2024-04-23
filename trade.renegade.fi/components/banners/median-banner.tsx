@@ -70,7 +70,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   }
   if (renamedQuoteTicker === "USDC") {
     renamedQuoteTicker = {
-      binance: "BUSD",
+      binance: "USDT",
       coinbase: "USD",
       kraken: "USD",
       okx: "USDT",
@@ -82,7 +82,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     binance: `https://www.binance.com/en/trade/${renamedBaseTicker}_${renamedQuoteTicker}`,
     coinbase: `https://www.coinbase.com/advanced-trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     kraken: `https://pro.kraken.com/app/trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
-    okx: `https://www.okx.com/trade-swap/${renamedBaseTicker}-${renamedQuoteTicker}-swap`,
+    okx: `https://www.okx.com/trade-spot/${renamedBaseTicker}-${renamedQuoteTicker}`,
     uniswapv3: `https://info.uniswap.org/#/tokens/${Token.findAddressByTicker(
       props.activeBaseTicker
     )}`,
