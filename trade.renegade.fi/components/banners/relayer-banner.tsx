@@ -171,11 +171,11 @@ export class RelayerStatusBanner extends React.Component<
               height="var(--banner-height)"
             >
               <Spacer flexGrow="2" />
-              <Text>Liquidity</Text>
+              <Text>TVL</Text>
               <BannerSeparator flexGrow={1} />
-              <Text>420.00 {this.props.activeBaseTicker}</Text>
+              <Text>123.456 {this.props.activeBaseTicker}</Text>
               <BannerSeparator flexGrow={1} />
-              <Text>69,000.00 {this.props.activeQuoteTicker}</Text>
+              <Text>123456.78 {this.props.activeQuoteTicker}</Text>
               <BannerSeparator flexGrow={3} />
               <Text>Relayer</Text>
               <BannerSeparator flexGrow={1} />
