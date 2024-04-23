@@ -187,43 +187,6 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
   )
 }
 
-interface MedianTripleProps {
-  activeBaseTicker: string
-  activeQuoteTicker: string
-  initialPrice?: number
-  isMobile?: boolean
-}
-function MedianTriple(props: MedianTripleProps) {
-  return (
-    <Flex
-      alignItems="center"
-      justifyContent="center"
-      flexDirection={props.isMobile ? "column" : "row"}
-      width={props.isMobile ? "100%" : "24%"}
-      minWidth={props.isMobile ? undefined : "400px"}
-      height={props.isMobile ? "40%" : "100%"}
-      paddingTop={props.isMobile ? "10px" : undefined}
-    >
-      <Spacer flexGrow="3" />
-      <Text
-        whiteSpace="nowrap"
-        variant={props.isMobile ? "rotate-right" : undefined}
-      >
-        NBBO Feed
-      </Text>
-      <BannerSeparator flexGrow={4} />
-      <ExchangeConnectionTriple
-        activeBaseTicker={props.activeBaseTicker}
-        activeQuoteTicker={props.activeQuoteTicker}
-        exchange={Exchange.Binance}
-        isMobile={props.isMobile}
-        initialPrice={props.initialPrice}
-      />
-      <BannerSeparator flexGrow={4} />
-    </Flex>
-  )
-}
-
 interface ExchangeConnectionsBannerProps {
   activeBaseTicker: string
   activeQuoteTicker: string
@@ -434,16 +397,20 @@ export class MedianBanner extends React.Component<
         userSelect="none"
         spacing="0px"
       >
-        <MedianTriple
-          activeBaseTicker={this.props.activeBaseTicker}
-          activeQuoteTicker={this.props.activeQuoteTicker}
-          isMobile={this.props.isMobile}
-          initialPrice={this.props.report?.[Exchange.Binance]}
-        />
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          width="13%"
+          minWidth="125px"
+          height="100%"
+        >
+          BBO Feeds
+        </Flex>
+        <BannerSeparator flexGrow={1} />
         <Flex
           position="relative"
           flexDirection={this.props.isMobile ? "column" : "row"}
-          width={this.props.isMobile ? undefined : "76%"}
+          width={this.props.isMobile ? undefined : "87%"}
           height={this.props.isMobile ? "60%" : undefined}
         >
           <Box
@@ -490,14 +457,15 @@ export class MedianBanner extends React.Component<
               minWidth={this.props.isMobile ? undefined : "1200px"}
               minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >
-              {/* <ExchangeConnectionTriple
+              <Spacer flexGrow="2" />
+              <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
                 exchange={Exchange.Binance}
-                // priceReport={this.props.report.Binance}
+                initialPrice={this.props.report?.[Exchange.Binance]}
                 isMobile={this.props.isMobile}
               />
-              <BannerSeparator /> */}
+              <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
@@ -521,15 +489,7 @@ export class MedianBanner extends React.Component<
                 initialPrice={this.props.report?.[Exchange.Okx]}
                 isMobile={this.props.isMobile}
               />
-              {/* <BannerSeparator /> */}
-              {/* <ExchangeConnectionTriple
-                activeBaseTicker={this.props.activeBaseTicker}
-                activeQuoteTicker={this.props.activeQuoteTicker}
-                exchange={Exchange.Uniswapv3}
-                // priceReport={this.props.report.UniswapV3}
-                isMobile={this.props.isMobile}
-              /> */}
-              <Spacer flexGrow="3" />
+              <Spacer flexGrow="2" />
             </Flex>
           </Box>
         </Flex>
