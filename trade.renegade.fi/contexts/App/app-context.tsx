@@ -2,12 +2,7 @@
 
 import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 import { fundList, fundWallet } from "@/lib/utils"
-import {
-  connect,
-  disconnect,
-  useConfig,
-  useStatus,
-} from "@sehyunchung/renegade-react"
+import { connect, disconnect, useConfig } from "@sehyunchung/renegade-react"
 import {
   PropsWithChildren,
   createContext,
@@ -46,7 +41,6 @@ function AppProvider({
 
   const { address } = useAccount()
   const [funded] = useLocalStorage(`funded_${address}`, false)
-  const status = useStatus()
 
   const prevAddressRef = useRef<string>()
   useEffect(() => {
@@ -61,8 +55,13 @@ function AppProvider({
   }, [address, config])
 
   const { executeTaskWithToast } = useTaskCompletionToast()
-  useEffect(() => {
-    if (funded || status !== "in relayer") return
+
+  const handleSignin = async (seed: Hex) => {
+    const res = await connect(config, { seed })
+    if (res?.taskId) {
+      await executeTaskWithToast(res.taskId, "Connecting...")
+    }
+    if (funded) return
     toast.promise(
       fundWallet(
         [
@@ -81,13 +80,6 @@ function AppProvider({
 
     // Fund additional wallets in background
     fundWallet(fundList, address!)
-  }, [address, funded, status])
-
-  const handleSignin = async (seed: Hex) => {
-    const res = await connect(config, { seed })
-    if (res?.taskId) {
-      await executeTaskWithToast(res.taskId, "Connecting...")
-    }
   }
 
   return (
