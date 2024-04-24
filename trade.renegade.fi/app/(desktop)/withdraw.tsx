@@ -1,5 +1,7 @@
 "use client"
 
+import WithdrawButton from "@/app/(desktop)/withdraw-button"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -10,13 +12,10 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-
-import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { Token } from "@sehyunchung/renegade-react"
 import { useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
-import WithdrawButton from "@/app/(desktop)/withdraw-button"
+
+import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
 
 export function WithdrawBody() {
   const { setView } = useApp()
@@ -25,10 +24,9 @@ export function WithdrawBody() {
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const [base, setBase] = useLocalStorage(
-    "base",
-    Token.findByTicker("WETH").ticker
-  )
+  const [base] = useLocalStorage("base", "WBTC", {
+    initializeWithValue: false,
+  })
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,11 +108,7 @@ export function WithdrawBody() {
         </Box>
         <WithdrawButton baseTicker={base} baseTokenAmount={baseTokenAmount} />
       </Flex>
-      <TokenSelectModal
-        isOpen={tokenMenuIsOpen}
-        onClose={onCloseTokenMenu}
-        setToken={setBase}
-      />
+      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>
   )
 }

@@ -1,3 +1,6 @@
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
+import { formatAmount } from "@/lib/utils"
 import {
   Box,
   Grid,
@@ -14,32 +17,30 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
+import { Token as NewToken } from "@sehyunchung/renegade-react"
+import { useBalances } from "@sehyunchung/renegade-react"
 import Image from "next/image"
 import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
+import { useLocalStorage } from "usehooks-ts"
 
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useDebounce } from "@/hooks/use-debounce"
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
-import { formatAmount } from "@/lib/utils"
-import { useBalances } from "@sehyunchung/renegade-react"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
   isOpen: boolean
   onClose: () => void
-  setToken: (ticker: string) => void
 }
-export function TokenSelectModal({
-  isOpen,
-  onClose,
-  setToken,
-}: TokenSelectModalProps) {
+export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
   const { view } = useApp()
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const balances = useBalances()
+  const [_, setBase] = useLocalStorage(
+    "base",
+    NewToken.findByTicker("WETH").ticker
+  )
   const filteredTickers = useMemo(() => {
     return DISPLAYED_TICKERS.filter(([ticker]) =>
       ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -124,7 +125,7 @@ export function TokenSelectModal({
                     ticker={ticker}
                     onRowClick={() => {
                       onClose()
-                      setToken(ticker)
+                      setBase(ticker)
                     }}
                   />
                 )

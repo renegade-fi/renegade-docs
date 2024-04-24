@@ -1,22 +1,24 @@
 "use client"
 
+import { AppProvider } from "@/contexts/App/app-context"
+import { PriceProvider } from "@/contexts/PriceContext/price-context"
+import { env } from "@/env.mjs"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
   ChakraProvider,
   ColorModeScript,
+  type ThemeConfig,
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
-  type ThemeConfig,
 } from "@chakra-ui/react"
 import { datadogLogs } from "@datadog/browser-logs"
 import { datadogRum } from "@datadog/browser-rum"
-import { Renegade } from "@renegade-fi/renegade-js"
 import {
+  RenegadeProvider,
   chain,
   createConfig as createSDKConfig,
-  RenegadeProvider as SDKProvider,
 } from "@sehyunchung/renegade-react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
@@ -24,14 +26,7 @@ import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { http } from "viem"
-import { createConfig, WagmiProvider } from "wagmi"
-
-import { AppProvider } from "@/contexts/App/app-context"
-import { ExchangeProvider } from "@/contexts/Exchange/exchange-context"
-import { OrderProvider } from "@/contexts/Order/order-context"
-import { PriceProvider } from "@/contexts/PriceContext/price-context"
-import { RenegadeProvider } from "@/contexts/Renegade/renegade-context"
-import { env } from "@/env.mjs"
+import { WagmiProvider, createConfig } from "wagmi"
 
 /*
  * ┌─────────────────────┐
@@ -208,15 +203,6 @@ export const wagmiConfig = createConfig(
 
 const queryClient = new QueryClient()
 
-export const renegade = new Renegade({
-  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport:
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-  verbose: false,
-})
-
 export const renegadeConfig = createSDKConfig({
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   priceReporterUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
@@ -231,8 +217,6 @@ export function Providers({
 }) {
   useEffect(() => {
     async function loadUtils() {
-      await renegade.init()
-
       datadogRum.init({
         applicationId: env.NEXT_PUBLIC_DATADOG_APPLICATION_ID,
         clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
@@ -272,7 +256,7 @@ export function Providers({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <SDKProvider reconnectOnMount={true} config={renegadeConfig}>
+            <RenegadeProvider reconnectOnMount={true} config={renegadeConfig}>
               <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClient}>
                   <ConnectKitProvider
@@ -286,26 +270,16 @@ export function Providers({
                       "--ck-spinner-color": "#ffffff",
                     }}
                   >
-                    <RenegadeProvider>
-                      <ExchangeProvider>
-                        <PriceProvider>
-                          <AppProvider tokenIcons={icons}>
-                            <OrderProvider>
-                              <Toaster
-                                expand
-                                position="bottom-center"
-                                richColors
-                              />
-                              {children}
-                            </OrderProvider>
-                          </AppProvider>
-                        </PriceProvider>
-                      </ExchangeProvider>
-                    </RenegadeProvider>
+                    <PriceProvider>
+                      <AppProvider tokenIcons={icons}>
+                        <Toaster expand position="bottom-center" richColors />
+                        {children}
+                      </AppProvider>
+                    </PriceProvider>
                   </ConnectKitProvider>
                 </QueryClientProvider>
               </WagmiProvider>
-            </SDKProvider>
+            </RenegadeProvider>
           </ChakraProvider>
         </CacheProvider>
       </IntercomProvider>

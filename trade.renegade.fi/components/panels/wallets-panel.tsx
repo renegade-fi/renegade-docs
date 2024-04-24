@@ -19,7 +19,6 @@ import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useOrder } from "@/contexts/Order/order-context"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 import { fundList, fundWallet } from "@/lib/utils"
 import {
@@ -30,6 +29,7 @@ import {
   useTaskQueue,
 } from "@sehyunchung/renegade-react"
 import { toast } from "sonner"
+import { useLocalStorage } from "usehooks-ts"
 import { Address } from "viem"
 
 interface TokenBalanceProps {
@@ -41,7 +41,10 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const token = Token.findByAddress(props.tokenAddr)
-  const { setBaseToken } = useOrder()
+  const [_, setBase] = useLocalStorage(
+    "base",
+    Token.findByTicker("WETH").ticker
+  )
 
   const formattedAmount = formatAmount(props.amount, token)
   const ticker = token.ticker
@@ -112,7 +115,7 @@ function TokenBalance(props: TokenBalanceProps) {
         height="calc(0.5 * var(--banner-height))"
         cursor="pointer"
         onClick={() => {
-          setBaseToken(ticker)
+          setBase(ticker)
           setView(ViewEnum.DEPOSIT)
         }}
       />
@@ -122,7 +125,7 @@ function TokenBalance(props: TokenBalanceProps) {
         borderRadius="100px"
         cursor="pointer"
         onClick={() => {
-          setBaseToken(token.ticker)
+          setBase(token.ticker)
           setView(ViewEnum.WITHDRAW)
         }}
       />

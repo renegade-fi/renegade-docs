@@ -1,5 +1,7 @@
 "use client"
 
+import DepositButton from "@/app/(desktop)/deposit-button"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -10,21 +12,34 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import { useState } from "react"
+import { useLocalStorage } from "usehooks-ts"
 
-import DepositButton from "@/app/(desktop)/deposit-button"
 import { TokenSelectModal } from "@/components/modals/token-select-modal"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { DepositProvider, useDeposit } from "@/contexts/Deposit/deposit-context"
 
-function DepositInner() {
+export function DepositBody() {
   const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const { baseTicker, baseTokenAmount, setBaseTicker, setBaseTokenAmount } =
-    useDeposit()
+  const [baseTokenAmount, setBaseTokenAmount] = useState("")
+  const [base] = useLocalStorage("base", "MATIC", {
+    initializeWithValue: false,
+  })
+
+  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (
+      value === "" ||
+      (!isNaN(parseFloat(value)) &&
+        isFinite(parseFloat(value)) &&
+        parseFloat(value) >= 0)
+    ) {
+      setBaseTokenAmount(value)
+    }
+  }
 
   return (
     <>
@@ -67,7 +82,7 @@ function DepositInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={setBaseTokenAmount}
+              onChange={handleSetBaseTokenAmount}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,
@@ -82,7 +97,7 @@ function DepositInner() {
               cursor="pointer"
               onClick={onOpenTokenMenu}
             >
-              <Text variant="trading-body-button">{baseTicker}</Text>
+              <Text variant="trading-body-button">{base}</Text>
               <ChevronDownIcon
                 boxSize="20px"
                 viewBox="6 6 12 12"
@@ -91,21 +106,9 @@ function DepositInner() {
             </HStack>
           </HStack>
         </Box>
-        <DepositButton />
+        <DepositButton baseTokenAmount={baseTokenAmount} />
       </Flex>
-      <TokenSelectModal
-        isOpen={tokenMenuIsOpen}
-        onClose={onCloseTokenMenu}
-        setToken={setBaseTicker}
-      />
+      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>
-  )
-}
-
-export function DepositBody() {
-  return (
-    <DepositProvider>
-      <DepositInner />
-    </DepositProvider>
   )
 }

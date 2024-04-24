@@ -2,8 +2,8 @@
 
 import { Flex, Text, keyframes } from "@chakra-ui/react"
 
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
+import { Direction } from "@/lib/types"
+import { useLocalStorage } from "usehooks-ts"
 
 interface BlurredOverlayProps {
   activeModal?: "buy-sell" | "base-token" | "quote-token"
@@ -15,7 +15,7 @@ export function BlurredOverlay({
   buySellSelectableCoords,
   onClose,
 }: BlurredOverlayProps) {
-  const { setDirection } = useOrder()
+  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   function OrText() {
     return (
       <Text
