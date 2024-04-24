@@ -8,23 +8,15 @@ import {
 } from "wagmi"
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
-import { fundList, fundWallet, safeLocalStorageGetItem } from "@/lib/utils"
-import {
-  chain,
-  connect,
-  publicClient,
-  useConfig,
-} from "@sehyunchung/renegade-react"
-import { toast } from "sonner"
+import { useApp } from "@/contexts/App/app-context"
+import { chain, publicClient } from "@sehyunchung/renegade-react"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
 export function DefaultStep() {
+  const { onSignin } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
-  const config = useConfig()
-  const { executeTaskWithToast } = useTaskCompletionToast()
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
@@ -49,36 +41,8 @@ export function DefaultStep() {
         if (!valid) {
           throw new Error("Invalid signature")
         }
-        config.setState({ ...config.state, seed: data })
-        const res = await connect(config, { seed: data })
+        onSignin(data)
         onClose()
-        if (res?.taskId) {
-          await executeTaskWithToast(res.taskId, "Connecting...")
-        }
-        if (config.state.status === "in relayer") {
-          const funded = safeLocalStorageGetItem(`funded_${address}`)
-          if (funded) return
-
-          // If the account has not been funded, fund it
-          toast.promise(
-            fundWallet(
-              [
-                { ticker: "WETH", amount: "10" },
-                { ticker: "USDC", amount: "1000000" },
-              ],
-              address!
-            ),
-            {
-              loading: "Funding account...",
-              success: "Your account has been funded with test funds.",
-              error:
-                "Funding failed: An unexpected error occurred. Please try again.",
-            }
-          )
-
-          // Fund additional wallets in background
-          fundWallet(fundList, address!)
-        }
       },
     },
   })
