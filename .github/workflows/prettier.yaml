@@ -23,13 +23,13 @@ jobs:
       #   with:
       #     cmd: prettier
       #     dir: "docs.renegade.fi"
-      - name: Install yarn (trade.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v3.0.0
         with:
-          cmd: install
-          dir: "trade.renegade.fi"
+          version: latest
+      - name: Install dependencies (trade.renegade.fi)
+        run: pnpm install --no-frozen-lockfile
+        working-directory: ./trade.renegade.fi
       - name: Prettier Check (trade.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: format:check
-          dir: "trade.renegade.fi"
+        run: pnpm run format:check
+        working-directory: ./trade.renegade.fi
