@@ -27,15 +27,15 @@ jobs:
       #   with:
       #     cmd: lint
       #     dir: "docs.renegade.fi"
-      - uses: borales/actions-yarn@v4.2.0
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v3.0.0
         with:
-          cmd: install
-          dir: "trade.renegade.fi"
+          version: latest
+      - run: pnpm install --no-frozen-lockfile
+        working-directory: ./trade.renegade.fi
       - name: Eslint Check (trade.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: lint
-          dir: "trade.renegade.fi"
+        run: pnpm lint
+        working-directory: ./trade.renegade.fi
         env:
           NEXT_PUBLIC_DARKPOOL_CONTRACT: ${{ secrets.NEXT_PUBLIC_DARKPOOL_CONTRACT }}
           NEXT_PUBLIC_DATADOG_APPLICATION_ID: ${{ secrets.NEXT_PUBLIC_DATADOG_APPLICATION_ID }}
@@ -47,7 +47,5 @@ jobs:
           NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
       - name: Type check (trade.renegade.fi)
-        uses: borales/actions-yarn@v4.2.0
-        with:
-          cmd: typecheck
-          dir: "trade.renegade.fi"
+        run: pnpm typecheck
+        working-directory: ./trade.renegade.fi
