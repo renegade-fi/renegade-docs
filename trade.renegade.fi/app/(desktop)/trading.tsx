@@ -1,16 +1,18 @@
 "use client"
 
+import { Direction } from "@/lib/types"
+import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
+import { Token } from "@sehyunchung/renegade-react"
 import React, { createRef, useEffect, useRef, useState } from "react"
+import { useLocalStorage } from "usehooks-ts"
+
+import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction } from "@/contexts/Order/types"
-import { useUSDPrice } from "@/hooks/use-usd-price"
-import { formatPrice } from "@/lib/utils"
 
 interface SelectableProps {
   text: string
@@ -52,14 +54,15 @@ function TradingInner() {
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const {
-    baseTicker,
-    baseTokenAmount,
-    direction,
-    quoteTicker,
-    setBaseToken,
-    setBaseTokenAmount,
-  } = useOrder()
+  const [baseTokenAmount, setBaseTokenAmount] = useState("")
+  const [base, setBase] = useLocalStorage(
+    "base",
+    Token.findByTicker("WETH").ticker
+  )
+  const [quote] = useLocalStorage("quote", "USDC", {
+    initializeWithValue: false,
+  })
+  const [direction] = useLocalStorage("direction", Direction.BUY)
   const [activeModal, setActiveModal] = useState<"buy-sell" | "quote-token">()
 
   const buySellSelectableRef = createRef<HTMLDivElement>()
@@ -90,10 +93,22 @@ function TradingInner() {
   }, [baseTokenAmount, buySellSelectableRef])
 
   useEffect(() => {
-    if (baseTicker === "USDC") {
-      setBaseToken("WETH")
+    if (base === "USDC") {
+      setBase("WETH")
     }
-  }, [baseTicker, setBaseToken])
+  }, [base, setBase])
+
+  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (
+      value === "" ||
+      (!isNaN(parseFloat(value)) &&
+        isFinite(parseFloat(value)) &&
+        parseFloat(value) >= 0)
+    ) {
+      setBaseTokenAmount(value)
+    }
+  }
 
   return (
     <>
@@ -130,7 +145,7 @@ function TradingInner() {
               }}
               _placeholder={{ color: "whiteAlpha.400" }}
               outline="none !important"
-              onChange={setBaseTokenAmount}
+              onChange={handleSetBaseTokenAmount}
               onFocus={(e) =>
                 e.target.addEventListener("wheel", (e) => e.preventDefault(), {
                   passive: false,
@@ -146,7 +161,7 @@ function TradingInner() {
               onClick={onOpenTokenMenu}
             >
               <Text cursor="pointer" variant="trading-body-button">
-                {baseTicker}
+                {base}
               </Text>
               <ChevronDownIcon
                 boxSize="20px"
@@ -162,22 +177,18 @@ function TradingInner() {
             >
               {direction === Direction.BUY ? "with" : "for"}
             </Text>
-            <Text variant="trading-body-button">{quoteTicker}</Text>
+            <Text variant="trading-body-button">{quote}</Text>
           </HStack>
-          <HelperText baseTicker={baseTicker} />
+          <HelperText baseTicker={base} />
         </Flex>
-        <PlaceOrderButton />
+        <PlaceOrderButton baseTokenAmount={baseTokenAmount} />
         <BlurredOverlay
           activeModal={activeModal}
           onClose={() => setActiveModal(undefined)}
           buySellSelectableCoords={buySellSelectableCoords.current}
         />
       </Flex>
-      <TokenSelectModal
-        isOpen={tokenMenuIsOpen}
-        onClose={onCloseTokenMenu}
-        setToken={setBaseToken}
-      />
+      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>
   )
 }

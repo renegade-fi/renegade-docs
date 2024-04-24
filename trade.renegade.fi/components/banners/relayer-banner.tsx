@@ -3,8 +3,6 @@
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
 import React from "react"
 
-import { RenegadeContext } from "@/contexts/Renegade/renegade-context"
-
 import { BannerSeparator } from "../banner-separator"
 import { PulsingConnection } from "../pulsing-connection-indicator"
 
@@ -25,8 +23,6 @@ export class RelayerStatusBanner extends React.Component<
   RelayerStatusBannerProps,
   RelayerStatusBannerState
 > {
-  static contextType = RenegadeContext
-
   constructor(props: RelayerStatusBannerProps) {
     super(props)
     this.state = {
@@ -149,55 +145,49 @@ export class RelayerStatusBanner extends React.Component<
       throw new Error("Invalid connection state: " + this.props.connectionState)
     }
     return (
-      <RenegadeContext.Consumer>
-        {() => (
-          <Box
-            ref={this.state.relayerStatusBannerRef}
-            overflow="hidden"
-            height="var(--banner-height)"
-            color="white.80"
-            borderBottom="var(--border)"
-            userSelect="text"
-            onMouseDown={this.onMouseDown}
-            onMouseEnter={this.onMouseEnter}
-            onMouseLeave={this.onMouseLeave}
-            onMouseMove={this.onMouseMove}
-            onMouseUp={this.onMouseUp}
-          >
-            <Flex
-              alignItems="center"
-              justifyContent="center"
-              minWidth="1200px"
-              height="var(--banner-height)"
-            >
-              <Spacer flexGrow="2" />
-              <Text>TVL</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>123.456 {this.props.activeBaseTicker}</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>123456.78 {this.props.activeQuoteTicker}</Text>
-              <BannerSeparator flexGrow={3} />
-              <Text>Relayer</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>renegade-relayer.eth</Text>
-              <BannerSeparator flexGrow={1} />
-              <HStack>
-                {connectionText}
-                <PulsingConnection
-                  state={this.props.connectionState || "dead"}
-                />
-              </HStack>
-              <BannerSeparator flexGrow={3} />
-              <Text>Fees</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>Relayer 0.08%</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>Protocol 0.02%</Text>
-              <Spacer flexGrow="2" />
-            </Flex>
-          </Box>
-        )}
-      </RenegadeContext.Consumer>
+      <Box
+        ref={this.state.relayerStatusBannerRef}
+        overflow="hidden"
+        height="var(--banner-height)"
+        color="white.80"
+        borderBottom="var(--border)"
+        userSelect="text"
+        onMouseDown={this.onMouseDown}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        onMouseMove={this.onMouseMove}
+        onMouseUp={this.onMouseUp}
+      >
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          minWidth="1200px"
+          height="var(--banner-height)"
+        >
+          <Spacer flexGrow="2" />
+          <Text>TVL</Text>
+          <BannerSeparator flexGrow={1} />
+          <Text>123.456 {this.props.activeBaseTicker}</Text>
+          <BannerSeparator flexGrow={1} />
+          <Text>123456.78 {this.props.activeQuoteTicker}</Text>
+          <BannerSeparator flexGrow={3} />
+          <Text>Relayer</Text>
+          <BannerSeparator flexGrow={1} />
+          <Text>renegade-relayer.eth</Text>
+          <BannerSeparator flexGrow={1} />
+          <HStack>
+            {connectionText}
+            <PulsingConnection state={this.props.connectionState || "dead"} />
+          </HStack>
+          <BannerSeparator flexGrow={3} />
+          <Text>Fees</Text>
+          <BannerSeparator flexGrow={1} />
+          <Text>Relayer 0.08%</Text>
+          <BannerSeparator flexGrow={1} />
+          <Text>Protocol 0.02%</Text>
+          <Spacer flexGrow="2" />
+        </Flex>
+      </Box>
     )
   }
 }

@@ -1,43 +1,50 @@
 "use client"
-import { Renegade } from "@renegade-fi/renegade-js"
 
-import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 import { env } from "@/env.mjs"
 import { useEffect, useState } from "react"
-import { useOrder } from "@/contexts/Order/order-context"
+import { useLocalStorage } from "usehooks-ts"
 
-const renegade = new Renegade({
-  relayerHostname: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  relayerHttpPort: 3000,
-  relayerWsPort: 4000,
-  useInsecureTransport:
-    env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost",
-
-  verbose: false,
-})
+import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 
 export function RelayerStatusData() {
   const [ping, setPing] = useState("loading")
-  const { baseTicker, quoteTicker } = useOrder()
+  const [base] = useLocalStorage("base", "REN", { initializeWithValue: false })
+  const [quote] = useLocalStorage("quote", "USDC", {
+    initializeWithValue: false,
+  })
 
   useEffect(() => {
     const fetchPing = async () => {
       try {
-        await renegade?.ping()
-        setPing("live")
+        const response = await fetch(
+          `${
+            env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"
+              ? "http"
+              : "https"
+          }://${env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME}:3000/v0/ping`
+        )
+        if (response.ok) {
+          setPing("live")
+        } else {
+          setPing("dead")
+        }
       } catch (error) {
         setPing("dead")
       }
     }
 
     fetchPing()
+    const intervalId = setInterval(fetchPing, 60000) // Set interval to 60 seconds
+
+    return () => clearInterval(intervalId) // Cleanup interval on component unmount
   }, [])
+
   return (
     <RelayerStatusBanner
       // @ts-ignore
       connectionState={ping}
-      activeBaseTicker={baseTicker}
-      activeQuoteTicker={quoteTicker}
+      activeBaseTicker={base}
+      activeQuoteTicker={quote}
     />
   )
 }

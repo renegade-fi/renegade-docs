@@ -1,19 +1,12 @@
 "use client"
 
+import { usePrice } from "@/contexts/PriceContext/price-context"
+import { Direction, LocalOrder } from "@/lib/types"
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
-import { useEffect, useMemo, useState } from "react"
-import { v4 as uuidv4 } from "uuid"
-import { useAccount as useAccountWagmi } from "wagmi"
-
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useOrder } from "@/contexts/Order/order-context"
-import { Direction, LocalOrder } from "@/contexts/Order/types"
-import { usePrice } from "@/contexts/PriceContext/price-context"
-import { useButton } from "@/hooks/use-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { Token } from "@sehyunchung/renegade-react"
 import {
   createOrder,
   formatAmount,
@@ -23,9 +16,22 @@ import {
   useStatus,
   useWalletId,
 } from "@sehyunchung/renegade-react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
+import { useLocalStorage } from "usehooks-ts"
+import { v4 as uuidv4 } from "uuid"
+import { useAccount as useAccountWagmi } from "wagmi"
 
-export function PlaceOrderButton() {
+import { useButton } from "@/hooks/use-button"
+import { useUSDPrice } from "@/hooks/use-usd-price"
+
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+
+export function PlaceOrderButton({
+  baseTokenAmount,
+}: {
+  baseTokenAmount: string
+}) {
   const { address } = useAccountWagmi()
   const balances = useBalances()
   const {
@@ -33,8 +39,17 @@ export function PlaceOrderButton() {
     onOpen: onOpenSignIn,
     onClose: onCloseSignIn,
   } = useDisclosure()
-  const { base, baseTicker, baseTokenAmount, direction, quote, quoteTicker } =
-    useOrder()
+  const [base] = useLocalStorage("base", "LINK", {
+    initializeWithValue: false,
+  })
+  const baseToken = Token.findByTicker(base)
+  const baseAddress = baseToken.address
+  const [quote] = useLocalStorage("quote", "USDC", {
+    initializeWithValue: false,
+  })
+  const quoteToken = Token.findByTicker(quote)
+  const quoteAddress = quoteToken.address
+  const [direction] = useLocalStorage("direction", Direction.BUY)
 
   const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
     connectText: "Connect Wallet to Place Orders",
@@ -50,11 +65,11 @@ export function PlaceOrderButton() {
 
   const handlePlaceOrder = async () => {
     const id = uuidv4()
-    const parsedAmount = parseAmount(baseTokenAmount, base)
+    const parsedAmount = parseAmount(baseTokenAmount, baseToken)
     await createOrder(config, {
       id,
-      base: base.address,
-      quote: quote.address,
+      base: baseAddress,
+      quote: quoteAddress,
       side: direction,
       amount: parsedAmount,
     })
@@ -62,7 +77,7 @@ export function PlaceOrderButton() {
         toast.message(
           `Started to place order to ${
             direction === "buy" ? "Buy" : "Sell"
-          } ${baseTokenAmount} ${baseTicker} for ${quoteTicker}`,
+          } ${baseTokenAmount} ${base} for ${quote}`,
           {
             description: "Check the history tab for the status of the task",
           }
@@ -73,8 +88,8 @@ export function PlaceOrderButton() {
           ...parseOld,
           {
             id,
-            base: base.address,
-            quote: quote.address,
+            base: baseAddress,
+            quote: quoteAddress,
             side: direction,
             amount: baseTokenAmount,
             timestamp: Date.now(),
@@ -90,30 +105,39 @@ export function PlaceOrderButton() {
       })
   }
 
-  const costInUsd = useUSDPrice(base.ticker, parseFloat(baseTokenAmount))
+  const costInUsd = useUSDPrice(base, parseFloat(baseTokenAmount))
 
   const hasInsufficientBalance = useMemo(() => {
     if (!baseTokenAmount) return false
     const baseBalance =
-      balances.find(({ mint }) => mint === base.address)?.amount || BigInt(0)
+      balances.find(({ mint }) => mint === baseAddress)?.amount || BigInt(0)
     const quoteBalance =
-      balances.find(({ mint }) => mint === quote.address)?.amount || BigInt(0)
+      balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
     if (direction === Direction.SELL) {
-      return baseBalance < parseAmount(baseTokenAmount, base)
+      return baseBalance < parseAmount(baseTokenAmount, baseToken)
     }
-    return parseFloat(formatAmount(quoteBalance, quote)) < costInUsd
-  }, [balances, base, baseTokenAmount, costInUsd, direction, quote])
+    return parseFloat(formatAmount(quoteBalance, quoteToken)) < costInUsd
+  }, [
+    balances,
+    baseAddress,
+    baseToken,
+    baseTokenAmount,
+    costInUsd,
+    direction,
+    quoteAddress,
+    quoteToken,
+  ])
 
   const [price, setPrice] = useState(0)
   const { handleSubscribe, handleGetPrice } = usePrice()
-  const priceReport = handleGetPrice(Exchange.Binance, baseTicker, quoteTicker)
+  const priceReport = handleGetPrice(Exchange.Binance, base, quote)
   useEffect(() => {
     if (!priceReport) return
     setPrice(priceReport)
   }, [priceReport])
   useEffect(() => {
-    handleSubscribe(Exchange.Binance, baseTicker, quoteTicker, 2)
-  }, [baseTicker, quoteTicker, handleSubscribe])
+    handleSubscribe(Exchange.Binance, base, quote, 2)
+  }, [base, quote, handleSubscribe])
   let placeOrderButtonContent: string
   if (shouldUse) {
     placeOrderButtonContent = buttonText
@@ -122,9 +146,7 @@ export function PlaceOrderButton() {
   } else if (hasInsufficientBalance) {
     placeOrderButtonContent = "Insufficient Balance"
   } else {
-    placeOrderButtonContent = `Place Order for ${
-      baseTokenAmount || ""
-    } ${baseTicker}`
+    placeOrderButtonContent = `Place Order for ${baseTokenAmount || ""} ${base}`
   }
 
   const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)

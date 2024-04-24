@@ -1,3 +1,12 @@
+import { env } from "@/env.mjs"
+import {
+  useReadErc20Allowance,
+  useReadErc20BalanceOf,
+  useWriteErc20Approve,
+} from "@/generated"
+import { signPermit2 } from "@/lib/permit2"
+import { Direction } from "@/lib/types"
+import { parseAmount } from "@/lib/utils"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
@@ -7,33 +16,30 @@ import {
   useConfig,
   useStatus,
 } from "@sehyunchung/renegade-react"
+import { getPkRootScalars } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
+import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useDeposit } from "@/contexts/Deposit/deposit-context"
-import { Direction } from "@/contexts/Order/types"
-import { env } from "@/env.mjs"
-import {
-  useReadErc20Allowance,
-  useReadErc20BalanceOf,
-  useWriteErc20Approve,
-} from "@/generated"
 import { useButton } from "@/hooks/use-button"
-import { signPermit2 } from "@/lib/permit2"
-import { parseAmount } from "@/lib/utils"
-import { getPkRootScalars } from "@sehyunchung/renegade-react"
-import { toast } from "sonner"
+
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 )
 
-export default function DepositButton() {
-  const { baseTicker, baseTokenAmount } = useDeposit()
+export default function DepositButton({
+  baseTokenAmount,
+}: {
+  baseTokenAmount: string
+}) {
+  const [base] = useLocalStorage("base", "MATIC", {
+    initializeWithValue: false,
+  })
   const {
     isOpen: signInIsOpen,
     onOpen: onOpenSignIn,
@@ -50,14 +56,14 @@ export default function DepositButton() {
   // Get L1 ERC20 balance
   const { data: l1Balance, queryKey: l1BalanceQueryKey } =
     useReadErc20BalanceOf({
-      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      address: Token.findAddressByTicker(base) as `0x${string}`,
       args: [address ?? "0x"],
     })
 
   // Get L1 ERC20 Allowance
   const { data: allowance, queryKey: allowanceQueryKey } =
     useReadErc20Allowance({
-      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      address: Token.findAddressByTicker(base) as `0x${string}`,
       args: [
         address ?? "0x",
         env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
@@ -79,8 +85,7 @@ export default function DepositButton() {
 
   const hasRpcConnectionError = typeof allowance === "undefined"
   const hasInsufficientBalance = l1Balance
-    ? l1Balance <
-      parseAmount(baseTokenAmount, new Token({ ticker: baseTicker }))
+    ? l1Balance < parseAmount(baseTokenAmount, new Token({ ticker: base }))
     : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
   const status = useStatus()
@@ -96,7 +101,7 @@ export default function DepositButton() {
   const handleApprove = async () => {
     if (!isConnected) return
     await approve({
-      address: Token.findAddressByTicker(baseTicker) as `0x${string}`,
+      address: Token.findAddressByTicker(base) as `0x${string}`,
       args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
     }).then(() => {
       // TODO: May need to await confirmation
@@ -106,7 +111,7 @@ export default function DepositButton() {
 
   const handleSignAndDeposit = async () => {
     if (!walletClient) return
-    const token = new Token({ address: Token.findAddressByTicker(baseTicker) })
+    const token = new Token({ address: Token.findAddressByTicker(base) })
     const amount = parseUnits(baseTokenAmount, 18)
 
     const pkRoot = getPkRootScalars(config)
@@ -130,7 +135,7 @@ export default function DepositButton() {
       permit: signature,
     })
       .then(() => {
-        toast.message(`Started to deposit ${baseTokenAmount} ${baseTicker}`, {
+        toast.message(`Started to deposit ${baseTokenAmount} ${base}`, {
           description: "Check the history tab for the status of the task",
         })
         if (token.ticker === "USDC") {
@@ -191,10 +196,10 @@ export default function DepositButton() {
           : hasInsufficientBalance
           ? "Insufficient balance"
           : needsApproval
-          ? `Approve ${baseTicker}`
+          ? `Approve ${base}`
           : hasRpcConnectionError
           ? "Error connecting to chain"
-          : `Deposit ${baseTokenAmount || ""} ${baseTicker}`}
+          : `Deposit ${baseTokenAmount || ""} ${base}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>

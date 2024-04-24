@@ -3,12 +3,13 @@
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import { Exchange, Token } from "@renegade-fi/renegade-js"
 import React from "react"
+import { useLocalStorage } from "usehooks-ts"
+
+import { useExchangePrice } from "@/hooks/use-price"
 
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
-import { useExchangePrice } from "@/hooks/use-price"
-import { useOrder } from "@/contexts/Order/order-context"
 
 function LinkWrapper(props: {
   link?: string
@@ -189,13 +190,13 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
 }
 
 export function MedianBannerWrapper() {
-  const { baseTicker, quoteTicker } = useOrder()
-  return (
-    <MedianBanner
-      activeBaseTicker={baseTicker}
-      activeQuoteTicker={quoteTicker}
-    />
-  )
+  const [base] = useLocalStorage("base", "DYDX", {
+    initializeWithValue: false,
+  })
+  const [quote] = useLocalStorage("quote", "USDC", {
+    initializeWithValue: false,
+  })
+  return <MedianBanner activeBaseTicker={base} activeQuoteTicker={quote} />
 }
 
 interface ExchangeConnectionsBannerProps {
