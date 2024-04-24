@@ -1,3 +1,7 @@
+import { wagmiConfig } from "@/app/providers"
+import { useApp } from "@/contexts/App/app-context"
+import { readErc20BalanceOf, useReadErc20BalanceOf } from "@/generated"
+import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 import {
   Box,
   Grid,
@@ -15,31 +19,28 @@ import {
   VStack,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
+import { Token as NewToken } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
+import { useLocalStorage } from "usehooks-ts"
 import { formatUnits } from "viem/utils"
 import { useAccount, useBlockNumber } from "wagmi"
 
-import { wagmiConfig } from "@/app/providers"
-import { useApp } from "@/contexts/App/app-context"
-import { readErc20BalanceOf, useReadErc20BalanceOf } from "@/generated"
 import { useDebounce } from "@/hooks/use-debounce"
-import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
 
 const ROW_HEIGHT = "56px"
 interface TokenSelectModalProps {
   isOpen: boolean
   onClose: () => void
-  setToken: (ticker: string) => void
 }
-export function TokenSelectModal({
-  isOpen,
-  onClose,
-  setToken,
-}: TokenSelectModalProps) {
+export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
+  const [_, setBase] = useLocalStorage(
+    "base",
+    NewToken.findByTicker("WETH").ticker
+  )
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
@@ -134,7 +135,7 @@ export function TokenSelectModal({
                     ticker={base}
                     onRowClick={() => {
                       onClose()
-                      setToken(base)
+                      setBase(base)
                     }}
                   />
                 )

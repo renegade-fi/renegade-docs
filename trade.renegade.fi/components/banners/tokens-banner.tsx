@@ -1,15 +1,17 @@
 "use client"
 
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { Stack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
+import { useLocalStorage } from "usehooks-ts"
 
 import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
-import { useLocalStorage } from "usehooks-ts"
 
 export function TokensBanner({}: { prices?: number[] }) {
-  const [_, setBaseToken] = useLocalStorage("base", "WETH")
+  const [_, setBaseToken] = useLocalStorage("base", "UNI", {
+    initializeWithValue: false,
+  })
   return (
     <Marquee
       autoFill

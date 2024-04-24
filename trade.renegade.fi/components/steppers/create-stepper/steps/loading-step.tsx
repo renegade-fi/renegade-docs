@@ -1,23 +1,17 @@
 import { Flex, ModalBody, ModalFooter, Spinner, Text } from "@chakra-ui/react"
-import { useEffect } from "react"
-
-import { useRenegade } from "@/contexts/Renegade/renegade-context"
-import { TaskState, TaskType } from "@/contexts/Renegade/types"
-
-import { useStepper } from "../create-stepper"
 
 export function LoadingStep() {
-  const { onClose } = useStepper()
-  const { taskType, taskState } = useRenegade()
+  // const { onClose } = useStepper()
+  // const { taskType, taskState } = useRenegade()
 
-  useEffect(() => {
-    if (
-      taskType === TaskType.InitializeAccount &&
-      taskState === TaskState.Completed
-    ) {
-      onClose()
-    }
-  }, [onClose, taskState, taskType])
+  // useEffect(() => {
+  //   if (
+  //     taskType === TaskType.InitializeAccount &&
+  //     taskState === TaskState.Completed
+  //   ) {
+  //     onClose()
+  //   }
+  // }, [onClose, taskState, taskType])
 
   return (
     <>
