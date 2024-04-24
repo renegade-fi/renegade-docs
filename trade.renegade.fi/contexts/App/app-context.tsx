@@ -1,6 +1,13 @@
 "use client"
 
-import { disconnect, useConfig } from "@sehyunchung/renegade-react"
+import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
+import { fundList, fundWallet } from "@/lib/utils"
+import {
+  connect,
+  disconnect,
+  useConfig,
+  useStatus,
+} from "@sehyunchung/renegade-react"
 import {
   PropsWithChildren,
   createContext,
@@ -9,6 +16,9 @@ import {
   useRef,
   useState,
 } from "react"
+import { toast } from "sonner"
+import { useLocalStorage } from "usehooks-ts"
+import { Hex } from "viem"
 import { useAccount } from "wagmi"
 
 export enum ViewEnum {
@@ -21,6 +31,7 @@ export interface AppContextValue {
   setView: (view: ViewEnum) => void
   tokenIcons: Record<string, string>
   view: ViewEnum
+  onSignin: (seed: Hex) => Promise<void>
 }
 
 const AppStateContext = createContext<AppContextValue | undefined>(undefined)
@@ -30,10 +41,14 @@ function AppProvider({
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
-  const { address } = useAccount()
-  const config = useConfig()
-  const prevAddressRef = useRef<string>()
 
+  const config = useConfig()
+
+  const { address } = useAccount()
+  const [funded] = useLocalStorage(`funded_${address}`, false)
+  const status = useStatus()
+
+  const prevAddressRef = useRef<string>()
   useEffect(() => {
     if (
       prevAddressRef.current &&
@@ -45,9 +60,40 @@ function AppProvider({
     prevAddressRef.current = address
   }, [address, config])
 
+  const { executeTaskWithToast } = useTaskCompletionToast()
+  useEffect(() => {
+    if (funded || status !== "in relayer") return
+    toast.promise(
+      fundWallet(
+        [
+          { ticker: "WETH", amount: "10" },
+          { ticker: "USDC", amount: "1000000" },
+        ],
+        address!
+      ),
+      {
+        loading: "Funding account...",
+        success: "Your account has been funded with test funds.",
+        error:
+          "Funding failed: An unexpected error occurred. Please try again.",
+      }
+    )
+
+    // Fund additional wallets in background
+    fundWallet(fundList, address!)
+  }, [address, funded, status])
+
+  const handleSignin = async (seed: Hex) => {
+    const res = await connect(config, { seed })
+    if (res?.taskId) {
+      await executeTaskWithToast(res.taskId, "Connecting...")
+    }
+  }
+
   return (
     <AppStateContext.Provider
       value={{
+        onSignin: handleSignin,
         setView,
         tokenIcons: tokenIcons || {},
         view,
