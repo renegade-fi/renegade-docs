@@ -9,7 +9,7 @@ import {
   cancelOrder,
   formatAmount,
   useConfig,
-  useNetworkOrders,
+  useOrderBook,
   useOrders,
   useStatus,
 } from "@sehyunchung/renegade-react"
@@ -237,7 +237,7 @@ function OrdersPanel(props: OrdersPanelProps) {
 }
 
 function OrderBookPanel() {
-  const networkOrders = useNetworkOrders()
+  const networkOrders = useOrderBook()
   const orders = useOrders()
 
   const matchedOrders = useMatchedOrders()
@@ -342,7 +342,7 @@ function OrderBookPanel() {
 }
 
 function CounterpartiesPanel() {
-  const globalOrders = useNetworkOrders()
+  const globalOrders = useOrderBook()
   return (
     <Flex
       position="relative"
