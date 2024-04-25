@@ -12,13 +12,13 @@ export const stylusDevnetEc2 = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["http://15.223.66.93:8547"],
+      http: ["https://sequencer.renegade.fi/"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],
     },
     public: {
-      http: ["http://15.223.66.93:8547"],
+      http: ["https://sequencer.renegade.fi/"],
       webSocket: [
         "wss://mainnet.infura.io/ws/v3/68c04ec6f9ce42c5becbed52a464ef81",
       ],
