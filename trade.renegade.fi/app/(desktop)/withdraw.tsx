@@ -24,7 +24,7 @@ export function WithdrawBody() {
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
-  const [base] = useLocalStorage("base", "WBTC", {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
