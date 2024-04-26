@@ -1,32 +1,36 @@
-import { Exchange } from "@renegade-fi/renegade-js"
 import { useEffect, useState } from "react"
 
-import { usePrice } from "@/contexts/PriceContext/price-context"
+import {
+  DEFAULT_QUOTE,
+  usePrice as usePriceContext,
+} from "@/contexts/PriceContext/price-context"
+import { Exchange } from "@sehyunchung/renegade-react"
+import { Address } from "viem"
 
-const THRESHOLD = 60 * 1000 // 1 minute
-
-export const useExchangePrice = (
+export const usePrice = (
   exchange: Exchange,
-  base: string,
-  quote: string
+  base: Address,
+  quote: Address = DEFAULT_QUOTE[exchange]
 ) => {
-  const [price, setPrice] = useState(0)
+  // const prevBase = usePrevious(base)
+  const { handleSubscribe, handleGetPrice, handleGetInitialPrice } =
+    usePriceContext()
+  const [price, setPrice] = useState(() => handleGetInitialPrice(base))
 
-  const { handleSubscribe, handleGetPrice, handleGetLastUpdate } = usePrice()
   const priceReport = handleGetPrice(exchange, base, quote)
+
+  useEffect(() => {
+    setPrice(0)
+  }, [base])
+
   useEffect(() => {
     if (!priceReport) return
     setPrice(priceReport)
   }, [priceReport])
+
   useEffect(() => {
-    handleSubscribe(exchange, base, quote, 2)
-  }, [base, handleSubscribe, quote, exchange])
+    handleSubscribe(exchange, base)
+  }, [base, exchange, handleSubscribe])
 
-  const lastUpdate = handleGetLastUpdate(exchange, base, quote)
-  let state: "live" | "stale" | "idle" = "idle"
-  if (lastUpdate) {
-    state = lastUpdate < Date.now() - THRESHOLD ? "stale" : "live"
-  }
-
-  return { price, state }
+  return price
 }

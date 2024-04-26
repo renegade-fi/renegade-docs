@@ -8,7 +8,7 @@ import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 
 export function RelayerStatusData() {
   const [ping, setPing] = useState("loading")
-  const [base] = useLocalStorage("base", "REN", { initializeWithValue: false })
+  const [base] = useLocalStorage("base", "WETH", { initializeWithValue: false })
   const [quote] = useLocalStorage("quote", "USDC", {
     initializeWithValue: false,
   })

@@ -1,7 +1,6 @@
 "use client"
 
 import { Box, Stack, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
 
 import { LivePrices } from "@/components/live-price"
 
@@ -43,7 +42,7 @@ export function TokensBanner({ prices }: { prices: number[] }) {
               isMobile
               baseTicker={baseTicker}
               quoteTicker={quoteTicker}
-              exchange={Exchange.Median}
+              exchange="binance"
               initialPrice={prices[i]}
             />
           </Stack>

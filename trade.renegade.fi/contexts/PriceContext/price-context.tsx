@@ -1,4 +1,10 @@
-import { Exchange, PriceReporterWs, Token } from "@renegade-fi/renegade-js"
+import {
+  Exchange,
+  PRICE_REPORTER_TOPIC,
+  Token,
+  WebSocketManager,
+  useConfig,
+} from "@sehyunchung/renegade-react"
 import React, {
   createContext,
   useContext,
@@ -7,107 +13,121 @@ import React, {
   useState,
 } from "react"
 
-import { env } from "@/env.mjs"
+import { Address } from "viem"
 
-const PriceContext = createContext<{
-  priceReporter: PriceReporterWs | null
-  handleSubscribe: (
-    exchange: Exchange,
-    base: string,
-    quote: string,
-    decimals: number
-  ) => void
+export const DEFAULT_QUOTE: Record<Exchange, Address> = {
+  binance: Token.findByTicker("USDT").address,
+  coinbase: Token.findByTicker("USDC").address,
+  kraken: "0x0000000000000000000000000000000000000000" as Address,
+  okx: Token.findByTicker("USDT").address,
+}
+
+type PriceContextValue = {
+  handleSubscribe: (exchange: Exchange, base: Address, quote?: Address) => void
   handleGetPrice: (
     exchange: Exchange,
-    base: string,
-    quote: string
+    base: Address,
+    quote?: Address
   ) => number | undefined
   handleGetLastUpdate: (
     exchange: Exchange,
-    base: string,
-    quote: string
+    base: Address,
+    quote?: Address
   ) => number | undefined
-} | null>(null)
+  handleGetInitialPrice: (base: Address, quote?: Address) => number
+}
 
-const invalid = ["USDT", "BUSD", "CBETH", "RNG"]
+const PriceContext = createContext<PriceContextValue | null>(null)
+
+const invalid = [Token.findByTicker("USDT").address]
 
 export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
-  const [priceReporter, setPriceReporter] = useState<PriceReporterWs | null>(
+  const { getPriceReporterBaseUrl } = useConfig()
+  const [priceReporter, setPriceReporter] = useState<WebSocketManager | null>(
     null
   )
   const [prices, setPrices] = useState<Record<string, number>>({})
   const lastUpdateRef = useRef<Record<string, number>>({})
   const [attempted, setAttempted] = useState<Record<string, boolean>>({})
+  const initialPrice = useRef<Record<string, number>>({})
   useEffect(() => {
-    const priceReporter = new PriceReporterWs(
-      env.NEXT_PUBLIC_PRICE_REPORTER_URL
-    )
-    setPriceReporter(priceReporter)
-    return () => {
-      priceReporter.teardown()
+    if (!priceReporter) {
+      setPriceReporter(new WebSocketManager(getPriceReporterBaseUrl()))
+    } else {
+      priceReporter.connect()
     }
-  }, [])
+    return () => {
+      if (priceReporter) {
+        priceReporter.close()
+      }
+    }
+  }, [getPriceReporterBaseUrl, priceReporter])
 
   const handleSubscribe = (
     exchange: Exchange,
-    base: string,
-    quote: string,
-    decimals: number
+    base: Address,
+    quote: Address = DEFAULT_QUOTE[exchange]
   ) => {
     if (!priceReporter || invalid.includes(base)) return
 
-    const topic = getTopic(exchange, base, quote)
+    const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     if (attempted[topic]) return
 
-    priceReporter.subscribeToTokenPair(
-      exchange,
-      new Token({ ticker: base }),
-      new Token({ ticker: quote || "USDT" }),
-      (price) => {
-        const now = Date.now()
-        const lastUpdateTime = lastUpdateRef.current[topic] || 0
+    priceReporter.subscribe(topic, (price) => {
+      const now = Date.now()
+      const lastUpdateTime = lastUpdateRef.current[topic] || 0
 
-        const randomThreshold = Math.random() * 1000 + 200
-        if (now - lastUpdateTime < randomThreshold) {
-          return
-        }
-
-        setPrices((prevPrices) => {
-          if (
-            prevPrices[topic]?.toFixed(decimals) !==
-            Number(price).toFixed(decimals)
-          ) {
-            return { ...prevPrices, [topic]: Number(price) }
-          }
-          return prevPrices
-        })
-        lastUpdateRef.current[topic] = now
+      const randomThreshold = Math.random() * 1000 + 200
+      if (now - lastUpdateTime < randomThreshold) {
+        return
       }
-    )
+
+      setPrices((prevPrices) => {
+        if (prevPrices[topic] !== Number(price)) {
+          return { ...prevPrices, [topic]: Number(price) }
+        }
+        return prevPrices
+      })
+      if (!initialPrice.current[`${base}-${quote}`]) {
+        initialPrice.current[`${base}-${quote}`] = Number(price)
+      }
+      lastUpdateRef.current[topic] = now
+    })
     setAttempted((prev) => ({ ...prev, [topic]: true }))
   }
 
-  const handleGetPrice = (exchange: Exchange, base: string, quote: string) => {
-    const topic = getTopic(exchange, base, quote)
+  const handleGetPrice = (
+    exchange: Exchange,
+    base: Address,
+    quote: Address = DEFAULT_QUOTE[exchange]
+  ) => {
+    const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     return prices[topic]
   }
 
   const handleGetLastUpdate = (
     exchange: Exchange,
-    base: string,
-    quote: string
+    base: Address,
+    quote: Address = DEFAULT_QUOTE[exchange]
   ) => {
-    const topic = getTopic(exchange, base, quote)
+    const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     return lastUpdateRef.current[topic]
+  }
+
+  const handleGetInitialPrice = (
+    base: Address,
+    quote: Address = DEFAULT_QUOTE["binance"]
+  ) => {
+    return initialPrice.current[`${base}-${quote}`] ?? 0
   }
 
   return (
     <PriceContext.Provider
       value={{
-        priceReporter,
         handleSubscribe,
         handleGetPrice,
         handleGetLastUpdate,
+        handleGetInitialPrice,
       }}
     >
       {children}
@@ -121,8 +141,4 @@ export const usePrice = () => {
     throw new Error("usePrice must be used within a PriceProvider")
   }
   return context
-}
-
-function getTopic(exchange: Exchange, base: string, quote: string) {
-  return `${exchange}-${base}-${quote}`
 }

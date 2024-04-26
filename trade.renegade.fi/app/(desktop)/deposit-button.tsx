@@ -37,7 +37,7 @@ export default function DepositButton({
 }: {
   baseTokenAmount: string
 }) {
-  const [base] = useLocalStorage("base", "MATIC", {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   const {

@@ -2,14 +2,13 @@
 
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { Stack, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
 import { useLocalStorage } from "usehooks-ts"
 
 import Marquee from "@/components/banners/marquee"
 import { LivePrices } from "@/components/live-price"
 
 export function TokensBanner({}: { prices?: number[] }) {
-  const [_, setBaseToken] = useLocalStorage("base", "UNI", {
+  const [_, setBaseToken] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   return (
@@ -42,7 +41,7 @@ export function TokensBanner({}: { prices?: number[] }) {
             <LivePrices
               baseTicker={baseTicker}
               quoteTicker={quoteTicker}
-              exchange={Exchange.Binance}
+              exchange="binance"
             />
           </Stack>
         )
