@@ -1,11 +1,12 @@
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { Box, Flex, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo } from "react"
 
-import { usePrice } from "@/contexts/PriceContext/price-context"
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 
+import { usePrevious } from "@/hooks/use-previous"
+import { usePrice } from "@/hooks/use-price"
+import { Token, type Exchange } from "@sehyunchung/renegade-react"
 import { BannerSeparator } from "./banner-separator"
 
 interface LivePricesProps {
@@ -26,7 +27,6 @@ export const LivePrices = ({
   quoteTicker,
   isMobile,
   onlyShowPrice,
-  initialPrice = 0,
   scaleBy,
   shouldRotate,
   withCommas,
@@ -43,28 +43,16 @@ export const LivePrices = ({
       return Math.abs(baseDefaultDecimals) + 2
     }
   }, [baseDefaultDecimals, baseTicker, quoteTicker])
-  const [price, setPrice] = useState(initialPrice)
-  const [prevPrice, setPrevPrice] = useState(price)
 
-  const { handleSubscribe, handleGetPrice } = usePrice()
-  const priceReport = handleGetPrice(exchange, baseTicker, quoteTicker)
-  useEffect(() => {
-    if (!priceReport) return
-    setPrice((prev) => {
-      setPrevPrice(prev)
-      return priceReport
-    })
-  }, [priceReport])
-  useEffect(() => {
-    handleSubscribe(exchange, baseTicker, quoteTicker, trailingDecimals)
-  }, [baseTicker, exchange, handleSubscribe, quoteTicker, trailingDecimals])
+  const price = usePrice(exchange, Token.findByTicker(baseTicker).address)
+  const prevPrice = usePrevious(price)
 
   // Given the previous and current price reports, determine the displayed
   // price and red/green fade class
   let priceStrClass = ""
-  if (prevPrice && price > prevPrice) {
+  if (prevPrice && price && price > prevPrice) {
     priceStrClass = "fade-green-to-white"
-  } else if (prevPrice && price < prevPrice) {
+  } else if (prevPrice && price && price < prevPrice) {
     priceStrClass = "fade-red-to-white"
   }
 

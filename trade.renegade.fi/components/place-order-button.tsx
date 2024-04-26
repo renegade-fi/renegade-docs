@@ -5,9 +5,8 @@ import { Direction, LocalOrder } from "@/lib/types"
 import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
-import { Token } from "@sehyunchung/renegade-react"
 import {
+  Token,
   createOrder,
   formatAmount,
   parseAmount,
@@ -39,7 +38,7 @@ export function PlaceOrderButton({
     onOpen: onOpenSignIn,
     onClose: onCloseSignIn,
   } = useDisclosure()
-  const [base] = useLocalStorage("base", "LINK", {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   const baseToken = Token.findByTicker(base)
@@ -130,14 +129,14 @@ export function PlaceOrderButton({
 
   const [price, setPrice] = useState(0)
   const { handleSubscribe, handleGetPrice } = usePrice()
-  const priceReport = handleGetPrice(Exchange.Binance, base, quote)
+  const priceReport = handleGetPrice("binance", baseAddress, quoteAddress)
   useEffect(() => {
     if (!priceReport) return
     setPrice(priceReport)
   }, [priceReport])
   useEffect(() => {
-    handleSubscribe(Exchange.Binance, base, quote, 2)
-  }, [base, quote, handleSubscribe])
+    handleSubscribe("binance", baseAddress, quoteAddress)
+  }, [baseAddress, quoteAddress, handleSubscribe])
   let placeOrderButtonContent: string
   if (shouldUse) {
     placeOrderButtonContent = buttonText

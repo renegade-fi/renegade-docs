@@ -25,7 +25,7 @@ export function DepositBody() {
     onClose: onCloseTokenMenu,
   } = useDisclosure()
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
-  const [base] = useLocalStorage("base", "MATIC", {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
 

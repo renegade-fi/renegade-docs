@@ -205,7 +205,7 @@ const queryClient = new QueryClient()
 
 export const renegadeConfig = createSDKConfig({
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  priceReporterUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+  priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
   ssr: true,
 })
 

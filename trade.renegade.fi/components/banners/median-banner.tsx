@@ -1,15 +1,24 @@
 "use client"
 
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
-import { Exchange, Token } from "@renegade-fi/renegade-js"
+import { Token } from "@renegade-fi/renegade-js"
+import type { Exchange } from "@sehyunchung/renegade-react"
+import { Token as NewToken } from "@sehyunchung/renegade-react"
 import React from "react"
 import { useLocalStorage } from "usehooks-ts"
-
-import { useExchangePrice } from "@/hooks/use-price"
 
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
+import { usePrice } from "@/contexts/PriceContext/price-context"
+
+enum ConnectionState {
+  Live = "live",
+  Stale = "stale",
+  Loading = "loading",
+}
+
+const STALE_THRESHOLD = 60_000 // 60 seconds
 
 function LinkWrapper(props: {
   link?: string
@@ -91,62 +100,40 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     median: "",
   }[props.exchange]
 
-  // Test if price state is accurate
-  const { state } = useExchangePrice(
+  const { handleGetLastUpdate } = usePrice()
+  const lastUpdate = handleGetLastUpdate(
     props.exchange,
-    props.activeBaseTicker,
-    props.activeQuoteTicker
+    NewToken.findByTicker(props.activeBaseTicker).address
   )
 
-  // let healthState = props.priceReport.healthState
-  let showPrice = true
-  let connectionText: string = state === "stale" ? "STALE" : "LIVE"
-  let textVariant: string = state === "stale" ? "status-red" : "status-green"
-  // If exchange is not supported, modify accordingly
-  // if (props.exchange === Exchange.Uniswapv3) {
-  //   showPrice = false
-  //   connectionText = "UNSUPPORTED"
-  //   textVariant = "status-gray"
-  // }
-  // If incoming price is stale (longer than 1 minute), modify accordingly
+  let state: ConnectionState
+  if (!lastUpdate) {
+    state = ConnectionState.Loading
+  } else {
+    state =
+      Date.now() - lastUpdate > STALE_THRESHOLD
+        ? ConnectionState.Stale
+        : ConnectionState.Live
+  }
 
-  // if (healthState === HealthState.enum.Connecting) {
-  //   showPrice = true
-  //   connectionText = "LIVE"
-  //   textVariant = "status-green"
-  // } else if (healthState === HealthState.enum.Unsupported) {
-  //   showPrice = false
-  //   connectionText = "UNSUPPORTED"
-  //   textVariant = "status-gray"
-  // } else if (healthState === HealthState.enum.Live) {
-  //   showPrice = true
-  //   connectionText = "LIVE"
-  //   textVariant = "status-green"
-  // } else if (healthState === HealthState.enum.NoDataReported) {
-  //   showPrice = false
-  //   connectionText = "NO DATA"
-  //   textVariant = "status-gray"
-  // } else if (healthState === HealthState.enum.TooStale) {
-  //   showPrice = false
-  //   connectionText = "TOO STALE"
-  //   textVariant = "status-red"
-  // } else if (healthState === HealthState.enum.NotEnoughData) {
-  //   showPrice = false
-  //   connectionText = "NOT ENOUGH DATA"
-  //   textVariant = "status-gray"
-  // } else if (healthState === HealthState.enum.TooMuchDeviation) {
-  //   showPrice = false
-  //   connectionText = "TOO MUCH DEVIATION"
-  //   textVariant = "status-red"
-  // } else {
-  //   throw new Error("Invalid health state: " + healthState)
-  // }
+  const connectionText =
+    state === ConnectionState.Stale
+      ? "STALE"
+      : state === ConnectionState.Loading
+      ? "LOADING"
+      : "LIVE"
+  const textVariant =
+    state === ConnectionState.Stale
+      ? "status-red"
+      : state === ConnectionState.Loading
+      ? "status-gray"
+      : "status-green"
 
   const pulseState = {
-    "status-green": "live",
-    "status-gray": "loading",
-    "status-red": "dead",
-  }[textVariant] as "live" | "loading" | "dead"
+    [ConnectionState.Live]: "live",
+    [ConnectionState.Loading]: "loading",
+    [ConnectionState.Stale]: "dead",
+  }[state] as "live" | "loading" | "dead"
 
   return (
     <LinkWrapper link={link} isMobile={props.isMobile}>
@@ -154,15 +141,13 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
         {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
       </Text>
       <BannerSeparator flexGrow={1} />
-      {showPrice && (
-        <LivePrices
-          baseTicker={props.activeBaseTicker}
-          quoteTicker={props.activeQuoteTicker}
-          exchange={props.exchange}
-          isMobile={props.isMobile}
-          initialPrice={props.initialPrice}
-        />
-      )}
+      <LivePrices
+        baseTicker={props.activeBaseTicker}
+        quoteTicker={props.activeQuoteTicker}
+        exchange={props.exchange}
+        isMobile={props.isMobile}
+        initialPrice={props.initialPrice}
+      />
       <Stack
         alignItems="center"
         justifyContent="center"
@@ -190,7 +175,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
 }
 
 export function MedianBannerWrapper() {
-  const [base] = useLocalStorage("base", "DYDX", {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   const [quote] = useLocalStorage("quote", "USDC", {
@@ -473,32 +458,32 @@ export class MedianBanner extends React.Component<
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
-                exchange={Exchange.Binance}
-                initialPrice={this.props.report?.[Exchange.Binance]}
+                exchange="binance"
+                initialPrice={this.props.report?.["binance"]}
                 isMobile={this.props.isMobile}
               />
               <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
-                exchange={Exchange.Coinbase}
-                initialPrice={this.props.report?.[Exchange.Coinbase]}
+                exchange="coinbase"
+                initialPrice={this.props.report?.["coinbase"]}
                 isMobile={this.props.isMobile}
               />
               <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
-                exchange={Exchange.Kraken}
-                initialPrice={this.props.report?.[Exchange.Kraken]}
+                exchange="kraken"
+                initialPrice={this.props.report?.["kraken"]}
                 isMobile={this.props.isMobile}
               />
               <BannerSeparator />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
-                exchange={Exchange.Okx}
-                initialPrice={this.props.report?.[Exchange.Okx]}
+                exchange="okx"
+                initialPrice={this.props.report?.["okx"]}
                 isMobile={this.props.isMobile}
               />
               <Spacer flexGrow="2" />
