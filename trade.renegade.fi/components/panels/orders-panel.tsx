@@ -1,16 +1,19 @@
 "use client"
 
 import { useApp } from "@/contexts/App/app-context"
+import { getReadableState } from "@/lib/utils"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   NetworkOrder,
+  OrderState,
   Token,
   UseOrdersReturnType,
   cancelOrder,
   formatAmount,
   useConfig,
   useOrderBook,
+  useOrderHistory,
   useOrders,
   useStatus,
 } from "@renegade-fi/react"
@@ -30,40 +33,55 @@ import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
-  amount: string
+  amount: bigint
   baseAddr: Address
+  filled: bigint
   id: string
   quoteAddr: Address
   side: string
-  matched?: boolean
+  state: OrderState
 }
 function SingleOrder({
   amount,
   baseAddr,
+  filled,
   id,
   quoteAddr,
   side,
-  matched,
+  state,
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
   const config = useConfig()
 
   const base = Token.findByAddress(baseAddr).ticker
   const quote = Token.findByAddress(quoteAddr).ticker
+  const formattedAmount = formatAmount(amount, Token.findByAddress(baseAddr))
+  const formattedRemaining = formatAmount(
+    BigInt(amount) - BigInt(filled),
+    Token.findByAddress(baseAddr)
+  )
+  const formattedState = getReadableState(state)
+
+  const shouldShowFill =
+    (state === OrderState.Created ||
+      state === OrderState.Matching ||
+      state === OrderState.SettlingMatch) &&
+    filled &&
+    filled !== amount
+
+  const isCancellable = [OrderState.Created, OrderState.Matching].includes(
+    state
+  )
 
   const handleCancel = async () => {
     await cancelOrder(config, { id })
       .then(() => {
         toast.message(
-          `Started to cancel order to ${
-            side === "buy" ? "Buy" : "Sell"
-          } ${amount} ${base}`,
-          {
-            description: `Check the history tab for the status of the task`,
-          }
+          `Cancelling order to ${side.toLowerCase()} ${formattedAmount} ${base}`
         )
       })
       .catch((e) => {
+        console.error(`Error cancelling order ${id}`)
         toast.error(`Error cancelling order: ${e.response.data ?? e.message}`)
       })
   }
@@ -71,9 +89,10 @@ function SingleOrder({
   return (
     <Flex
       alignItems="center"
-      justifyContent="space-evenly"
-      gap="4px"
-      padding="4%"
+      justifyContent="space-between"
+      gap="4%"
+      width="100%"
+      height="64px"
       color="white.60"
       borderColor="white.20"
       borderBottom="var(--secondary-border)"
@@ -83,8 +102,9 @@ function SingleOrder({
       }}
       transition="all 0.2s"
       filter="grayscale(1)"
+      paddingX="4%"
     >
-      <Text fontFamily="Favorit">{matched ? "Matched" : "Open"}</Text>
+      <Text fontFamily="Favorit">{formattedState}</Text>
       <Box position="relative" width="45px" height="40px">
         <Image
           width="25px"
@@ -103,8 +123,11 @@ function SingleOrder({
         />
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
-        <Text fontSize="1.1em" lineHeight="1">
-          {amount} {base}
+        <Text lineHeight="1">
+          {shouldShowFill
+            ? `${formattedRemaining} / ${formattedAmount}`
+            : formattedAmount}{" "}
+          {base}
         </Text>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
           {side.toUpperCase()}
@@ -120,7 +143,7 @@ function SingleOrder({
           background: "white.10",
         }}
       /> */}
-      {!matched ? (
+      {isCancellable ? (
         <SmallCloseIcon
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
@@ -141,14 +164,12 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const orders = useOrders()
+  const orderHistory = useOrderHistory({ sort: "desc" })
   const status = useStatus()
   const isConnected = status === "in relayer"
 
-  const matchedOrders = useMatchedOrders()
-
   const Content = useMemo(() => {
-    if (!isConnected || (!orders.length && !matchedOrders.length)) {
+    if (!isConnected || !orderHistory.length) {
       return (
         <Text
           margin="auto"
@@ -173,32 +194,23 @@ function OrdersPanel(props: OrdersPanelProps) {
           padding: "0 8px",
         }}
       >
-        {matchedOrders.map((order) => (
-          <Box key={order.id} width="100%">
+        {orderHistory.map((order) => {
+          return (
             <SingleOrder
-              amount={order.amount}
-              baseAddr={order.base as Address}
+              key={order.id}
+              amount={order.data.amount}
+              filled={order.filled}
+              baseAddr={order.data.base_mint}
               id={order.id}
-              quoteAddr={order.quote as Address}
-              side={order.side}
-              matched
+              quoteAddr={order.data.quote_mint}
+              side={order.data.side}
+              state={order.state}
             />
-          </Box>
-        ))}
-        {orders.map(({ amount, base_mint, id: orderId, quote_mint, side }) => (
-          <Box key={orderId} width="100%">
-            <SingleOrder
-              amount={formatAmount(amount, Token.findByAddress(base_mint))}
-              baseAddr={base_mint}
-              id={orderId}
-              quoteAddr={quote_mint}
-              side={side}
-            />
-          </Box>
-        ))}
+          )
+        })}
       </SimpleBar>
     )
-  }, [isConnected, matchedOrders, orders])
+  }, [isConnected, orderHistory])
 
   return (
     <>
