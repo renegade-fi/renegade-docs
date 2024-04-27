@@ -1,4 +1,4 @@
-import { NextResponse, userAgent, type NextRequest } from "next/server"
+import { type NextRequest, NextResponse, userAgent } from "next/server"
 
 export function middleware(request: NextRequest) {
   const { device } = userAgent(request)

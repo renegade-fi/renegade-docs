@@ -1,4 +1,7 @@
+import { formatAmount, parseAmount } from "@/lib/utils"
+import { stylusDevnetEc2 } from "@/lib/viem"
 import { Token } from "@renegade-fi/renegade-js"
+import { publicClient } from "@sehyunchung/renegade-react"
 import {
   PrivateKeyAccount,
   createWalletClient,
@@ -8,10 +11,6 @@ import {
   parseEther,
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
-
-import { formatAmount, parseAmount } from "@/lib/utils"
-import { stylusDevnetEc2 } from "@/lib/viem"
-import { publicClient } from "@sehyunchung/renegade-react"
 
 export const maxDuration = 300
 

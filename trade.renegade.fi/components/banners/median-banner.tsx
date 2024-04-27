@@ -1,5 +1,6 @@
 "use client"
 
+import { usePrice } from "@/contexts/PriceContext/price-context"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/renegade-js"
 import type { Exchange } from "@sehyunchung/renegade-react"
@@ -10,7 +11,6 @@ import { useLocalStorage } from "usehooks-ts"
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
-import { usePrice } from "@/contexts/PriceContext/price-context"
 
 enum ConnectionState {
   Live = "live",

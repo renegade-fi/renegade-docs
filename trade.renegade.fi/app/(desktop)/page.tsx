@@ -1,11 +1,11 @@
+import { Main } from "@/app/(desktop)/main"
+import backgroundPattern from "@/icons/background_pattern.png"
 import Image from "next/image"
 
-import { Main } from "@/app/(desktop)/main"
 import { MedianBannerWrapper } from "@/components/banners/median-banner"
 import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
-import backgroundPattern from "@/icons/background_pattern.png"
 
 export const dynamic = "force-dynamic"
 

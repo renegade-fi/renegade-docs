@@ -1,6 +1,3 @@
-import { tokenMappings } from "@renegade-fi/renegade-js"
-import { StaticImageData } from "next/image"
-
 import inchLogo from "@/icons/tokens/1inch.png"
 import audioLogo from "@/icons/tokens/audio.png"
 import axsLogo from "@/icons/tokens/axs.png"
@@ -36,6 +33,8 @@ import truLogo from "@/icons/tokens/tru.png"
 import usdtLogo from "@/icons/tokens/usdt.png"
 import wbtcLogo from "@/icons/tokens/wbtc.png"
 import wethLogo from "@/icons/tokens/weth.png"
+import { tokenMappings } from "@renegade-fi/renegade-js"
+import { StaticImageData } from "next/image"
 
 const TOKENLIST_URL =
   "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json"

@@ -1,6 +1,5 @@
 "use client"
 
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 import { fundList, fundWallet } from "@/lib/utils"
 import { connect, disconnect, useConfig } from "@sehyunchung/renegade-react"
 import {
@@ -15,6 +14,8 @@ import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { Hex } from "viem"
 import { useAccount } from "wagmi"
+
+import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 
 export enum ViewEnum {
   TRADING,

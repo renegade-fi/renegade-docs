@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react"
-
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { Token } from "@sehyunchung/renegade-react"
+import { useEffect, useState } from "react"
 
 export const useUSDPrice = (base: string, amount: number) => {
   const [price, setPrice] = useState(0)

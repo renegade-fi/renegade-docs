@@ -1,3 +1,4 @@
+import "@/styles/marquee.css"
 import React, {
   CSSProperties,
   Children,
@@ -13,8 +14,6 @@ import React, {
   useRef,
   useState,
 } from "react"
-
-import "@/styles/marquee.css"
 
 type MarqueeProps = {
   style?: CSSProperties

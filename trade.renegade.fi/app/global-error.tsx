@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-
 import { env } from "@/env.mjs"
 import "@/styles/fonts.css"
+import { useEffect, useState } from "react"
 
 const RELAYER_HOSTNAME =
   env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"

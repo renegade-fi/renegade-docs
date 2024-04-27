@@ -1,8 +1,7 @@
 "use client"
 
-import { Flex, Text, keyframes } from "@chakra-ui/react"
-
 import { Direction } from "@/lib/types"
+import { Flex, Text, keyframes } from "@chakra-ui/react"
 import { useLocalStorage } from "usehooks-ts"
 
 interface BlurredOverlayProps {

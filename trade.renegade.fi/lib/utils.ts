@@ -1,9 +1,8 @@
+import { env } from "@/env.mjs"
+import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { Balance, BalanceId, Renegade, Token } from "@renegade-fi/renegade-js"
 import { Metadata } from "next"
 import { formatUnits, isAddress, parseUnits } from "viem"
-
-import { env } from "@/env.mjs"
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
 
 export function safeLocalStorageGetItem(key: string): string | null {
   if (typeof window !== "undefined") {
