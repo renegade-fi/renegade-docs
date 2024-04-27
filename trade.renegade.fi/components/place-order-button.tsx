@@ -1,8 +1,7 @@
 "use client"
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
-import { Direction, LocalOrder } from "@/lib/types"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
@@ -13,7 +12,6 @@ import {
   useBalances,
   useConfig,
   useStatus,
-  useWalletId,
 } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -57,7 +55,6 @@ export function PlaceOrderButton({
   })
 
   const config = useConfig()
-  const walletId = useWalletId()
   const status = useStatus()
 
   const isConnected = status === "in relayer"
@@ -74,29 +71,9 @@ export function PlaceOrderButton({
     })
       .then(() => {
         toast.message(
-          `Started to place order to ${
+          `Creating order to ${
             direction === "buy" ? "Buy" : "Sell"
-          } ${baseTokenAmount} ${base} for ${quote}`,
-          {
-            description: "Check the history tab for the status of the task",
-          }
-        )
-        const old = safeLocalStorageGetItem(`order-details-${walletId}`)
-        const parseOld: LocalOrder[] = old ? JSON.parse(old) : []
-        const newO = [
-          ...parseOld,
-          {
-            id,
-            base: baseAddress,
-            quote: quoteAddress,
-            side: direction,
-            amount: baseTokenAmount,
-            timestamp: Date.now(),
-          },
-        ]
-        safeLocalStorageSetItem(
-          `order-details-${walletId}`,
-          JSON.stringify(newO)
+          } ${baseTokenAmount} ${base} for ${quote}`
         )
       })
       .catch((e) => {
