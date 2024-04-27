@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react"
-
 import {
   DEFAULT_QUOTE,
   usePrice as usePriceContext,
 } from "@/contexts/PriceContext/price-context"
 import { Exchange } from "@sehyunchung/renegade-react"
+import { useEffect, useState } from "react"
 import { Address } from "viem"
 
 export const usePrice = (

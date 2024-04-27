@@ -1,10 +1,8 @@
-import { PriceReporterWs, Renegade } from "@renegade-fi/renegade-js"
-
-import { env } from "@/env.mjs"
-import { getTokenBannerData } from "@/lib/utils"
-
 import { MobileBody } from "./body"
 import { MobileNav } from "./main-nav"
+import { env } from "@/env.mjs"
+import { getTokenBannerData } from "@/lib/utils"
+import { PriceReporterWs, Renegade } from "@renegade-fi/renegade-js"
 
 export const dynamic = "force-dynamic"
 

@@ -1,4 +1,6 @@
+import { useApp } from "@/contexts/App/app-context"
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
+import { chain, publicClient } from "@sehyunchung/renegade-react"
 import { Unplug } from "lucide-react"
 import { verifyMessage } from "viem"
 import {
@@ -8,8 +10,6 @@ import {
 } from "wagmi"
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { useApp } from "@/contexts/App/app-context"
-import { chain, publicClient } from "@sehyunchung/renegade-react"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 

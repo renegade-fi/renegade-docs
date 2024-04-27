@@ -1,5 +1,6 @@
 "use client"
 
+import { useApp } from "@/contexts/App/app-context"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
@@ -19,12 +20,12 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
-
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { useApp } from "@/contexts/App/app-context"
-import { useMatchedOrders } from "@/hooks/use-matched-orders"
 import { toast } from "sonner"
 import { Address } from "viem"
+
+import { useMatchedOrders } from "@/hooks/use-matched-orders"
+
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 
 dayjs.extend(relativeTime)
 

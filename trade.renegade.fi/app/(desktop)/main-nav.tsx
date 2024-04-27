@@ -10,6 +10,11 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import {
+  disconnect as disconnectRenegade,
+  useConfig,
+  useStatus,
+} from "@sehyunchung/renegade-react"
 import { ConnectKitButton } from "connectkit"
 import Image from "next/image"
 import React, { createRef, useEffect, useState } from "react"
@@ -19,14 +24,11 @@ import {
   useEnsName as useEnsNameWagmi,
 } from "wagmi"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { useButton } from "@/hooks/use-button"
+
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+
 import glyphDark from "@/icons/glyph_dark.svg"
-import {
-  disconnect as disconnectRenegade,
-  useConfig,
-  useStatus,
-} from "@sehyunchung/renegade-react"
 
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)

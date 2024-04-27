@@ -1,5 +1,8 @@
 "use client"
 
+import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -9,18 +12,6 @@ import {
 } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
 import { tokenMappings } from "@renegade-fi/renegade-js"
-import { useModal as useModalConnectKit } from "connectkit"
-import Image from "next/image"
-import { useMemo } from "react"
-import SimpleBar from "simplebar-react"
-import "simplebar-react/dist/simplebar.min.css"
-import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
-
-import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
-import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { useUSDPrice } from "@/hooks/use-usd-price"
-import { fundList, fundWallet } from "@/lib/utils"
 import {
   Token,
   formatAmount,
@@ -28,9 +19,19 @@ import {
   useStatus,
   useTaskQueue,
 } from "@sehyunchung/renegade-react"
+import { useModal as useModalConnectKit } from "connectkit"
+import Image from "next/image"
+import { useMemo } from "react"
+import SimpleBar from "simplebar-react"
+import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { Address } from "viem"
+import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
+
+import { useUSDPrice } from "@/hooks/use-usd-price"
+
+import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 
 interface TokenBalanceProps {
   tokenAddr: Address

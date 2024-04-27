@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import React from "react"
-
 import { Providers } from "@/app/providers"
 import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
+import type { Metadata } from "next"
+import React from "react"
+
 import "@/styles/index.css"
 
 export const metadata: Metadata = {

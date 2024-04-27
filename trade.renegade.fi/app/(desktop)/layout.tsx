@@ -1,15 +1,15 @@
-import { Analytics } from "@vercel/analytics/react"
-import React from "react"
-
 import { Footer } from "@/app/(desktop)/footer"
 import { MainNav } from "@/app/(desktop)/main-nav"
 import { Providers } from "@/app/providers"
-import { TokensBanner } from "@/components/banners/tokens-banner"
 import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
 import { constructMetadata } from "@/lib/utils"
 import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
+import { Analytics } from "@vercel/analytics/react"
+import React from "react"
+
+import { TokensBanner } from "@/components/banners/tokens-banner"
 import "@/styles/index.css"
 
 export const metadata = constructMetadata()

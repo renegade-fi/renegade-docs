@@ -1,8 +1,7 @@
+import { useStatus } from "@sehyunchung/renegade-react"
 import { useModal as useModalConnectKit } from "connectkit"
 import { useMemo } from "react"
 import { useAccount as useAccountWagmi } from "wagmi"
-
-import { useStatus } from "@sehyunchung/renegade-react"
 
 export const useButton = ({
   connectText,
