@@ -1,13 +1,13 @@
 "use client"
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
-import { Direction, LocalOrder } from "@/lib/types"
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from "@/lib/utils"
+import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/renegade-js"
-import { Token } from "@sehyunchung/renegade-react"
 import {
+  Order,
+  Token,
   createOrder,
   formatAmount,
   parseAmount,
@@ -63,6 +63,17 @@ export function PlaceOrderButton({
 
   const isConnected = status === "in relayer"
 
+  const [_, setLocalOrders] = useLocalStorage<Record<string, Order>>(
+    `order-history-${walletId}`,
+    {},
+    {
+      initializeWithValue: false,
+      serializer: (value) =>
+        JSON.stringify(value, (_, v) =>
+          typeof v === "bigint" ? v.toString() : v
+        ),
+    }
+  )
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
@@ -82,23 +93,18 @@ export function PlaceOrderButton({
             description: "Check the history tab for the status of the task",
           }
         )
-        const old = safeLocalStorageGetItem(`order-details-${walletId}`)
-        const parseOld: LocalOrder[] = old ? JSON.parse(old) : []
-        const newO = [
-          ...parseOld,
-          {
+        setLocalOrders((prev) => ({
+          ...prev,
+          [id]: {
             id,
-            base: baseAddress,
-            quote: quoteAddress,
-            side: direction,
-            amount: baseTokenAmount,
-            timestamp: Date.now(),
+            side: direction === "buy" ? "Buy" : "Sell",
+            amount: parsedAmount,
+            base_mint: baseAddress,
+            quote_mint: quoteAddress,
+            type: "Midpoint",
+            worst_case_price: "",
           },
-        ]
-        safeLocalStorageSetItem(
-          `order-details-${walletId}`,
-          JSON.stringify(newO)
-        )
+        }))
       })
       .catch((e) => {
         toast.error(`Error placing order: ${e.response.data ?? e.message}`)

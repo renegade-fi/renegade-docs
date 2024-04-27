@@ -23,18 +23,21 @@ import "simplebar-react/dist/simplebar.min.css"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { useApp } from "@/contexts/App/app-context"
 import { useMatchedOrders } from "@/hooks/use-matched-orders"
+import { useOrders as useOrderHistory } from "@/hooks/use-orders"
+import { getReadableState } from "@/lib/utils"
+import { OrderState } from "@sehyunchung/renegade-react"
 import { toast } from "sonner"
 import { Address } from "viem"
 
 dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
-  amount: string
+  amount: bigint
   baseAddr: Address
   id: string
   quoteAddr: Address
   side: string
-  matched?: boolean
+  state: OrderState
 }
 function SingleOrder({
   amount,
@@ -42,7 +45,7 @@ function SingleOrder({
   id,
   quoteAddr,
   side,
-  matched,
+  state,
 }: SingleOrderProps) {
   const { tokenIcons } = useApp()
   const config = useConfig()
@@ -53,26 +56,24 @@ function SingleOrder({
   const handleCancel = async () => {
     await cancelOrder(config, { id })
       .then(() => {
-        toast.message(
-          `Started to cancel order to ${
-            side === "buy" ? "Buy" : "Sell"
-          } ${amount} ${base}`,
-          {
-            description: `Check the history tab for the status of the task`,
-          }
-        )
+        toast.message(`Cancelling order to ${side} ${amount} ${base}`, {
+          description: `Check the history tab for the status of the task`,
+        })
       })
       .catch((e) => {
         toast.error(`Error cancelling order: ${e.response.data ?? e.message}`)
       })
   }
 
+  const formattedAmount = formatAmount(amount, Token.findByAddress(baseAddr))
+
   return (
     <Flex
       alignItems="center"
-      justifyContent="space-evenly"
-      gap="4px"
-      padding="4%"
+      justifyContent="space-between"
+      gap="4%"
+      width="100%"
+      height="64px"
       color="white.60"
       borderColor="white.20"
       borderBottom="var(--secondary-border)"
@@ -82,8 +83,9 @@ function SingleOrder({
       }}
       transition="all 0.2s"
       filter="grayscale(1)"
+      paddingX="4%"
     >
-      <Text fontFamily="Favorit">{matched ? "Matched" : "Open"}</Text>
+      <Text fontFamily="Favorit">{getReadableState(state)}</Text>
       <Box position="relative" width="45px" height="40px">
         <Image
           width="25px"
@@ -103,7 +105,7 @@ function SingleOrder({
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
         <Text fontSize="1.1em" lineHeight="1">
-          {amount} {base}
+          {formattedAmount} {base}
         </Text>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
           {side.toUpperCase()}
@@ -119,7 +121,7 @@ function SingleOrder({
           background: "white.10",
         }}
       /> */}
-      {!matched ? (
+      {state === OrderState.Created ? (
         <SmallCloseIcon
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
@@ -140,14 +142,13 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
-  const orders = useOrders()
+  const orderHistory = useOrderHistory()
+  console.log("🚀 ~ OrdersPanel ~ orderHistory:", orderHistory)
   const status = useStatus()
   const isConnected = status === "in relayer"
 
-  const matchedOrders = useMatchedOrders()
-
   const Content = useMemo(() => {
-    if (!isConnected || (!orders.length && !matchedOrders.length)) {
+    if (!isConnected || !orderHistory.length) {
       return (
         <Text
           margin="auto"
@@ -172,32 +173,29 @@ function OrdersPanel(props: OrdersPanelProps) {
           padding: "0 8px",
         }}
       >
-        {matchedOrders.map((order) => (
-          <Box key={order.id} width="100%">
-            <SingleOrder
-              amount={order.amount}
-              baseAddr={order.base as Address}
-              id={order.id}
-              quoteAddr={order.quote as Address}
-              side={order.side}
-              matched
-            />
-          </Box>
-        ))}
-        {orders.map(({ amount, base_mint, id: orderId, quote_mint, side }) => (
-          <Box key={orderId} width="100%">
-            <SingleOrder
-              amount={formatAmount(amount, Token.findByAddress(base_mint))}
-              baseAddr={base_mint}
-              id={orderId}
-              quoteAddr={quote_mint}
-              side={side}
-            />
-          </Box>
-        ))}
+        {orderHistory.map((order) => {
+          if (
+            order.amount &&
+            order.base_mint &&
+            order.quote_mint &&
+            order.side
+          ) {
+            return (
+              <SingleOrder
+                key={order.id}
+                amount={order.amount}
+                baseAddr={order.base_mint}
+                id={order.id}
+                quoteAddr={order.quote_mint}
+                side={order.side}
+                state={order.state}
+              />
+            )
+          }
+        })}
       </SimpleBar>
     )
-  }, [isConnected, matchedOrders, orders])
+  }, [isConnected, orderHistory])
 
   return (
     <>

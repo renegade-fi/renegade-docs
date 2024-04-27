@@ -4,6 +4,7 @@ import { formatUnits, isAddress, parseUnits } from "viem"
 
 import { env } from "@/env.mjs"
 import { DISPLAYED_TICKERS } from "@/lib/tokens"
+import { OrderState } from "@sehyunchung/renegade-react"
 
 export function safeLocalStorageGetItem(key: string): string | null {
   if (typeof window !== "undefined") {
@@ -250,3 +251,18 @@ export const fundList: { ticker: string; amount: string }[] = [
     amount: "100",
   },
 ]
+
+export const getReadableState = (state: OrderState) => {
+  switch (state) {
+    case OrderState.Created:
+      return "Open"
+    case OrderState.Matching:
+      return "Matching"
+    case OrderState.SettlingMatch:
+      return "Settling"
+    case OrderState.Filled:
+      return "Matched"
+    case OrderState.Cancelled:
+      return "Cancelled"
+  }
+}
