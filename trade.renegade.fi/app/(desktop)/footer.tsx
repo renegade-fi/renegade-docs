@@ -62,10 +62,10 @@ export class Footer extends React.Component<
           alignItems="center"
           gap="30px"
           width="30%"
-          marginLeft="2%"
+          marginLeft="35px"
           userSelect="none"
         >
-          <Box ref={this.state.logoRef}>
+          <Box ref={this.state.logoRef} minWidth="200px">
             <Image alt="Renegade Logo" height="30" src={logoDark} />
           </Box>
           <Link

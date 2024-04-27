@@ -93,10 +93,10 @@ function Glyph(props: GlyphProps) {
       alignItems="center"
       gap="20px"
       width="30%"
-      marginLeft="1.2%"
+      marginLeft="20px"
       userSelect="none"
     >
-      <Box ref={props.glyphRef}>
+      <Box ref={props.glyphRef} minWidth="50px">
         <Image alt="Renegade Logo" height="38" src={glyphDark} />
       </Box>
       <Link
