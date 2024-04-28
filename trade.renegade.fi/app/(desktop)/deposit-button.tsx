@@ -6,17 +6,17 @@ import {
 } from "@/generated"
 import { signPermit2 } from "@/lib/permit2"
 import { Direction } from "@/lib/types"
-import { parseAmount } from "@/lib/utils"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
 import {
+  Token,
   chain,
   deposit,
+  getPkRootScalars,
+  parseAmount,
   useConfig,
   useStatus,
 } from "@sehyunchung/renegade-react"
-import { getPkRootScalars } from "@sehyunchung/renegade-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"
@@ -56,14 +56,14 @@ export default function DepositButton({
   // Get L1 ERC20 balance
   const { data: l1Balance, queryKey: l1BalanceQueryKey } =
     useReadErc20BalanceOf({
-      address: Token.findAddressByTicker(base) as `0x${string}`,
+      address: Token.findByTicker(base).address,
       args: [address ?? "0x"],
     })
 
   // Get L1 ERC20 Allowance
   const { data: allowance, queryKey: allowanceQueryKey } =
     useReadErc20Allowance({
-      address: Token.findAddressByTicker(base) as `0x${string}`,
+      address: Token.findByTicker(base).address,
       args: [
         address ?? "0x",
         env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
@@ -85,7 +85,7 @@ export default function DepositButton({
 
   const hasRpcConnectionError = typeof allowance === "undefined"
   const hasInsufficientBalance = l1Balance
-    ? l1Balance < parseAmount(baseTokenAmount, new Token({ ticker: base }))
+    ? l1Balance < parseAmount(baseTokenAmount, Token.findByTicker(base))
     : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
   const status = useStatus()
@@ -101,7 +101,7 @@ export default function DepositButton({
   const handleApprove = async () => {
     if (!isConnected) return
     await approve({
-      address: Token.findAddressByTicker(base) as `0x${string}`,
+      address: Token.findByTicker(base).address,
       args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
     }).then(() => {
       // TODO: May need to await confirmation
@@ -111,7 +111,7 @@ export default function DepositButton({
 
   const handleSignAndDeposit = async () => {
     if (!walletClient) return
-    const token = new Token({ address: Token.findAddressByTicker(base) })
+    const token = Token.findByTicker(base)
     const amount = parseUnits(baseTokenAmount, 18)
 
     const pkRoot = getPkRootScalars(config)
@@ -128,7 +128,7 @@ export default function DepositButton({
     })
     await deposit(config, {
       fromAddr: walletClient.account.address,
-      mint: `0x${token.address}`,
+      mint: token.address,
       amount,
       permitNonce: nonce,
       permitDeadline: deadline,
@@ -145,7 +145,7 @@ export default function DepositButton({
         }
       })
       .catch((e) => {
-        toast.error(`Error depositing: ${e.response.data ?? e.message}`)
+        toast.error(`Error depositing: ${e?.response?.data ?? e.message}`)
       })
   }
 

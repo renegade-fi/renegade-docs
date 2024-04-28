@@ -29,12 +29,9 @@ dependencies:
   '@emotion/styled':
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
-  '@renegade-fi/renegade-js':
-    specifier: ^0.5.8
-    version: 0.5.8(typescript@5.1.6)
   '@sehyunchung/renegade-react':
-    specifier: ^2.0.20
-    version: 2.0.20(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.16.0)
+    specifier: ^2.0.24
+    version: 2.0.24(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4264,26 +4261,6 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/renegade-js@0.5.8(typescript@5.1.6):
-    resolution: {integrity: sha512-usMecaBjjjzaRDtGmykPD/79VMW2mzCIk/J/wJSOv+W2sois6VKxB9s6+IV5NdyndiK90XzPWp5hWOGC3/pttw==}
-    dependencies:
-      '@noble/hashes': 1.4.0
-      axios: 1.6.8
-      isomorphic-fetch: 3.0.0
-      isomorphic-ws: 5.0.0(ws@8.16.0)
-      json-bigint: 1.0.0
-      uuid: 9.0.1
-      viem: 2.9.16(typescript@5.1.6)(zod@3.22.4)
-      ws: 8.16.0
-      zod: 3.22.4
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - encoding
-      - typescript
-      - utf-8-validate
-    dev: false
-
   /@rushstack/eslint-patch@1.10.2:
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
     dev: true
@@ -4348,11 +4325,11 @@ packages:
       '@scure/base': 1.1.6
     dev: false
 
-  /@sehyunchung/renegade-core@1.0.19(@types/react@18.2.77)(react@18.2.0)(ws@8.16.0):
-    resolution: {integrity: sha512-1cnGU+7YQT9jGBaLmD0pJfbaCiGc3j2Yufn9R1ejmHMp+CfHxGfuGqC3VXpB1iv5eMSFPLs2cRdp1oxyDkP7LA==}
+  /@sehyunchung/renegade-core@1.0.23(@types/react@18.2.77)(react@18.2.0)(ws@8.13.0):
+    resolution: {integrity: sha512-Qdl+2Q/11fuZVw7eeSJKW2Mt6DWDIwuV9ygYPVo4KcoW3Lldfe+t5njspkQ3eFDFfwLDXT1598N9ZX1i+afklw==}
     dependencies:
       axios: 1.6.8
-      isomorphic-ws: 5.0.0(ws@8.16.0)
+      isomorphic-ws: 5.0.0(ws@8.13.0)
       json-bigint: 1.0.0
       tiny-invariant: 1.3.3
       zustand: 4.5.2(@types/react@18.2.77)(react@18.2.0)
@@ -4364,8 +4341,8 @@ packages:
       - ws
     dev: false
 
-  /@sehyunchung/renegade-react@2.0.20(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.16.0):
-    resolution: {integrity: sha512-TqgFMqcPl/H+NNU+mSBxKv8gcGs7/Buofq+OS+FaC7/PXxVElxWRmnIkIvsQ18r3hZO7mDUswGVTSKdBUh/Bog==}
+  /@sehyunchung/renegade-react@2.0.24(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0):
+    resolution: {integrity: sha512-wD++QKshVhh+bdcdICEIspEG9Rkhjbvha0MZKeYan8NGk/Q7S+3rw5ETM14FrJfFkEkoALRb173IOuyzn6ao0A==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
@@ -4374,7 +4351,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@sehyunchung/renegade-core': 1.0.19(@types/react@18.2.77)(react@18.2.0)(ws@8.16.0)
+      '@sehyunchung/renegade-core': 1.0.23(@types/react@18.2.77)(react@18.2.0)(ws@8.13.0)
       '@tanstack/react-query': 5.29.2(react@18.2.0)
       json-bigint: 1.0.0
       react: 18.2.0
@@ -8325,15 +8302,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /isomorphic-fetch@3.0.0:
-    resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
-    dependencies:
-      node-fetch: 2.7.0
-      whatwg-fetch: 3.6.20
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /isomorphic-unfetch@3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
     dependencies:
@@ -8343,12 +8311,12 @@ packages:
       - encoding
     dev: false
 
-  /isomorphic-ws@5.0.0(ws@8.16.0):
+  /isomorphic-ws@5.0.0(ws@8.13.0):
     resolution: {integrity: sha512-muId7Zzn9ywDsyXgTIafTry2sV3nySZeUDe6YedVd1Hvuuep5AsIlqK+XefWpYTyJG5e503F2xIuT2lcU6rCSw==}
     peerDependencies:
       ws: '*'
     dependencies:
-      ws: 8.16.0
+      ws: 8.13.0
     dev: false
 
   /isows@1.0.3(ws@8.13.0):
@@ -11915,19 +11883,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-
-  /ws@8.16.0:
-    resolution: {integrity: sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-    dev: false
 
   /xmlhttprequest-ssl@2.0.0:
     resolution: {integrity: sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==}

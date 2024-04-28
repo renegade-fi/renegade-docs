@@ -1,7 +1,10 @@
-import { formatAmount, parseAmount } from "@/lib/utils"
 import { stylusDevnetEc2 } from "@/lib/viem"
-import { Token } from "@renegade-fi/renegade-js"
-import { publicClient } from "@sehyunchung/renegade-react"
+import {
+  Token,
+  formatAmount,
+  parseAmount,
+  publicClient,
+} from "@sehyunchung/renegade-react"
 import {
   PrivateKeyAccount,
   createWalletClient,
@@ -122,7 +125,7 @@ async function mintTokens(
     transport: http(),
   })
 
-  const token = new Token({ ticker })
+  const token = Token.findByTicker(ticker)
   const tokenAmount = parseAmount(amount, token)
 
   let attempts = 0
@@ -130,7 +133,7 @@ async function mintTokens(
     try {
       const { request: tokenRequest } = await publicClient.simulateContract({
         account,
-        address: Token.findAddressByTicker(ticker) as `0x${string}`,
+        address: Token.findByTicker(ticker).address,
         abi,
         functionName: "mint",
         args: [recipient, tokenAmount],
