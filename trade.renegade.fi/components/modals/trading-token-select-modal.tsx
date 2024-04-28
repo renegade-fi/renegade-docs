@@ -1,6 +1,5 @@
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DISPLAYED_TICKERS, TICKER_TO_NAME } from "@/lib/tokens"
-import { formatAmount } from "@/lib/utils"
 import {
   Box,
   Grid,
@@ -16,9 +15,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { Token as NewToken } from "@sehyunchung/renegade-react"
-import { useBalances } from "@sehyunchung/renegade-react"
+import { Token, formatAmount, useBalances } from "@renegade-fi/react"
 import Image from "next/image"
 import { useMemo, useState } from "react"
 import SimpleBar from "simplebar-react"
@@ -37,10 +34,7 @@ export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const balances = useBalances()
-  const [_, setBase] = useLocalStorage(
-    "base",
-    NewToken.findByTicker("WETH").ticker
-  )
+  const [_, setBase] = useLocalStorage("base", "WETH")
   const filteredTickers = useMemo(() => {
     return DISPLAYED_TICKERS.filter(([ticker]) =>
       ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -50,7 +44,7 @@ export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
     const result: { ticker: string; balance: bigint | undefined }[] = []
     for (const [ticker] of filteredTickers) {
       const balance = balances.find(
-        (b) => b.mint === Token.findAddressByTicker(ticker)
+        (b) => b.mint === Token.findByTicker(ticker).address
       )
       result.push({ ticker, balance: balance?.amount })
     }
@@ -147,7 +141,9 @@ const Row = ({ ticker, onRowClick, balance }: RowProps) => {
   const { tokenIcons } = useApp()
 
   const balanceAmount = useMemo(() => {
-    let result = balance ? formatAmount(balance, new Token({ ticker })) : "0"
+    let result = balance
+      ? formatAmount(balance, Token.findByTicker(ticker))
+      : "0"
 
     // Check if result has decimals and truncate to 2 decimals without rounding
     if (result.includes(".")) {

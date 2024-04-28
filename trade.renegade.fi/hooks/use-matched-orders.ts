@@ -1,9 +1,5 @@
 import { LocalOrder } from "@/lib/types"
-import {
-  useOrderBook,
-  useOrders,
-  useWalletId,
-} from "@sehyunchung/renegade-react"
+import { useOrderBook, useOrders, useWalletId } from "@renegade-fi/react"
 import { useLocalStorage } from "usehooks-ts"
 
 export const useMatchedOrders = () => {

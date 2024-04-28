@@ -1,4 +1,4 @@
-import { Token } from "@renegade-fi/renegade-js"
+import { Token } from "@renegade-fi/react"
 import {
   Address,
   TypedDataDomain,
@@ -76,7 +76,7 @@ export async function signPermit2({
   // Construct Message
   const message = {
     permitted: {
-      token: `0x${token.address}` as `0x${string}`,
+      token: token.address,
       amount,
     },
     spender,

@@ -1,4 +1,4 @@
-import { useStatus } from "@sehyunchung/renegade-react"
+import { useStatus } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import { useMemo } from "react"
 import { useAccount as useAccountWagmi } from "wagmi"

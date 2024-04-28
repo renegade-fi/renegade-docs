@@ -14,7 +14,7 @@ const DISPLAYED_TICKERS = [
   ["LDO", "USDC"],
 ]
 
-export function TokensBanner({ prices }: { prices: number[] }) {
+export function TokensBanner({ prices }: { prices?: number[] }) {
   return (
     <Box
       width="calc(0.75 * var(--banner-height))"
@@ -43,7 +43,7 @@ export function TokensBanner({ prices }: { prices: number[] }) {
               baseTicker={baseTicker}
               quoteTicker={quoteTicker}
               exchange="binance"
-              initialPrice={prices[i]}
+              initialPrice={prices ? prices[i] : undefined}
             />
           </Stack>
         )

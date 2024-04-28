@@ -4,7 +4,7 @@ import { Direction } from "@/lib/types"
 import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
-import { Token } from "@sehyunchung/renegade-react"
+import { Token } from "@renegade-fi/react"
 import React, { createRef, useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 

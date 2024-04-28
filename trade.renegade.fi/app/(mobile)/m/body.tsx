@@ -4,7 +4,7 @@ import { TokensBanner } from "@/app/(mobile)/m/tokens-banner"
 import backgroundPattern from "@/icons/background_pattern.png"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, Flex, HStack, Text } from "@chakra-ui/react"
-import { Exchange } from "@renegade-fi/renegade-js"
+import { Exchange } from "@renegade-fi/react"
 import Image from "next/image"
 
 import { MedianBanner } from "@/components/banners/median-banner"
@@ -75,7 +75,7 @@ export function MobileBody({
   prices,
   report,
 }: {
-  prices: number[]
+  prices?: number[]
   report?: Record<Exchange, number>
 }) {
   return (

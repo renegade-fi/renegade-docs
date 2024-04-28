@@ -4,7 +4,7 @@ import {
   Token,
   WebSocketManager,
   useConfig,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import React, {
   createContext,
   useContext,

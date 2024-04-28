@@ -1,9 +1,7 @@
-import { formatAmount, parseAmount } from "@/lib/utils"
-import { stylusDevnetEc2 } from "@/lib/viem"
-import { Token } from "@renegade-fi/renegade-js"
-import { publicClient } from "@sehyunchung/renegade-react"
+import { Token, chain, formatAmount, parseAmount } from "@renegade-fi/react"
 import {
   PrivateKeyAccount,
+  createPublicClient,
   createWalletClient,
   formatEther,
   http,
@@ -18,6 +16,11 @@ export const maxDuration = 300
 const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
 ])
+
+const publicClient = createPublicClient({
+  chain,
+  transport: http(),
+})
 
 export async function POST(request: Request) {
   if (!process.env.DEV_PRIVATE_KEY) {
@@ -75,7 +78,7 @@ async function fundEth(
 ): Promise<void> {
   const walletClient = createWalletClient({
     account,
-    chain: stylusDevnetEc2,
+    chain,
     transport: http(),
   })
 
@@ -118,11 +121,11 @@ async function mintTokens(
 ): Promise<void> {
   const walletClient = createWalletClient({
     account,
-    chain: stylusDevnetEc2,
+    chain,
     transport: http(),
   })
 
-  const token = new Token({ ticker })
+  const token = Token.findByTicker(ticker)
   const tokenAmount = parseAmount(amount, token)
 
   let attempts = 0
@@ -130,7 +133,7 @@ async function mintTokens(
     try {
       const { request: tokenRequest } = await publicClient.simulateContract({
         account,
-        address: Token.findAddressByTicker(ticker) as `0x${string}`,
+        address: Token.findByTicker(ticker).address,
         abi,
         functionName: "mint",
         args: [recipient, tokenAmount],

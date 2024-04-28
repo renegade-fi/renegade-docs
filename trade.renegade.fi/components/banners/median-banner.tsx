@@ -2,9 +2,8 @@
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import type { Exchange } from "@sehyunchung/renegade-react"
-import { Token as NewToken } from "@sehyunchung/renegade-react"
+import type { Exchange } from "@renegade-fi/react"
+import { Token } from "@renegade-fi/react"
 import React from "react"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -94,16 +93,16 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     coinbase: `https://www.coinbase.com/advanced-trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     kraken: `https://pro.kraken.com/app/trade/${renamedBaseTicker}-${renamedQuoteTicker}`,
     okx: `https://www.okx.com/trade-spot/${renamedBaseTicker}-${renamedQuoteTicker}`,
-    uniswapv3: `https://info.uniswap.org/#/tokens/${Token.findAddressByTicker(
-      props.activeBaseTicker
-    )}`,
+    uniswapv3: `https://info.uniswap.org/#/tokens/${
+      Token.findByTicker(props.activeBaseTicker).address
+    }`,
     median: "",
   }[props.exchange]
 
   const { handleGetLastUpdate } = usePrice()
   const lastUpdate = handleGetLastUpdate(
     props.exchange,
-    NewToken.findByTicker(props.activeBaseTicker).address
+    Token.findByTicker(props.activeBaseTicker).address
   )
 
   let state: ConnectionState

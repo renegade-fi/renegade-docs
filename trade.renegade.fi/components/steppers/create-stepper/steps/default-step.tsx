@@ -1,6 +1,6 @@
 import { useApp } from "@/contexts/App/app-context"
 import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
-import { chain, publicClient } from "@sehyunchung/renegade-react"
+import { useConfig } from "@renegade-fi/react"
 import { Unplug } from "lucide-react"
 import { verifyMessage } from "viem"
 import {
@@ -17,12 +17,14 @@ export function DefaultStep() {
   const { onSignin } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
+  const config = useConfig()
+  const client = config.getViemClient()
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
         // If Cloudflare is down, Smart Contract accounts cannot be verified
         // EOA accounts can be verified using verifyMessage util
-        const valid = await publicClient
+        const valid = await client
           .verifyMessage({
             address: address ?? `0x`,
             message: variables.message,
@@ -67,7 +69,7 @@ export function DefaultStep() {
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
-                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${chain.id}`,
+                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${client.chain?.id}`,
                 })
               }}
             >
