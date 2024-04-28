@@ -129,13 +129,13 @@ export function PlaceOrderButton({
 
   const [price, setPrice] = useState(0)
   const { handleSubscribe, handleGetPrice } = usePrice()
-  const priceReport = handleGetPrice("binance", baseAddress, quoteAddress)
+  const priceReport = handleGetPrice("binance", baseAddress)
   useEffect(() => {
     if (!priceReport) return
     setPrice(priceReport)
   }, [priceReport])
   useEffect(() => {
-    handleSubscribe("binance", baseAddress, quoteAddress)
+    handleSubscribe("binance", baseAddress)
   }, [baseAddress, quoteAddress, handleSubscribe])
   let placeOrderButtonContent: string
   if (shouldUse) {

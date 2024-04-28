@@ -69,6 +69,10 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     if (!priceReporter || invalid.includes(base)) return
 
+    // DYDX is not supported on Coinbase
+    if (exchange === "coinbase" && base === Token.findByTicker("DYDX").address)
+      return
+
     const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     if (attempted[topic]) return
 

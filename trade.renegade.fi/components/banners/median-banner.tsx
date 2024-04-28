@@ -4,7 +4,7 @@ import { usePrice } from "@/contexts/PriceContext/price-context"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import type { Exchange } from "@renegade-fi/react"
 import { Token } from "@renegade-fi/react"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
 import { BannerSeparator } from "@/components/banner-separator"
@@ -15,6 +15,7 @@ enum ConnectionState {
   Live = "live",
   Stale = "stale",
   Loading = "loading",
+  NoData = "no data",
 }
 
 const STALE_THRESHOLD = 60_000 // 60 seconds
@@ -105,26 +106,38 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     Token.findByTicker(props.activeBaseTicker).address
   )
 
-  let state: ConnectionState
-  if (!lastUpdate) {
-    state = ConnectionState.Loading
-  } else {
-    state =
-      Date.now() - lastUpdate > STALE_THRESHOLD
-        ? ConnectionState.Stale
-        : ConnectionState.Live
-  }
+  const [state, setState] = useState<ConnectionState>(ConnectionState.Loading)
+
+  useEffect(() => {
+    if (!lastUpdate) {
+      const timer = setTimeout(() => {
+        if (!lastUpdate) {
+          setState(ConnectionState.NoData)
+        }
+      }, 5000) // 30 seconds
+
+      return () => clearTimeout(timer)
+    } else {
+      const newState =
+        Date.now() - lastUpdate > STALE_THRESHOLD
+          ? ConnectionState.Stale
+          : ConnectionState.Live
+      setState(newState)
+    }
+  }, [lastUpdate])
 
   const connectionText =
     state === ConnectionState.Stale
       ? "STALE"
       : state === ConnectionState.Loading
       ? "LOADING"
+      : state === ConnectionState.NoData
+      ? "NO DATA"
       : "LIVE"
   const textVariant =
     state === ConnectionState.Stale
       ? "status-red"
-      : state === ConnectionState.Loading
+      : state === ConnectionState.Loading || state === ConnectionState.NoData
       ? "status-gray"
       : "status-green"
 
@@ -132,6 +145,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     [ConnectionState.Live]: "live",
     [ConnectionState.Loading]: "loading",
     [ConnectionState.Stale]: "dead",
+    [ConnectionState.NoData]: "loading",
   }[state] as "live" | "loading" | "dead"
 
   return (
