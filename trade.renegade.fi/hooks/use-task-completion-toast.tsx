@@ -1,4 +1,4 @@
-import { useConfig, waitForTaskCompletion } from "@sehyunchung/renegade-react"
+import { useConfig, waitForTaskCompletion } from "@renegade-fi/react"
 import { useRef } from "react"
 import { toast } from "sonner"
 

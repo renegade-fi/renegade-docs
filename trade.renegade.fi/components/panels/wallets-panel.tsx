@@ -11,14 +11,14 @@ import {
   UnlockIcon,
 } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
-import { tokenMappings } from "@renegade-fi/renegade-js"
+import { tokenMapping } from "@renegade-fi/react"
 import {
   Token,
   formatAmount,
   useBalances,
   useStatus,
   useTaskQueue,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
 import { useMemo } from "react"
@@ -223,7 +223,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     const nonzero: Array<[Address, bigint]> = Object.entries(balances).map(
       ([_, b]) => [b.mint, b.amount]
     )
-    const placeholders: Array<[Address, bigint]> = tokenMappings.tokens
+    const placeholders: Array<[Address, bigint]> = tokenMapping.tokens
       .filter((t) => !nonzero.some(([a]) => a === t.address))
       .map((t) => [t.address as Address, BigInt(0)])
 

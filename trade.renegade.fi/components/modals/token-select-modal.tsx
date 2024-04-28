@@ -18,8 +18,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/renegade-js"
-import { Token as NewToken } from "@sehyunchung/renegade-react"
+import { Token } from "@renegade-fi/react"
 import { useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
 import { useEffect, useMemo, useState } from "react"
@@ -37,10 +36,7 @@ interface TokenSelectModalProps {
   onClose: () => void
 }
 export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
-  const [_, setBase] = useLocalStorage(
-    "base",
-    NewToken.findByTicker("WETH").ticker
-  )
+  const [_, setBase] = useLocalStorage("base", "WETH")
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
@@ -55,7 +51,7 @@ export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
       const result: { base: string; balance: bigint }[] = []
       for (const [ticker] of DISPLAYED_TICKERS) {
         const balance = await readErc20BalanceOf(wagmiConfig, {
-          address: Token.findAddressByTicker(ticker) as `0x${string}`,
+          address: Token.findByTicker(ticker).address,
           args: [address ?? "0x"],
         })
         result.push({ base: ticker, balance: balance })
@@ -157,7 +153,7 @@ const Row = ({ ticker, onRowClick }: RowProps) => {
   const { address } = useAccount()
   const { tokenIcons } = useApp()
   const { data: erc20Balance, queryKey } = useReadErc20BalanceOf({
-    address: Token.findAddressByTicker(ticker) as `0x${string}`,
+    address: Token.findByTicker(ticker).address,
     args: [address ?? "0x"],
   })
   const queryClient = useQueryClient()

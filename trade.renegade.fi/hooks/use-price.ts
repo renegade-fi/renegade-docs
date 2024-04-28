@@ -2,7 +2,7 @@ import {
   DEFAULT_QUOTE,
   usePrice as usePriceContext,
 } from "@/contexts/PriceContext/price-context"
-import { Exchange } from "@sehyunchung/renegade-react"
+import { Exchange } from "@renegade-fi/react"
 import { useEffect, useState } from "react"
 import { Address } from "viem"
 

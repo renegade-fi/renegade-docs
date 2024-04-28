@@ -2,7 +2,7 @@ import { BannerSeparator } from "./banner-separator"
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { Box, Flex, Text } from "@chakra-ui/react"
-import { type Exchange, Token } from "@sehyunchung/renegade-react"
+import { type Exchange, Token } from "@renegade-fi/react"
 import { useMemo } from "react"
 
 import { usePrevious } from "@/hooks/use-previous"

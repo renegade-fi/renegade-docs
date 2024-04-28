@@ -1,7 +1,7 @@
 "use client"
 
 import { fundList, fundWallet } from "@/lib/utils"
-import { connect, disconnect, useConfig } from "@sehyunchung/renegade-react"
+import { connect, disconnect, useConfig } from "@renegade-fi/react"
 import {
   PropsWithChildren,
   createContext,

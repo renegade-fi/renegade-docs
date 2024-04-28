@@ -17,9 +17,8 @@ import { datadogLogs } from "@datadog/browser-logs"
 import { datadogRum } from "@datadog/browser-rum"
 import {
   RenegadeProvider,
-  chain,
   createConfig as createSDKConfig,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import { PropsWithChildren, useEffect } from "react"
@@ -180,6 +179,16 @@ const components = {
 }
 const theme = extendTheme({ config, styles, colors, components })
 
+export const renegadeConfig = createSDKConfig({
+  darkPoolAddress: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
+  priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
+  relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+  rpcUrl: env.NEXT_PUBLIC_RPC_URL,
+  ssr: true,
+})
+
+const renegadeChain = renegadeConfig.getRenegadeChain()
+
 /*
  * ┌─────────────────────┐
  * │    Wallet Config    |
@@ -192,22 +201,16 @@ export const wagmiConfig = createConfig(
     appName: "Renegade | On-Chain Dark Pool",
     appIcon: "https://www.renegade.fi/glyph_light.svg",
     appUrl: "https://renegade.fi",
-    chains: [chain],
+    chains: [renegadeChain],
     ssr: true,
     transports: {
-      [chain.id]: http(),
+      [renegadeChain.id]: http(),
     },
     walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
 )
 
 const queryClient = new QueryClient()
-
-export const renegadeConfig = createSDKConfig({
-  relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
-  ssr: true,
-})
 
 export function Providers({
   children,

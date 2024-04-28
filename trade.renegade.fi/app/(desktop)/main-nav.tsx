@@ -14,7 +14,7 @@ import {
   disconnect as disconnectRenegade,
   useConfig,
   useStatus,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { ConnectKitButton } from "connectkit"
 import Image from "next/image"
 import React, { createRef, useEffect, useState } from "react"

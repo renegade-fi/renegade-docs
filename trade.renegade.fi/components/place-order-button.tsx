@@ -14,7 +14,7 @@ import {
   useConfig,
   useStatus,
   useWalletId,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"

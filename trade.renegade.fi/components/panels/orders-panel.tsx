@@ -13,7 +13,7 @@ import {
   useOrderBook,
   useOrders,
   useStatus,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"

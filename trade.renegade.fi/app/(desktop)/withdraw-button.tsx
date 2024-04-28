@@ -7,7 +7,7 @@ import {
   useConfig,
   useStatus,
   withdraw,
-} from "@sehyunchung/renegade-react"
+} from "@renegade-fi/react"
 import { useMemo } from "react"
 import { toast } from "sonner"
 import { useAccount } from "wagmi"
