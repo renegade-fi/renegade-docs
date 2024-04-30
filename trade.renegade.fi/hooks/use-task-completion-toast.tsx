@@ -1,3 +1,4 @@
+import { formatTaskState } from "@/lib/utils"
 import { useConfig, waitForTaskCompletion } from "@renegade-fi/react"
 import { useRef } from "react"
 import { toast } from "sonner"
@@ -12,7 +13,7 @@ const useTaskCompletionToast = () => {
     try {
       await waitForTaskCompletion(config, { id: taskId }, (t) => {
         if (t && !taskNameRef.current) taskNameRef.current = t.description
-        toast.loading(`${t.description} task: ${t.state}`, {
+        toast.loading(`${t.description}: ${formatTaskState(t.state)}`, {
           id: toastId,
         })
       })

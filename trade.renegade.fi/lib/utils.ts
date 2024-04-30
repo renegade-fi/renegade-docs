@@ -19,6 +19,20 @@ export function formatPrice(num: number) {
   return formatted.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+export function formatTaskState(taskState: string) {
+  if (taskState === "Finding Opening") {
+    return "Indexing Wallet"
+  } else if (taskState === "Proving") {
+    return "Proving ZKP"
+  } else if (taskState === "Submitting Tx") {
+    return "Submitting Transaction"
+  } else if (taskState === "Updating Validity Proofs") {
+    return "Preparing for Matching"
+  } else {
+    return taskState
+  }
+}
+
 export function constructMetadata({
   title = `Renegade Testnet | On-Chain Dark Pool`,
   description = `Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.`,

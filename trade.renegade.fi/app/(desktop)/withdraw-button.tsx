@@ -64,7 +64,7 @@ export default function WithdrawButton({
       destinationAddr: address,
     })
       .then(() => {
-        toast.message(`Started to withdraw ${baseTokenAmount} ${baseTicker}`, {
+        toast.message(`Withdrawing ${baseTokenAmount} ${baseTicker}`, {
           description: "Check the history tab for the status of the task",
         })
       })

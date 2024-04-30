@@ -74,7 +74,7 @@ export function PlaceOrderButton({
     })
       .then(() => {
         toast.message(
-          `Started to place order to ${
+          `Placing Order to ${
             direction === "buy" ? "Buy" : "Sell"
           } ${baseTokenAmount} ${base} for ${quote}`,
           {

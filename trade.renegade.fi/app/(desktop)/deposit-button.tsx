@@ -134,7 +134,7 @@ export default function DepositButton({
       permit: signature,
     })
       .then(() => {
-        toast.message(`Started to deposit ${baseTokenAmount} ${base}`, {
+        toast.message(`Depositing ${baseTokenAmount} ${base}`, {
           description: "Check the history tab for the status of the task",
         })
         if (token.ticker === "USDC") {

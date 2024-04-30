@@ -2,7 +2,7 @@
 
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import { fundList, fundWallet } from "@/lib/utils"
+import { formatTaskState, fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -410,7 +410,7 @@ function HistorySection() {
                   <Flex alignItems="center" gap="2">
                     {task.state !== "Completed" && <>{rightIcon}</>}
                     <Text color="white.80" fontSize="0.8em">
-                      {task.state}
+                      {formatTaskState(task.state)}
                     </Text>
                   </Flex>
                 </Flex>

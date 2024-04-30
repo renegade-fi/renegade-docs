@@ -55,7 +55,7 @@ function SingleOrder({
     await cancelOrder(config, { id })
       .then(() => {
         toast.message(
-          `Started to cancel order to ${
+          `Cancelling Order to ${
             side === "buy" ? "Buy" : "Sell"
           } ${amount} ${base}`,
           {
