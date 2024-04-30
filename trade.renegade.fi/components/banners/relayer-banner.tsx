@@ -1,10 +1,77 @@
 "use client"
 
+import { env } from "@/env.mjs"
+import { useReadErc20BalanceOf } from "@/generated"
+import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
-import React from "react"
+import { Token } from "@renegade-fi/react"
+import { useQueryClient } from "@tanstack/react-query"
+import React, { useEffect, useMemo } from "react"
+import { formatUnits } from "viem/utils"
+import { useBlockNumber } from "wagmi"
 
 import { BannerSeparator } from "../banner-separator"
 import { PulsingConnection } from "../pulsing-connection-indicator"
+
+const useTvl = (ticker: string) => {
+  // Query the chain to get the balance of the dark pool contract
+  let { data: balance, queryKey: balanceQueryKey } = useReadErc20BalanceOf({
+    address: Token.findByTicker(ticker).address,
+    args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT ?? "0x"],
+  })
+  balance = balance ? Number.parseFloat(formatUnits(balance, 18)) : 0
+
+  // Round to default decimals
+  const defaultDecimals = TICKER_TO_DEFAULT_DECIMALS[ticker] || 0
+  const trailingDecimals = useMemo(() => {
+    if (["USDC", "WETH", "WBTC"].includes(ticker)) {
+      return 2
+    } else if (defaultDecimals >= 3) {
+      return 2
+    } else {
+      return Math.abs(defaultDecimals) + 2
+    }
+  }, [defaultDecimals, ticker])
+  balance = balance.toLocaleString(undefined, {
+    minimumFractionDigits: trailingDecimals,
+  })
+
+  return [balance, balanceQueryKey]
+}
+
+interface TvlStatisticsProps {
+  baseTicker: string
+  quoteTicker: string
+}
+function TvlStatistics(props: TvlStatisticsProps) {
+  const [baseBalance, baseQueryKey] = useTvl(props.baseTicker)
+  const [quoteBalance, quoteQueryKey] = useTvl(props.quoteTicker)
+
+  const queryClient = useQueryClient()
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: baseQueryKey })
+    queryClient.invalidateQueries({ queryKey: quoteQueryKey })
+  }, [baseQueryKey, quoteQueryKey, blockNumber, queryClient])
+
+  return (
+    <>
+      <Text>TVL</Text>
+      <BannerSeparator flexGrow={1} />
+      <Text>
+        {baseBalance} {props.baseTicker}
+      </Text>
+      {props.baseTicker !== props.quoteTicker && (
+        <>
+          <BannerSeparator flexGrow={1} />
+          <Text>
+            {quoteBalance} {props.quoteTicker}
+          </Text>
+        </>
+      )}
+    </>
+  )
+}
 
 interface RelayerStatusBannerProps {
   activeBaseTicker: string
@@ -165,11 +232,10 @@ export class RelayerStatusBanner extends React.Component<
           height="var(--banner-height)"
         >
           <Spacer flexGrow="2" />
-          <Text>TVL</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>123.456 {this.props.activeBaseTicker}</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>123456.78 {this.props.activeQuoteTicker}</Text>
+          <TvlStatistics
+            baseTicker={this.props.activeBaseTicker}
+            quoteTicker={this.props.activeQuoteTicker}
+          />
           <BannerSeparator flexGrow={3} />
           <Text>Relayer</Text>
           <BannerSeparator flexGrow={1} />

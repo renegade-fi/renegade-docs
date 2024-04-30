@@ -62,7 +62,9 @@ export const LivePrices = ({
   }
 
   // Format the price as a string
-  let priceStr = price.toFixed(trailingDecimals)
+  let priceStr = price.toLocaleString(undefined, {
+    minimumFractionDigits: trailingDecimals,
+  })
   if (
     // (!scaledPrice || scaleBy === 0) &&
     // baseDefaultDecimals > 0 &&
