@@ -3,8 +3,10 @@ import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
   parseAmount,
+  payFees,
   useBalances,
   useConfig,
+  useFees,
   useStatus,
   withdraw,
 } from "@renegade-fi/react"
@@ -54,8 +56,18 @@ export default function WithdrawButton({
   const config = useConfig()
   const { address } = useAccount()
 
+  const fees = useFees()
+
   const handleWithdraw = async () => {
     if (!address) return
+
+    if (fees.length > 0) {
+      const toastId = toast.loading("Paying fees before withdrawing")
+      await payFees(config)
+      toast.success("Fees successfully paid", { id: toastId })
+    }
+
+    // Withdraw
     const token = Token.findByTicker(baseTicker)
     const amount = parseAmount(baseTokenAmount, token)
     await withdraw(config, {
