@@ -10,6 +10,7 @@ import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
+  chain,
   deposit,
   getPkRootScalars,
   parseAmount,
@@ -20,7 +21,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { parseUnits } from "viem"
+import { createPublicClient, http, parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
@@ -30,6 +31,11 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 )
+
+const publicClient = createPublicClient({
+  chain,
+  transport: http(),
+})
 
 export default function DepositButton({
   baseTokenAmount,
@@ -98,10 +104,14 @@ export default function DepositButton({
   const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   const config = useConfig()
   const handleApprove = async () => {
-    if (!isConnected) return
+    if (!isConnected || !walletClient) return
+    const nonce = await publicClient.getTransactionCount({
+      address: walletClient.account.address,
+    })
     await approve({
       address: Token.findByTicker(base).address,
       args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
+      nonce,
     }).then(() => {
       // TODO: May need to await confirmation
       handleSignAndDeposit()
