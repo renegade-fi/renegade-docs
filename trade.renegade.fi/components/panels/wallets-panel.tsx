@@ -6,18 +6,16 @@ import { fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  CheckIcon,
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react"
-import { tokenMapping } from "@renegade-fi/react"
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
   formatAmount,
+  tokenMapping,
   useBalances,
   useStatus,
-  useTaskQueue,
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
@@ -32,6 +30,7 @@ import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { TaskHistoryList } from "@/components/panels/task-history-list"
 
 interface TokenBalanceProps {
   tokenAddr: Address
@@ -76,12 +75,15 @@ function TokenBalance(props: TokenBalanceProps) {
       alignItems="center"
       gap="5px"
       width="100%"
-      padding="0 8% 0 8%"
+      padding="5% 6%"
       color="white.60"
       borderColor="white.20"
       borderBottom="var(--secondary-border)"
+      _hover={{
+        color: isZero ? undefined : "white.90",
+      }}
       boxSizing="border-box"
-      transition="filter 0.1s"
+      transition="all 0.2s"
       filter={isZero ? "grayscale(1)" : undefined}
     >
       <Image width="25" height="25" alt="Logo" src={tokenIcons[ticker]} />
@@ -90,7 +92,6 @@ function TokenBalance(props: TokenBalanceProps) {
         flexDirection="column"
         flexGrow="1"
         marginLeft="5px"
-        padding="10px 0 10px 0"
         fontFamily="Favorit"
         cursor="pointer"
         onClick={() => handleAddToWallet(props.tokenAddr)}
@@ -356,73 +357,6 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 }
 
 function HistorySection() {
-  const status = useStatus()
-  const tasks = useTaskQueue()
-  const Content = useMemo(() => {
-    return (
-      <SimpleBar
-        style={{
-          minHeight: "30vh",
-          width: "100%",
-        }}
-      >
-        {tasks
-          .filter((task) => !task.description.includes("Fee"))
-          .map((task) => {
-            const textColor = task.state === "Completed" ? "green" : "white"
-
-            const rightIcon =
-              task.state === "Completed" ? (
-                <CheckIcon color="white.60" height="4" />
-              ) : task.state === "Queued" ? (
-                <></>
-              ) : (
-                <Spinner color="white.60" size="xs" />
-              )
-            return (
-              <Flex
-                key={task.id}
-                alignItems="center"
-                flexDirection="row"
-                width="100%"
-                padding="4%"
-                borderColor="white.20"
-                borderBottom="var(--secondary-border)"
-              >
-                <Flex flexDirection="column">
-                  <Flex alignItems="center" gap="2">
-                    <Text
-                      color={textColor}
-                      fontFamily="Favorit Extended"
-                      fontWeight="500"
-                    >
-                      {task.description}
-                    </Text>
-                    <Text
-                      color="white.60"
-                      fontFamily="Favorit Expanded"
-                      fontSize="0.7em"
-                      fontWeight="500"
-                    >
-                      a few seconds ago
-                    </Text>
-                  </Flex>
-                  <Flex alignItems="center" gap="2">
-                    {task.state !== "Completed" && <>{rightIcon}</>}
-                    <Text color="white.80" fontSize="0.8em">
-                      {task.state}
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Flex>
-            )
-          })}
-      </SimpleBar>
-    )
-  }, [tasks])
-
-  if (status !== "in relayer") return null
-
   return (
     <>
       <Flex
@@ -437,7 +371,15 @@ function HistorySection() {
       >
         <Text>History</Text>
       </Flex>
-      {Content}
+      <SimpleBar
+        style={{
+          minHeight: "30vh",
+          width: "100%",
+          padding: "0 8px",
+        }}
+      >
+        <TaskHistoryList />
+      </SimpleBar>
     </>
   )
 }

@@ -21,11 +21,15 @@ import {
 } from "@renegade-fi/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
+
+dayjs.extend(relativeTime)
 
 /*
  * ┌─────────────────────┐
