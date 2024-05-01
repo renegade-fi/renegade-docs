@@ -29,9 +29,8 @@ export default async function RootLayout({
             style={{
               flexDirection: "column",
               display: "flex",
-              // width: "100vw",
               minHeight: "100vh",
-              // overflowX: "hidden",
+              overflow: "hidden",
             }}
           >
             <MainNav />

@@ -30,8 +30,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
   '@renegade-fi/react':
-    specifier: ^0.0.5
-    version: 0.0.5(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+    specifier: ^0.0.6
+    version: 0.0.6(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4261,8 +4261,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/core@0.0.5(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-qIzx1cj1dHIT1+BOobcZEeORaZgJ+OAIcb1V67HHWS7u17Cs1tzloRaQPdVd7Xcz1sfga0DloVS/mMWDOm37Sg==}
+  /@renegade-fi/core@0.0.6(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-vZfT9ZgVX2q3XijXM4iZ3jo58tRPcTiwdZ6sR4BGyMGTyisdcbd5fKiac9tpJx/D5xsoWGMA/XDDCL3T7yyxvQ==}
     dependencies:
       axios: 1.6.8
       isomorphic-ws: 5.0.0(ws@8.13.0)
@@ -4282,8 +4282,8 @@ packages:
       - zod
     dev: false
 
-  /@renegade-fi/react@0.0.5(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-qvOGkmulzC8Y6eoY+4lMV7qfKvkfNYVmdmUjttu6HikO7POYaicUICEnB2Ve9+voDrEn0ahI/wnIfqf/RgCg4w==}
+  /@renegade-fi/react@0.0.6(@tanstack/react-query@5.29.2)(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-2BmAvpVOEnvraaPOCXiRxE4S/80y8Ml06/gbE6efSUgbT7b0zxvBW6MAZl3fATwuKcietrp/uPlM+pIG+Ac++A==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
@@ -4292,7 +4292,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@renegade-fi/core': 0.0.5(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+      '@renegade-fi/core': 0.0.6(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
       '@tanstack/react-query': 5.29.2(react@18.2.0)
       json-bigint: 1.0.0
       react: 18.2.0

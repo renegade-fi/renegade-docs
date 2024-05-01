@@ -19,7 +19,6 @@ import {
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
 import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
@@ -29,8 +28,6 @@ import { Address } from "viem"
 import { useMatchedOrders } from "@/hooks/use-matched-orders"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
-
-dayjs.extend(relativeTime)
 
 interface SingleOrderProps {
   amount: bigint
