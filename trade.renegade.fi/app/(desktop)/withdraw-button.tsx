@@ -60,7 +60,9 @@ export default function WithdrawButton({
 
   const fees = useFees()
   const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find((task) => task.state !== "Completed")
+  const isQueue = taskHistory.find(
+    (task) => task.state !== "Completed" && task.state !== "Failed"
+  )
 
   const handleWithdraw = async () => {
     if (!address) return

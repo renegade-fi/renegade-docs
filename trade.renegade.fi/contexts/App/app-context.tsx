@@ -54,9 +54,10 @@ function AppProvider({
     prevAddressRef.current = address
   }, [address, config])
 
-  // Funding
+  // Sign In + Funding
   const [funded] = useLocalStorage(`funded_${address}`, false)
   const { executeTaskWithToast } = useTaskCompletionToast()
+
   const handleSignin = async (seed: Hex) => {
     const res = await connect(config, { seed })
     if (res?.taskId) {

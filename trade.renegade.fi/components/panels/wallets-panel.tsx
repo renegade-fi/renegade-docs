@@ -9,13 +9,14 @@ import {
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Spacer, Text, Tooltip } from "@chakra-ui/react"
 import {
   Token,
   formatAmount,
   tokenMapping,
   useBalances,
   useStatus,
+  useTaskHistory,
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
@@ -24,7 +25,7 @@ import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { Address } from "viem"
+import { Address, formatUnits } from "viem"
 import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
@@ -64,7 +65,6 @@ function TokenBalance(props: TokenBalanceProps) {
       options: {
         address,
         decimals: token.decimals || 18,
-        // TODO: Deploy new contracts with actual ticker
         symbol: "DUMMY",
       },
     })
@@ -96,13 +96,23 @@ function TokenBalance(props: TokenBalanceProps) {
         cursor="pointer"
         onClick={() => handleAddToWallet(props.tokenAddr)}
       >
-        <Text
-          fontSize="1.1em"
-          lineHeight="1"
-          opacity={isZero ? "40%" : undefined}
+        <Tooltip
+          backgroundColor="white"
+          hasArrow
+          label={
+            !isZero
+              ? `${formatUnits(props.amount, token.decimals)} ${ticker}`
+              : undefined
+          }
         >
-          {formattedAmount} {ticker}
-        </Text>
+          <Text
+            fontSize="1.1em"
+            lineHeight="1"
+            opacity={isZero ? "40%" : undefined}
+          >
+            {formattedAmount} {ticker}
+          </Text>
+        </Tooltip>
         <Box
           color="white.40"
           fontSize="0.8em"
@@ -112,25 +122,29 @@ function TokenBalance(props: TokenBalanceProps) {
           ${usdPrice.toFixed(2)}
         </Box>
       </Flex>
-      <ArrowDownIcon
-        width="calc(0.5 * var(--banner-height))"
-        height="calc(0.5 * var(--banner-height))"
-        cursor="pointer"
-        onClick={() => {
-          setBase(ticker)
-          setView(ViewEnum.DEPOSIT)
-        }}
-      />
-      <ArrowUpIcon
-        width="calc(0.5 * var(--banner-height))"
-        height="calc(0.5 * var(--banner-height))"
-        borderRadius="100px"
-        cursor="pointer"
-        onClick={() => {
-          setBase(token.ticker)
-          setView(ViewEnum.WITHDRAW)
-        }}
-      />
+      <Tooltip backgroundColor="white" label="Deposit">
+        <ArrowDownIcon
+          width="calc(0.5 * var(--banner-height))"
+          height="calc(0.5 * var(--banner-height))"
+          cursor="pointer"
+          onClick={() => {
+            setBase(ticker)
+            setView(ViewEnum.DEPOSIT)
+          }}
+        />
+      </Tooltip>
+      <Tooltip backgroundColor="white" label="Withdraw">
+        <ArrowUpIcon
+          width="calc(0.5 * var(--banner-height))"
+          height="calc(0.5 * var(--banner-height))"
+          borderRadius="100px"
+          cursor="pointer"
+          onClick={() => {
+            setBase(token.ticker)
+            setView(ViewEnum.WITHDRAW)
+          }}
+        />
+      </Tooltip>
     </Flex>
   )
 }
@@ -185,19 +199,6 @@ function DepositWithdrawButtons() {
         <Text>Airdrop</Text>
         <ArrowDownIcon />
       </Flex>
-      {/* <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexGrow="1"
-        gap="5px"
-        _hover={{
-          backgroundColor: "#000",
-        }}
-        onClick={onOpenAirdropModal}
-      >
-        <Text>Airdrop</Text>
-        <ArrowUpIcon />
-      </Flex> */}
     </Flex>
   )
 }
@@ -241,12 +242,8 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     return combined
   }, [balances])
 
-  const showDeposit = useMemo(() => {
-    return !Object.values(balances).some((b) => b.amount > BigInt(0))
-  }, [balances])
-
   const Content = useMemo(() => {
-    if (isConnected && !showDeposit) {
+    if (isConnected && balances.length) {
       return (
         <>
           <SimpleBar
@@ -272,6 +269,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           justifyContent="center"
           flexDirection="column"
           flexGrow="1"
+          minHeight="calc(100% - 30vh - (3 * var(--banner-height)))"
         >
           <ConnectWalletButton />
           <SignInButton />
@@ -311,11 +309,11 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     }
   }, [
     address,
+    balances.length,
     formattedBalances,
     isConnected,
     isSigningIn,
     setView,
-    showDeposit,
   ])
 
   return (
@@ -357,6 +355,12 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 }
 
 function HistorySection() {
+  const history = useTaskHistory()
+  const historyWithoutNewWallet = history.filter(
+    (task) => task.task_info.task_type !== "NewWallet"
+  )
+  const balances = useBalances()
+  if (!historyWithoutNewWallet.length && !balances.length) return null
   return (
     <>
       <Flex

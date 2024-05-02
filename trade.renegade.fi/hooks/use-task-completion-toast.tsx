@@ -12,12 +12,12 @@ const useTaskCompletionToast = () => {
     try {
       await waitForTaskCompletion(config, { id: taskId }, (t) => {
         if (t && !taskNameRef.current) taskNameRef.current = t.description
-        toast.loading(`${t.description} task: ${t.state}`, {
+        toast.loading(`${t.description}: ${t.state}`, {
           id: toastId,
         })
       })
 
-      toast.success(`${taskNameRef.current} successful`, {
+      toast.success(`${taskNameRef.current ?? "Sign in"} successful`, {
         id: toastId,
       })
     } catch (error) {

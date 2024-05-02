@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text, Tooltip } from "@chakra-ui/react"
+import { Box, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react"
 import dayjs from "dayjs"
 import { CheckIcon, TriangleAlert } from "lucide-react"
 
@@ -27,10 +27,8 @@ export function TaskItem({
     )
 
   return (
-    <Flex
+    <Box
       justifyContent="center"
-      flexDirection="column"
-      width="100%"
       padding="4% 6%"
       color="white.60"
       borderColor="white.20"
@@ -44,6 +42,7 @@ export function TaskItem({
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        minWidth="100%"
         whiteSpace="nowrap"
       >
         <Text fontFamily="Favorit Extended" fontWeight="500">
@@ -57,6 +56,7 @@ export function TaskItem({
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        minWidth="100%"
         whiteSpace="nowrap"
       >
         <Tooltip backgroundColor="white" hasArrow label={tooltip}>
@@ -65,9 +65,11 @@ export function TaskItem({
           </Text>
         </Tooltip>
         <Text fontFamily="Favorit Expanded" fontSize="0.7em" fontWeight="500">
-          {dayjs.unix(createdAt).fromNow()}
+          {dayjs().isSame(dayjs.unix(createdAt), "day")
+            ? dayjs.unix(createdAt).format("HH:mm:ss")
+            : dayjs.unix(createdAt).fromNow()}
         </Text>
       </Flex>
-    </Flex>
+    </Box>
   )
 }

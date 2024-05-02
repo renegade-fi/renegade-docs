@@ -62,7 +62,9 @@ export function PlaceOrderButton({
   const isConnected = status === "in relayer"
 
   const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find((task) => task.state !== "Completed")
+  const isQueue = taskHistory.find(
+    (task) => task.state !== "Completed" && task.state !== "Failed"
+  )
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
@@ -76,7 +78,14 @@ export function PlaceOrderButton({
       side: direction,
       amount: parsedAmount,
     }).catch((e) => {
-      toast.error(FAILED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
+      toast.error(
+        FAILED_PLACE_ORDER_MSG(
+          baseToken,
+          parsedAmount,
+          direction,
+          e.response.data
+        )
+      )
       console.error(`Error placing order: ${e.response?.data ?? e.message}`)
     })
   }
