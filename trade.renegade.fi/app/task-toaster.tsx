@@ -3,6 +3,7 @@ import {
   generateFailedToastMessage,
   generateStartToastMessage,
 } from "@/lib/task"
+import { useDisclosure } from "@chakra-ui/react"
 import {
   Task,
   TaskType,
@@ -12,7 +13,11 @@ import {
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
 
+import { FeeModal } from "@/components/modals/fee-modal"
+
 export function TaskToaster() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const incomingTask = useTaskHistoryWebSocket()
   const taskHistory = useTaskHistory()
   const taskRef = useRef<Map<string, Task>>(new Map())
@@ -55,14 +60,13 @@ export function TaskToaster() {
             label: "What's this?",
             onClick: (event) => {
               event.preventDefault()
-              //   TODO: Explanatory modal?
-              console.log("Action!")
+              onOpen()
             },
           },
         })
       }
     }
-  }, [incomingTask])
+  }, [incomingTask, onOpen])
 
-  return null
+  return <FeeModal isOpen={isOpen} onClose={onClose} />
 }
