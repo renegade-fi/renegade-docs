@@ -1,6 +1,7 @@
 "use client"
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
+import { FAILED_PLACE_ORDER_MSG, QUEUED_CANCEL_ORDER_MSG } from "@/lib/task"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -12,6 +13,7 @@ import {
   useBalances,
   useConfig,
   useStatus,
+  useTaskHistory,
 } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -59,26 +61,24 @@ export function PlaceOrderButton({
 
   const isConnected = status === "in relayer"
 
+  const taskHistory = useTaskHistory()
+  const isQueue = taskHistory.find((task) => task.state !== "Completed")
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
+    if (isQueue) {
+      toast.message(QUEUED_CANCEL_ORDER_MSG(baseToken, parsedAmount, direction))
+    }
     await createOrder(config, {
       id,
       base: baseAddress,
       quote: quoteAddress,
       side: direction,
       amount: parsedAmount,
+    }).catch((e) => {
+      toast.error(FAILED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
+      console.error(`Error placing order: ${e.response?.data ?? e.message}`)
     })
-      .then(() => {
-        toast.message(
-          `Creating order to ${
-            direction === "buy" ? "Buy" : "Sell"
-          } ${baseTokenAmount} ${base} for ${quote}`
-        )
-      })
-      .catch((e) => {
-        toast.error(`Error placing order: ${e.response.data ?? e.message}`)
-      })
   }
 
   const costInUsd = useUSDPrice(base, parseFloat(baseTokenAmount))

@@ -1,3 +1,4 @@
+import { FAILED_WITHDRAWAL_MSG, QUEUED_WITHDRAWAL_MSG } from "@/lib/task"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
@@ -8,6 +9,7 @@ import {
   useConfig,
   useFees,
   useStatus,
+  useTaskHistory,
   withdraw,
 } from "@renegade-fi/react"
 import { useMemo } from "react"
@@ -57,32 +59,30 @@ export default function WithdrawButton({
   const { address } = useAccount()
 
   const fees = useFees()
+  const taskHistory = useTaskHistory()
+  const isQueue = taskHistory.find((task) => task.state !== "Completed")
 
   const handleWithdraw = async () => {
     if (!address) return
+    const token = Token.findByTicker(baseTicker)
+    const amount = parseAmount(baseTokenAmount, token)
+    if (isQueue) {
+      toast.message(QUEUED_WITHDRAWAL_MSG(token, amount))
+    }
 
     if (fees.length > 0) {
-      const toastId = toast.loading("Paying fees before withdrawing")
       await payFees(config)
-      toast.success("Fees successfully paid", { id: toastId })
     }
 
     // Withdraw
-    const token = Token.findByTicker(baseTicker)
-    const amount = parseAmount(baseTokenAmount, token)
     await withdraw(config, {
       mint: token.address,
       amount,
       destinationAddr: address,
+    }).catch((e) => {
+      toast.error(FAILED_WITHDRAWAL_MSG(token, amount))
+      console.error(`Error withdrawing: ${e.response?.data ?? e.message}`)
     })
-      .then(() => {
-        toast.message(`Started to withdraw ${baseTokenAmount} ${baseTicker}`, {
-          description: "Check the history tab for the status of the task",
-        })
-      })
-      .catch((e) => {
-        toast.error(`Error withdrawing: ${e.response.data ?? e.message}`)
-      })
   }
 
   const handleClick = async () => {
