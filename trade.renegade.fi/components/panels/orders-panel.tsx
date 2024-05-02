@@ -7,7 +7,7 @@ import {
   getReadableState,
 } from "@/lib/task"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
-import { Box, Flex, Image, Text } from "@chakra-ui/react"
+import { Box, Flex, Image, Text, Tooltip } from "@chakra-ui/react"
 import {
   NetworkOrder,
   OrderState,
@@ -71,12 +71,22 @@ function SingleOrder({
     filled &&
     filled !== amount
 
+  const fillText = shouldShowFill
+    ? `${formattedRemaining} / ${formattedAmount} ${base}`
+    : `${formattedAmount} ${base}`
+
+  const fillLabel = `${Math.round(
+    (Number(filled) / Number(amount)) * 100
+  )}% filled`
+
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
   )
 
   const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find((task) => task.state !== "Completed")
+  const isQueue = taskHistory.find(
+    (task) => task.state !== "Completed" && task.state !== "Failed"
+  )
 
   const handleCancel = async () => {
     if (isQueue) {
@@ -98,7 +108,7 @@ function SingleOrder({
       justifyContent="space-between"
       gap="4%"
       width="100%"
-      height="64px"
+      padding="5%"
       color="white.60"
       borderColor="white.20"
       borderBottom="var(--secondary-border)"
@@ -108,7 +118,6 @@ function SingleOrder({
       }}
       transition="all 0.2s"
       filter="grayscale(1)"
-      paddingX="4%"
     >
       <Text fontFamily="Favorit">{formattedState}</Text>
       <Box position="relative" width="45px" height="40px">
@@ -129,12 +138,9 @@ function SingleOrder({
         />
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
-        <Text lineHeight="1">
-          {shouldShowFill
-            ? `${formattedRemaining} / ${formattedAmount}`
-            : formattedAmount}{" "}
-          {base}
-        </Text>
+        <Tooltip backgroundColor="white" hasArrow label={fillLabel}>
+          <Text lineHeight="1">{fillText}</Text>
+        </Tooltip>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
           {side.toUpperCase()}
         </Text>
@@ -296,7 +302,7 @@ function OrderBookPanel() {
             ? "VERIFIED"
             : counterpartyOrder.state.toUpperCase()
 
-          const ago = dayjs.unix(counterpartyOrder.timestamp).fromNow()
+          const timestamp = counterpartyOrder.timestamp
           const textColor =
             status === "ACTIVE" || status === "MATCHED"
               ? "green"
@@ -305,36 +311,38 @@ function OrderBookPanel() {
               : "white.60"
 
           return (
-            <Flex
+            <Box
               key={counterpartyOrder.id}
-              flexDirection="row"
-              width="100%"
-              padding="4%"
+              padding="5%"
               borderBottom="var(--secondary-border)"
             >
-              <Flex flexDirection="column">
-                <Flex alignItems="center">
-                  <Text
-                    color={textColor}
-                    fontFamily="Favorit Extended"
-                    fontWeight="500"
-                  >
-                    {status}&nbsp;
-                  </Text>
-                  <Text
-                    color="white.60"
-                    fontFamily="Favorit Expanded"
-                    fontSize="0.7em"
-                    fontWeight="500"
-                  >
-                    {ago}
-                  </Text>
-                </Flex>
-                <Text color="white.80" fontSize="0.8em">
-                  {title}
+              <Flex
+                alignItems="center"
+                justifyContent="space-between"
+                minWidth="100%"
+              >
+                <Text
+                  color={textColor}
+                  fontFamily="Favorit Extended"
+                  fontWeight="500"
+                >
+                  {status}&nbsp;
+                </Text>
+                <Text
+                  color="white.60"
+                  fontFamily="Favorit Expanded"
+                  fontSize="0.7em"
+                  fontWeight="500"
+                >
+                  {dayjs().isSame(dayjs.unix(timestamp), "day")
+                    ? dayjs.unix(timestamp).format("HH:mm:ss")
+                    : dayjs.unix(timestamp).fromNow()}
                 </Text>
               </Flex>
-            </Flex>
+              <Text color="white.80" fontSize="0.8em">
+                {title}
+              </Text>
+            </Box>
           )
         })}
       </SimpleBar>

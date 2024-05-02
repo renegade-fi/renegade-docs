@@ -82,7 +82,7 @@ export default function DepositButton({
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: l1BalanceQueryKey })
     queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
-  }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient])
+  }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient, base])
 
   // L1 ERC20 Approval
   const { writeContractAsync: approve, status: approveStatus } =
@@ -96,12 +96,11 @@ export default function DepositButton({
     : true
   const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
   const status = useStatus()
-  const isConnected = status === "in relayer"
+  const isConnected = status === "in relayer" && address
 
   const isDisabled =
-    (isConnected && !baseTokenAmount) ||
-    hasRpcConnectionError ||
-    hasInsufficientBalance
+    isConnected &&
+    (!baseTokenAmount || hasRpcConnectionError || hasInsufficientBalance)
 
   const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
   const config = useConfig()
@@ -121,7 +120,9 @@ export default function DepositButton({
   }
 
   const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find((task) => task.state !== "Completed")
+  const isQueue = taskHistory.find(
+    (task) => task.state !== "Completed" && task.state !== "Failed"
+  )
   const handleSignAndDeposit = async () => {
     if (!walletClient) return
     const token = Token.findByTicker(base)
@@ -158,7 +159,13 @@ export default function DepositButton({
         }
       })
       .catch((e) => {
-        toast.error(FAILED_DEPOSIT_MSG(token, amount))
+        toast.error(
+          FAILED_DEPOSIT_MSG(
+            token,
+            amount,
+            e.shortMessage ?? e.response?.data ?? e.message
+          )
+        )
         console.error(`Error depositing: ${e.response?.data ?? e.message}`)
       })
   }

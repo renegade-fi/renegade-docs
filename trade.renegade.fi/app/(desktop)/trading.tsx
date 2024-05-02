@@ -3,11 +3,21 @@
 import { Direction } from "@/lib/types"
 import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
-import { Flex, HStack, Input, Text, useDisclosure } from "@chakra-ui/react"
+import {
+  Button,
+  Flex,
+  HStack,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react"
 import { Token } from "@renegade-fi/react"
 import React, { createRef, useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
+import { useMax } from "@/hooks/use-max"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
@@ -133,28 +143,41 @@ function TradingInner() {
               activeModal={activeModal}
               ref={buySellSelectableRef}
             />
-            <Input
-              width="200px"
-              fontFamily="Favorit"
-              fontSize="0.8em"
-              borderColor="whiteAlpha.300"
-              borderRadius="100px"
-              _focus={{
-                borderColor: "white.50 !important",
-                boxShadow: "none !important",
-              }}
-              _placeholder={{ color: "whiteAlpha.400" }}
-              outline="none !important"
-              onChange={handleSetBaseTokenAmount}
-              onFocus={(e) =>
-                e.target.addEventListener("wheel", (e) => e.preventDefault(), {
-                  passive: false,
-                })
-              }
-              placeholder="0.00"
-              type="number"
-              value={baseTokenAmount || ""}
-            />
+            <InputGroup>
+              <Input
+                width="200px"
+                paddingRight="3rem"
+                fontFamily="Favorit"
+                fontSize="0.8em"
+                borderColor="whiteAlpha.300"
+                borderRadius="100px"
+                _focus={{
+                  borderColor: "white.50 !important",
+                  boxShadow: "none !important",
+                }}
+                _placeholder={{ color: "whiteAlpha.400" }}
+                outline="none !important"
+                onChange={handleSetBaseTokenAmount}
+                onFocus={(e) =>
+                  e.target.addEventListener(
+                    "wheel",
+                    (e) => e.preventDefault(),
+                    {
+                      passive: false,
+                    }
+                  )
+                }
+                placeholder="0.00"
+                type="number"
+                value={baseTokenAmount || ""}
+              />
+              <InputRightElement width="3.5rem">
+                <MaxButton
+                  baseTokenAmount={baseTokenAmount}
+                  setBaseTokenAmount={setBaseTokenAmount}
+                />
+              </InputRightElement>
+            </InputGroup>
             <HStack
               userSelect="none"
               cursor="pointer"
@@ -210,5 +233,50 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
         midpoint of ${formattedUsdPrice}
       </Text>
     </HStack>
+  )
+}
+
+function MaxButton({
+  baseTokenAmount,
+  setBaseTokenAmount,
+}: {
+  baseTokenAmount: string
+  setBaseTokenAmount: (value: string) => void
+}) {
+  const [base] = useLocalStorage("base", Token.findByTicker("WETH").ticker)
+  const [quote] = useLocalStorage("quote", "USDC", {
+    initializeWithValue: false,
+  })
+  const [direction] = useLocalStorage("direction", Direction.BUY)
+  const max = useMax(direction === Direction.SELL ? base : quote)
+  const usdPrice = useUSDPrice(base, 1)
+  const buyMax = (1 / usdPrice) * Number(max) * 0.99
+
+  const handleSetMax = () => {
+    if (max) {
+      if (direction === Direction.SELL) {
+        setBaseTokenAmount(max)
+      } else {
+        setBaseTokenAmount(buyMax.toString())
+      }
+    }
+  }
+  const hideMaxButton =
+    !max ||
+    (direction === Direction.SELL
+      ? baseTokenAmount === max
+      : baseTokenAmount === buyMax.toString())
+  if (hideMaxButton) return null
+  return (
+    <Button
+      color="white.60"
+      fontFamily="Favorit"
+      fontWeight="400"
+      onClick={handleSetMax}
+      size="xs"
+      variant="ghost"
+    >
+      Max
+    </Button>
   )
 }

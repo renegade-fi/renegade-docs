@@ -192,10 +192,14 @@ export function generateFailedToastMessage(task: Task) {
   return message
 }
 
-export const FAILED_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
-  `Failed to deposit ${formatAmount(amount, mint)} ${
-    mint.ticker
-  }. Please try again.`
+export const FAILED_DEPOSIT_MSG = (
+  mint: Token,
+  amount: bigint,
+  reason?: string
+) =>
+  `Failed to deposit ${formatAmount(amount, mint)} ${mint.ticker}. ${
+    reason ?? "Please try again"
+  }.`
 
 export const FAILED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
   `Failed to withdraw ${formatAmount(amount, mint)} ${
@@ -205,12 +209,13 @@ export const FAILED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
 export const FAILED_PLACE_ORDER_MSG = (
   base: Token,
   amount: bigint,
-  side: string
+  side: string,
+  reason?: string
 ) =>
   `Failed to place ${side.toLowerCase()} order for ${formatAmount(
     amount,
     base
-  )} ${base.ticker}. Please try again.`
+  )} ${base.ticker}. ${reason ?? "Please try again"}.`
 
 export const FAILED_CANCEL_ORDER_MSG = (
   base: Token,

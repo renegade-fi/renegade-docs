@@ -32,7 +32,7 @@ export function TaskHistoryList() {
     ["Submitting Tx"]: "Submitting Tx",
     ["Submitting Payment"]: "Submitting Tx",
     ["Finding Opening"]: "Indexing",
-    ["Updating Validity Proofs"]: "Updating State",
+    ["Updating Validity Proofs"]: "Updating",
     ["Completed"]: "Completed",
     ["Failed"]: "Failed",
   }

@@ -9,11 +9,15 @@ import {
   Flex,
   HStack,
   Input,
+  InputGroup,
+  InputRightElement,
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
 import { useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
+
+import { useMax } from "@/hooks/use-max"
 
 import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
 
@@ -40,6 +44,16 @@ export function WithdrawBody() {
       setBaseTokenAmount(value)
     }
   }
+
+  const max = useMax(base)
+
+  const handleSetMax = () => {
+    if (max) {
+      setBaseTokenAmount(max)
+    }
+  }
+
+  const hideMaxButton = !max || baseTokenAmount === max
 
   return (
     <>
@@ -70,28 +84,49 @@ export function WithdrawBody() {
                 Withdraw
               </Text>
             </div>
-            <Input
-              width="200px"
-              fontFamily="Favorit"
-              fontSize="0.8em"
-              borderColor="whiteAlpha.300"
-              borderRadius="100px"
-              _focus={{
-                borderColor: "white.50 !important",
-                boxShadow: "none !important",
-              }}
-              _placeholder={{ color: "whiteAlpha.400" }}
-              outline="none !important"
-              onChange={handleSetBaseTokenAmount}
-              onFocus={(e) =>
-                e.target.addEventListener("wheel", (e) => e.preventDefault(), {
-                  passive: false,
-                })
-              }
-              placeholder="0.00"
-              type="number"
-              value={baseTokenAmount}
-            />
+            <InputGroup>
+              <Input
+                width="200px"
+                paddingRight="3rem"
+                fontFamily="Favorit"
+                fontSize="0.8em"
+                borderColor="whiteAlpha.300"
+                borderRadius="100px"
+                _focus={{
+                  borderColor: "white.50 !important",
+                  boxShadow: "none !important",
+                }}
+                _placeholder={{ color: "whiteAlpha.400" }}
+                outline="none !important"
+                onChange={handleSetBaseTokenAmount}
+                onFocus={(e) =>
+                  e.target.addEventListener(
+                    "wheel",
+                    (e) => e.preventDefault(),
+                    {
+                      passive: false,
+                    }
+                  )
+                }
+                placeholder="0.00"
+                type="number"
+                value={baseTokenAmount}
+              />
+              {!hideMaxButton && (
+                <InputRightElement width="3.5rem">
+                  <Button
+                    color="white.60"
+                    fontFamily="Favorit"
+                    fontWeight="400"
+                    onClick={handleSetMax}
+                    size="xs"
+                    variant="ghost"
+                  >
+                    Max
+                  </Button>
+                </InputRightElement>
+              )}
+            </InputGroup>
             <HStack
               userSelect="none"
               cursor="pointer"

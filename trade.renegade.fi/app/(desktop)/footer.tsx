@@ -1,62 +1,40 @@
 "use client"
 
+import { renegadeConfig } from "@/app/providers"
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
+import { lookupWallet, useWalletId } from "@renegade-fi/react"
 import Image from "next/image"
-import React from "react"
+import { useEffect, useRef, useState } from "react"
 
 import logoDark from "@/icons/logo_dark.svg"
 
-interface FooterState {
-  logoRef: React.RefObject<HTMLDivElement>
-  showDownloadPrompt: boolean
-}
-export class Footer extends React.Component<
-  Record<string, never>,
-  FooterState
-> {
-  constructor(props: Record<string, never>) {
-    super(props)
-    this.state = {
-      logoRef: React.createRef(),
-      showDownloadPrompt: false,
+export const Footer = () => {
+  const logoRef = useRef<HTMLDivElement>(null)
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
+  const walletId = useWalletId()
+
+  useEffect(() => {
+    const handleContextMenu = (e: MouseEvent) => {
+      if (logoRef.current?.contains(e.target as Node)) {
+        e.preventDefault()
+        setShowDownloadPrompt(true)
+      }
     }
-    this.handleContextMenu = this.handleContextMenu.bind(this)
-  }
 
-  componentDidMount() {
-    document.addEventListener("contextmenu", this.handleContextMenu)
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("contextmenu", this.handleContextMenu)
-  }
-
-  handleContextMenu(e: MouseEvent) {
-    if (!this.state.logoRef.current) {
-      return
+    document.addEventListener("contextmenu", handleContextMenu)
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu)
     }
-    // If the context menu click does not intersect the logo, ignore.
-    const boundingBox = this.state.logoRef.current.getBoundingClientRect()
-    if (
-      boundingBox.left > e.pageX ||
-      boundingBox.right < e.pageX ||
-      boundingBox.top > e.pageY ||
-      boundingBox.bottom < e.pageY
-    ) {
-      return
-    }
-    e.preventDefault()
-    this.setState({ showDownloadPrompt: true })
-  }
+  }, [])
 
-  render() {
-    return (
+  return (
+    <>
       <Flex
         position="relative"
         alignItems="center"
         width="100%"
         height="120px"
-        onClick={() => this.setState({ showDownloadPrompt: false })}
+        onClick={() => setShowDownloadPrompt(false)}
       >
         <Flex
           alignItems="center"
@@ -65,20 +43,18 @@ export class Footer extends React.Component<
           marginLeft="2%"
           userSelect="none"
         >
-          <Box ref={this.state.logoRef}>
+          <Box ref={logoRef}>
             <Image alt="Renegade Logo" height="30" src={logoDark} />
           </Box>
           <Link
             color="white.90"
             fontSize="1.1em"
             fontWeight="300"
-            opacity={this.state.showDownloadPrompt ? 1 : 0}
+            opacity={showDownloadPrompt ? 1 : 0}
             transform={
-              this.state.showDownloadPrompt
-                ? "translateX(0px)"
-                : "translateX(-15px)"
+              showDownloadPrompt ? "translateX(0px)" : "translateX(-15px)"
             }
-            pointerEvents={this.state.showDownloadPrompt ? undefined : "none"}
+            pointerEvents={showDownloadPrompt ? undefined : "none"}
             transition="0.2s"
             href="https://renegade.fi/logos.zip"
             isExternal
@@ -86,18 +62,30 @@ export class Footer extends React.Component<
             Download Logo Pack
           </Link>
         </Flex>
-        <Box
+        <Text
           position="absolute"
-          right="0"
-          left="0"
-          display="grid"
-          placeContent="center"
+          left="50%"
+          color="white.90"
+          fontSize="1.1em"
+          fontWeight="300"
+          transform="translateX(-50%)"
+          onClick={() => lookupWallet(renegadeConfig)}
         >
-          <Text color="white.90" fontSize="1.1em" fontWeight="300">
-            TESTNET
-          </Text>
-        </Box>
+          TESTNET
+        </Text>
       </Flex>
-    )
-  }
+      <Text
+        position="absolute"
+        bottom="0"
+        left="0"
+        color="white.20"
+        fontFamily="Favorit Mono"
+        _hover={{ color: "white.100" }}
+        cursor="pointer"
+        onClick={() => navigator.clipboard.writeText(walletId ?? "")}
+      >
+        {walletId}
+      </Text>
+    </>
+  )
 }
