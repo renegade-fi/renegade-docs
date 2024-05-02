@@ -1,7 +1,7 @@
 "use client"
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
-import { FAILED_PLACE_ORDER_MSG, QUEUED_CANCEL_ORDER_MSG } from "@/lib/task"
+import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -67,7 +67,7 @@ export function PlaceOrderButton({
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
     if (isQueue) {
-      toast.message(QUEUED_CANCEL_ORDER_MSG(baseToken, parsedAmount, direction))
+      toast.message(QUEUED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
     }
     await createOrder(config, {
       id,

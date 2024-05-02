@@ -281,7 +281,7 @@ export function Providers({
                   >
                     <PriceProvider>
                       <AppProvider tokenIcons={icons}>
-                        <Toaster expand position="bottom-center" richColors />
+                        <Toaster position="bottom-center" richColors />
                         <TaskToaster />
                         <OrderToaster />
                         {children}
