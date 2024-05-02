@@ -1,5 +1,4 @@
 import { env } from "@/env.mjs"
-import { OrderState } from "@renegade-fi/react"
 import { Metadata } from "next"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -164,18 +163,3 @@ export const fundList: { ticker: string; amount: string }[] = [
     amount: "100",
   },
 ]
-
-export const getReadableState = (state: OrderState) => {
-  switch (state) {
-    case OrderState.Created:
-      return "Open"
-    case OrderState.Matching:
-      return "Open"
-    case OrderState.SettlingMatch:
-      return "Settling"
-    case OrderState.Filled:
-      return "Matched"
-    case OrderState.Cancelled:
-      return "Cancelled"
-  }
-}

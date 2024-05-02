@@ -5,6 +5,7 @@ import {
   useWriteErc20Approve,
 } from "@/generated"
 import { signPermit2 } from "@/lib/permit2"
+import { FAILED_DEPOSIT_MSG, QUEUED_DEPOSIT_MSG } from "@/lib/task"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -15,6 +16,7 @@ import {
   parseAmount,
   useConfig,
   useStatus,
+  useTaskHistory,
 } from "@renegade-fi/react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
@@ -108,6 +110,8 @@ export default function DepositButton({
     })
   }
 
+  const taskHistory = useTaskHistory()
+  const isQueue = taskHistory.find((task) => task.state !== "Completed")
   const handleSignAndDeposit = async () => {
     if (!walletClient) return
     const token = Token.findByTicker(base)
@@ -125,6 +129,9 @@ export default function DepositButton({
       walletClient,
       pkRoot,
     })
+    if (isQueue) {
+      toast.message(QUEUED_DEPOSIT_MSG(token, amount))
+    }
     await deposit(config, {
       fromAddr: walletClient.account.address,
       mint: token.address,
@@ -134,9 +141,6 @@ export default function DepositButton({
       permit: signature,
     })
       .then(() => {
-        toast.message(`Started to deposit ${baseTokenAmount} ${base}`, {
-          description: "Check the history tab for the status of the task",
-        })
         if (token.ticker === "USDC") {
           setDirection(Direction.BUY)
         } else {
@@ -144,7 +148,8 @@ export default function DepositButton({
         }
       })
       .catch((e) => {
-        toast.error(`Error depositing: ${e?.response?.data ?? e.message}`)
+        toast.error(FAILED_DEPOSIT_MSG(token, amount))
+        console.error(`Error depositing: ${e.response?.data ?? e.message}`)
       })
   }
 

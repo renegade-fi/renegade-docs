@@ -1,7 +1,11 @@
 "use client"
 
 import { useApp } from "@/contexts/App/app-context"
-import { getReadableState } from "@/lib/utils"
+import {
+  FAILED_CANCEL_ORDER_MSG,
+  QUEUED_CANCEL_ORDER_MSG,
+  getReadableState,
+} from "@/lib/task"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
@@ -16,6 +20,7 @@ import {
   useOrderHistory,
   useOrders,
   useStatus,
+  useTaskHistory,
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
@@ -70,17 +75,21 @@ function SingleOrder({
     state
   )
 
+  const taskHistory = useTaskHistory()
+  const isQueue = taskHistory.find((task) => task.state !== "Completed")
+
   const handleCancel = async () => {
-    await cancelOrder(config, { id })
-      .then(() => {
-        toast.message(
-          `Cancelling order to ${side.toLowerCase()} ${formattedAmount} ${base}`
-        )
-      })
-      .catch((e) => {
-        console.error(`Error cancelling order ${id}`)
-        toast.error(`Error cancelling order: ${e.response.data ?? e.message}`)
-      })
+    if (isQueue) {
+      toast.message(
+        QUEUED_CANCEL_ORDER_MSG(Token.findByAddress(baseAddr), amount, side)
+      )
+    }
+    await cancelOrder(config, { id }).catch((e) => {
+      console.error(`Error cancelling order ${e.response?.data ?? e.message}`)
+      toast.error(
+        FAILED_CANCEL_ORDER_MSG(Token.findByAddress(baseAddr), amount, side)
+      )
+    })
   }
 
   return (
