@@ -44,7 +44,6 @@ export function OrderToaster() {
       const formattedFilled = formatAmount(filled, base)
       const lastFilled = existingOrder?.filled || BigInt(0)
 
-      // TODO: Race condition if user orders gets update quicker than order history
       if (state === OrderState.Filled) {
         toast.success(
           `Order completely filled: ${
