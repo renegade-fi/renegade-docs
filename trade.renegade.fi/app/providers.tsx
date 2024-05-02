@@ -1,5 +1,7 @@
 "use client"
 
+import { OrderToaster } from "@/app/order-toaster"
+import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { env } from "@/env.mjs"
@@ -280,6 +282,8 @@ export function Providers({
                     <PriceProvider>
                       <AppProvider tokenIcons={icons}>
                         <Toaster expand position="bottom-center" richColors />
+                        <TaskToaster />
+                        <OrderToaster />
                         {children}
                       </AppProvider>
                     </PriceProvider>

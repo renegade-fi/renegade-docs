@@ -1,7 +1,6 @@
 import { Flex, Spinner, Text, Tooltip } from "@chakra-ui/react"
-import { type TaskState } from "@renegade-fi/react"
 import dayjs from "dayjs"
-import { CheckIcon, X } from "lucide-react"
+import { CheckIcon, TriangleAlert } from "lucide-react"
 
 export function TaskItem({
   name,
@@ -12,20 +11,20 @@ export function TaskItem({
 }: {
   name: string
   createdAt: number
-  state: TaskState
+  state: string
   description?: string
   tooltip?: string
 }) {
-  const rightIcon = {
-    ["Queued"]: <></>,
-    ["Running"]: <Spinner size="xs" />,
-    ["Proving"]: <Spinner size="xs" />,
-    ["Submitting Tx"]: <Spinner size="xs" />,
-    ["Finding Opening"]: <Spinner size="xs" />,
-    ["Updating Validity Proofs"]: <Spinner size="xs" />,
-    ["Completed"]: <CheckIcon size="17" />,
-    ["Failed"]: <X size="12" />,
-  }[state]
+  const icon =
+    state === "Completed" ? (
+      <CheckIcon size="17" />
+    ) : state === "Failed" ? (
+      <TriangleAlert size="14" />
+    ) : state === "Queued" ? (
+      <></>
+    ) : (
+      <Spinner size="xs" />
+    )
 
   return (
     <Flex
@@ -51,7 +50,7 @@ export function TaskItem({
           {name}
         </Text>
         <Flex gap="1" verticalAlign="middle">
-          {rightIcon}
+          {icon}
           <Text fontSize="0.8em">{state}</Text>
         </Flex>
       </Flex>

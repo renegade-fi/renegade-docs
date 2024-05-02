@@ -1,18 +1,7 @@
 "use client"
 
 import { fundList, fundWallet } from "@/lib/utils"
-import {
-  OrderState,
-  Token,
-  UseOrderHistoryWebSocketReturnType,
-  connect,
-  disconnect,
-  formatAmount,
-  useConfig,
-  useOrderHistory,
-  useOrderHistoryWebSocket,
-  useOrders,
-} from "@renegade-fi/react"
+import { connect, disconnect, useConfig } from "@renegade-fi/react"
 import {
   PropsWithChildren,
   createContext,
@@ -48,69 +37,6 @@ function AppProvider({
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
-
-  // Order History Panel
-  const orderHistory = useOrderHistory()
-  const incomingOrder = useOrderHistoryWebSocket()
-  const orders = useOrders()
-  const orderMetadataRef = useRef<
-    Map<string, UseOrderHistoryWebSocketReturnType>
-  >(new Map())
-
-  // Hydrate initial filled states
-  useEffect(() => {
-    orderHistory.forEach((order) => {
-      if (orderMetadataRef.current.get(order.id)) return
-      orderMetadataRef.current.set(order.id, order)
-    })
-  }, [orderHistory])
-
-  useEffect(() => {
-    if (incomingOrder) {
-      const {
-        id,
-        filled,
-        state,
-        data: { base_mint, amount, side },
-      } = incomingOrder
-      const base = Token.findByAddress(base_mint)
-      const formattedAmount = formatAmount(amount, base)
-      const formattedFilled = formatAmount(filled, base)
-      const lastFilled = orderMetadataRef.current.get(id)?.filled || BigInt(0)
-
-      // Ignore duplicate events
-      if (orderMetadataRef.current.get(id)?.state === state) {
-        return
-      }
-
-      // TODO: Race condition if user orders gets update quicker than order history
-      if (state === OrderState.Created && !orders.find((o) => o.id === id)) {
-        toast.success(
-          `Order created: ${side} ${formattedAmount} ${base.ticker}`
-        )
-      } else if (state === OrderState.Filled) {
-        toast.success(
-          `Order completely filled: ${
-            side === "Buy" ? "Bought" : "Sold"
-          } ${formattedFilled} ${base.ticker}`
-        )
-      } else if (filled > lastFilled) {
-        const currentFill = filled - lastFilled
-        const formattedCurrentFill = formatAmount(currentFill, base)
-        toast.success(
-          `Order partially filled: ${
-            side === "Buy" ? "Bought" : "Sold"
-          } ${formattedCurrentFill} ${base.ticker}`
-        )
-      } else if (state === OrderState.Cancelled) {
-        toast.success(
-          `Order cancelled: ${side} ${formattedAmount} ${base.ticker}`
-        )
-      }
-
-      orderMetadataRef.current.set(id, incomingOrder)
-    }
-  }, [incomingOrder, orders])
 
   const config = useConfig()
 
