@@ -1,5 +1,6 @@
 "use client"
 
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Direction } from "@/lib/types"
 import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
@@ -59,6 +60,7 @@ export function TradingBody() {
 }
 
 function TradingInner() {
+  const { view } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
     onOpen: onOpenTokenMenu,
@@ -103,10 +105,10 @@ function TradingInner() {
   }, [baseTokenAmount, buySellSelectableRef])
 
   useEffect(() => {
-    if (base === "USDC") {
+    if (view === ViewEnum.TRADING && base === "USDC") {
       setBase("WETH")
     }
-  }, [base, setBase])
+  }, [base, setBase, view])
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -243,7 +245,9 @@ function MaxButton({
   baseTokenAmount: string
   setBaseTokenAmount: (value: string) => void
 }) {
-  const [base] = useLocalStorage("base", Token.findByTicker("WETH").ticker)
+  const [base] = useLocalStorage("base", Token.findByTicker("WETH").ticker, {
+    initializeWithValue: false,
+  })
   const [quote] = useLocalStorage("quote", "USDC", {
     initializeWithValue: false,
   })

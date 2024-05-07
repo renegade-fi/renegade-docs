@@ -36,7 +36,9 @@ interface TokenSelectModalProps {
   onClose: () => void
 }
 export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
-  const [_, setBase] = useLocalStorage("base", "WETH")
+  const [_, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 

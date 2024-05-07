@@ -34,7 +34,9 @@ export function TokenSelectModal({ isOpen, onClose }: TokenSelectModalProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
   const balances = useBalances()
-  const [_, setBase] = useLocalStorage("base", "WETH")
+  const [_, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
   const filteredTickers = useMemo(() => {
     return DISPLAYED_TICKERS.filter(([ticker]) =>
       ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
