@@ -225,7 +225,10 @@ export function Providers({
   icons?: Record<string, string>
 }) {
   useEffect(() => {
-    async function loadUtils() {
+    async function loadLogging() {
+      if (process.env.VERCEL_ENV === "development") {
+        return
+      }
       datadogRum.init({
         applicationId: env.NEXT_PUBLIC_DATADOG_APPLICATION_ID,
         clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
@@ -254,7 +257,7 @@ export function Providers({
 
       datadogRum.startSessionReplayRecording()
     }
-    loadUtils()
+    loadLogging()
     return () => {
       datadogRum.stopSessionReplayRecording()
     }
