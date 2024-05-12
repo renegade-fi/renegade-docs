@@ -42,10 +42,9 @@ function TokenBalance(props: TokenBalanceProps) {
   const { tokenIcons } = useApp()
   const { setView } = useApp()
   const token = Token.findByAddress(props.tokenAddr)
-  const [_, setBase] = useLocalStorage(
-    "base",
-    Token.findByTicker("WETH").ticker
-  )
+  const [_, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
 
   const formattedAmount = formatAmount(props.amount, token)
   const ticker = token.ticker
@@ -377,7 +376,7 @@ function HistorySection() {
       </Flex>
       <SimpleBar
         style={{
-          minHeight: "30vh",
+          height: "30vh",
           width: "100%",
           padding: "0 8px",
         }}
