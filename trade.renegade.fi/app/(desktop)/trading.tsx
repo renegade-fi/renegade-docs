@@ -206,7 +206,10 @@ function TradingInner() {
           </HStack>
           <HelperText baseTicker={base} />
         </Flex>
-        <PlaceOrderButton baseTokenAmount={baseTokenAmount} />
+        <PlaceOrderButton
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
         <BlurredOverlay
           activeModal={activeModal}
           onClose={() => setActiveModal(undefined)}

@@ -41,8 +41,10 @@ const publicClient = createPublicClient({
 
 export default function DepositButton({
   baseTokenAmount,
+  setBaseTokenAmount,
 }: {
   baseTokenAmount: string
+  setBaseTokenAmount: (baseTokenAmount: string) => void
 }) {
   const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
@@ -140,6 +142,7 @@ export default function DepositButton({
       walletClient,
       pkRoot,
     })
+    setBaseTokenAmount("")
     if (isQueue) {
       toast.message(QUEUED_DEPOSIT_MSG(token, amount))
     }

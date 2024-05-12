@@ -28,8 +28,10 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 
 export function PlaceOrderButton({
   baseTokenAmount,
+  setBaseTokenAmount,
 }: {
   baseTokenAmount: string
+  setBaseTokenAmount: (baseTokenAmount: string) => void
 }) {
   const { address } = useAccountWagmi()
   const balances = useBalances()
@@ -68,6 +70,7 @@ export function PlaceOrderButton({
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
+    setBaseTokenAmount("")
     if (isQueue) {
       toast.message(QUEUED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
     }

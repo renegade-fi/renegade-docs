@@ -156,7 +156,10 @@ export function DepositBody() {
             </HStack>
           </HStack>
         </Box>
-        <DepositButton baseTokenAmount={baseTokenAmount} />
+        <DepositButton
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
       </Flex>
       <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>

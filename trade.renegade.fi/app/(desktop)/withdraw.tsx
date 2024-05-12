@@ -141,7 +141,11 @@ export function WithdrawBody() {
             </HStack>
           </HStack>
         </Box>
-        <WithdrawButton baseTicker={base} baseTokenAmount={baseTokenAmount} />
+        <WithdrawButton
+          baseTicker={base}
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
       </Flex>
       <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>
