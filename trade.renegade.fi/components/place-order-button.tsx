@@ -93,8 +93,6 @@ export function PlaceOrderButton({
     })
   }
 
-  const costInUsd = useUSDPrice(base, parseFloat(baseTokenAmount))
-
   const hasInsufficientBalance = useMemo(() => {
     if (!baseTokenAmount) return false
     const baseBalance =
@@ -102,19 +100,10 @@ export function PlaceOrderButton({
     const quoteBalance =
       balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
     if (direction === Direction.SELL) {
-      return baseBalance < parseAmount(baseTokenAmount, baseToken)
+      return baseBalance === BigInt(0)
     }
-    return parseFloat(formatAmount(quoteBalance, quoteToken)) < costInUsd
-  }, [
-    balances,
-    baseAddress,
-    baseToken,
-    baseTokenAmount,
-    costInUsd,
-    direction,
-    quoteAddress,
-    quoteToken,
-  ])
+    return quoteBalance === BigInt(0)
+  }, [balances, baseAddress, baseTokenAmount, direction, quoteAddress])
 
   const [price, setPrice] = useState(0)
   const { handleSubscribe, handleGetPrice } = usePrice()
