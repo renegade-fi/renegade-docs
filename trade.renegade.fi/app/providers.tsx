@@ -14,6 +14,7 @@ import {
   createMultiStyleConfigHelpers,
   extendTheme,
   keyframes,
+  useDisclosure,
 } from "@chakra-ui/react"
 import { datadogLogs } from "@datadog/browser-logs"
 import { datadogRum } from "@datadog/browser-rum"
@@ -30,6 +31,8 @@ import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
+
+import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
 dayjs.extend(relativeTime)
 
@@ -271,26 +274,16 @@ export function Providers({
             <RenegadeProvider reconnectOnMount={true} config={renegadeConfig}>
               <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClient}>
-                  <ConnectKitProvider
-                    mode="dark"
-                    customTheme={{
-                      "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
-                      "--ck-overlay-backdrop-filter": "blur(8px)",
-                      "--ck-font-family": "Favorit Extended",
-                      "--ck-border-radius": "10px",
-                      "--ck-body-background": "#1e1e1e",
-                      "--ck-spinner-color": "#ffffff",
-                    }}
-                  >
-                    <PriceProvider>
-                      <AppProvider tokenIcons={icons}>
+                  <AppProvider tokenIcons={icons}>
+                    <ConnectKitProviderWithSignMessage>
+                      <PriceProvider>
                         <Toaster position="bottom-center" richColors />
                         <TaskToaster />
                         <OrderToaster />
                         {children}
-                      </AppProvider>
-                    </PriceProvider>
-                  </ConnectKitProvider>
+                      </PriceProvider>
+                    </ConnectKitProviderWithSignMessage>
+                  </AppProvider>
                 </QueryClientProvider>
               </WagmiProvider>
             </RenegadeProvider>
@@ -298,5 +291,27 @@ export function Providers({
         </CacheProvider>
       </IntercomProvider>
     </>
+  )
+}
+
+// Required because ConnectKitProvider needs access to the useSignMessage wagmi hook
+function ConnectKitProviderWithSignMessage({ children }: PropsWithChildren) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  return (
+    <ConnectKitProvider
+      onConnect={onOpen}
+      mode="dark"
+      customTheme={{
+        "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
+        "--ck-overlay-backdrop-filter": "blur(8px)",
+        "--ck-font-family": "Favorit Extended",
+        "--ck-border-radius": "10px",
+        "--ck-body-background": "#1e1e1e",
+        "--ck-spinner-color": "#ffffff",
+      }}
+    >
+      {children}
+      {isOpen && <CreateStepper onClose={onClose} />}
+    </ConnectKitProvider>
   )
 }
