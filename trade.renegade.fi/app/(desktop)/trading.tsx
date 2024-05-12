@@ -110,18 +110,6 @@ function TradingInner() {
     }
   }, [base, setBase, view])
 
-  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    if (
-      value === "" ||
-      (!isNaN(parseFloat(value)) &&
-        isFinite(parseFloat(value)) &&
-        parseFloat(value) >= 0)
-    ) {
-      setBaseTokenAmount(value)
-    }
-  }
-
   return (
     <>
       <Flex
@@ -145,41 +133,10 @@ function TradingInner() {
               activeModal={activeModal}
               ref={buySellSelectableRef}
             />
-            <InputGroup>
-              <Input
-                width="200px"
-                paddingRight="3rem"
-                fontFamily="Favorit"
-                fontSize="0.8em"
-                borderColor="whiteAlpha.300"
-                borderRadius="100px"
-                _focus={{
-                  borderColor: "white.50 !important",
-                  boxShadow: "none !important",
-                }}
-                _placeholder={{ color: "whiteAlpha.400" }}
-                outline="none !important"
-                onChange={handleSetBaseTokenAmount}
-                onFocus={(e) =>
-                  e.target.addEventListener(
-                    "wheel",
-                    (e) => e.preventDefault(),
-                    {
-                      passive: false,
-                    }
-                  )
-                }
-                placeholder="0.00"
-                type="number"
-                value={baseTokenAmount || ""}
-              />
-              <InputRightElement width="3.5rem">
-                <MaxButton
-                  baseTokenAmount={baseTokenAmount}
-                  setBaseTokenAmount={setBaseTokenAmount}
-                />
-              </InputRightElement>
-            </InputGroup>
+            <InputWithMaxButton
+              baseTokenAmount={baseTokenAmount}
+              setBaseTokenAmount={setBaseTokenAmount}
+            />
             <HStack
               userSelect="none"
               cursor="pointer"
@@ -206,7 +163,10 @@ function TradingInner() {
           </HStack>
           <HelperText baseTicker={base} />
         </Flex>
-        <PlaceOrderButton baseTokenAmount={baseTokenAmount} />
+        <PlaceOrderButton
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
         <BlurredOverlay
           activeModal={activeModal}
           onClose={() => setActiveModal(undefined)}
@@ -238,14 +198,14 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
   )
 }
 
-function MaxButton({
+function InputWithMaxButton({
   baseTokenAmount,
   setBaseTokenAmount,
 }: {
   baseTokenAmount: string
   setBaseTokenAmount: (value: string) => void
 }) {
-  const [base] = useLocalStorage("base", Token.findByTicker("WETH").ticker, {
+  const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
   const [quote] = useLocalStorage("quote", "USDC", {
@@ -255,6 +215,18 @@ function MaxButton({
   const max = useMax(direction === Direction.SELL ? base : quote)
   const usdPrice = useUSDPrice(base, 1)
   const buyMax = (1 / usdPrice) * Number(max) * 0.99
+
+  const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    if (
+      value === "" ||
+      (!isNaN(parseFloat(value)) &&
+        isFinite(parseFloat(value)) &&
+        parseFloat(value) >= 0)
+    ) {
+      setBaseTokenAmount(value)
+    }
+  }
 
   const handleSetMax = () => {
     if (max) {
@@ -270,17 +242,47 @@ function MaxButton({
     (direction === Direction.SELL
       ? baseTokenAmount === max
       : baseTokenAmount === buyMax.toString())
-  if (hideMaxButton) return null
+
   return (
-    <Button
-      color="white.60"
-      fontFamily="Favorit"
-      fontWeight="400"
-      onClick={handleSetMax}
-      size="xs"
-      variant="ghost"
-    >
-      Max
-    </Button>
+    <InputGroup>
+      <Input
+        width="200px"
+        paddingRight={hideMaxButton ? undefined : "3rem"}
+        fontFamily="Favorit"
+        fontSize="0.8em"
+        borderColor="whiteAlpha.300"
+        borderRadius="100px"
+        _focus={{
+          borderColor: "white.50 !important",
+          boxShadow: "none !important",
+        }}
+        _placeholder={{ color: "whiteAlpha.400" }}
+        outline="none !important"
+        onChange={handleSetBaseTokenAmount}
+        onFocus={(e) =>
+          e.target.addEventListener("wheel", (e) => e.preventDefault(), {
+            passive: false,
+          })
+        }
+        placeholder="0.00"
+        type="number"
+        value={baseTokenAmount || ""}
+      />
+      {!hideMaxButton && (
+        <InputRightElement width="3.5rem">
+          <Button
+            color="white.60"
+            fontFamily="Favorit"
+            fontWeight="400"
+            borderRadius="100px"
+            onClick={handleSetMax}
+            size="xs"
+            variant="ghost"
+          >
+            Max
+          </Button>
+        </InputRightElement>
+      )}
+    </InputGroup>
   )
 }
