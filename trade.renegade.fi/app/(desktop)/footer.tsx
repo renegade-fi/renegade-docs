@@ -78,10 +78,11 @@ export const Footer = () => {
         position="absolute"
         bottom="0"
         left="0"
-        color="white.20"
         fontFamily="Favorit Mono"
-        _hover={{ color: "white.100" }}
+        opacity={0.05}
+        _hover={{ opacity: 1 }}
         cursor="pointer"
+        transition="0.2s"
         onClick={() => navigator.clipboard.writeText(walletId ?? "")}
       >
         {walletId}

@@ -23,9 +23,11 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 export default function WithdrawButton({
   baseTicker,
   baseTokenAmount,
+  setBaseTokenAmount,
 }: {
   baseTicker: string
   baseTokenAmount: string
+  setBaseTokenAmount: (baseTokenAmount: string) => void
 }) {
   const {
     isOpen: signInIsOpen,
@@ -53,7 +55,7 @@ export default function WithdrawButton({
   const status = useStatus()
   const isConnected = status === "in relayer"
 
-  const isDisabled = (isConnected && !baseTokenAmount) || hasInsufficientBalance
+  const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)
 
   const config = useConfig()
   const { address } = useAccount()
@@ -68,6 +70,7 @@ export default function WithdrawButton({
     if (!address) return
     const token = Token.findByTicker(baseTicker)
     const amount = parseAmount(baseTokenAmount, token)
+    setBaseTokenAmount("")
     if (isQueue) {
       toast.message(QUEUED_WITHDRAWAL_MSG(token, amount))
     }

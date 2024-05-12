@@ -31,7 +31,7 @@ import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { Address, formatUnits } from "viem"
-import { useAccount as useAccountWagmi, useWalletClient } from "wagmi"
+import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
@@ -46,13 +46,11 @@ interface TokenBalanceProps {
   amount: bigint
 }
 function TokenBalance(props: TokenBalanceProps) {
-  const { tokenIcons } = useApp()
-  const { setView } = useApp()
+  const { setView, tokenIcons } = useApp()
   const token = Token.findByAddress(props.tokenAddr)
-  const [_, setBase] = useLocalStorage(
-    "base",
-    Token.findByTicker("WETH").ticker
-  )
+  const [_, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
 
   const formattedAmount = formatAmount(props.amount, token)
   const ticker = token.ticker
@@ -63,18 +61,9 @@ function TokenBalance(props: TokenBalanceProps) {
 
   const isZero = props.amount === BigInt(0)
 
-  const { data: walletClient } = useWalletClient()
-  const handleAddToWallet = async (address: Address) => {
-    if (!walletClient) return
-    const token = Token.findByAddress(address)
-    await walletClient.watchAsset({
-      type: "ERC20",
-      options: {
-        address,
-        decimals: token.decimals || 18,
-        symbol: "DUMMY",
-      },
-    })
+  const handleClick = () => {
+    setBase(ticker)
+    setView(ViewEnum.TRADING)
   }
   return (
     <Flex
@@ -100,7 +89,7 @@ function TokenBalance(props: TokenBalanceProps) {
         marginLeft="5px"
         fontFamily="Favorit"
         cursor="pointer"
-        onClick={() => handleAddToWallet(props.tokenAddr)}
+        onClick={handleClick}
       >
         <Tooltip
           label={
@@ -387,7 +376,7 @@ function HistorySection() {
       </Tooltip>
       <SimpleBar
         style={{
-          minHeight: "30vh",
+          height: "30vh",
           width: "100%",
           padding: "0 8px",
         }}

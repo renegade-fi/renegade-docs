@@ -102,7 +102,7 @@ export function DepositBody() {
             <InputGroup>
               <Input
                 width="200px"
-                paddingRight="3rem"
+                paddingRight={hideMaxButton ? undefined : "3rem"}
                 fontFamily="Favorit"
                 fontSize="0.8em"
                 borderColor="whiteAlpha.300"
@@ -133,6 +133,7 @@ export function DepositBody() {
                     color="white.60"
                     fontFamily="Favorit"
                     fontWeight="400"
+                    borderRadius="100px"
                     onClick={handleSetMax}
                     size="xs"
                     variant="ghost"
@@ -156,7 +157,10 @@ export function DepositBody() {
             </HStack>
           </HStack>
         </Box>
-        <DepositButton baseTokenAmount={baseTokenAmount} />
+        <DepositButton
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
       </Flex>
       <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>

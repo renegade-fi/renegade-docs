@@ -87,7 +87,7 @@ export function WithdrawBody() {
             <InputGroup>
               <Input
                 width="200px"
-                paddingRight="3rem"
+                paddingRight={hideMaxButton ? undefined : "3rem"}
                 fontFamily="Favorit"
                 fontSize="0.8em"
                 borderColor="whiteAlpha.300"
@@ -118,6 +118,7 @@ export function WithdrawBody() {
                     color="white.60"
                     fontFamily="Favorit"
                     fontWeight="400"
+                    borderRadius="100px"
                     onClick={handleSetMax}
                     size="xs"
                     variant="ghost"
@@ -141,7 +142,11 @@ export function WithdrawBody() {
             </HStack>
           </HStack>
         </Box>
-        <WithdrawButton baseTicker={base} baseTokenAmount={baseTokenAmount} />
+        <WithdrawButton
+          baseTicker={base}
+          baseTokenAmount={baseTokenAmount}
+          setBaseTokenAmount={setBaseTokenAmount}
+        />
       </Flex>
       <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
     </>

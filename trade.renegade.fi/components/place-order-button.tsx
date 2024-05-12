@@ -1,5 +1,3 @@
-"use client"
-
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
 import { Direction } from "@/lib/types"
@@ -8,7 +6,6 @@ import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
   createOrder,
-  formatAmount,
   parseAmount,
   useBalances,
   useConfig,
@@ -22,14 +19,15 @@ import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
 export function PlaceOrderButton({
   baseTokenAmount,
+  setBaseTokenAmount,
 }: {
   baseTokenAmount: string
+  setBaseTokenAmount: (baseTokenAmount: string) => void
 }) {
   const { address } = useAccountWagmi()
   const balances = useBalances()
@@ -68,6 +66,7 @@ export function PlaceOrderButton({
   const handlePlaceOrder = async () => {
     const id = uuidv4()
     const parsedAmount = parseAmount(baseTokenAmount, baseToken)
+    setBaseTokenAmount("")
     if (isQueue) {
       toast.message(QUEUED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
     }
@@ -90,8 +89,6 @@ export function PlaceOrderButton({
     })
   }
 
-  const costInUsd = useUSDPrice(base, parseFloat(baseTokenAmount))
-
   const hasInsufficientBalance = useMemo(() => {
     if (!baseTokenAmount) return false
     const baseBalance =
@@ -99,19 +96,10 @@ export function PlaceOrderButton({
     const quoteBalance =
       balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
     if (direction === Direction.SELL) {
-      return baseBalance < parseAmount(baseTokenAmount, baseToken)
+      return baseBalance === BigInt(0)
     }
-    return parseFloat(formatAmount(quoteBalance, quoteToken)) < costInUsd
-  }, [
-    balances,
-    baseAddress,
-    baseToken,
-    baseTokenAmount,
-    costInUsd,
-    direction,
-    quoteAddress,
-    quoteToken,
-  ])
+    return quoteBalance === BigInt(0)
+  }, [balances, baseAddress, baseTokenAmount, direction, quoteAddress])
 
   const [price, setPrice] = useState(0)
   const { handleSubscribe, handleGetPrice } = usePrice()
