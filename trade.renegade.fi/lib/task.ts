@@ -79,7 +79,7 @@ export function generateStartToastMessage(task: Task) {
       message = "Creating new wallet..."
       break
     case TaskType.PayOfflineFee:
-      message = "Paying offline fee..."
+      message = "Paying fee..."
       break
     case TaskType.UpdateWallet:
       switch (taskInfo.update_type) {
@@ -151,7 +151,7 @@ export function generateFailedToastMessage(task: Task) {
       message = "Failed to create new wallet. Please try again."
       break
     case TaskType.PayOfflineFee:
-      message = "Failed to pay offline fee. Please try again."
+      message = "Failed to pay fee. Please try again."
       break
     case TaskType.UpdateWallet:
       let token

@@ -314,6 +314,8 @@ function OrderBookPanel() {
             <Box
               key={counterpartyOrder.id}
               padding="5%"
+              color="white.60"
+              fontSize="0.8em"
               borderBottom="var(--secondary-border)"
             >
               <Flex
@@ -324,24 +326,14 @@ function OrderBookPanel() {
                 <Text
                   color={textColor}
                   fontFamily="Favorit Extended"
+                  fontSize="1.2em"
                   fontWeight="500"
                 >
                   {status}&nbsp;
                 </Text>
-                <Text
-                  color="white.60"
-                  fontFamily="Favorit Expanded"
-                  fontSize="0.7em"
-                  fontWeight="500"
-                >
-                  {dayjs().isSame(dayjs.unix(timestamp), "day")
-                    ? dayjs.unix(timestamp).format("HH:mm:ss")
-                    : dayjs.unix(timestamp).fromNow()}
-                </Text>
+                <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>
               </Flex>
-              <Text color="white.80" fontSize="0.8em">
-                {title}
-              </Text>
+              <Text>{title}</Text>
             </Box>
           )
         })}

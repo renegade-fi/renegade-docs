@@ -55,15 +55,7 @@ export function TaskToaster() {
         toast.message(message)
       } else if (incomingTask.state === "Proving Payment") {
         const message = generateStartToastMessage(incomingTask)
-        toast.message(message, {
-          action: {
-            label: "What's this?",
-            onClick: (event) => {
-              event.preventDefault()
-              onOpen()
-            },
-          },
-        })
+        toast.message(message)
       }
     }
   }, [incomingTask, onOpen])
