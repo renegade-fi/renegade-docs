@@ -42,7 +42,7 @@ export function DepositBody() {
       value === "" ||
       (!isNaN(parseFloat(value)) &&
         isFinite(parseFloat(value)) &&
-        parseFloat(value) >= 0)
+        parseFloat(value) > 0)
     ) {
       setBaseTokenAmount(value)
     }
