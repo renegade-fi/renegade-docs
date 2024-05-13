@@ -15,7 +15,9 @@ type ERC20TokenSelectModalProps = {
   isOpen: boolean
   onClose: () => void
 }
-const tokens = tokenMapping.tokens
+const tokens = tokenMapping.tokens.filter(
+  ({ ticker }) => !["USDT"].includes(ticker)
+)
 export function ERC20TokenSelectModal({
   isOpen,
   onClose,

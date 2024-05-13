@@ -17,11 +17,13 @@ type TradingTokenSelectModalProps = {
   isOpen: boolean
   onClose: () => void
 }
+const tokens = tokenMapping.tokens.filter(
+  ({ ticker }) => !["USDC", "USDT"].includes(ticker)
+)
 export function TradingTokenSelectModal({
   isOpen,
   onClose,
 }: TradingTokenSelectModalProps) {
-  const tokens = tokenMapping.tokens
   const balances = useBalances()
   const [_, setBase] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
@@ -53,7 +55,7 @@ export function TradingTokenSelectModal({
         address,
         balance: formatAmount(balance, Token.findByAddress(address)),
       }))
-  }, [balances, debouncedSearchTerm, tokens])
+  }, [balances, debouncedSearchTerm])
 
   return (
     <TokenSelectModal
