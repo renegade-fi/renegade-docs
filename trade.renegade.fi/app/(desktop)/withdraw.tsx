@@ -19,7 +19,7 @@ import { useLocalStorage } from "usehooks-ts"
 
 import { useMax } from "@/hooks/use-max"
 
-import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
+import { ERC20TokenSelectModal } from "@/components/modals/erc20-token-select-modal"
 
 export function WithdrawBody() {
   const { setView } = useApp()
@@ -148,7 +148,10 @@ export function WithdrawBody() {
           setBaseTokenAmount={setBaseTokenAmount}
         />
       </Flex>
-      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
+      <ERC20TokenSelectModal
+        isOpen={tokenMenuIsOpen}
+        onClose={onCloseTokenMenu}
+      />
     </>
   )
 }

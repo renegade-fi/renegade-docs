@@ -22,7 +22,7 @@ import { useLocalStorage } from "usehooks-ts"
 import { formatUnits } from "viem"
 import { useAccount, useBlockNumber } from "wagmi"
 
-import { TokenSelectModal } from "@/components/modals/token-select-modal"
+import { ERC20TokenSelectModal } from "@/components/modals/erc20-token-select-modal"
 
 export function DepositBody() {
   const { setView } = useApp()
@@ -162,7 +162,10 @@ export function DepositBody() {
           setBaseTokenAmount={setBaseTokenAmount}
         />
       </Flex>
-      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
+      <ERC20TokenSelectModal
+        isOpen={tokenMenuIsOpen}
+        onClose={onCloseTokenMenu}
+      />
     </>
   )
 }
