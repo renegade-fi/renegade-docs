@@ -25,6 +25,8 @@ export function TaskItem({
     ) : (
       <Spinner size="xs" />
     )
+  const iconColor =
+    state === "Completed" ? "green" : state === "Failed" ? "red" : "white"
 
   return (
     <Box
@@ -39,6 +41,7 @@ export function TaskItem({
         color: "white.90",
       }}
       transition="all 0.2s"
+      role="group"
     >
       <Flex
         alignItems="center"
@@ -50,7 +53,9 @@ export function TaskItem({
           {name}
         </Text>
         <Flex gap="1" verticalAlign="middle">
-          {icon}
+          <Box _groupHover={{ color: iconColor }} transition="color 0.2s">
+            {icon}
+          </Box>
           <Text>{state}</Text>
         </Flex>
       </Flex>
