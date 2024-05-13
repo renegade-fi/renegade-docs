@@ -22,7 +22,7 @@ import { useMax } from "@/hooks/use-max"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
-import { TokenSelectModal } from "@/components/modals/trading-token-select-modal"
+import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
 
 interface SelectableProps {
@@ -213,7 +213,10 @@ function TradingInner() {
           buySellSelectableCoords={buySellSelectableCoords.current}
         />
       </Flex>
-      <TokenSelectModal isOpen={tokenMenuIsOpen} onClose={onCloseTokenMenu} />
+      <TradingTokenSelectModal
+        isOpen={tokenMenuIsOpen}
+        onClose={onCloseTokenMenu}
+      />
     </>
   )
 }

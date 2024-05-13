@@ -1,7 +1,7 @@
 "use client"
 
-import { DISPLAYED_TICKERS } from "@/lib/tokens"
 import { Stack, Text } from "@chakra-ui/react"
+import { tokenMapping } from "@renegade-fi/react"
 import { useLocalStorage } from "usehooks-ts"
 
 import Marquee from "@/components/banners/marquee"
@@ -11,6 +11,9 @@ export function TokensBanner({}: { prices?: number[] }) {
   const [_, setBaseToken] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
+  const tokens = tokenMapping.tokens.filter(
+    ({ ticker }) => !["USDC", "USDT"].includes(ticker)
+  )
   return (
     <Marquee
       autoFill
@@ -23,24 +26,27 @@ export function TokensBanner({}: { prices?: number[] }) {
         height: "var(--banner-height)",
       }}
     >
-      {DISPLAYED_TICKERS.map(([baseTicker, quoteTicker]) => {
-        if (["USDC", "USDT"].includes(baseTicker)) {
-          return null
-        }
+      {tokens.map(({ ticker }) => {
         return (
           <Stack
-            key={baseTicker + quoteTicker}
+            key={ticker}
             alignItems="center"
             direction="row"
             marginRight="0.5rem"
-            onClick={() => setBaseToken(baseTicker)}
+            padding="4px 8px"
+            borderRadius="0.5rem"
+            _hover={{
+              backgroundColor: "white.10",
+            }}
+            transition="background 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)"
+            onClick={() => setBaseToken(ticker)}
           >
             <Text color="white.80" fontFamily="Favorit Expanded">
-              {baseTicker}
+              {ticker}
             </Text>
             <LivePrices
-              baseTicker={baseTicker}
-              quoteTicker={quoteTicker}
+              baseTicker={ticker}
+              quoteTicker="USDC"
               exchange="binance"
             />
           </Stack>
