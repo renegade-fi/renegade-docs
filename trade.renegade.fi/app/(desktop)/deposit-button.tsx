@@ -77,9 +77,10 @@ export default function DepositButton({
     })
 
   useEffect(() => {
+    console.log("invalidating queries")
     queryClient.invalidateQueries({ queryKey: balanceQueryKey })
     queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
-  }, [allowanceQueryKey, blockNumber, balanceQueryKey, queryClient, base])
+  }, [blockNumber, base, queryClient, balanceQueryKey, allowanceQueryKey])
 
   // ERC20 Approval
   const status = useStatus()
