@@ -49,27 +49,24 @@ export default function DepositButton({
   const [base] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
-  const {
-    isOpen: signInIsOpen,
-    onOpen: onOpenSignIn,
-    onClose: onCloseSignIn,
-  } = useDisclosure()
+  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const { buttonOnClick, buttonText, cursor, shouldUse } = useButton({
     connectText: "Connect Wallet to Deposit",
-    onOpenSignIn,
+    onOpenSignIn: onOpen,
     signInText: "Sign in to Deposit",
   })
 
   const { address } = useAccount()
+  const queryClient = useQueryClient()
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+  // Get ERC20 balance
+  const { data: balance, queryKey: balanceQueryKey } = useReadErc20BalanceOf({
+    address: Token.findByTicker(base).address,
+    args: [address ?? "0x"],
+  })
 
-  // Get L1 ERC20 balance
-  const { data: l1Balance, queryKey: l1BalanceQueryKey } =
-    useReadErc20BalanceOf({
-      address: Token.findByTicker(base).address,
-      args: [address ?? "0x"],
-    })
-
-  // Get L1 ERC20 Allowance
+  // ERC20 Allowance
   const { data: allowance, queryKey: allowanceQueryKey } =
     useReadErc20Allowance({
       address: Token.findByTicker(base).address,
@@ -79,33 +76,17 @@ export default function DepositButton({
       ],
     })
 
-  const queryClient = useQueryClient()
-  const { data: blockNumber } = useBlockNumber({ watch: true })
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: l1BalanceQueryKey })
+    queryClient.invalidateQueries({ queryKey: balanceQueryKey })
     queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
-  }, [allowanceQueryKey, blockNumber, l1BalanceQueryKey, queryClient, base])
+  }, [allowanceQueryKey, blockNumber, balanceQueryKey, queryClient, base])
 
-  // L1 ERC20 Approval
-  const { writeContractAsync: approve, status: approveStatus } =
-    useWriteErc20Approve()
-
-  const { data: walletClient } = useWalletClient()
-
-  const hasRpcConnectionError = typeof allowance === "undefined"
-  const hasInsufficientBalance = l1Balance
-    ? l1Balance < parseAmount(baseTokenAmount, Token.findByTicker(base))
-    : true
-  const needsApproval = allowance === BigInt(0) && approveStatus !== "success"
+  // ERC20 Approval
   const status = useStatus()
   const isConnected = status === "in relayer" && address
-
-  const isDisabled =
-    isConnected &&
-    (!baseTokenAmount || hasRpcConnectionError || hasInsufficientBalance)
-
-  const [_, setDirection] = useLocalStorage("direction", Direction.BUY)
-  const config = useConfig()
+  const { writeContractAsync: approve, status: approveStatus } =
+    useWriteErc20Approve()
+  const { data: walletClient } = useWalletClient()
   const handleApprove = async () => {
     if (!isConnected || !walletClient) return
     const nonce = await publicClient.getTransactionCount({
@@ -121,6 +102,8 @@ export default function DepositButton({
     })
   }
 
+  // Deposit
+  const config = useConfig()
   const taskHistory = useTaskHistory()
   const isQueue = taskHistory.find(
     (task) => task.state !== "Completed" && task.state !== "Failed"
@@ -129,9 +112,7 @@ export default function DepositButton({
     if (!walletClient) return
     const token = Token.findByTicker(base)
     const amount = parseUnits(baseTokenAmount, 18)
-
     const pkRoot = getPkRootScalars(config)
-
     // Generate Permit2 Signature
     const { signature, nonce, deadline } = await signPermit2({
       amount,
@@ -172,6 +153,12 @@ export default function DepositButton({
         console.error(`Error depositing: ${e.response?.data ?? e.message}`)
       })
   }
+
+  const hasInsufficientBalance = balance
+    ? balance < parseAmount(baseTokenAmount, Token.findByTicker(base))
+    : true
+  const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)
+  const needsApproval = allowance === BigInt(0) || allowance === undefined
 
   const handleClick = async () => {
     if (shouldUse) {
@@ -221,11 +208,9 @@ export default function DepositButton({
           ? "Insufficient balance"
           : needsApproval
           ? `Approve ${base}`
-          : hasRpcConnectionError
-          ? "Error connecting to chain"
-          : `Deposit ${baseTokenAmount || ""} ${base}`}
+          : `Deposit ${baseTokenAmount || "0"} ${base}`}
       </Button>
-      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
+      {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )
 }
