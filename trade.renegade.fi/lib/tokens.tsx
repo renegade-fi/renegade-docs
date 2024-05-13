@@ -33,7 +33,6 @@ import truLogo from "@/icons/tokens/tru.png"
 import usdtLogo from "@/icons/tokens/usdt.png"
 import wbtcLogo from "@/icons/tokens/wbtc.png"
 import wethLogo from "@/icons/tokens/weth.png"
-import { tokenMapping } from "@renegade-fi/react"
 import { StaticImageData } from "next/image"
 
 const TOKENLIST_URL =
@@ -133,10 +132,6 @@ export const TICKER_TO_NAME_AND_DEFAULT_DECIMALS: {
   // AUDIO: ["Audius", -1],
   // BAT: ["Basic Attention Token", -1],
 }
-
-export const DISPLAYED_TICKERS: [string, string][] = tokenMapping.tokens.map(
-  (token) => [token.ticker, "USDC"]
-)
 
 export const TICKER_TO_NAME: { [key in string]: string } = {}
 export const TICKER_TO_DEFAULT_DECIMALS: { [key in string]: number } = {}
