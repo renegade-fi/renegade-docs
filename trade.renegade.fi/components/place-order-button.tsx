@@ -1,5 +1,3 @@
-"use client"
-
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
 import { Direction } from "@/lib/types"
@@ -8,7 +6,6 @@ import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
   createOrder,
-  formatAmount,
   parseAmount,
   useBalances,
   useConfig,
@@ -22,7 +19,6 @@ import { v4 as uuidv4 } from "uuid"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 

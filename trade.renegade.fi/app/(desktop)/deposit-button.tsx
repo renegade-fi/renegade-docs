@@ -77,7 +77,6 @@ export default function DepositButton({
     })
 
   useEffect(() => {
-    console.log("invalidating queries")
     queryClient.invalidateQueries({ queryKey: balanceQueryKey })
     queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
   }, [blockNumber, base, queryClient, balanceQueryKey, allowanceQueryKey])
