@@ -102,7 +102,7 @@ export function DepositBody() {
             <InputGroup>
               <Input
                 width="200px"
-                paddingRight="3rem"
+                paddingRight={hideMaxButton ? undefined : "3rem"}
                 fontFamily="Favorit"
                 fontSize="0.8em"
                 borderColor="whiteAlpha.300"
