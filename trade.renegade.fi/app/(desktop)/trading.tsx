@@ -274,6 +274,7 @@ function InputWithMaxButton({
             color="white.60"
             fontFamily="Favorit"
             fontWeight="400"
+            borderRadius="100px"
             onClick={handleSetMax}
             size="xs"
             variant="ghost"
