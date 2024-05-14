@@ -5,7 +5,7 @@ import { Token, formatAmount, tokenMapping } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 import { Address } from "viem"
-import { useAccount } from "wagmi"
+import { useAccount, useBlockNumber } from "wagmi"
 
 import { useDebounce } from "@/hooks/use-debounce"
 
@@ -32,6 +32,7 @@ export function ERC20TokenSelectModal({
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
+  const { data: blockNumber } = useBlockNumber({ watch: true })
   useEffect(() => {
     const fetchBalances = async () => {
       const balancePromises = tokens.map(async (token) => {
@@ -45,7 +46,7 @@ export function ERC20TokenSelectModal({
       setBalances(result)
     }
     fetchBalances()
-  }, [address])
+  }, [address, blockNumber])
 
   const filteredBalances = useMemo(() => {
     return balances
