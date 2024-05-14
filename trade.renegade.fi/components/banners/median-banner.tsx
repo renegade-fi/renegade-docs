@@ -1,6 +1,7 @@
 "use client"
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
+import { BBO_TOOLTIP } from "@/lib/tooltip-labels"
 import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
 import type { Exchange } from "@renegade-fi/react"
 import { Token } from "@renegade-fi/react"
@@ -10,6 +11,7 @@ import { useLocalStorage } from "usehooks-ts"
 import { BannerSeparator } from "@/components/banner-separator"
 import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
+import { Tooltip } from "@/components/tooltip"
 
 enum ConnectionState {
   Live = "live",
@@ -407,15 +409,17 @@ export class MedianBanner extends React.Component<
         userSelect="none"
         spacing="0px"
       >
-        <Flex
-          alignItems="center"
-          justifyContent="center"
-          width="13%"
-          minWidth="125px"
-          height="100%"
-        >
-          BBO Feeds
-        </Flex>
+        <Tooltip label={BBO_TOOLTIP} placement="right">
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            width="13%"
+            minWidth="125px"
+            height="100%"
+          >
+            BBO Feeds
+          </Flex>
+        </Tooltip>
         <BannerSeparator flexGrow={1} />
         <Flex
           position="relative"
