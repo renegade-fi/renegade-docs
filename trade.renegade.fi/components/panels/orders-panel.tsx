@@ -108,7 +108,7 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
           color: "white.90",
         }}
         transition="all 0.2s"
-        filter="grayscale(1)"
+        filter={isCancellable ? "inherit" : "grayscale(1)"}
       >
         <Text fontFamily="Favorit">{formattedState}</Text>
         <Box position="relative" width="45px" height="40px">
