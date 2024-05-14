@@ -156,7 +156,7 @@ function TokenBalance(props: TokenBalanceProps) {
 function DepositWithdrawButtons() {
   const { address } = useAccountWagmi()
   return (
-    <Tooltip placement="top" label={AIRDROP_TOOLTIP}>
+    <Tooltip placement="right" label={AIRDROP_TOOLTIP}>
       <Flex
         flexDirection="row"
         width="100%"
