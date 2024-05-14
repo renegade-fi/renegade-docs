@@ -16,7 +16,7 @@ export const getReadableState = (state: OrderState) => {
     case OrderState.SettlingMatch:
       return "Settling"
     case OrderState.Filled:
-      return "Matched"
+      return "Filled"
     case OrderState.Cancelled:
       return "Cancelled"
   }
@@ -151,7 +151,7 @@ export function generateFailedToastMessage(task: Task) {
       message = "Failed to create new wallet. Please try again."
       break
     case TaskType.PayOfflineFee:
-      message = "Failed to pay offline fee. Please try again."
+      message = "Failed to pay fee. Please try again."
       break
     case TaskType.UpdateWallet:
       let token

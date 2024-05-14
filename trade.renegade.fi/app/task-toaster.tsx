@@ -3,7 +3,6 @@ import {
   generateFailedToastMessage,
   generateStartToastMessage,
 } from "@/lib/task"
-import { useDisclosure } from "@chakra-ui/react"
 import {
   Task,
   TaskType,
@@ -13,11 +12,7 @@ import {
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
 
-import { FeeModal } from "@/components/modals/fee-modal"
-
 export function TaskToaster() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
   const incomingTask = useTaskHistoryWebSocket()
   const taskHistory = useTaskHistory()
   const taskRef = useRef<Map<string, Task>>(new Map())
@@ -55,18 +50,9 @@ export function TaskToaster() {
         toast.message(message)
       } else if (incomingTask.state === "Proving Payment") {
         const message = generateStartToastMessage(incomingTask)
-        toast.message(message, {
-          action: {
-            label: "What's this?",
-            onClick: (event) => {
-              event.preventDefault()
-              onOpen()
-            },
-          },
-        })
+        toast.message(message)
       }
     }
-  }, [incomingTask, onOpen])
-
-  return <FeeModal isOpen={isOpen} onClose={onClose} />
+  }, [incomingTask])
+  return null
 }

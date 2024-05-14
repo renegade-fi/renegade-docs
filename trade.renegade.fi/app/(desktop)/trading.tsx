@@ -222,19 +222,10 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
   const usdPrice = useUSDPrice(baseTicker, 1)
   const formattedUsdPrice = formatPrice(usdPrice)
   return (
-    <HStack
-      marginTop="5px"
-      color="white.50"
-      fontFamily="Favorit Extended"
-      fontWeight="100"
-      userSelect="text"
-      spacing="0"
-    >
-      <Text marginRight="4px">
-        Trades are end-to-end encrypted and always clear at the real-time
-        midpoint of ${formattedUsdPrice}
-      </Text>
-    </HStack>
+    <Text color="white.50" fontWeight="100" userSelect="text">
+      Trades are end-to-end encrypted and always clear at the real-time midpoint
+      of ${formattedUsdPrice}
+    </Text>
   )
 }
 

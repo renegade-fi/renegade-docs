@@ -1,7 +1,16 @@
 "use client"
 
+import {
+  FEES_TOOLTIP,
+  PROTOCOL_FEE_TOOLTIP,
+  RELAYER_FEE_TOOLTIP,
+  RELAYER_NAME_TOOLTIP,
+  TVL_TOOLTIP,
+} from "@/lib/tooltip-labels"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
 import React from "react"
+
+import { Tooltip } from "@/components/tooltip"
 
 import { BannerSeparator } from "../banner-separator"
 import { PulsingConnection } from "../pulsing-connection-indicator"
@@ -165,26 +174,42 @@ export class RelayerStatusBanner extends React.Component<
           height="var(--banner-height)"
         >
           <Spacer flexGrow="2" />
-          <Text>TVL</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>123.456 {this.props.activeBaseTicker}</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>123456.78 {this.props.activeQuoteTicker}</Text>
+          <Tooltip placement="bottom" label={TVL_TOOLTIP}>
+            <Flex alignItems="center" gap="3">
+              <Text>TVL</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>123.456 {this.props.activeBaseTicker}</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>123456.78 {this.props.activeQuoteTicker}</Text>
+            </Flex>
+          </Tooltip>
           <BannerSeparator flexGrow={3} />
-          <Text>Relayer</Text>
-          <BannerSeparator flexGrow={1} />
-          <Text>renegade-relayer.eth</Text>
-          <BannerSeparator flexGrow={1} />
-          <HStack>
-            {connectionText}
-            <PulsingConnection state={this.props.connectionState || "dead"} />
-          </HStack>
+          <Tooltip placement="bottom" label={RELAYER_NAME_TOOLTIP}>
+            <Flex alignItems="center" gap="3">
+              <Text>Relayer</Text>
+              <BannerSeparator flexGrow={1} />
+              <Text>renegade-relayer.eth</Text>
+              <BannerSeparator flexGrow={1} />
+              <HStack>
+                {connectionText}
+                <PulsingConnection
+                  state={this.props.connectionState || "dead"}
+                />
+              </HStack>
+            </Flex>
+          </Tooltip>
           <BannerSeparator flexGrow={3} />
-          <Text>Fees</Text>
+          <Tooltip placement="bottom" label={FEES_TOOLTIP}>
+            <Text>Fees</Text>
+          </Tooltip>
           <BannerSeparator flexGrow={1} />
-          <Text>Relayer 0.08%</Text>
+          <Tooltip placement="bottom" label={RELAYER_FEE_TOOLTIP}>
+            <Text>Relayer 0.08%</Text>
+          </Tooltip>
           <BannerSeparator flexGrow={1} />
-          <Text>Protocol 0.02%</Text>
+          <Tooltip placement="bottom" label={PROTOCOL_FEE_TOOLTIP}>
+            <Text>Protocol 0.02%</Text>
+          </Tooltip>
           <Spacer flexGrow="2" />
         </Flex>
       </Box>
