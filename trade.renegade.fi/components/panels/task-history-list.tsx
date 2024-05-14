@@ -43,6 +43,15 @@ export function TaskHistoryList() {
         const formattedState = formattedStates[task.state]
         switch (task.task_info.task_type) {
           case TaskType.NewWallet:
+            return (
+              <TaskItem
+                key={task.id}
+                name={formattedTaskType[task.task_info.task_type]}
+                createdAt={createdAt}
+                state={formattedState}
+                isFeeTask
+              />
+            )
           case TaskType.PayOfflineFee:
             return (
               <TaskItem
@@ -50,6 +59,7 @@ export function TaskHistoryList() {
                 name={formattedTaskType[task.task_info.task_type]}
                 createdAt={createdAt}
                 state={formattedState}
+                isFeeTask
               />
             )
           case TaskType.UpdateWallet:
