@@ -23,3 +23,5 @@ export const TVL_TOOLTIP =
   "This is the total value locked in the protocol. It is the sum of the balances in all wallets."
 export const AIRDROP_TOOLTIP =
   "Get more testnet funds here. NOTE: These are not real funds and hold no value."
+export const ACTIVE_ORDERS_TOOLTIP =
+  "The total number of active orders in the network."
