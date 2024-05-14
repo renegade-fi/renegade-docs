@@ -10,11 +10,13 @@ import {
   ACTIVE_ORDERS_TOOLTIP,
   NETWORK_ORDERS_TOOLTIP,
   ORDER_HISTORY_TOOLTIP,
+  ORDER_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   NetworkOrder,
+  OrderMetadata,
   OrderState,
   Token,
   UseOrdersReturnType,
@@ -33,7 +35,6 @@ import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
-import { Address } from "viem"
 
 import { useMatchedOrders } from "@/hooks/use-matched-orders"
 
@@ -41,50 +42,24 @@ import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 
 import { Tooltip } from "../tooltip"
 
-interface SingleOrderProps {
-  amount: bigint
-  baseAddr: Address
-  filled: bigint
-  id: string
-  quoteAddr: Address
-  side: string
-  state: OrderState
-}
-function SingleOrder({
-  amount,
-  baseAddr,
-  filled,
-  id,
-  quoteAddr,
-  side,
-  state,
-}: SingleOrderProps) {
+function SingleOrder({ order }: { order: OrderMetadata }) {
+  const {
+    id,
+    state,
+    filled,
+    created,
+    data: { amount, base_mint, quote_mint, side },
+  } = order
   const { tokenIcons } = useApp()
   const config = useConfig()
 
-  const base = Token.findByAddress(baseAddr).ticker
-  const quote = Token.findByAddress(quoteAddr).ticker
-  const formattedAmount = formatAmount(amount, Token.findByAddress(baseAddr))
-  const formattedRemaining = formatAmount(
-    BigInt(amount) - BigInt(filled),
-    Token.findByAddress(baseAddr)
-  )
+  const base = Token.findByAddress(base_mint)
+  const quote = Token.findByAddress(quote_mint)
+  const formattedAmount = formatAmount(amount, base)
+  const formattedRemaining = formatAmount(BigInt(amount) - BigInt(filled), base)
   const formattedState = getReadableState(state)
 
-  const shouldShowFill =
-    (state === OrderState.Created ||
-      state === OrderState.Matching ||
-      state === OrderState.SettlingMatch) &&
-    filled &&
-    filled !== amount
-
-  const fillText = shouldShowFill
-    ? `${formattedRemaining} / ${formattedAmount} ${base}`
-    : `${formattedAmount} ${base}`
-
-  const fillLabel = `${Math.round(
-    (Number(filled) / Number(amount)) * 100
-  )}% filled`
+  const fillLabel = `${Math.round((Number(filled) / Number(amount)) * 100)}%`
 
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
@@ -97,84 +72,88 @@ function SingleOrder({
 
   const handleCancel = async () => {
     if (isQueue) {
-      toast.message(
-        QUEUED_CANCEL_ORDER_MSG(Token.findByAddress(baseAddr), amount, side)
-      )
+      toast.message(QUEUED_CANCEL_ORDER_MSG(base, amount, side))
     }
     await cancelOrder(config, { id }).catch((e) => {
       console.error(`Error cancelling order ${e.response?.data ?? e.message}`)
-      toast.error(
-        FAILED_CANCEL_ORDER_MSG(Token.findByAddress(baseAddr), amount, side)
-      )
+      toast.error(FAILED_CANCEL_ORDER_MSG(base, amount, side))
     })
   }
 
   return (
-    <Flex
-      alignItems="center"
-      justifyContent="space-between"
-      gap="4%"
-      width="100%"
-      padding="5%"
-      color="white.60"
-      borderColor="white.20"
-      borderBottom="var(--secondary-border)"
-      _hover={{
-        filter: "inherit",
-        color: "white.90",
-      }}
-      transition="all 0.2s"
-      filter="grayscale(1)"
+    <Tooltip
+      placement="left"
+      // @ts-ignore
+      label={ORDER_TOOLTIP(
+        base.ticker,
+        formattedAmount,
+        formattedRemaining,
+        fillLabel,
+        formattedState,
+        side,
+        created / 1000
+      )}
     >
-      <Text fontFamily="Favorit">{formattedState}</Text>
-      <Box position="relative" width="45px" height="40px">
-        <Image
-          width="25px"
-          height="25px"
-          alt="Quote logo"
-          src={tokenIcons[quote]}
-        />
-        <Image
-          position="absolute"
-          right="1"
-          bottom="1"
-          width="25px"
-          height="25px"
-          alt="Base logo"
-          src={tokenIcons[base]}
-        />
-      </Box>
-      <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
-        <Tooltip label={fillLabel}>
-          <Text lineHeight="1">{fillText}</Text>
-        </Tooltip>
-        <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
-          {side.toUpperCase()}
-        </Text>
-      </Flex>
-      {/* <EditIcon
-        width="calc(0.5 * var(--banner-height))"
-        height="calc(0.5 * var(--banner-height))"
-        padding="2px"
-        borderRadius="100px"
-        cursor="pointer"
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        gap="4%"
+        width="100%"
+        padding="5%"
+        color="white.60"
+        borderColor="white.20"
+        borderBottom="var(--secondary-border)"
         _hover={{
-          background: "white.10",
+          filter: "inherit",
+          color: "white.90",
         }}
-      /> */}
-      {isCancellable ? (
-        <SmallCloseIcon
-          width="calc(0.5 * var(--banner-height))"
-          height="calc(0.5 * var(--banner-height))"
-          borderRadius="100px"
-          cursor="pointer"
-          _hover={{
-            background: "white.10",
-          }}
-          onClick={handleCancel}
-        />
-      ) : null}
-    </Flex>
+        transition="all 0.2s"
+        filter="grayscale(1)"
+      >
+        <Text fontFamily="Favorit">{formattedState}</Text>
+        <Box position="relative" width="45px" height="40px">
+          <Image
+            width="25px"
+            height="25px"
+            alt="Quote logo"
+            src={tokenIcons[quote.ticker]}
+          />
+          <Image
+            position="absolute"
+            right="1"
+            bottom="1"
+            width="25px"
+            height="25px"
+            alt="Base logo"
+            src={tokenIcons[base.ticker]}
+          />
+        </Box>
+        <Flex
+          alignItems="flex-start"
+          flexDirection="column"
+          fontFamily="Favorit"
+        >
+          <Text lineHeight="1">
+            {formattedRemaining} {base.ticker}
+          </Text>
+          <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
+            {side.toUpperCase()}
+          </Text>
+        </Flex>
+        {isCancellable ? (
+          <SmallCloseIcon
+            width="calc(0.5 * var(--banner-height))"
+            height="calc(0.5 * var(--banner-height))"
+            borderRadius="100px"
+            cursor="pointer"
+            _hover={{
+              background: "white.10",
+            }}
+            onClick={handleCancel}
+          />
+        ) : null}
+      </Flex>
+    </Tooltip>
   )
 }
 
@@ -214,18 +193,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         }}
       >
         {orderHistory.map((order) => {
-          return (
-            <SingleOrder
-              key={order.id}
-              amount={order.data.amount}
-              filled={order.filled}
-              baseAddr={order.data.base_mint}
-              id={order.id}
-              quoteAddr={order.data.quote_mint}
-              side={order.data.side}
-              state={order.state}
-            />
-          )
+          return <SingleOrder key={order.id} order={order} />
         })}
       </SimpleBar>
     )

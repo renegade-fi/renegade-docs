@@ -54,4 +54,5 @@ export function TaskToaster() {
       }
     }
   }, [incomingTask])
+  return null
 }

@@ -1,3 +1,6 @@
+import { Text } from "@chakra-ui/react"
+import dayjs from "dayjs"
+
 export const ORDER_HISTORY_TOOLTIP =
   "These are the orders in your Renegade Wallet. Only you and the node you're connected to can see your orders."
 export const NETWORK_ORDERS_TOOLTIP =
@@ -25,3 +28,28 @@ export const AIRDROP_TOOLTIP =
   "Get more testnet funds here. NOTE: These are not real funds and hold no value."
 export const ACTIVE_ORDERS_TOOLTIP =
   "The total number of active orders in the network."
+export const ORDER_TOOLTIP = (
+  base: string,
+  currentAmount: string,
+  originalAmount: string,
+  fill: string,
+  state: string,
+  side: string,
+  createdAt: number
+) => {
+  return (
+    <Text>
+      Size: {currentAmount} {base}
+      <br />
+      Original Size: {originalAmount} {base}
+      <br />
+      Fill: {fill}
+      <br />
+      State: {state}
+      <br />
+      Side: {side}
+      <br />
+      Created: {dayjs.unix(createdAt).fromNow()}
+    </Text>
+  )
+}
