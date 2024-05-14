@@ -1,5 +1,8 @@
 "use client"
 
+import { env } from "@/env.mjs"
+import { useReadErc20BalanceOf } from "@/generated"
+import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 import {
   FEES_TOOLTIP,
   PROTOCOL_FEE_TOOLTIP,
@@ -8,12 +11,93 @@ import {
   TVL_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
-import React from "react"
+import { Token } from "@renegade-fi/react"
+import { useQueryClient } from "@tanstack/react-query"
+import React, { useEffect } from "react"
+import { Address } from "viem"
+import { formatUnits } from "viem/utils"
+import { useBlockNumber } from "wagmi"
 
 import { Tooltip } from "@/components/tooltip"
 
 import { BannerSeparator } from "../banner-separator"
 import { PulsingConnection } from "../pulsing-connection-indicator"
+
+const useTvl = (ticker: string) => {
+  // Query the chain to get the balance of the dark pool contract
+  const { data, queryKey } = useReadErc20BalanceOf({
+    address: Token.findByTicker(ticker).address,
+    args: [(env.NEXT_PUBLIC_DARKPOOL_CONTRACT as Address) ?? "0x"],
+  })
+  let balance = data ? formatUnits(data, 18) : "0"
+
+  // Round to default decimals
+  const defaultDecimals = TICKER_TO_DEFAULT_DECIMALS[ticker] || 0
+  const trailingDecimals =
+    ["USDC", "WETH", "WBTC"].includes(ticker) || defaultDecimals >= 3
+      ? 2
+      : Math.abs(defaultDecimals) + 2
+
+  const formattedBalance = Number.parseFloat(balance).toLocaleString(
+    undefined,
+    {
+      maximumFractionDigits: trailingDecimals,
+    }
+  )
+
+  return { balance, queryKey, formattedBalance }
+}
+
+interface TvlStatisticsProps {
+  baseTicker: string
+  quoteTicker: string
+}
+function TvlStatistics(props: TvlStatisticsProps) {
+  const {
+    balance: baseBalance,
+    queryKey: baseQueryKey,
+    formattedBalance: formattedBaseBalance,
+  } = useTvl(props.baseTicker)
+  const {
+    balance: quoteBalance,
+    queryKey: quoteQueryKey,
+    formattedBalance: formattedQuoteBalance,
+  } = useTvl(props.quoteTicker)
+
+  const queryClient = useQueryClient()
+  const { data: blockNumber } = useBlockNumber({ watch: true })
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: baseQueryKey })
+    queryClient.invalidateQueries({ queryKey: quoteQueryKey })
+  }, [baseQueryKey, quoteQueryKey, blockNumber, queryClient])
+
+  return (
+    <>
+      <Tooltip placement="bottom" label={TVL_TOOLTIP}>
+        <Text>TVL</Text>
+      </Tooltip>
+      <BannerSeparator flexGrow={1} />
+      <Tooltip placement="bottom" label={`${baseBalance} ${props.baseTicker}`}>
+        <Text>
+          {formattedBaseBalance} {props.baseTicker}
+        </Text>
+      </Tooltip>
+      {props.baseTicker !== props.quoteTicker && (
+        <>
+          <BannerSeparator flexGrow={1} />
+          <Tooltip
+            placement="bottom"
+            label={`${quoteBalance} ${props.quoteTicker}`}
+          >
+            <Text>
+              {formattedQuoteBalance} {props.quoteTicker}
+            </Text>
+          </Tooltip>
+        </>
+      )}
+    </>
+  )
+}
 
 interface RelayerStatusBannerProps {
   activeBaseTicker: string
@@ -174,7 +258,7 @@ export class RelayerStatusBanner extends React.Component<
           height="var(--banner-height)"
         >
           <Spacer flexGrow="2" />
-          <Tooltip placement="bottom" label={TVL_TOOLTIP}>
+          {/* <Tooltip placement="bottom" label={TVL_TOOLTIP}>
             <Text>TVL</Text>
           </Tooltip>
           <BannerSeparator flexGrow={1} />
@@ -184,7 +268,11 @@ export class RelayerStatusBanner extends React.Component<
           <BannerSeparator flexGrow={1} />
           <Tooltip placement="bottom" label="123456.78 USDC">
             <Text>123456.78 {this.props.activeQuoteTicker}</Text>
-          </Tooltip>
+          </Tooltip> */}
+          <TvlStatistics
+            baseTicker={this.props.activeBaseTicker}
+            quoteTicker={this.props.activeQuoteTicker}
+          />
           <BannerSeparator flexGrow={3} />
           <Tooltip placement="bottom" label={RELAYER_NAME_TOOLTIP}>
             <Text>Relayer</Text>
