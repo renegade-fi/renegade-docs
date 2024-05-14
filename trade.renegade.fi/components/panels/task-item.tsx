@@ -1,9 +1,6 @@
-import { useApp } from "@/contexts/App/app-context"
 import { Box, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react"
-import { Token } from "@renegade-fi/react"
 import dayjs from "dayjs"
 import { CheckIcon, TriangleAlert } from "lucide-react"
-import Image from "next/image"
 
 export function TaskItem({
   createdAt,
@@ -18,7 +15,6 @@ export function TaskItem({
   state: string
   tooltip?: string
 }) {
-  const { tokenIcons } = useApp()
   const icon =
     state === "Completed" ? (
       <CheckIcon size="17" />
@@ -69,7 +65,12 @@ export function TaskItem({
         minWidth="100%"
         whiteSpace="nowrap"
       >
-        <Tooltip backgroundColor="white" hasArrow label={tooltip}>
+        <Tooltip
+          color="white.100"
+          backgroundColor="white.10"
+          hasArrow
+          label={tooltip}
+        >
           <Text>{description}</Text>
         </Tooltip>
         <Text>{dayjs.unix(createdAt).fromNow()}</Text>
