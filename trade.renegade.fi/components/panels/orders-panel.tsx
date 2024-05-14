@@ -91,7 +91,7 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
         fillLabel,
         formattedState,
         side,
-        created / 1000
+        Number(created) / 1000
       )}
     >
       <Flex
@@ -308,7 +308,7 @@ function OrderBookPanel() {
                 >
                   {status}&nbsp;
                 </Text>
-                <Text>{dayjs.unix(timestamp).fromNow()}</Text>
+                <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>
               </Flex>
               <Text>{title}</Text>
             </Box>
