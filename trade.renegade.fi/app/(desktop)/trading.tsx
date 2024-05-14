@@ -1,6 +1,7 @@
 "use client"
 
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { QUOTE_TOOLTIP, TRADE_HELPER_TOOLTIP } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
@@ -24,6 +25,7 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
 import { PlaceOrderButton } from "@/components/place-order-button"
+import { Tooltip } from "@/components/tooltip"
 
 interface SelectableProps {
   text: string
@@ -159,7 +161,9 @@ function TradingInner() {
             >
               {direction === Direction.BUY ? "with" : "for"}
             </Text>
-            <Text variant="trading-body-button">{quote}</Text>
+            <Tooltip placement="right" label={QUOTE_TOOLTIP}>
+              <Text variant="trading-body-button">{quote}</Text>
+            </Tooltip>
           </HStack>
           <HelperText baseTicker={base} />
         </Flex>
@@ -185,19 +189,12 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
   const usdPrice = useUSDPrice(baseTicker, 1)
   const formattedUsdPrice = formatPrice(usdPrice)
   return (
-    <HStack
-      marginTop="5px"
-      color="white.50"
-      fontFamily="Favorit Extended"
-      fontWeight="100"
-      userSelect="text"
-      spacing="0"
-    >
-      <Text marginRight="4px">
+    <Tooltip placement="right" label={TRADE_HELPER_TOOLTIP}>
+      <Text color="white.50" fontWeight="100" userSelect="text">
         Trades are end-to-end encrypted and always clear at the real-time
         midpoint of ${formattedUsdPrice}
       </Text>
-    </HStack>
+    </Tooltip>
   )
 }
 

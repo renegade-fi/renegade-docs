@@ -18,7 +18,6 @@ export function TokensBanner({}: { prices?: number[] }) {
     <Marquee
       autoFill
       pauseOnHover
-      play={false}
       style={{
         alignItems: "center",
         borderBottom: "var(--border)",

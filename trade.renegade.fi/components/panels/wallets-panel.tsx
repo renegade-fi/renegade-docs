@@ -2,6 +2,11 @@
 
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import {
+  AIRDROP_TOOLTIP,
+  RENEGADE_ACCOUNT_TOOLTIP,
+  TASK_HISTORY_TOOLTIP,
+} from "@/lib/tooltip-labels"
 import { fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
@@ -9,7 +14,7 @@ import {
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, Spacer, Text, Tooltip } from "@chakra-ui/react"
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
   formatAmount,
@@ -32,6 +37,8 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { TaskHistoryList } from "@/components/panels/task-history-list"
+
+import { Tooltip } from "../tooltip"
 
 interface TokenBalanceProps {
   tokenAddr: Address
@@ -58,7 +65,6 @@ function TokenBalance(props: TokenBalanceProps) {
     setBase(ticker)
     setView(ViewEnum.TRADING)
   }
-
   return (
     <Flex
       alignItems="center"
@@ -86,8 +92,6 @@ function TokenBalance(props: TokenBalanceProps) {
         onClick={handleClick}
       >
         <Tooltip
-          backgroundColor="white"
-          hasArrow
           label={
             !isZero
               ? `${formatUnits(props.amount, token.decimals)} ${ticker}`
@@ -111,7 +115,7 @@ function TokenBalance(props: TokenBalanceProps) {
           ${usdPrice.toFixed(2)}
         </Box>
       </Flex>
-      <Tooltip backgroundColor="white" label="Deposit">
+      <Tooltip label="Deposit">
         <ArrowDownIcon
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
@@ -122,7 +126,7 @@ function TokenBalance(props: TokenBalanceProps) {
           }}
         />
       </Tooltip>
-      <Tooltip backgroundColor="white" label="Withdraw">
+      <Tooltip label="Withdraw">
         <ArrowUpIcon
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
@@ -141,54 +145,56 @@ function TokenBalance(props: TokenBalanceProps) {
 function DepositWithdrawButtons() {
   const { address } = useAccountWagmi()
   return (
-    <Flex
-      flexDirection="row"
-      width="100%"
-      minHeight="var(--banner-height)"
-      color="white.60"
-      borderColor="border"
-      borderTop="var(--border)"
-      cursor="pointer"
-    >
+    <Tooltip placement="top" label={AIRDROP_TOOLTIP}>
       <Flex
-        alignItems="center"
-        justifyContent="center"
-        flexGrow="1"
-        gap="5px"
-        color="white.90"
+        flexDirection="row"
+        width="100%"
+        minHeight="var(--banner-height)"
+        color="white.60"
         borderColor="border"
-        borderRight="var(--border)"
-        _hover={{
-          backgroundColor: "#000",
-        }}
+        borderTop="var(--border)"
         cursor="pointer"
-        onClick={() => {
-          if (!address) return
-
-          toast.promise(
-            fundWallet(
-              [
-                { ticker: "WETH", amount: "10" },
-                { ticker: "USDC", amount: "1000000" },
-              ],
-              address
-            ),
-            {
-              loading: "Funding account...",
-              success: "Your account has been funded with test funds.",
-              error:
-                "Funding failed: An unexpected error occurred. Please try again.",
-            }
-          )
-
-          // Fund additional wallets in background
-          fundWallet(fundList, address)
-        }}
       >
-        <Text>Airdrop</Text>
-        <ArrowDownIcon />
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexGrow="1"
+          gap="5px"
+          color="white.90"
+          borderColor="border"
+          borderRight="var(--border)"
+          _hover={{
+            backgroundColor: "#000",
+          }}
+          cursor="pointer"
+          onClick={() => {
+            if (!address) return
+
+            toast.promise(
+              fundWallet(
+                [
+                  { ticker: "WETH", amount: "10" },
+                  { ticker: "USDC", amount: "1000000" },
+                ],
+                address
+              ),
+              {
+                loading: "Funding account...",
+                success: "Your account has been funded with test funds.",
+                error:
+                  "Funding failed: An unexpected error occurred. Please try again.",
+              }
+            )
+
+            // Fund additional wallets in background
+            fundWallet(fundList, address)
+          }}
+        >
+          <Text>Airdrop</Text>
+          <ArrowDownIcon />
+        </Flex>
       </Flex>
-    </Flex>
+    </Tooltip>
   )
 }
 
@@ -307,37 +313,39 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
 
   return (
     <>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        minHeight="var(--banner-height)"
-        borderColor="border"
-        borderBottom="var(--border)"
-      >
-        <Text>Renegade Account</Text>
+      <Tooltip placement="right" label={RENEGADE_ACCOUNT_TOOLTIP}>
         <Flex
-          position="absolute"
-          left="10px"
+          position="relative"
           alignItems="center"
           justifyContent="center"
-          width="calc(0.6 * var(--banner-height))"
-          height="calc(0.6 * var(--banner-height))"
-          borderRadius="100px"
-          _hover={{
-            background: "white.10",
-          }}
-          cursor="pointer"
-          onClick={props.toggleIsLocked}
+          width="100%"
+          minHeight="var(--banner-height)"
+          borderColor="border"
+          borderBottom="var(--border)"
         >
-          {props.isLocked ? (
-            <LockIcon boxSize="11px" color="white.80" />
-          ) : (
-            <UnlockIcon boxSize="11px" color="white.80" />
-          )}
+          <Text>Renegade Wallet</Text>
+          <Flex
+            position="absolute"
+            left="10px"
+            alignItems="center"
+            justifyContent="center"
+            width="calc(0.6 * var(--banner-height))"
+            height="calc(0.6 * var(--banner-height))"
+            borderRadius="100px"
+            _hover={{
+              background: "white.10",
+            }}
+            cursor="pointer"
+            onClick={props.toggleIsLocked}
+          >
+            {props.isLocked ? (
+              <LockIcon boxSize="11px" color="white.80" />
+            ) : (
+              <UnlockIcon boxSize="11px" color="white.80" />
+            )}
+          </Flex>
         </Flex>
-      </Flex>
+      </Tooltip>
       {Content}
     </>
   )
@@ -352,18 +360,20 @@ function HistorySection() {
   if (!historyWithoutNewWallet.length && !balances.length) return null
   return (
     <>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        minHeight="var(--banner-height)"
-        borderColor="border"
-        borderTop="var(--border)"
-        borderBottom="var(--border)"
-      >
-        <Text>History</Text>
-      </Flex>
+      <Tooltip placement="right" label={TASK_HISTORY_TOOLTIP}>
+        <Flex
+          position="relative"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          minHeight="var(--banner-height)"
+          borderColor="border"
+          borderTop="var(--border)"
+          borderBottom="var(--border)"
+        >
+          <Text>Task History</Text>
+        </Flex>
+      </Tooltip>
       <SimpleBar
         style={{
           height: "30vh",
