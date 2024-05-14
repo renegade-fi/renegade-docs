@@ -6,8 +6,12 @@ import {
   QUEUED_CANCEL_ORDER_MSG,
   getReadableState,
 } from "@/lib/task"
+import {
+  NETWORK_ORDERS_TOOLTIP,
+  ORDER_HISTORY_TOOLTIP,
+} from "@/lib/tooltip-labels"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
-import { Box, Flex, Image, Text, Tooltip } from "@chakra-ui/react"
+import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   NetworkOrder,
   OrderState,
@@ -33,6 +37,8 @@ import { Address } from "viem"
 import { useMatchedOrders } from "@/hooks/use-matched-orders"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+
+import { Tooltip } from "../tooltip"
 
 interface SingleOrderProps {
   amount: bigint
@@ -138,7 +144,7 @@ function SingleOrder({
         />
       </Box>
       <Flex alignItems="flex-start" flexDirection="column" fontFamily="Favorit">
-        <Tooltip backgroundColor="white" hasArrow label={fillLabel}>
+        <Tooltip label={fillLabel}>
           <Text lineHeight="1">{fillText}</Text>
         </Tooltip>
         <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
@@ -226,36 +232,38 @@ function OrdersPanel(props: OrdersPanelProps) {
 
   return (
     <>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        minHeight="var(--banner-height)"
-        borderBottom="var(--border)"
-      >
+      <Tooltip placement="left" label={ORDER_HISTORY_TOOLTIP}>
         <Flex
-          position="absolute"
-          left="10px"
+          position="relative"
           alignItems="center"
           justifyContent="center"
-          width="calc(0.6 * var(--banner-height))"
-          height="calc(0.6 * var(--banner-height))"
-          borderRadius="100px"
-          _hover={{
-            background: "white.10",
-          }}
-          cursor="pointer"
-          onClick={props.toggleIsLocked}
+          width="100%"
+          minHeight="var(--banner-height)"
+          borderBottom="var(--border)"
         >
-          {props.isLocked ? (
-            <LockIcon boxSize="11px" color="white.80" />
-          ) : (
-            <UnlockIcon boxSize="11px" color="white.80" />
-          )}
+          <Flex
+            position="absolute"
+            left="10px"
+            alignItems="center"
+            justifyContent="center"
+            width="calc(0.6 * var(--banner-height))"
+            height="calc(0.6 * var(--banner-height))"
+            borderRadius="100px"
+            _hover={{
+              background: "white.10",
+            }}
+            cursor="pointer"
+            onClick={props.toggleIsLocked}
+          >
+            {props.isLocked ? (
+              <LockIcon boxSize="11px" color="white.80" />
+            ) : (
+              <UnlockIcon boxSize="11px" color="white.80" />
+            )}
+          </Flex>
+          <Text>Order History</Text>
         </Flex>
-        <Text>Order History</Text>
-      </Flex>
+      </Tooltip>
       {Content}
     </>
   )
@@ -351,18 +359,20 @@ function OrderBookPanel() {
 
   return (
     <>
-      <Flex
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        width="100%"
-        minHeight="var(--banner-height)"
-        borderColor="border"
-        borderTop="var(--border)"
-        borderBottom="var(--border)"
-      >
-        <Text>Order Book</Text>
-      </Flex>
+      <Tooltip placement="left" label={NETWORK_ORDERS_TOOLTIP}>
+        <Flex
+          position="relative"
+          alignItems="center"
+          justifyContent="center"
+          width="100%"
+          minHeight="var(--banner-height)"
+          borderColor="border"
+          borderTop="var(--border)"
+          borderBottom="var(--border)"
+        >
+          <Text>Order Book</Text>
+        </Flex>
+      </Tooltip>
       {panelBody}
     </>
   )

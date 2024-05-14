@@ -1,6 +1,8 @@
-import { Box, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react"
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react"
 import dayjs from "dayjs"
 import { CheckIcon, TriangleAlert } from "lucide-react"
+
+import { Tooltip } from "../tooltip"
 
 export function TaskItem({
   name,
@@ -59,10 +61,8 @@ export function TaskItem({
         minWidth="100%"
         whiteSpace="nowrap"
       >
-        <Tooltip backgroundColor="white" hasArrow label={tooltip}>
-          <Text fontSize="0.8em" cursor="pointer">
-            {description}
-          </Text>
+        <Tooltip label={tooltip}>
+          <Text>{description}</Text>
         </Tooltip>
         <Text fontFamily="Favorit Expanded" fontSize="0.7em" fontWeight="500">
           {dayjs().isSame(dayjs.unix(createdAt), "day")
