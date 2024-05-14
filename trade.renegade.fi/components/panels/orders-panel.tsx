@@ -7,6 +7,7 @@ import {
   getReadableState,
 } from "@/lib/task"
 import {
+  ACTIVE_ORDERS_TOOLTIP,
   NETWORK_ORDERS_TOOLTIP,
   ORDER_HISTORY_TOOLTIP,
 } from "@/lib/tooltip-labels"
@@ -373,18 +374,20 @@ function OrderBookPanel() {
 function CounterpartiesPanel() {
   const globalOrders = useOrderBook()
   return (
-    <Flex
-      position="relative"
-      alignItems="center"
-      justifyContent="center"
-      width="100%"
-      minHeight="var(--banner-height)"
-      borderColor="border"
-      borderTop="var(--border)"
-    >
-      <Text>Active Orders:&nbsp;</Text>
-      <Text>{Object.keys(globalOrders).length || "..."}</Text>
-    </Flex>
+    <Tooltip placement="left" label={ACTIVE_ORDERS_TOOLTIP}>
+      <Flex
+        position="relative"
+        alignItems="center"
+        justifyContent="center"
+        width="100%"
+        minHeight="var(--banner-height)"
+        borderColor="border"
+        borderTop="var(--border)"
+      >
+        <Text>Active Orders:&nbsp;</Text>
+        <Text>{Object.keys(globalOrders).length || "..."}</Text>
+      </Flex>
+    </Tooltip>
   )
 }
 
