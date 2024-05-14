@@ -229,7 +229,7 @@ export function Providers({
 }) {
   useEffect(() => {
     async function loadLogging() {
-      if (process.env.VERCEL_ENV === "development") {
+      if (process.env.NEXT_PUBLIC_VERCEL_ENV === "development") {
         return
       }
       datadogRum.init({
