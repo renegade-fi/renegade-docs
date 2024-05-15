@@ -20,7 +20,7 @@ const CreateStepperInner = () => {
         background="rgba(0, 0, 0, 0.25)"
         backdropFilter="blur(8px)"
       />
-      <ModalContent height="192px" background="surfaces.1" borderRadius="10">
+      <ModalContent height="228px" background="surfaces.1" borderRadius="10">
         {step === Step.DEFAULT && (
           <ModalHeader paddingBottom="0">Unlock your Wallet</ModalHeader>
         )}

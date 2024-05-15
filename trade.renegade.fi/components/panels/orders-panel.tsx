@@ -162,7 +162,6 @@ interface OrdersPanelProps {
 }
 function OrdersPanel(props: OrdersPanelProps) {
   const orderHistory = useOrderHistory({ sort: "desc" })
-  console.log("🚀 ~ OrdersPanel ~ orderHistory:", orderHistory)
   const status = useStatus()
   const isConnected = status === "in relayer"
 
