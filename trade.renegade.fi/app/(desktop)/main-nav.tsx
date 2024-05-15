@@ -26,7 +26,7 @@ import {
 
 import { useButton } from "@/hooks/use-button"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { SignInModal } from "@/components/modals/sign-in-modal"
 
 import glyphDark from "@/icons/glyph_dark.svg"
 
@@ -174,7 +174,7 @@ export function SignInButton() {
       >
         {buttonText}
       </Button>
-      {isOpen && <CreateStepper onClose={onClose} />}
+      {isOpen && <SignInModal onClose={onClose} />}
     </>
   )
 }

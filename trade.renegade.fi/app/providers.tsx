@@ -32,7 +32,7 @@ import { Toaster } from "sonner"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { SignInModal } from "@/components/modals/sign-in-modal"
 
 dayjs.extend(relativeTime)
 
@@ -188,12 +188,14 @@ const components = {
 }
 const theme = extendTheme({ config, styles, colors, components })
 
+const rememberMe = window.localStorage.getItem("rememberMe") === "1"
 export const renegadeConfig = createSDKConfig({
   darkPoolAddress: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
   priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   rpcUrl: env.NEXT_PUBLIC_RPC_URL,
   ssr: true,
+  storage: rememberMe ? undefined : null,
 })
 
 const renegadeChain = renegadeConfig.getRenegadeChain()
@@ -271,7 +273,10 @@ export function Providers({
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <RenegadeProvider reconnectOnMount={true} config={renegadeConfig}>
+            <RenegadeProvider
+              reconnectOnMount={!!rememberMe}
+              config={renegadeConfig}
+            >
               <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClient}>
                   <AppProvider tokenIcons={icons}>
@@ -311,7 +316,7 @@ function ConnectKitProviderWithSignMessage({ children }: PropsWithChildren) {
       }}
     >
       {children}
-      {isOpen && <CreateStepper onClose={onClose} />}
+      {isOpen && <SignInModal onClose={onClose} />}
     </ConnectKitProvider>
   )
 }

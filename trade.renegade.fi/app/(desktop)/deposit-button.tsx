@@ -28,7 +28,7 @@ import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { SignInModal } from "@/components/modals/sign-in-modal"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -210,7 +210,7 @@ export default function DepositButton({
           ? `Approve ${base}`
           : `Deposit ${baseTokenAmount || "0"} ${base}`}
       </Button>
-      {isOpen && <CreateStepper onClose={onClose} />}
+      {isOpen && <SignInModal onClose={onClose} />}
     </>
   )
 }
