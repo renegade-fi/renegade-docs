@@ -334,9 +334,9 @@ function OrderBookPanel() {
                   fontSize="0.7em"
                   fontWeight="500"
                 >
-                  {dayjs().isSame(dayjs.unix(timestamp), "day")
-                    ? dayjs.unix(timestamp).format("HH:mm:ss")
-                    : dayjs.unix(timestamp).fromNow()}
+                  {dayjs().isSame(dayjs.unix(Number(timestamp)), "day")
+                    ? dayjs.unix(Number(timestamp)).format("HH:mm:ss")
+                    : dayjs.unix(Number(timestamp)).fromNow()}
                 </Text>
               </Flex>
               <Text color="white.80" fontSize="0.8em">
