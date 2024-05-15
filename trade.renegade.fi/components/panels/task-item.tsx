@@ -31,6 +31,9 @@ export function TaskItem({
       <Spinner size="xs" />
     )
 
+  const iconColor =
+    state === "Completed" ? "green" : state === "Failed" ? "red" : "white.90"
+
   return (
     <Tooltip placement="right" label={isFeeTask ? FEES_TOOLTIP : ""}>
       <Box
