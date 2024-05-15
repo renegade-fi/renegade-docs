@@ -107,7 +107,9 @@ interface PanelState {
 export class Panel extends React.Component<PanelProps, PanelState> {
   constructor(props: PanelProps) {
     super(props)
-    const isLockedStorage = localStorage.getItem(this.getLocalStorageKey())
+    const isLockedStorage = window.localStorage.getItem(
+      this.getLocalStorageKey()
+    )
     this.state = {
       isHovering: false,
       isLocked: isLockedStorage === "true" || isLockedStorage === null,

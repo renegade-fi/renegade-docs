@@ -1,7 +1,16 @@
 import { useApp } from "@/contexts/App/app-context"
-import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
+import {
+  Button,
+  Checkbox,
+  Flex,
+  HStack,
+  ModalBody,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react"
 import { useConfig } from "@renegade-fi/react"
-import { Unplug } from "lucide-react"
+import { CircleHelp, Unplug } from "lucide-react"
+import { useLocalStorage } from "usehooks-ts"
 import { verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
@@ -19,6 +28,7 @@ export function DefaultStep() {
   const { address } = useAccountWagmi()
   const config = useConfig()
   const client = config.getViemClient()
+  const [rememberMe, setRememberMe] = useLocalStorage("rememberMe", 0)
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
@@ -58,6 +68,27 @@ export function DefaultStep() {
             To trade on Renegade, we require a one-time signature to unlock and
             create your wallet.
           </Text>
+          <Flex gap="2">
+            <Checkbox
+              color="white.30"
+              defaultChecked={!!rememberMe}
+              id="remember-me"
+              onChange={() => setRememberMe((prev) => (prev ? 0 : 1))}
+              size="sm"
+              value={rememberMe}
+            />
+            <Tooltip
+              label="Only use this option if you are using a secure device that you own."
+              placement="right"
+            >
+              <Flex gap="1">
+                <Text color="white.60" fontSize="0.9em">
+                  Remember Me
+                </Text>
+                <CircleHelp color="#999999" height="16" />
+              </Flex>
+            </Tooltip>
+          </Flex>
           <div>
             <Button
               width="100%"
