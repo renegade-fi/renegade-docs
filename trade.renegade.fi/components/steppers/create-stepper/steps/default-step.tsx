@@ -1,7 +1,16 @@
 import { useApp } from "@/contexts/App/app-context"
-import { Button, Flex, HStack, ModalBody, Text } from "@chakra-ui/react"
+import { REMEMBER_ME_TOOLTIP } from "@/lib/tooltip-labels"
+import {
+  Button,
+  Checkbox,
+  Flex,
+  HStack,
+  ModalBody,
+  Text,
+} from "@chakra-ui/react"
 import { useConfig } from "@renegade-fi/react"
-import { Unplug } from "lucide-react"
+import { CircleHelp, Unplug } from "lucide-react"
+import { useLocalStorage } from "usehooks-ts"
 import { verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
@@ -10,6 +19,7 @@ import {
 } from "wagmi"
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { Tooltip } from "@/components/tooltip"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
@@ -19,6 +29,7 @@ export function DefaultStep() {
   const { address } = useAccountWagmi()
   const config = useConfig()
   const client = config.getViemClient()
+  const [rememberMe, setRememberMe] = useLocalStorage("rememberMe", false)
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
@@ -58,6 +69,26 @@ export function DefaultStep() {
             To trade on Renegade, we require a one-time signature to unlock and
             create your wallet.
           </Text>
+          <Flex gap="2">
+            <Checkbox
+              color="white.30"
+              isChecked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              size="sm"
+            />
+            <Flex
+              gap="1"
+              cursor="pointer"
+              onClick={() => setRememberMe((prev) => !prev)}
+            >
+              <Text color="white.60" fontSize="0.9em">
+                Remember Me
+              </Text>
+              <Tooltip label={REMEMBER_ME_TOOLTIP} placement="right">
+                <CircleHelp color="#999999" height="16" />
+              </Tooltip>
+            </Flex>
+          </Flex>
           <div>
             <Button
               width="100%"

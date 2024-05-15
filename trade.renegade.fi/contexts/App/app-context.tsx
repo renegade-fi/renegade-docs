@@ -11,7 +11,7 @@ import {
   useState,
 } from "react"
 import { toast } from "sonner"
-import { useLocalStorage } from "usehooks-ts"
+import { useReadLocalStorage } from "usehooks-ts"
 import { Hex } from "viem"
 import { useAccount } from "wagmi"
 
@@ -55,8 +55,8 @@ function AppProvider({
   }, [address, config])
 
   // Sign In + Funding
-  const [funded] = useLocalStorage(`funded_${address}`, false)
   const { executeTaskWithToast } = useTaskCompletionToast()
+  const funded = useReadLocalStorage(`funded_${address}`)
 
   const handleSignin = async (seed: Hex) => {
     const res = await connect(config, { seed })

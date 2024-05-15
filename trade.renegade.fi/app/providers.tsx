@@ -29,6 +29,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
+import { useReadLocalStorage } from "usehooks-ts"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
@@ -227,6 +228,21 @@ export function Providers({
 }: PropsWithChildren & {
   icons?: Record<string, string>
 }) {
+  const rememberMe = useReadLocalStorage<boolean>("rememberMe")
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!rememberMe) {
+        window.localStorage.setItem("renegade.store", "")
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [rememberMe])
+
   useEffect(() => {
     async function loadLogging() {
       datadogRum.init({
@@ -262,13 +278,17 @@ export function Providers({
       datadogRum.stopSessionReplayRecording()
     }
   }, [])
+
   return (
     <>
       <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-            <RenegadeProvider reconnectOnMount={true} config={renegadeConfig}>
+            <RenegadeProvider
+              reconnectOnMount={!!rememberMe}
+              config={renegadeConfig}
+            >
               <WagmiProvider config={wagmiConfig}>
                 <QueryClientProvider client={queryClient}>
                   <AppProvider tokenIcons={icons}>
