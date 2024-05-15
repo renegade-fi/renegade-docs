@@ -20,7 +20,7 @@ import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { SignInModal } from "@/components/modals/sign-in-modal"
 
 export function PlaceOrderButton({
   baseTokenAmount,
@@ -165,7 +165,7 @@ export function PlaceOrderButton({
       >
         {placeOrderButtonContent}
       </Button>
-      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
+      {signInIsOpen && <SignInModal onClose={onCloseSignIn} />}
     </>
   )
 }

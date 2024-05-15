@@ -18,7 +18,7 @@ import { useAccount } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
 
-import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { SignInModal } from "@/components/modals/sign-in-modal"
 
 export default function WithdrawButton({
   baseTicker,
@@ -55,7 +55,7 @@ export default function WithdrawButton({
   const status = useStatus()
   const isConnected = status === "in relayer"
 
-  const isDisabled = (isConnected && !baseTokenAmount) || hasInsufficientBalance
+  const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)
 
   const config = useConfig()
   const { address } = useAccount()
@@ -135,7 +135,7 @@ export default function WithdrawButton({
           ? "Insufficient balance"
           : `Withdraw ${baseTokenAmount || ""} ${baseTicker}`}
       </Button>
-      {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
+      {signInIsOpen && <SignInModal onClose={onCloseSignIn} />}
     </>
   )
 }

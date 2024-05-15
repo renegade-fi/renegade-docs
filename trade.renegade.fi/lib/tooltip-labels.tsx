@@ -53,3 +53,5 @@ export const ORDER_TOOLTIP = (
     </Text>
   )
 }
+export const REMEMBER_ME_TOOLTIP =
+  "Only use this option if you are using a secure device that you own."
