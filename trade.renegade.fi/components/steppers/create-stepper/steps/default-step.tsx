@@ -1,4 +1,5 @@
 import { useApp } from "@/contexts/App/app-context"
+import { REMEMBER_ME_TOOLTIP } from "@/lib/tooltip-labels"
 import {
   Button,
   Checkbox,
@@ -6,7 +7,6 @@ import {
   HStack,
   ModalBody,
   Text,
-  Tooltip,
 } from "@chakra-ui/react"
 import { useConfig } from "@renegade-fi/react"
 import { CircleHelp, Unplug } from "lucide-react"
@@ -19,6 +19,7 @@ import {
 } from "wagmi"
 
 import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { Tooltip } from "@/components/tooltip"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
@@ -77,10 +78,7 @@ export function DefaultStep() {
               size="sm"
               value={rememberMe}
             />
-            <Tooltip
-              label="Only use this option if you are using a secure device that you own."
-              placement="right"
-            >
+            <Tooltip label={REMEMBER_ME_TOOLTIP} placement="right">
               <Flex gap="1">
                 <Text color="white.60" fontSize="0.9em">
                   Remember Me
