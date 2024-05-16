@@ -7,7 +7,9 @@ import {
   RELAYER_NAME_TOOLTIP,
   TVL_TOOLTIP,
 } from "@/lib/tooltip-labels"
+import { formatNumber } from "@/lib/utils"
 import { Box, Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import { Token } from "@renegade-fi/react"
 import React from "react"
 
 import { Tooltip } from "@/components/tooltip"
@@ -19,6 +21,8 @@ interface RelayerStatusBannerProps {
   activeBaseTicker: string
   activeQuoteTicker: string
   connectionState?: "live" | "dead" | "loading"
+  baseTvl: bigint
+  quoteTvl: bigint
 }
 interface RelayerStatusBannerState {
   relayerStatusBannerRef: React.RefObject<HTMLDivElement>
@@ -174,15 +178,45 @@ export class RelayerStatusBanner extends React.Component<
           height="var(--banner-height)"
         >
           <Spacer flexGrow="2" />
-          <Tooltip placement="bottom" label={TVL_TOOLTIP}>
-            <Flex alignItems="center" gap="3">
+          <Flex alignItems="center" gap="3">
+            <Tooltip placement="bottom" label={TVL_TOOLTIP}>
               <Text>TVL</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>123.456 {this.props.activeBaseTicker}</Text>
-              <BannerSeparator flexGrow={1} />
-              <Text>123456.78 {this.props.activeQuoteTicker}</Text>
-            </Flex>
-          </Tooltip>
+            </Tooltip>
+            <BannerSeparator flexGrow={1} />
+            <Tooltip
+              placement="bottom"
+              label={`${formatNumber(
+                this.props.baseTvl,
+                Token.findByTicker(this.props.activeBaseTicker).decimals,
+                true
+              )} ${this.props.activeBaseTicker}`}
+            >
+              <Text>
+                {formatNumber(
+                  this.props.baseTvl,
+                  Token.findByTicker(this.props.activeBaseTicker).decimals
+                )}{" "}
+                {this.props.activeBaseTicker}
+              </Text>
+            </Tooltip>
+            <BannerSeparator flexGrow={1} />
+            <Tooltip
+              placement="bottom"
+              label={`${formatNumber(
+                this.props.quoteTvl,
+                Token.findByTicker(this.props.activeQuoteTicker).decimals,
+                true
+              )} ${this.props.activeQuoteTicker}`}
+            >
+              <Text>
+                {formatNumber(
+                  this.props.quoteTvl,
+                  Token.findByTicker(this.props.activeQuoteTicker).decimals
+                )}{" "}
+                {this.props.activeQuoteTicker}
+              </Text>
+            </Tooltip>
+          </Flex>
           <BannerSeparator flexGrow={3} />
           <Tooltip placement="bottom" label={RELAYER_NAME_TOOLTIP}>
             <Flex alignItems="center" gap="3">

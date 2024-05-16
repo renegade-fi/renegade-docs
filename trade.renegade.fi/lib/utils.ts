@@ -44,7 +44,7 @@ export const formatNumber = (
 
   let formatStr = ""
   if (balanceValue > 10000000) {
-    formatStr = "0.00a"
+    formatStr = long ? "0,0[.]00" : "0.00a"
   } else if (balanceValue > 1000000) {
     formatStr = `0${long ? ".[00]" : ""}`
   } else if (balanceValue > 10000) {

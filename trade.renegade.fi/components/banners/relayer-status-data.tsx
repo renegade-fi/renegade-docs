@@ -4,6 +4,8 @@ import { env } from "@/env.mjs"
 import { useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
+import { useTvl } from "@/hooks/use-tvl"
+
 import { RelayerStatusBanner } from "@/components/banners/relayer-banner"
 
 export function RelayerStatusData() {
@@ -12,6 +14,8 @@ export function RelayerStatusData() {
   const [quote] = useLocalStorage("quote", "USDC", {
     initializeWithValue: false,
   })
+  const baseTvl = useTvl(base)
+  const quoteTvl = useTvl(quote)
 
   useEffect(() => {
     const fetchPing = async () => {
@@ -45,6 +49,8 @@ export function RelayerStatusData() {
       connectionState={ping}
       activeBaseTicker={base}
       activeQuoteTicker={quote}
+      baseTvl={baseTvl}
+      quoteTvl={quoteTvl}
     />
   )
 }
