@@ -215,7 +215,9 @@ function DisconnectWalletButton() {
       background="white.10"
       onClick={() => {
         disconnect()
+        console.log("before disconnect", config.state)
         disconnectRenegade(config)
+        console.log("after disconnect", config.state)
       }}
       variant="wallet-connect"
     >
