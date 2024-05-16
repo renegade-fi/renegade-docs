@@ -47,3 +47,5 @@ export const ORDER_TOOLTIP = (
 }
 export const REMEMBER_ME_TOOLTIP =
   "Only use this option if you are using a secure device that you own."
+export const INSUFFICIENT_BALANCE_TOOLTIP =
+  "Insufficient balance to cover the entire order. Only part of the order will be filled."

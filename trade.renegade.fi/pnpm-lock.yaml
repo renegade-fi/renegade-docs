@@ -30,8 +30,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
   '@renegade-fi/react':
-    specifier: ^0.0.22
-    version: 0.0.22(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+    specifier: ^0.0.23
+    version: 0.0.23(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4261,8 +4261,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/core@0.0.22(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-+fUrFqYMUvDUg6g+1VdkKoR9taW4oiJs64TS6mI9UsNANGB1hQgCnb/WnidboSZFc6ekTE0JLAr/ua6ZElaZ5w==}
+  /@renegade-fi/core@0.0.23(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-/c5Gd++LzvN0IifOpehP3WhhjZKxpPTfTt94YCwI9VZgRabhwwTPkvL36zClezZQialnxv7BBojzuI4dXgFRyw==}
     dependencies:
       axios: 1.6.8
       isomorphic-ws: 5.0.0(ws@8.13.0)
@@ -4282,12 +4282,12 @@ packages:
       - zod
     dev: false
 
-  /@renegade-fi/react@0.0.22(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-0MKkcPsZElyY+XM7abRXKt10MkBpB5066VpGLzrAJ9jPHCoVcPP1GWGBtAhottd5UIpigYNw54/0XEHxKRnqBA==}
+  /@renegade-fi/react@0.0.23(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-mJhZcYiejKVQeRnz0gj2NRaZ1YZTCAq1nfMojb7mWESbryf22mfw5b+Of82T7ZbzdBTKvvxGYZrgSUW8IjC9HQ==}
     peerDependencies:
       react: '>=18'
     dependencies:
-      '@renegade-fi/core': 0.0.22(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+      '@renegade-fi/core': 0.0.23(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0)(react@18.2.0)
