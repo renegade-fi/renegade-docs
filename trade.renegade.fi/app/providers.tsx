@@ -227,10 +227,16 @@ export function Providers({
 }) {
   const rememberMe = useReadLocalStorage("rememberMe")
   useEffect(() => {
-    return () => {
+    const handleBeforeUnload = () => {
       if (!rememberMe) {
         window.localStorage.setItem("renegade.store", "")
       }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
     }
   }, [rememberMe])
 
