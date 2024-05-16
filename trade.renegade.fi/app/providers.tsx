@@ -28,7 +28,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
-import { useReadLocalStorage } from "usehooks-ts"
+import { useLocalStorage, useReadLocalStorage } from "usehooks-ts"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
@@ -226,13 +226,16 @@ export function Providers({
   icons?: Record<string, string>
 }) {
   const rememberMe = useReadLocalStorage("rememberMe")
+  const [, setStore] = useLocalStorage("renegade.store", {})
+  console.log("🚀 ~ rememberMe:", rememberMe)
   useEffect(() => {
     return () => {
       if (!rememberMe) {
-        localStorage.removeItem("renegade.store")
+        // localStorage.removeItem("renegade.store")
+        setStore({})
       }
     }
-  }, [rememberMe])
+  }, [rememberMe, setStore])
 
   useEffect(() => {
     async function loadUtils() {
