@@ -1,6 +1,5 @@
 "use client"
 
-import { renegadeConfig } from "@/app/providers"
 import { fundList, fundWallet } from "@/lib/utils"
 import { connect, disconnect, useConfig } from "@renegade-fi/react"
 import {
@@ -61,7 +60,6 @@ function AppProvider({
 
   const handleSignin = async (seed: Hex) => {
     const res = await connect(config, { seed })
-    // renegadeConfig.reinitializeStore(!!rememberMe)
     if (res?.taskId) {
       await executeTaskWithToast(res.taskId, "Connecting...")
     }
