@@ -226,17 +226,6 @@ export function Providers({
   icons?: Record<string, string>
 }) {
   const rememberMe = useReadLocalStorage("rememberMe")
-  const [, setStore] = useLocalStorage("renegade.store", {})
-  console.log("🚀 ~ rememberMe:", rememberMe)
-  useEffect(() => {
-    return () => {
-      if (!rememberMe) {
-        // localStorage.removeItem("renegade.store")
-        setStore({})
-      }
-    }
-  }, [rememberMe, setStore])
-
   useEffect(() => {
     async function loadUtils() {
       datadogRum.init({
