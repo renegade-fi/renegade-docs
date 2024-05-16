@@ -90,7 +90,7 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
         formattedAmount,
         fillLabel,
         side,
-        created / 1000
+        Number(created) / 1000
       )}
     >
       <Flex
@@ -310,9 +310,7 @@ function OrderBookPanel() {
                   fontSize="0.7em"
                   fontWeight="500"
                 >
-                  {dayjs().isSame(dayjs.unix(timestamp), "day")
-                    ? dayjs.unix(timestamp).format("HH:mm:ss")
-                    : dayjs.unix(timestamp).fromNow()}
+                  {dayjs.unix(Number(timestamp)).fromNow()}
                 </Text>
               </Flex>
               <Text color="white.80" fontSize="0.8em">

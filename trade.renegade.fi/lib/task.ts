@@ -79,7 +79,7 @@ export function generateStartToastMessage(task: Task) {
       message = "Creating new wallet..."
       break
     case TaskType.PayOfflineFee:
-      message = "Paying offline fee..."
+      message = "Paying fee..."
       break
     case TaskType.UpdateWallet:
       switch (taskInfo.update_type) {
