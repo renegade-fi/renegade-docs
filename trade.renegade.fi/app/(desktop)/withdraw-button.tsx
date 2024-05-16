@@ -133,7 +133,7 @@ export default function WithdrawButton({
           ? buttonText
           : hasInsufficientBalance
           ? "Insufficient balance"
-          : `Withdraw ${baseTokenAmount || ""} ${baseTicker}`}
+          : `Withdraw ${baseTokenAmount || "0"} ${baseTicker}`}
       </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
