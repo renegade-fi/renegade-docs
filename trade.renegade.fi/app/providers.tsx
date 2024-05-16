@@ -28,7 +28,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
-import { useLocalStorage, useReadLocalStorage } from "usehooks-ts"
+import { useReadLocalStorage } from "usehooks-ts"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
