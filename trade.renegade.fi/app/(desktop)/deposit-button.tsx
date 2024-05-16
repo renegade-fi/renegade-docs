@@ -116,7 +116,7 @@ export default function DepositButton({
     // Generate Permit2 Signature
     const { signature, nonce, deadline } = await signPermit2({
       amount,
-      chainId: config.getRenegadeChain().id,
+      chainId: chain.id,
       spender: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
       permit2Address: env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
       token,

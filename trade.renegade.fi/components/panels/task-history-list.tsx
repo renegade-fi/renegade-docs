@@ -39,7 +39,7 @@ export function TaskHistoryList() {
   return (
     <>
       {history.map((task) => {
-        const createdAt = task.created_at / 1000
+        const createdAt = Number(task.created_at) / 1000
         const formattedState = formattedStates[task.state]
         switch (task.task_info.task_type) {
           case TaskType.NewWallet:

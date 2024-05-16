@@ -8,10 +8,10 @@ import {
   ModalBody,
   Text,
 } from "@chakra-ui/react"
-import { useConfig } from "@renegade-fi/react"
+import { chain } from "@renegade-fi/react"
 import { CircleHelp, Unplug } from "lucide-react"
 import { useLocalStorage } from "usehooks-ts"
-import { verifyMessage } from "viem"
+import { createPublicClient, http, verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
@@ -23,19 +23,22 @@ import { Tooltip } from "@/components/tooltip"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
 
+const publicClient = createPublicClient({
+  chain,
+  transport: http(),
+})
+
 export function DefaultStep() {
   const { onSignin } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
-  const config = useConfig()
-  const client = config.getViemClient()
   const [rememberMe, setRememberMe] = useLocalStorage("rememberMe", false)
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
         // If Cloudflare is down, Smart Contract accounts cannot be verified
         // EOA accounts can be verified using verifyMessage util
-        const valid = await client
+        const valid = await publicClient
           .verifyMessage({
             address: address ?? `0x`,
             message: variables.message,
@@ -100,7 +103,7 @@ export function DefaultStep() {
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
-                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${client.chain?.id}`,
+                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${chain.id}`,
                 })
               }}
             >

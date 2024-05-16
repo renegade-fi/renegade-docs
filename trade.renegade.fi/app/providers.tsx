@@ -20,6 +20,7 @@ import { datadogLogs } from "@datadog/browser-logs"
 import { datadogRum } from "@datadog/browser-rum"
 import {
   RenegadeProvider,
+  chain,
   createConfig as createSDKConfig,
 } from "@renegade-fi/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
@@ -197,8 +198,6 @@ export const renegadeConfig = createSDKConfig({
   ssr: true,
 })
 
-const renegadeChain = renegadeConfig.getRenegadeChain()
-
 /*
  * ┌─────────────────────┐
  * │    Wallet Config    |
@@ -211,10 +210,10 @@ export const wagmiConfig = createConfig(
     appName: "Renegade | On-Chain Dark Pool",
     appIcon: "https://www.renegade.fi/glyph_light.svg",
     appUrl: "https://renegade.fi",
-    chains: [renegadeChain],
+    chains: [chain],
     ssr: true,
     transports: {
-      [renegadeChain.id]: http(),
+      [chain.id]: http(),
     },
     walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
