@@ -5,7 +5,6 @@ import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { env } from "@/env.mjs"
-import { safeLocalStorageGetItem } from "@/lib/utils"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -29,6 +28,7 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { PropsWithChildren, useEffect } from "react"
 import { IntercomProvider } from "react-use-intercom"
 import { Toaster } from "sonner"
+import { useReadLocalStorage } from "usehooks-ts"
 import { http } from "viem"
 import { WagmiProvider, createConfig } from "wagmi"
 
@@ -186,13 +186,11 @@ const components = {
 }
 const theme = extendTheme({ config, styles, colors, components })
 
-const rememberMe = safeLocalStorageGetItem("rememberMe") === "1"
 export const renegadeConfig = createSDKConfig({
   darkPoolAddress: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
   priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   rpcUrl: env.NEXT_PUBLIC_RPC_URL,
-  shouldPersist: rememberMe,
   ssr: true,
 })
 
@@ -227,6 +225,15 @@ export function Providers({
 }: PropsWithChildren & {
   icons?: Record<string, string>
 }) {
+  const rememberMe = useReadLocalStorage("rememberMe")
+  useEffect(() => {
+    return () => {
+      if (!rememberMe) {
+        localStorage.removeItem("renegade.store")
+      }
+    }
+  }, [rememberMe])
+
   useEffect(() => {
     async function loadUtils() {
       datadogRum.init({
@@ -262,6 +269,7 @@ export function Providers({
       datadogRum.stopSessionReplayRecording()
     }
   }, [])
+
   return (
     <>
       <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
