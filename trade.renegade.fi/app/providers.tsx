@@ -5,6 +5,7 @@ import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
 import { env } from "@/env.mjs"
+import { safeLocalStorageGetItem } from "@/lib/utils"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -185,14 +186,14 @@ const components = {
 }
 const theme = extendTheme({ config, styles, colors, components })
 
-const rememberMe = window.localStorage.getItem("rememberMe") === "1"
+const rememberMe = safeLocalStorageGetItem("rememberMe") === "1"
 export const renegadeConfig = createSDKConfig({
   darkPoolAddress: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
   priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
   relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
   rpcUrl: env.NEXT_PUBLIC_RPC_URL,
+  shouldPersist: rememberMe,
   ssr: true,
-  storage: rememberMe ? undefined : null,
 })
 
 const renegadeChain = renegadeConfig.getRenegadeChain()

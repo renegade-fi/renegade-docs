@@ -30,8 +30,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
   '@renegade-fi/react':
-    specifier: 0.0.19
-    version: 0.0.19(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+    specifier: 0.0.0-canary-20240516184828
+    version: 0.0.0-canary-20240516184828(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4261,8 +4261,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/core@0.0.19(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-q4EpwzpPqBfx8sLq1kd8GG4qXo0mcmepOmHzT05Djk260A02hEX6i0qGnVExPirNvHCe9uDS+vBTpQTl5F0xZA==}
+  /@renegade-fi/core@0.0.0-canary-20240516184828(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-EJJNx2amF2dy4o1G9Z6rYKgRwjgg5rr9blgRezaWliFt6a/rP++1myxqVFQLov6DdD7lB+9Yk6PYOINYnROdJg==}
     dependencies:
       axios: 1.6.8
       isomorphic-ws: 5.0.0(ws@8.13.0)
@@ -4282,12 +4282,12 @@ packages:
       - zod
     dev: false
 
-  /@renegade-fi/react@0.0.19(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-GqzOPJ1yYllPEbFCSRYyIf6pWcw6sW9+JfAXuJkwSuctIen86C9+yzGwygUWxGcTF29OVgrrR2DjjfABqJu2CQ==}
+  /@renegade-fi/react@0.0.0-canary-20240516184828(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-iwXJtYHEzpXJcNd3OBDyB4JwFxh3xTqI1dGxM7BFyUoBLREjthDVjjYIhT3mT925dPhNyDsgc3O2XXoewz9YQA==}
     peerDependencies:
       react: '>=18'
     dependencies:
-      '@renegade-fi/core': 0.0.19(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+      '@renegade-fi/core': 0.0.0-canary-20240516184828(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0)(react@18.2.0)

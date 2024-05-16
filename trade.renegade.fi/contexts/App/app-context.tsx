@@ -57,12 +57,11 @@ function AppProvider({
 
   // Sign In + Funding
   const { executeTaskWithToast } = useTaskCompletionToast()
-  const rememberMe = useReadLocalStorage("rememberMe")
   const funded = useReadLocalStorage(`funded_${address}`)
 
   const handleSignin = async (seed: Hex) => {
     const res = await connect(config, { seed })
-    renegadeConfig.reinitializeStore(!!rememberMe)
+    // renegadeConfig.reinitializeStore(!!rememberMe)
     if (res?.taskId) {
       await executeTaskWithToast(res.taskId, "Connecting...")
     }
