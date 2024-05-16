@@ -227,6 +227,14 @@ export function Providers({
 }) {
   const rememberMe = useReadLocalStorage("rememberMe")
   useEffect(() => {
+    return () => {
+      if (!rememberMe) {
+        window.localStorage.setItem("renegade.store", "")
+      }
+    }
+  }, [rememberMe])
+
+  useEffect(() => {
     async function loadUtils() {
       datadogRum.init({
         applicationId: env.NEXT_PUBLIC_DATADOG_APPLICATION_ID,
