@@ -38,15 +38,10 @@ export const Footer = () => {
         width="100%"
         height="120px"
         onClick={() => setShowDownloadPrompt(false)}
+        paddingX="40px"
       >
-        <Flex
-          alignItems="center"
-          gap="30px"
-          width="30%"
-          marginLeft="2%"
-          userSelect="none"
-        >
-          <Box ref={logoRef}>
+        <Flex alignItems="center" gap="30px">
+          <Box ref={logoRef} minWidth="200px">
             <Image alt="Renegade Logo" height="30" src={logoDark} />
           </Box>
           <Link

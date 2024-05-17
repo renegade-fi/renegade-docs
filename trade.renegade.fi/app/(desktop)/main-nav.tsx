@@ -19,6 +19,7 @@ import { ConnectKitButton } from "connectkit"
 import Image from "next/image"
 import React, { createRef, useEffect, useState } from "react"
 import {
+  useAccount,
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
   useEnsName as useEnsNameWagmi,
@@ -89,14 +90,8 @@ interface GlyphProps {
 }
 function Glyph(props: GlyphProps) {
   return (
-    <Flex
-      alignItems="center"
-      gap="20px"
-      width="30%"
-      marginLeft="1.2%"
-      userSelect="none"
-    >
-      <Box ref={props.glyphRef}>
+    <Flex alignItems="center" gap="20px">
+      <Box ref={props.glyphRef} minWidth="50px">
         <Image alt="Renegade Logo" height="38" src={glyphDark} />
       </Box>
       <Link
@@ -124,10 +119,7 @@ function Glyph(props: GlyphProps) {
 export function ConnectWalletButton() {
   return (
     <ConnectKitButton.Custom>
-      {({ isConnected, show }) => {
-        if (isConnected) {
-          return null
-        }
+      {({ show }) => {
         return (
           <Button onClick={show} variant="wallet-connect">
             Connect Wallet
@@ -159,9 +151,6 @@ export function SignInButton() {
     status === "creating wallet" ||
     status === "looking up" ||
     status === "connecting"
-  if (!address || status === "in relayer") {
-    return null
-  }
 
   return (
     <>
@@ -187,11 +176,7 @@ function DisconnectWalletButton() {
   const { disconnect } = useDisconnectWagmi()
   const { address } = useAccountWagmi()
   const { data } = useEnsNameWagmi({ address })
-  const status = useStatus()
   const config = useConfig()
-  if (!address || status !== "in relayer") {
-    return null
-  }
 
   let buttonContent: React.ReactElement
   if (data) {
@@ -225,6 +210,8 @@ function DisconnectWalletButton() {
 }
 
 export function MainNav() {
+  const { address } = useAccount()
+  const status = useStatus()
   const [showDownloadPrompt, setshowDownloadPrompt] = useState(false)
   const glyphRef = createRef<HTMLDivElement>()
 
@@ -244,10 +231,12 @@ export function MainNav() {
   return (
     <Flex
       alignItems="center"
+      justifyContent="space-between"
       width="100%"
       height="calc(2 * var(--banner-height))"
       borderBottom="var(--border)"
       onClick={() => setshowDownloadPrompt(false)}
+      paddingX="19px"
     >
       <Glyph glyphRef={glyphRef} showDownloadPrompt={showDownloadPrompt} />
       <Spacer />
@@ -286,13 +275,15 @@ export function MainNav() {
         </FancyUnderline>
       </HStack>
       <Spacer />
-      <Flex justifyContent="right" width="30%" paddingRight="1.5%">
-        <Box onClick={(event) => event.stopPropagation()}>
+      <Box onClick={(event) => event.stopPropagation()}>
+        {!address ? (
           <ConnectWalletButton />
+        ) : status !== "in relayer" ? (
           <SignInButton />
+        ) : (
           <DisconnectWalletButton />
-        </Box>
-      </Flex>
+        )}
+      </Box>
     </Flex>
   )
 }
