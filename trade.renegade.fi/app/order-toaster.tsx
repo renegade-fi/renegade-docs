@@ -1,8 +1,8 @@
+import { formatNumber } from "@/lib/utils"
 import {
   OrderMetadata,
   OrderState,
   Token,
-  formatAmount,
   useOrderHistory,
   useOrderHistoryWebSocket,
   useOrders,
@@ -41,7 +41,7 @@ export function OrderToaster() {
         data: { base_mint, side },
       } = incomingOrder
       const base = Token.findByAddress(base_mint)
-      const formattedFilled = formatAmount(filled, base)
+      const formattedFilled = formatNumber(filled, base.decimals)
       const lastFilled = existingOrder?.filled || BigInt(0)
 
       if (state === OrderState.Filled) {
@@ -52,7 +52,7 @@ export function OrderToaster() {
         )
       } else if (filled > lastFilled) {
         const currentFill = filled - lastFilled
-        const formattedCurrentFill = formatAmount(currentFill, base)
+        const formattedCurrentFill = formatNumber(currentFill, base.decimals)
         toast.success(
           `Order partially filled: ${
             side === "Buy" ? "Bought" : "Sold"

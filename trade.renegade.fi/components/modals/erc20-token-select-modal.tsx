@@ -1,7 +1,8 @@
 import { wagmiConfig } from "@/app/providers"
 import { readErc20BalanceOf } from "@/generated"
 import { TICKER_TO_NAME } from "@/lib/tokens"
-import { Token, formatAmount, tokenMapping } from "@renegade-fi/react"
+import { formatNumber } from "@/lib/utils"
+import { Token, tokenMapping } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 import { Address } from "viem"
@@ -61,7 +62,7 @@ export function ERC20TokenSelectModal({
       .sort((a, b) => Number(b.balance - a.balance)) // Sort in descending order
       .map(({ address, balance }) => ({
         address,
-        balance: formatAmount(balance, Token.findByAddress(address)),
+        balance: formatNumber(balance, Token.findByAddress(address).decimals),
       }))
   }, [balances, debouncedSearchTerm])
 

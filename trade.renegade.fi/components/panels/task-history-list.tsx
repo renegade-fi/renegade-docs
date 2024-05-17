@@ -1,12 +1,11 @@
+import { formatNumber } from "@/lib/utils"
 import {
   TaskState,
   TaskType,
   Token,
   UpdateType,
-  formatAmount,
   useTaskHistory,
 } from "@renegade-fi/react"
-import { formatUnits } from "viem"
 
 import { TaskItem } from "@/components/panels/task-item"
 
@@ -49,7 +48,6 @@ export function TaskHistoryList() {
                 name={formattedTaskType[task.task_info.task_type]}
                 createdAt={createdAt}
                 state={formattedState}
-                isFeeTask
               />
             )
           case TaskType.PayOfflineFee:
@@ -71,15 +69,16 @@ export function TaskHistoryList() {
                   <TaskItem
                     key={task.id}
                     createdAt={createdAt}
-                    description={`${formatAmount(
+                    description={`${formatNumber(
                       task.task_info.amount,
-                      token
+                      token.decimals
                     )} ${token.ticker}`}
                     name={formattedUpdateType[task.task_info.update_type]}
                     state={formattedState}
-                    tooltip={`${formatUnits(
+                    tooltip={`${formatNumber(
                       task.task_info.amount,
-                      token.decimals
+                      token.decimals,
+                      true
                     )} ${token.ticker}`}
                   />
                 )
@@ -89,16 +88,17 @@ export function TaskHistoryList() {
                 return (
                   <TaskItem
                     key={task.id}
-                    description={`${task.task_info.side} ${formatAmount(
+                    description={`${task.task_info.side} ${formatNumber(
                       task.task_info.amount,
-                      base
+                      base.decimals
                     )} ${base.ticker} `}
                     createdAt={createdAt}
                     name={formattedUpdateType[task.task_info.update_type]}
                     state={formattedState}
-                    tooltip={`${formatUnits(
+                    tooltip={`${formatNumber(
                       task.task_info.amount,
-                      base.decimals
+                      base.decimals,
+                      true
                     )} ${base.ticker}`}
                   />
                 )
@@ -112,13 +112,16 @@ export function TaskHistoryList() {
                 key={task.id}
                 createdAt={createdAt}
                 description={`${
-                  task.task_info.is_sell ? "Sold" : "Bought"
-                } ${formatAmount(task.task_info.volume, base)} ${base.ticker}`}
+                  task.task_info.is_sell ? "Sell" : "Buy"
+                } ${formatNumber(task.task_info.volume, base.decimals)} ${
+                  base.ticker
+                }`}
                 name={formattedTaskType[task.task_info.task_type]}
                 state={formattedState}
-                tooltip={`${formatUnits(
+                tooltip={`${formatNumber(
                   task.task_info.volume,
-                  base.decimals
+                  base.decimals,
+                  true
                 )} ${base.ticker}`}
               />
             )

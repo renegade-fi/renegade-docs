@@ -2,7 +2,6 @@
 
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Direction } from "@/lib/types"
-import { formatPrice } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -15,6 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/react"
+import numeral from "numeral"
 import React, { createRef, useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -183,11 +183,11 @@ function TradingInner() {
 
 function HelperText({ baseTicker }: { baseTicker: string }) {
   const usdPrice = useUSDPrice(baseTicker, 1)
-  const formattedUsdPrice = formatPrice(usdPrice)
+  const formattedUsdPrice = numeral(usdPrice).format("$0.00")
   return (
     <Text color="white.50" fontWeight="100" userSelect="text">
       Trades are end-to-end encrypted and always clear at the real-time midpoint
-      of ${formattedUsdPrice}
+      of {formattedUsdPrice}
     </Text>
   )
 }

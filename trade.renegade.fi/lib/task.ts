@@ -1,50 +1,52 @@
+import { formatNumber } from "@/lib/utils"
 import {
   OrderState,
   Task,
   TaskType,
   Token,
   UpdateType,
-  formatAmount,
 } from "@renegade-fi/react"
 
 export const START_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
-  `Depositing ${formatAmount(amount, mint)} ${mint.ticker}...`
+  `Depositing ${formatNumber(amount, mint.decimals)} ${mint.ticker}...`
 
 export const START_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Withdrawing ${formatAmount(amount, mint)} ${mint.ticker}...`
+  `Withdrawing ${formatNumber(amount, mint.decimals)} ${mint.ticker}...`
 
 export const START_PLACE_ORDER_MSG = (
   base: Token,
   amount: bigint,
   side: string
 ) =>
-  `Placing Order to ${side.toLowerCase()} ${formatAmount(amount, base)} ${
-    base.ticker
-  }...`
+  `Placing Order to ${side.toLowerCase()} ${formatNumber(
+    amount,
+    base.decimals
+  )} ${base.ticker}...`
 
 export const START_CANCEL_ORDER_MSG = (
   base: Token,
   amount: bigint,
   side: string
 ) =>
-  `Cancelling Order to ${side.toLowerCase()} ${formatAmount(amount, base)} ${
-    base.ticker
-  }...`
+  `Cancelling Order to ${side.toLowerCase()} ${formatNumber(
+    amount,
+    base.decimals
+  )} ${base.ticker}...`
 
 export const QUEUED_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
-  `Queued: Depositing ${formatAmount(amount, mint)} ${mint.ticker}.`
+  `Queued: Depositing ${formatNumber(amount, mint.decimals)} ${mint.ticker}.`
 
 export const QUEUED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Queued: Withdrawing ${formatAmount(amount, mint)} ${mint.ticker}.`
+  `Queued: Withdrawing ${formatNumber(amount, mint.decimals)} ${mint.ticker}.`
 
 export const QUEUED_PLACE_ORDER_MSG = (
   base: Token,
   amount: bigint,
   side: string
 ) =>
-  `Queued: Placing order to ${side.toLowerCase()} ${formatAmount(
+  `Queued: Placing order to ${side.toLowerCase()} ${formatNumber(
     amount,
-    base
+    base.decimals
   )} ${base.ticker}.`
 
 export const QUEUED_CANCEL_ORDER_MSG = (
@@ -52,9 +54,9 @@ export const QUEUED_CANCEL_ORDER_MSG = (
   amount: bigint,
   side: string
 ) =>
-  `Queued: Cancelling order to ${side.toLowerCase()} ${formatAmount(
+  `Queued: Cancelling order to ${side.toLowerCase()} ${formatNumber(
     amount,
-    base
+    base.decimals
   )} ${base.ticker}.`
 
 export const FAILED_DEPOSIT_MSG = (
@@ -62,12 +64,12 @@ export const FAILED_DEPOSIT_MSG = (
   amount: bigint,
   reason?: string
 ) =>
-  `Failed to deposit ${formatAmount(amount, mint)} ${mint.ticker}. ${
+  `Failed to deposit ${formatNumber(amount, mint.decimals)} ${mint.ticker}. ${
     reason ?? "Please try again"
   }.`
 
 export const FAILED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Failed to withdraw ${formatAmount(amount, mint)} ${
+  `Failed to withdraw ${formatNumber(amount, mint.decimals)} ${
     mint.ticker
   }. Please try again.`
 
@@ -77,9 +79,9 @@ export const FAILED_PLACE_ORDER_MSG = (
   side: string,
   reason?: string
 ) =>
-  `Failed to place order to ${side.toLowerCase()} ${formatAmount(
+  `Failed to place order to ${side.toLowerCase()} ${formatNumber(
     amount,
-    base
+    base.decimals
   )} ${base.ticker}. ${reason ?? "Please try again"}.`
 
 export const FAILED_CANCEL_ORDER_MSG = (
@@ -87,9 +89,9 @@ export const FAILED_CANCEL_ORDER_MSG = (
   amount: bigint,
   side: string
 ) =>
-  `Failed to cancel order to ${side.toLowerCase()} ${formatAmount(
+  `Failed to cancel order to ${side.toLowerCase()} ${formatNumber(
     amount,
-    base
+    base.decimals
   )} ${base.ticker}. Please try again.`
 
 export const getReadableState = (state: OrderState) => {
@@ -122,19 +124,21 @@ export function generateCompletionToastMessage(task: Task) {
       switch (taskInfo.update_type) {
         case UpdateType.Deposit:
         case UpdateType.Withdraw:
-          const mint = Token.findByAddress(taskInfo.mint) // mint is available for Deposit and Withdraw
+          const mint = Token.findByAddress(taskInfo.mint)
           message = `${
             taskInfo.update_type === UpdateType.Deposit
               ? "Deposit"
               : "Withdrawal"
-          } of ${formatAmount(taskInfo.amount, mint)} ${mint.ticker} completed.`
+          } of ${formatNumber(taskInfo.amount, mint.decimals)} ${
+            mint.ticker
+          } completed.`
           break
         case UpdateType.PlaceOrder:
         case UpdateType.CancelOrder:
-          const base = Token.findByAddress(taskInfo.base) // base is available for PlaceOrder and CancelOrder
-          message = `${taskInfo.side} order for ${formatAmount(
+          const base = Token.findByAddress(taskInfo.base)
+          message = `${taskInfo.side} order for ${formatNumber(
             taskInfo.amount,
-            base
+            base.decimals
           )} ${base.ticker} ${
             taskInfo.update_type === UpdateType.PlaceOrder
               ? "placed"
@@ -144,11 +148,12 @@ export function generateCompletionToastMessage(task: Task) {
       }
       break
     case TaskType.SettleMatch:
-      const token = Token.findByAddress(taskInfo.base) // base is available for SettleMatch
+      const token = Token.findByAddress(taskInfo.base)
       let actionVerb = taskInfo.is_sell ? "Sold" : "Bought"
-      message = `${actionVerb} ${formatAmount(taskInfo.volume, token)} ${
-        token.ticker
-      } successfully.`
+      message = `${actionVerb} ${formatNumber(
+        taskInfo.volume,
+        token.decimals
+      )} ${token.ticker} successfully.`
       break
   }
 
@@ -175,7 +180,9 @@ export function generateStartToastMessage(task: Task) {
             taskInfo.update_type === UpdateType.Deposit
               ? "deposit"
               : "withdrawal"
-          } of ${formatAmount(taskInfo.amount, mint)} ${mint.ticker}...`
+          } of ${formatNumber(taskInfo.amount, mint.decimals)} ${
+            mint.ticker
+          }...`
           break
         case UpdateType.PlaceOrder:
         case UpdateType.CancelOrder:
@@ -184,9 +191,9 @@ export function generateStartToastMessage(task: Task) {
             taskInfo.update_type === UpdateType.PlaceOrder
               ? "Placing"
               : "Cancelling"
-          } ${taskInfo.side.toLowerCase()} order for ${formatAmount(
+          } ${taskInfo.side.toLowerCase()} order for ${formatNumber(
             taskInfo.amount,
-            base
+            base.decimals
           )} ${base.ticker}...`
           break
       }
@@ -194,9 +201,10 @@ export function generateStartToastMessage(task: Task) {
     case TaskType.SettleMatch:
       const token = Token.findByAddress(taskInfo.base) // base is available for SettleMatch
       let actionVerb = taskInfo.is_sell ? "Selling" : "Buying"
-      message = `${actionVerb} ${formatAmount(taskInfo.volume, token)} ${
-        token.ticker
-      }...`
+      message = `${actionVerb} ${formatNumber(
+        taskInfo.volume,
+        token.decimals
+      )} ${token.ticker}...`
       break
   }
 
@@ -223,9 +231,9 @@ export function generateFailedToastMessage(task: Task) {
         token = Token.findByAddress(taskInfo.mint) // mint is available for Deposit and Withdraw
         const action =
           taskInfo.update_type === UpdateType.Deposit ? "deposit" : "withdrawal"
-        message = `Failed to ${action} ${formatAmount(
+        message = `Failed to ${action} ${formatNumber(
           taskInfo.amount,
-          token
+          token.decimals
         )} ${token.ticker}. Please try again.`
       } else if (
         taskInfo.update_type === UpdateType.PlaceOrder ||
@@ -234,18 +242,18 @@ export function generateFailedToastMessage(task: Task) {
         token = Token.findByAddress(taskInfo.base) // base is available for PlaceOrder and CancelOrder
         const action =
           taskInfo.update_type === UpdateType.PlaceOrder ? "place" : "cancel"
-        message = `Failed to ${action} order for ${formatAmount(
+        message = `Failed to ${action} order for ${formatNumber(
           taskInfo.amount,
-          token
+          token.decimals
         )} ${token.ticker}. Please try again.`
       }
       break
     case TaskType.SettleMatch:
       token = Token.findByAddress(taskInfo.base) // base is available for SettleMatch
       const actionVerb = taskInfo.is_sell ? "sell" : "buy"
-      message = `Failed to ${actionVerb} ${formatAmount(
+      message = `Failed to ${actionVerb} ${formatNumber(
         taskInfo.volume,
-        token
+        token.decimals
       )} ${token.ticker}. Please try again.`
       break
   }

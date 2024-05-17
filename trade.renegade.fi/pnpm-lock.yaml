@@ -30,8 +30,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
   '@renegade-fi/react':
-    specifier: ^0.0.23
-    version: 0.0.23(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+    specifier: ^0.0.24
+    version: 0.0.24(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -53,6 +53,9 @@ dependencies:
   next:
     specifier: ^14.1.4
     version: 14.2.0(@babel/core@7.24.4)(react-dom@18.2.0)(react@18.2.0)
+  numeral:
+    specifier: ^2.0.6
+    version: 2.0.6
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -94,6 +97,9 @@ devDependencies:
   '@types/node':
     specifier: 20.4.2
     version: 20.4.2
+  '@types/numeral':
+    specifier: ^2.0.5
+    version: 2.0.5
   '@types/react':
     specifier: ^18.2.34
     version: 18.2.77
@@ -4261,8 +4267,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/core@0.0.23(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-/c5Gd++LzvN0IifOpehP3WhhjZKxpPTfTt94YCwI9VZgRabhwwTPkvL36zClezZQialnxv7BBojzuI4dXgFRyw==}
+  /@renegade-fi/core@0.0.24(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-xUcqfo948boF5JseUX6CKrah5E1Z5wSxd2/ibl5nBC68wZQ++1wigZP9cwEhuQnHAIt4YYbKyloMJCTQUDtR7g==}
     dependencies:
       axios: 1.6.8
       isomorphic-ws: 5.0.0(ws@8.13.0)
@@ -4282,12 +4288,12 @@ packages:
       - zod
     dev: false
 
-  /@renegade-fi/react@0.0.23(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-mJhZcYiejKVQeRnz0gj2NRaZ1YZTCAq1nfMojb7mWESbryf22mfw5b+Of82T7ZbzdBTKvvxGYZrgSUW8IjC9HQ==}
+  /@renegade-fi/react@0.0.24(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-xzr4DwbXgOz2Kr/8QjbvwMsqHI+UR04Yt2gbRVECd9aO98CFdQ4DDwNH44E4S6ICPwK2lm4J4TvNkWEyrcGaig==}
     peerDependencies:
       react: '>=18'
     dependencies:
-      '@renegade-fi/core': 0.0.23(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+      '@renegade-fi/core': 0.0.24(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0)(react@18.2.0)
@@ -4666,6 +4672,10 @@ packages:
 
   /@types/node@20.4.2:
     resolution: {integrity: sha512-Dd0BYtWgnWJKwO1jkmTrzofjK2QXXcai0dmtzvIBhcA+RsG5h8R3xlyta0kGOZRNfL9GuRtb1knmPEhQrePCEw==}
+
+  /@types/numeral@2.0.5:
+    resolution: {integrity: sha512-kH8I7OSSwQu9DS9JYdFWbuvhVzvFRoCPCkGxNwoGgaPeDfEPJlcxNvEOypZhQ3XXHsGbfIuYcxcJxKUfJHnRfw==}
+    dev: true
 
   /@types/parse-json@4.0.2:
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -9395,6 +9405,10 @@ packages:
 
   /nullthrows@1.1.1:
     resolution: {integrity: sha512-2vPPEi+Z7WqML2jZYddDIfy5Dqb0r2fze2zTxNNknZaFpVHU3mFB3R+DWeJWGVx0ecvttSGlJTI+WG+8Z4cDWw==}
+    dev: false
+
+  /numeral@2.0.6:
+    resolution: {integrity: sha512-qaKRmtYPZ5qdw4jWJD6bxEf1FJEqllJrwxCLIm0sQU/A7v2/czigzOb+C2uSiFsa9lBUzeH7M1oK+Q+OLxL3kA==}
     dev: false
 
   /ob1@0.80.8:
