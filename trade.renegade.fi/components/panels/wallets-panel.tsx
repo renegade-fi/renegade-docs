@@ -266,9 +266,11 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           flexGrow="1"
           minHeight="calc(100% - 30vh - (3 * var(--banner-height)))"
         >
-          <ConnectWalletButton />
-          <SignInButton />
-          {isConnected && (
+          {!address ? (
+            <ConnectWalletButton />
+          ) : !isConnected ? (
+            <SignInButton />
+          ) : (
             <Button
               padding="0 15% 0 15%"
               onClick={() => {
@@ -294,9 +296,9 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
             textAlign="center"
           >
             {isConnected
-              ? "Deposit tokens into your Renegade Account to get started."
+              ? "Deposit tokens into your Renegade Wallet to get started."
               : address
-              ? "Sign in to create a Renegade account and view your balances."
+              ? "Sign in to create a Renegade Wallet and view your balances."
               : "Connect your Ethereum wallet before signing in."}
           </Text>
         </Flex>
@@ -419,7 +421,7 @@ export function WalletsPanel() {
           toggleIsLocked={toggleIsLocked}
         />
       )}
-      panelCollapsedDisplayTexts={["Renegade Account", "History"]}
+      panelCollapsedDisplayTexts={["Renegade Wallet", "History"]}
       isOpenConnectKitModal={open}
       flipDirection={false}
     />

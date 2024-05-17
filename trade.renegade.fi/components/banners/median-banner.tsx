@@ -413,11 +413,14 @@ export class MedianBanner extends React.Component<
           <Flex
             alignItems="center"
             justifyContent="center"
-            width="13%"
-            minWidth="125px"
-            height="100%"
+            width={this.props.isMobile ? "100%" : "13%"}
+            minWidth={this.props.isMobile ? undefined : "125px"}
+            height={this.props.isMobile ? "13%" : "100%"}
+            minHeight={this.props.isMobile ? "125px" : undefined}
           >
-            BBO Feeds
+            <Text variant={this.props.isMobile ? "rotate-right" : undefined}>
+              BBO Feeds
+            </Text>
           </Flex>
         </Tooltip>
         <BannerSeparator flexGrow={1} />
@@ -425,7 +428,7 @@ export class MedianBanner extends React.Component<
           position="relative"
           flexDirection={this.props.isMobile ? "column" : "row"}
           width={this.props.isMobile ? undefined : "87%"}
-          height={this.props.isMobile ? "60%" : undefined}
+          height={this.props.isMobile ? "87%" : undefined}
         >
           <Box
             position="absolute"

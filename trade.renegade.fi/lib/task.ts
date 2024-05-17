@@ -7,6 +7,91 @@ import {
   formatAmount,
 } from "@renegade-fi/react"
 
+export const START_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
+  `Depositing ${formatAmount(amount, mint)} ${mint.ticker}...`
+
+export const START_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
+  `Withdrawing ${formatAmount(amount, mint)} ${mint.ticker}...`
+
+export const START_PLACE_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string
+) =>
+  `Placing Order to ${side.toLowerCase()} ${formatAmount(amount, base)} ${
+    base.ticker
+  }...`
+
+export const START_CANCEL_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string
+) =>
+  `Cancelling Order to ${side.toLowerCase()} ${formatAmount(amount, base)} ${
+    base.ticker
+  }...`
+
+export const QUEUED_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
+  `Queued: Depositing ${formatAmount(amount, mint)} ${mint.ticker}.`
+
+export const QUEUED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
+  `Queued: Withdrawing ${formatAmount(amount, mint)} ${mint.ticker}.`
+
+export const QUEUED_PLACE_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string
+) =>
+  `Queued: Placing order to ${side.toLowerCase()} ${formatAmount(
+    amount,
+    base
+  )} ${base.ticker}.`
+
+export const QUEUED_CANCEL_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string
+) =>
+  `Queued: Cancelling order to ${side.toLowerCase()} ${formatAmount(
+    amount,
+    base
+  )} ${base.ticker}.`
+
+export const FAILED_DEPOSIT_MSG = (
+  mint: Token,
+  amount: bigint,
+  reason?: string
+) =>
+  `Failed to deposit ${formatAmount(amount, mint)} ${mint.ticker}. ${
+    reason ?? "Please try again"
+  }.`
+
+export const FAILED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
+  `Failed to withdraw ${formatAmount(amount, mint)} ${
+    mint.ticker
+  }. Please try again.`
+
+export const FAILED_PLACE_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string,
+  reason?: string
+) =>
+  `Failed to place order to ${side.toLowerCase()} ${formatAmount(
+    amount,
+    base
+  )} ${base.ticker}. ${reason ?? "Please try again"}.`
+
+export const FAILED_CANCEL_ORDER_MSG = (
+  base: Token,
+  amount: bigint,
+  side: string
+) =>
+  `Failed to cancel order to ${side.toLowerCase()} ${formatAmount(
+    amount,
+    base
+  )} ${base.ticker}. Please try again.`
+
 export const getReadableState = (state: OrderState) => {
   switch (state) {
     case OrderState.Created:
@@ -118,30 +203,6 @@ export function generateStartToastMessage(task: Task) {
   return message
 }
 
-export const START_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
-  `Initiating deposit of ${formatAmount(amount, mint)} ${mint.ticker}...`
-
-export const START_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Initiating withdrawal of ${formatAmount(amount, mint)} ${mint.ticker}...`
-
-export const START_PLACE_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string
-) =>
-  `Placing ${side.toLowerCase()} order for ${formatAmount(amount, base)} ${
-    base.ticker
-  }...`
-
-export const START_CANCEL_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string
-) =>
-  `Cancelling ${side.toLowerCase()} order for ${formatAmount(amount, base)} ${
-    base.ticker
-  }...`
-
 export function generateFailedToastMessage(task: Task) {
   let message = ""
   const taskInfo = task.task_info
@@ -191,64 +252,3 @@ export function generateFailedToastMessage(task: Task) {
 
   return message
 }
-
-export const FAILED_DEPOSIT_MSG = (
-  mint: Token,
-  amount: bigint,
-  reason?: string
-) =>
-  `Failed to deposit ${formatAmount(amount, mint)} ${mint.ticker}. ${
-    reason ?? "Please try again"
-  }.`
-
-export const FAILED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Failed to withdraw ${formatAmount(amount, mint)} ${
-    mint.ticker
-  }. Please try again.`
-
-export const FAILED_PLACE_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string,
-  reason?: string
-) =>
-  `Failed to place ${side.toLowerCase()} order for ${formatAmount(
-    amount,
-    base
-  )} ${base.ticker}. ${reason ?? "Please try again"}.`
-
-export const FAILED_CANCEL_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string
-) =>
-  `Failed to cancel ${side.toLowerCase()} order for ${formatAmount(
-    amount,
-    base
-  )} ${base.ticker}. Please try again.`
-
-export const QUEUED_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
-  `Queued: Depositing ${formatAmount(amount, mint)} ${mint.ticker}.`
-
-export const QUEUED_WITHDRAWAL_MSG = (mint: Token, amount: bigint) =>
-  `Queued: Withdrawing ${formatAmount(amount, mint)} ${mint.ticker}.`
-
-export const QUEUED_PLACE_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string
-) =>
-  `Queued: Placing ${side.toLowerCase()} order for ${formatAmount(
-    amount,
-    base
-  )} ${base.ticker}.`
-
-export const QUEUED_CANCEL_ORDER_MSG = (
-  base: Token,
-  amount: bigint,
-  side: string
-) =>
-  `Queued: Cancelling ${side.toLowerCase()} order for ${formatAmount(
-    amount,
-    base
-  )} ${base.ticker}.`

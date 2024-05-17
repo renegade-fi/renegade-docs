@@ -22,6 +22,7 @@ import {
   RenegadeProvider,
   chain,
   createConfig as createSDKConfig,
+  useStatus,
 } from "@renegade-fi/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
@@ -313,9 +314,14 @@ export function Providers({
 // Required because ConnectKitProvider needs access to the useSignMessage wagmi hook
 function ConnectKitProviderWithSignMessage({ children }: PropsWithChildren) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const status = useStatus()
   return (
     <ConnectKitProvider
-      onConnect={onOpen}
+      onConnect={() => {
+        if (status !== "in relayer") {
+          onOpen()
+        }
+      }}
       mode="dark"
       customTheme={{
         "--ck-overlay-background": "rgba(0, 0, 0, 0.25)",
