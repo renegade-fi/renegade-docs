@@ -7,7 +7,7 @@ import {
   RENEGADE_ACCOUNT_TOOLTIP,
   TASK_HISTORY_TOOLTIP,
 } from "@/lib/tooltip-labels"
-import { fundList, fundWallet } from "@/lib/utils"
+import { formatNumber, fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -25,12 +25,13 @@ import {
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import Image from "next/image"
+import numeral from "numeral"
 import { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { Address, formatUnits } from "viem"
+import { Address } from "viem"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
@@ -52,12 +53,13 @@ function TokenBalance(props: TokenBalanceProps) {
     initializeWithValue: false,
   })
 
-  const formattedAmount = formatAmount(props.amount, token)
+  const formattedAmount = formatNumber(props.amount, token.decimals)
   const ticker = token.ticker
   const usdPrice = useUSDPrice(
     ticker,
     parseFloat(formatAmount(props.amount, token))
   )
+  const formattedUsdPrice = numeral(usdPrice).format("$0.00")
 
   const isZero = props.amount === BigInt(0)
 
@@ -94,7 +96,7 @@ function TokenBalance(props: TokenBalanceProps) {
         <Tooltip
           label={
             !isZero
-              ? `${formatUnits(props.amount, token.decimals)} ${ticker}`
+              ? `${formatNumber(props.amount, token.decimals, true)} ${ticker}`
               : undefined
           }
         >
@@ -112,7 +114,7 @@ function TokenBalance(props: TokenBalanceProps) {
           lineHeight="1"
           opacity={!usdPrice ? "40%" : undefined}
         >
-          ${usdPrice.toFixed(2)}
+          {formattedUsdPrice}
         </Box>
       </Flex>
       <Tooltip label="Deposit">

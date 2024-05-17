@@ -12,6 +12,7 @@ import {
   ORDER_HISTORY_TOOLTIP,
   ORDER_TOOLTIP,
 } from "@/lib/tooltip-labels"
+import { formatNumber } from "@/lib/utils"
 import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
@@ -55,8 +56,11 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
 
   const base = Token.findByAddress(base_mint)
   const quote = Token.findByAddress(quote_mint)
-  const formattedAmount = formatAmount(amount, base)
-  const formattedRemaining = formatAmount(BigInt(amount) - BigInt(filled), base)
+  const formattedAmount = formatNumber(amount, base.decimals)
+  const formattedRemaining = formatNumber(
+    BigInt(amount) - BigInt(filled),
+    base.decimals
+  )
   const formattedState = getReadableState(state)
 
   const fillLabel = `${Math.round((Number(filled) / Number(amount)) * 100)}%`
