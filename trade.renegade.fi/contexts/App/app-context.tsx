@@ -17,6 +17,8 @@ import { useAccount } from "wagmi"
 
 import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 
+import { SequencerHealthModal } from "@/components/modals/sequencer-health-modal"
+
 export enum ViewEnum {
   TRADING,
   DEPOSIT,
@@ -94,6 +96,7 @@ function AppProvider({
       }}
     >
       {children}
+      <SequencerHealthModal />
     </AppStateContext.Provider>
   )
 }
