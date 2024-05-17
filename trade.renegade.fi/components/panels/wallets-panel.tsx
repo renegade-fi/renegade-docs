@@ -73,14 +73,9 @@ function TokenBalance(props: TokenBalanceProps) {
       gap="5px"
       width="100%"
       padding="5% 6%"
-      color="white.60"
-      borderColor="white.20"
+      color="text.secondary"
       borderBottom="var(--secondary-border)"
-      _hover={{
-        color: isZero ? undefined : "white.90",
-      }}
       boxSizing="border-box"
-      transition="all 0.2s"
       filter={isZero ? "grayscale(1)" : undefined}
     >
       <Image width="25" height="25" alt="Logo" src={tokenIcons[ticker]} />
@@ -90,6 +85,7 @@ function TokenBalance(props: TokenBalanceProps) {
         flexGrow="1"
         marginLeft="5px"
         fontFamily="Favorit"
+        lineHeight="1"
         cursor="pointer"
         onClick={handleClick}
       >
@@ -100,18 +96,13 @@ function TokenBalance(props: TokenBalanceProps) {
               : undefined
           }
         >
-          <Text
-            fontSize="1.1em"
-            lineHeight="1"
-            opacity={isZero ? "40%" : undefined}
-          >
+          <Text fontSize="1.1em" opacity={isZero ? "40%" : undefined}>
             {formattedAmount} {ticker}
           </Text>
         </Tooltip>
         <Box
-          color="white.40"
+          color="text.muted"
           fontSize="0.8em"
-          lineHeight="1"
           opacity={!usdPrice ? "40%" : undefined}
         >
           {formattedUsdPrice}
@@ -119,6 +110,11 @@ function TokenBalance(props: TokenBalanceProps) {
       </Flex>
       <Tooltip label="Deposit">
         <ArrowDownIcon
+          transition="color 0.3s ease"
+          color="text.secondary"
+          _hover={{
+            color: "text.muted",
+          }}
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
           cursor="pointer"
@@ -130,6 +126,11 @@ function TokenBalance(props: TokenBalanceProps) {
       </Tooltip>
       <Tooltip label="Withdraw">
         <ArrowUpIcon
+          transition="color 0.3s ease"
+          color="text.secondary"
+          _hover={{
+            color: "text.muted",
+          }}
           width="calc(0.5 * var(--banner-height))"
           height="calc(0.5 * var(--banner-height))"
           borderRadius="100px"
@@ -152,7 +153,6 @@ function DepositWithdrawButtons() {
         flexDirection="row"
         width="100%"
         minHeight="var(--banner-height)"
-        color="white.60"
         borderColor="border"
         borderTop="var(--border)"
         cursor="pointer"
@@ -162,13 +162,14 @@ function DepositWithdrawButtons() {
           justifyContent="center"
           flexGrow="1"
           gap="5px"
-          color="white.90"
-          borderColor="border"
+          color="text.primary"
           borderRight="var(--border)"
           _hover={{
             backgroundColor: "#000",
+            color: "text.muted",
           }}
           cursor="pointer"
+          // transition="color 0.3s ease"
           onClick={() => {
             if (!address) return
 
@@ -193,7 +194,7 @@ function DepositWithdrawButtons() {
           }}
         >
           <Text>Airdrop</Text>
-          <ArrowDownIcon />
+          <ArrowDownIcon transition="color 0.3s ease" />
         </Flex>
       </Flex>
     </Tooltip>
@@ -292,7 +293,7 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           <Text
             marginTop="10px"
             padding="0 10% 0 10%"
-            color={address ? "white.50" : "white.40"}
+            color="text.secondary"
             fontSize="0.8em"
             fontWeight="100"
             textAlign="center"
@@ -327,25 +328,24 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
           borderColor="border"
           borderBottom="var(--border)"
         >
-          <Text>Renegade Wallet</Text>
+          <Text color="text.primary">Renegade Wallet</Text>
           <Flex
             position="absolute"
-            left="10px"
+            top="12px"
+            left="29px"
             alignItems="center"
-            justifyContent="center"
-            width="calc(0.6 * var(--banner-height))"
-            height="calc(0.6 * var(--banner-height))"
-            borderRadius="100px"
+            color="text.primary"
             _hover={{
-              background: "white.10",
+              color: "text.secondary",
             }}
             cursor="pointer"
+            transition="color 0.3s ease"
             onClick={props.toggleIsLocked}
           >
             {props.isLocked ? (
-              <LockIcon boxSize="11px" color="white.80" />
+              <LockIcon boxSize="11px" />
             ) : (
-              <UnlockIcon boxSize="11px" color="white.80" />
+              <UnlockIcon boxSize="11px" />
             )}
           </Flex>
         </Flex>
@@ -375,7 +375,7 @@ function HistorySection() {
           borderTop="var(--border)"
           borderBottom="var(--border)"
         >
-          <Text>Task History</Text>
+          <Text color="text.primary">Task History</Text>
         </Flex>
       </Tooltip>
       <SimpleBar

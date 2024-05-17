@@ -34,16 +34,16 @@ export function TokensBanner({}: { prices?: number[] }) {
             direction="row"
             marginRight="0.5rem"
             padding="4px 8px"
+            color="text.primary"
             borderRadius="0.5rem"
             _hover={{
               backgroundColor: "white.10",
+              color: "text.primary",
             }}
-            transition="background 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)"
+            transition="background-color 0.3s ease"
             onClick={() => setBaseToken(ticker)}
           >
-            <Text color="white.80" fontFamily="Favorit Expanded">
-              {ticker}
-            </Text>
+            <Text fontFamily="Favorit Expanded">{ticker}</Text>
             <LivePrices
               baseTicker={ticker}
               quoteTicker="USDC"

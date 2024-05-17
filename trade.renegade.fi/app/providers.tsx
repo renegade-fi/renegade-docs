@@ -93,6 +93,11 @@ const colors = {
   "white.20": "#333333",
   "white.10": "#1a1a1a",
   "white.5": "#0d0d0d",
+  text: {
+    primary: "#cccccc",
+    secondary: "#999999",
+    muted: "#666666",
+  },
   surfaces: {
     1: "#1e1e1e",
   },

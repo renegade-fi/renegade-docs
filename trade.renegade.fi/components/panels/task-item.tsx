@@ -32,22 +32,23 @@ export function TaskItem({
     )
 
   const iconColor =
-    state === "Completed" ? "green" : state === "Failed" ? "red" : "white.90"
+    state === "Completed"
+      ? "green"
+      : state === "Failed"
+      ? "red"
+      : "text.primary"
 
   return (
     <Tooltip placement="right" label={isFeeTask ? FEES_TOOLTIP : ""}>
       <Box
         justifyContent="center"
         padding="4% 6%"
-        color="white.60"
+        color="text.secondary"
         fontSize="0.8em"
-        borderColor="white.20"
         borderBottom="var(--secondary-border)"
         _hover={{
-          filter: "inherit",
-          color: "white.90",
+          color: "text.primary",
         }}
-        transition="all 0.2s"
         role="group"
       >
         <Flex
@@ -56,11 +57,12 @@ export function TaskItem({
           minWidth="100%"
           whiteSpace="nowrap"
         >
-          <Text fontFamily="Favorit Extended" fontSize="1.2em" fontWeight="500">
-            {name}
-          </Text>
+          <Text fontSize="1.2em">{name}</Text>
           <Flex gap="1" verticalAlign="middle">
-            <Box _groupHover={{ color: iconColor }} transition="color 0.2s">
+            <Box
+              _groupHover={{ color: iconColor }}
+              transition="color 0.3s ease"
+            >
               {icon}
             </Box>
             <Text>{state}</Text>
