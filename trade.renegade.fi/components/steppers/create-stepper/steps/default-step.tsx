@@ -67,14 +67,18 @@ export function DefaultStep() {
   return (
     <>
       <ModalBody>
-        <Flex justifyContent="center" flexDirection="column" gap="4">
-          <Text color="white.60" fontSize="0.9em">
+        <Flex
+          justifyContent="center"
+          flexDirection="column"
+          gap="4"
+          color="text.secondary"
+        >
+          <Text fontSize="0.9em">
             To trade on Renegade, we require a one-time signature to unlock and
             create your wallet.
           </Text>
           <Flex gap="2">
             <Checkbox
-              color="white.30"
               isChecked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
               size="sm"
@@ -84,11 +88,9 @@ export function DefaultStep() {
               cursor="pointer"
               onClick={() => setRememberMe((prev) => !prev)}
             >
-              <Text color="white.60" fontSize="0.9em">
-                Remember Me
-              </Text>
+              <Text fontSize="0.9em">Remember Me</Text>
               <Tooltip label={REMEMBER_ME_TOOLTIP} placement="right">
-                <CircleHelp color="#999999" height="16" />
+                <CircleHelp height="16" />
               </Tooltip>
             </Flex>
           </Flex>
@@ -96,7 +98,7 @@ export function DefaultStep() {
             <Button
               width="100%"
               height={status === "pending" ? "56px" : "40px"}
-              color="white.90"
+              color="text.primary"
               fontWeight="800"
               transition="0.2s"
               isLoading={status === "pending"}
@@ -116,7 +118,6 @@ export function DefaultStep() {
               transition="0.2s"
             >
               <Button
-                color="white.50"
                 fontFamily="Favorit"
                 fontSize="1em"
                 fontWeight="400"

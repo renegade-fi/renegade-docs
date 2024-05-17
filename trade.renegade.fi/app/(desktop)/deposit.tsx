@@ -95,7 +95,7 @@ export function DepositBody() {
                 <ChevronLeftIcon />
                 Back to Trading
               </Button>
-              <Text color="white.50" fontSize="34px">
+              <Text color="text.secondary" fontSize="34px">
                 Deposit
               </Text>
             </div>
@@ -130,7 +130,7 @@ export function DepositBody() {
               {!hideMaxButton && (
                 <InputRightElement width="3.5rem">
                   <Button
-                    color="white.60"
+                    color="text.secondary"
                     fontFamily="Favorit"
                     fontWeight="400"
                     borderRadius="100px"
@@ -149,11 +149,7 @@ export function DepositBody() {
               onClick={onOpenTokenMenu}
             >
               <Text variant="trading-body-button">{base}</Text>
-              <ChevronDownIcon
-                boxSize="20px"
-                viewBox="6 6 12 12"
-                color="white.100"
-              />
+              <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" />
             </HStack>
           </HStack>
         </Box>

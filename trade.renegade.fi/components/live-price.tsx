@@ -137,14 +137,14 @@ export const LivePrices = ({
         justifyContent="center"
         flexGrow="1"
         width={isMobile ? "100%" : undefined}
-        color="white.80"
+        color="inherit"
         fontFamily="Favorit Mono"
         lineHeight="1"
         opacity={price === 0 ? "20%" : "100%"}
         _hover={{ textDecoration: "none" }}
         transform={isMobile && shouldRotate ? "rotate(180deg)" : undefined}
       >
-        ${priceStr}
+        <Text>${priceStr}</Text>
       </Flex>
       <Flex
         position="relative"

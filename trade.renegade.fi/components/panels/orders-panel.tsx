@@ -13,7 +13,7 @@ import {
   ORDER_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { formatNumber } from "@/lib/utils"
-import { LockIcon, SmallCloseIcon, UnlockIcon } from "@chakra-ui/icons"
+import { Icon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   NetworkOrder,
@@ -32,6 +32,7 @@ import {
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
+import { X } from "lucide-react"
 import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
@@ -103,22 +104,25 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
         gap="4%"
         width="100%"
         padding="5%"
-        color="white.60"
-        borderColor="white.20"
+        color={isCancellable ? "text.secondary" : "text.muted"}
+        fontSize="0.8em"
         borderBottom="var(--secondary-border)"
         _hover={{
           filter: "inherit",
-          color: "white.90",
+          color: "text.primary",
         }}
-        transition="all 0.2s"
+        whiteSpace="nowrap"
+        transition="filter 0.3s ease"
         filter={isCancellable ? "inherit" : "grayscale(1)"}
       >
-        <Text fontFamily="Favorit">{formattedState}</Text>
+        <Text fontFamily="Favorit" fontSize="1.2em">
+          {formattedState}
+        </Text>
         <Box position="relative" width="45px" height="40px">
           <Image
             width="25px"
             height="25px"
-            alt="Quote logo"
+            alt=""
             src={tokenIcons[quote.ticker]}
           />
           <Image
@@ -127,33 +131,28 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
             bottom="1"
             width="25px"
             height="25px"
-            alt="Base logo"
+            alt=""
             src={tokenIcons[base.ticker]}
           />
         </Box>
-        <Flex
-          alignItems="flex-start"
-          flexDirection="column"
-          fontFamily="Favorit"
-        >
-          <Text lineHeight="1">
+        <Flex alignItems="flex-start" flexDirection="column" lineHeight="1">
+          <Text fontFamily="Favorit" fontSize="1.4em">
             {formattedAmount} {base.ticker}
           </Text>
-          <Text fontFamily="Favorit Extended" fontSize="0.9em" fontWeight="200">
-            {side.toUpperCase()}
-          </Text>
+          <Text>{side.toUpperCase()}</Text>
         </Flex>
         {isCancellable ? (
-          <SmallCloseIcon
-            width="calc(0.5 * var(--banner-height))"
-            height="calc(0.5 * var(--banner-height))"
-            borderRadius="100px"
-            cursor="pointer"
-            _hover={{
-              background: "white.10",
-            }}
-            onClick={handleCancel}
-          />
+          <Tooltip label="Cancel Order">
+            <Icon
+              as={X}
+              color="text.secondary"
+              cursor="pointer"
+              _hover={{
+                color: "text.muted",
+              }}
+              onClick={handleCancel}
+            />
+          </Tooltip>
         ) : null}
       </Flex>
     </Tooltip>
@@ -175,7 +174,7 @@ function OrdersPanel(props: OrdersPanelProps) {
         <Text
           margin="auto"
           padding="0 10%"
-          color="white.50"
+          color="text.secondary"
           fontSize="0.8em"
           fontWeight="100"
           textAlign="center"
@@ -190,7 +189,7 @@ function OrdersPanel(props: OrdersPanelProps) {
     return (
       <SimpleBar
         style={{
-          height: "calc(100% - 30vh -  (3 * var(--banner-height)))",
+          height: "calc(100% - 30vh - (3 * var(--banner-height)))",
           width: "100%",
           padding: "0 8px",
         }}
@@ -215,25 +214,24 @@ function OrdersPanel(props: OrdersPanelProps) {
         >
           <Flex
             position="absolute"
-            left="10px"
+            top="12px"
+            left="29px"
             alignItems="center"
-            justifyContent="center"
-            width="calc(0.6 * var(--banner-height))"
-            height="calc(0.6 * var(--banner-height))"
-            borderRadius="100px"
+            color="text.primary"
             _hover={{
-              background: "white.10",
+              color: "text.secondary",
             }}
             cursor="pointer"
+            transition="color 0.3s ease"
             onClick={props.toggleIsLocked}
           >
             {props.isLocked ? (
-              <LockIcon boxSize="11px" color="white.80" />
+              <LockIcon boxSize="11px" />
             ) : (
-              <UnlockIcon boxSize="11px" color="white.80" />
+              <UnlockIcon boxSize="11px" />
             )}
           </Flex>
-          <Text>Order History</Text>
+          <Text color="text.primary">Orders</Text>
         </Flex>
       </Tooltip>
       {Content}
@@ -254,7 +252,7 @@ function OrderBookPanel() {
       <Box display="grid" height="30vh" placeContent="center">
         <Text
           padding="0 10%"
-          color="white.50"
+          color="text.secondary"
           fontSize="0.8em"
           fontWeight="100"
           textAlign="center"
@@ -275,51 +273,46 @@ function OrderBookPanel() {
         {Object.values(networkOrders).map((counterpartyOrder) => {
           const title = formatTitle(orders, counterpartyOrder)
           const status = orders.find(({ id }) => id === counterpartyOrder.id)
-            ? "ACTIVE"
+            ? "Active"
             : matchedOrders.some(({ id }) => id === counterpartyOrder.id)
-            ? "MATCHED"
+            ? "Matched"
             : counterpartyOrder.state === "Cancelled"
-            ? "VERIFIED"
-            : counterpartyOrder.state.toUpperCase()
+            ? "Verified"
+            : counterpartyOrder.state
 
           const timestamp = counterpartyOrder.timestamp
           const textColor =
-            status === "ACTIVE" || status === "MATCHED"
+            status === "Active" || status === "Matched"
               ? "green"
-              : status === "CANCELLED"
+              : status === "Cancelled"
               ? "red"
-              : "white.60"
+              : undefined
 
           return (
             <Box
               key={counterpartyOrder.id}
               padding="5%"
+              color="text.secondary"
+              fontSize="0.8em"
               borderBottom="var(--secondary-border)"
+              _hover={{
+                filter: "inherit",
+                color: "text.primary",
+              }}
+              role="group"
             >
               <Flex
                 alignItems="center"
                 justifyContent="space-between"
                 minWidth="100%"
+                whiteSpace="nowrap"
               >
-                <Text
-                  color={textColor}
-                  fontFamily="Favorit Extended"
-                  fontWeight="500"
-                >
+                <Text fontSize="1.2em" _groupHover={{ color: textColor }}>
                   {status}&nbsp;
                 </Text>
-                <Text
-                  color="white.60"
-                  fontFamily="Favorit Expanded"
-                  fontSize="0.7em"
-                  fontWeight="500"
-                >
-                  {dayjs.unix(Number(timestamp)).fromNow()}
-                </Text>
+                <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>
               </Flex>
-              <Text color="white.80" fontSize="0.8em">
-                {title}
-              </Text>
+              <Text>{title}</Text>
             </Box>
           )
         })}
@@ -340,7 +333,7 @@ function OrderBookPanel() {
           borderTop="var(--border)"
           borderBottom="var(--border)"
         >
-          <Text>Order Book</Text>
+          <Text color="text.primary">Order Book</Text>
         </Flex>
       </Tooltip>
       {panelBody}
@@ -358,6 +351,7 @@ function CounterpartiesPanel() {
         justifyContent="center"
         width="100%"
         minHeight="var(--banner-height)"
+        color="text.primary"
         borderColor="border"
         borderTop="var(--border)"
       >

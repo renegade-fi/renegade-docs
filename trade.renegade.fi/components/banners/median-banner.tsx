@@ -401,7 +401,7 @@ export class MedianBanner extends React.Component<
           this.props.isMobile ? "calc(0.75 * var(--banner-height))" : "100%"
         }
         height={this.props.isMobile ? "220vw" : "var(--banner-height)"}
-        color="white.80"
+        color="text.primary"
         fontSize={this.props.isMobile ? "0.8em" : undefined}
         borderColor="border"
         borderBottom={this.props.isMobile ? undefined : "var(--border)"}

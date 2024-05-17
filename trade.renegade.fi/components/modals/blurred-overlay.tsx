@@ -19,7 +19,7 @@ export function BlurredOverlay({
     return (
       <Text
         margin="-10px 0 -5px 0"
-        color="white.70"
+        color="text.secondary"
         fontFamily="Aime"
         fontSize="0.8em"
       >

@@ -38,7 +38,7 @@
     color: var(--price-report-fade-red);
   }
   100% {
-    color: var(--chakra-colors-white-80);
+    color: inherit;
   }
 }
 
@@ -47,7 +47,7 @@
     color: var(--price-report-fade-green);
   }
   100% {
-    color: var(--chakra-colors-white-80);
+    color: inherit;
   }
 }
 
@@ -78,9 +78,4 @@
   100% {
     transform: translateX(-33.333%);
   }
-}
-
-.wrapper:hover #slide {
-  transition: 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
-  bottom: 0;
 }

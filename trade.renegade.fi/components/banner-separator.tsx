@@ -6,7 +6,12 @@ interface BannerSeparatorProps {
 export function BannerSeparator(props: BannerSeparatorProps) {
   return (
     <Center flexGrow={props.flexGrow || 4} height="100%">
-      <Box width="4px" height="4px" background="white.80" borderRadius="2px" />
+      <Box
+        width="4px"
+        height="4px"
+        background="text.secondary"
+        borderRadius="2px"
+      />
     </Center>
   )
 }

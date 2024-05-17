@@ -48,7 +48,7 @@ const Selectable = React.forwardRef(
         >
           {props.text}
         </Text>
-        <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" color="white.100" />
+        <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" />
       </HStack>
     )
   }
@@ -145,14 +145,10 @@ function TradingInner() {
               <Text cursor="pointer" variant="trading-body-button">
                 {base}
               </Text>
-              <ChevronDownIcon
-                boxSize="20px"
-                viewBox="6 6 12 12"
-                color="white.100"
-              />
+              <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" />
             </HStack>
             <Text
-              color="white.50"
+              color="text.secondary"
               fontFamily="Favorit"
               fontSize="0.9em"
               fontWeight="200"
@@ -185,7 +181,7 @@ function HelperText({ baseTicker }: { baseTicker: string }) {
   const usdPrice = useUSDPrice(baseTicker, 1)
   const formattedUsdPrice = numeral(usdPrice).format("$0.00")
   return (
-    <Text color="white.50" fontWeight="100" userSelect="text">
+    <Text color="text.muted" fontWeight="100" userSelect="text">
       Trades are end-to-end encrypted and always clear at the real-time midpoint
       of {formattedUsdPrice}
     </Text>
@@ -265,7 +261,7 @@ function InputWithMaxButton({
       {!hideMaxButton && (
         <InputRightElement width="3.5rem">
           <Button
-            color="white.60"
+            color="text.secondary"
             fontFamily="Favorit"
             fontWeight="400"
             borderRadius="100px"

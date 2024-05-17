@@ -45,16 +45,15 @@ export function TokenSelectModal({
       />
       <ModalContent
         height="592px"
-        fontFamily="Favorit"
-        fontSize="1.2em"
         background="white.5"
         border="var(--border)"
         borderColor="white.30"
       >
-        <ModalHeader>
+        <ModalHeader color="text.primary">
           Select a Token
           <Input
             marginTop={4}
+            fontFamily="Favorit"
             borderColor="whiteAlpha.300"
             _focus={{
               borderColor: "white.50 !important",
@@ -72,7 +71,7 @@ export function TokenSelectModal({
           {addressAndBalances.length === 0 && (
             <Box display="grid" minHeight="80%" placeContent="center">
               <Text
-                color="white.50"
+                color="text.secondary"
                 fontFamily="Favorit Extended"
                 fontSize="1.2em"
               >
@@ -117,18 +116,19 @@ const Row = ({ address, onClick, balance }: RowProps) => {
   const ticker = Token.findByAddress(address).ticker
   return (
     <Grid
-      className="wrapper"
       key={address}
       position="relative"
       alignItems="center"
       gridTemplateColumns="2fr 1fr"
       overflow="hidden"
       height={ROW_HEIGHT}
+      color="text.primary"
+      fontFamily="Favorit"
+      fontSize="1.2em"
       _hover={{
         backgroundColor: "white.10",
       }}
       cursor="pointer"
-      transition="0.1s"
       onClick={onClick}
       paddingX="5"
     >
@@ -143,7 +143,7 @@ const Row = ({ address, onClick, balance }: RowProps) => {
           />
           <VStack alignItems="start" gap="0">
             <Text>{TICKER_TO_NAME[ticker]}</Text>
-            <Text color="white.60" fontSize="0.7em">
+            <Text color="text.secondary" fontSize="0.7em">
               {ticker}
             </Text>
           </VStack>
@@ -151,9 +151,7 @@ const Row = ({ address, onClick, balance }: RowProps) => {
       </GridItem>
       <GridItem>
         <Box textAlign="right">
-          <Text color="white.50" fontFamily="Favorit Mono">
-            {balance}
-          </Text>
+          <Text fontFamily="Favorit Mono">{balance}</Text>
         </Box>
       </GridItem>
     </Grid>
