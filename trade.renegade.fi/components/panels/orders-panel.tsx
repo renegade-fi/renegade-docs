@@ -58,10 +58,20 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
   const base = Token.findByAddress(base_mint)
   const quote = Token.findByAddress(quote_mint)
   const formattedAmount = formatNumber(amount, base.decimals)
+  const formattedAmountLong = formatNumber(amount, base.decimals, true)
   const formattedRemaining = formatNumber(
     BigInt(amount) - BigInt(filled),
     base.decimals
   )
+  const formattedRemainingLong = formatNumber(
+    BigInt(amount) - BigInt(filled),
+    base.decimals,
+    true
+  )
+  const amountLabel =
+    state === OrderState.Filled ? formattedAmount : formattedRemaining
+  const amountLabelLong =
+    state === OrderState.Filled ? formattedAmountLong : formattedRemainingLong
   const formattedState = getReadableState(state)
 
   const fillLabel = `${Math.round((Number(filled) / Number(amount)) * 100)}%`
@@ -69,6 +79,8 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
   )
+
+  const isColored = isCancellable || state === OrderState.SettlingMatch
 
   const taskHistory = useTaskHistory()
   const isQueue = taskHistory.find(
@@ -88,11 +100,13 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
   return (
     <Tooltip
       placement="left"
+      paddingX={3}
+      paddingY={2.8}
       // @ts-ignore
       label={ORDER_TOOLTIP(
         base.ticker,
-        formattedRemaining,
-        formattedAmount,
+        formattedRemainingLong,
+        formattedAmountLong,
         fillLabel,
         side,
         Number(created) / 1000
@@ -113,9 +127,9 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
         }}
         whiteSpace="nowrap"
         transition="filter 0.3s ease"
-        filter={isCancellable ? "inherit" : "grayscale(1)"}
+        filter={isColored ? "inherit" : "grayscale(1)"}
       >
-        <Text fontFamily="Favorit" fontSize="1.2em">
+        <Text fontFamily="Favorit" fontSize="1.3em">
           {formattedState}
         </Text>
         <Box position="relative" width="45px" height="40px">
@@ -136,15 +150,21 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
           />
         </Box>
         <Flex alignItems="flex-start" flexDirection="column" lineHeight="1">
-          <Text fontFamily="Favorit" fontSize="1.4em">
-            {formattedAmount} {base.ticker}
-          </Text>
+          <Tooltip
+            placement="bottom"
+            label={`${amountLabelLong} ${base.ticker}`}
+          >
+            <Text fontFamily="Favorit" fontSize="1.4em">
+              {amountLabel} {base.ticker}
+            </Text>
+          </Tooltip>
           <Text>{side.toUpperCase()}</Text>
         </Flex>
         {isCancellable ? (
           <Tooltip label="Cancel Order">
             <Icon
               as={X}
+              boxSize="1.4em"
               color="text.secondary"
               cursor="pointer"
               _hover={{
@@ -307,7 +327,7 @@ function OrderBookPanel() {
                 minWidth="100%"
                 whiteSpace="nowrap"
               >
-                <Text fontSize="1.2em" _groupHover={{ color: textColor }}>
+                <Text fontSize="1.3em" _groupHover={{ color: textColor }}>
                   {status}&nbsp;
                 </Text>
                 <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>

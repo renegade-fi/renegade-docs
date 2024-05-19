@@ -28,27 +28,22 @@ export const formatNumber = (
 ) => {
   const balanceValue = Number(formatUnits(balance, decimals))
   const tempNumeral = numeral(balanceValue)
-  if (balance === BigInt(260000000000)) {
-    console.log("formatnumber debug: ", {
-      balance,
-      decimals,
-      long,
-      balanceValue,
-      tempNumeral,
-    })
-  }
 
   if (balanceValue.toString().indexOf("e") !== -1) {
-    return formatScientificToDecimal(balanceValue)
+    if (long) {
+      return formatScientificToDecimal(balanceValue)
+    } else {
+      return tempNumeral.format("0[.]00e+0")
+    }
   }
 
   let formatStr = ""
   if (balanceValue > 10000000) {
     formatStr = long ? "0,0[.]00" : "0.00a"
   } else if (balanceValue > 1000000) {
-    formatStr = `0${long ? ".[00]" : ""}`
+    formatStr = long ? "0.[00]" : "0[.]00a"
   } else if (balanceValue > 10000) {
-    formatStr = `0[.]00${long ? "00" : ""}`
+    formatStr = long ? "0.[00]" : "0[.]00a"
   } else if (balanceValue > 100) {
     formatStr = `0[.]00${long ? "00" : ""}`
   } else if (balanceValue >= 1) {

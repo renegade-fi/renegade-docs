@@ -37,9 +37,9 @@ export function TokensBanner({}: { prices?: number[] }) {
             color="text.primary"
             borderRadius="0.5rem"
             _hover={{
-              backgroundColor: "white.10",
               color: "text.primary",
             }}
+            cursor="pointer"
             transition="background-color 0.3s ease"
             onClick={() => setBaseToken(ticker)}
           >

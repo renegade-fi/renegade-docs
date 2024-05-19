@@ -32,7 +32,7 @@ export const ORDER_TOOLTIP = (
   createdAt: number
 ) => {
   return (
-    <Text fontFamily="Favorit Mono">
+    <Text fontFamily="Favorit Mono" whiteSpace="nowrap">
       Original Size: {originalAmount} {base}
       <br />
       Remaining Size: {currentAmount} {base}
