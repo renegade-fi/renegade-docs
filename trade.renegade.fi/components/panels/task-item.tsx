@@ -57,7 +57,7 @@ export function TaskItem({
           minWidth="100%"
           whiteSpace="nowrap"
         >
-          <Text fontSize="1.2em">{name}</Text>
+          <Text fontSize="1.3em">{name}</Text>
           <Flex gap="1" verticalAlign="middle">
             <Box
               _groupHover={{ color: iconColor }}
