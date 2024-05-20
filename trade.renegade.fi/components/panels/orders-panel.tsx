@@ -16,23 +16,18 @@ import { formatNumber } from "@/lib/utils"
 import { Icon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
-  NetworkOrder,
   OrderMetadata,
   OrderState,
   Token,
-  UseOrdersReturnType,
   cancelOrder,
-  formatAmount,
   useBalances,
   useConfig,
   useOrderBook,
   useOrderHistory,
-  useOrders,
   useStatus,
   useTaskHistory,
 } from "@renegade-fi/react"
 import { useModal as useModalConnectKit } from "connectkit"
-import dayjs from "dayjs"
 import { X } from "lucide-react"
 import numeral from "numeral"
 import React, { useMemo } from "react"
@@ -41,10 +36,11 @@ import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { formatUnits } from "viem"
 
-import { useMatchedOrders } from "@/hooks/use-matched-orders"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
+import { NetworkOrderItem } from "@/components/panels/network-order"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
+import { UserOrder } from "@/components/panels/user-order"
 
 import { Tooltip } from "../tooltip"
 
@@ -297,9 +293,7 @@ function OrdersPanel(props: OrdersPanelProps) {
 
 function OrderBookPanel() {
   const networkOrders = useOrderBook()
-  const orders = useOrders()
-
-  const matchedOrders = useMatchedOrders()
+  const orderHistory = useOrderHistory()
 
   let panelBody: React.ReactElement
 
@@ -326,51 +320,14 @@ function OrderBookPanel() {
           padding: "0 8px",
         }}
       >
-        {Object.values(networkOrders).map((counterpartyOrder) => {
-          const title = formatTitle(orders, counterpartyOrder)
-          const status = orders.find(({ id }) => id === counterpartyOrder.id)
-            ? "Active"
-            : matchedOrders.some(({ id }) => id === counterpartyOrder.id)
-            ? "Matched"
-            : counterpartyOrder.state === "Cancelled"
-            ? "Verified"
-            : counterpartyOrder.state
-
-          const timestamp = counterpartyOrder.timestamp
-          const textColor =
-            status === "Active" || status === "Matched"
-              ? "green"
-              : status === "Cancelled"
-              ? "red"
-              : undefined
-
-          return (
-            <Box
-              key={counterpartyOrder.id}
-              padding="5%"
-              color="text.secondary"
-              fontSize="0.8em"
-              borderBottom="var(--secondary-border)"
-              _hover={{
-                filter: "inherit",
-                color: "text.primary",
-              }}
-              role="group"
-            >
-              <Flex
-                alignItems="center"
-                justifyContent="space-between"
-                minWidth="100%"
-                whiteSpace="nowrap"
-              >
-                <Text fontSize="1.3em" _groupHover={{ color: textColor }}>
-                  {status}&nbsp;
-                </Text>
-                <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>
-              </Flex>
-              <Text>{title}</Text>
-            </Box>
+        {Object.values(networkOrders).map((networkOrder) => {
+          const userOrder = orderHistory.find(
+            ({ id }) => id === networkOrder.id
           )
+          if (userOrder) {
+            return <UserOrder order={userOrder} />
+          }
+          return <NetworkOrderItem order={networkOrder} />
         })}
       </SimpleBar>
     )
@@ -457,16 +414,4 @@ export function OrdersAndCounterpartiesPanel() {
       flipDirection={true}
     />
   )
-}
-
-const formatTitle = (orders: UseOrdersReturnType, order: NetworkOrder) => {
-  const userOrder = orders.find(({ id }) => id === order.id)
-  if (userOrder) {
-    const base = Token.findByAddress(userOrder.base_mint)
-    const quote = Token.findByAddress(userOrder.quote_mint).ticker
-    const formattedAmount = formatAmount(userOrder.amount, base)
-    return `${userOrder.side} ${formattedAmount} ${base.ticker} for ${quote}`
-  }
-
-  return `Unknown order hash: ${order.id.split("-")[0].toString()}`
 }

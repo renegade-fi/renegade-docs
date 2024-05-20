@@ -72,3 +72,5 @@ export const REMEMBER_ME_TOOLTIP =
   "Only use this option if you are using a secure device that you own."
 export const INSUFFICIENT_BALANCE_TOOLTIP =
   "Insufficient balance to cover the entire order. Only part of the order will be filled."
+export const USER_ORDER_IN_ORDERBOOK =
+  "Your order in the global order book is only visible to you and your connected relayer, along with the counterparty during matching."
