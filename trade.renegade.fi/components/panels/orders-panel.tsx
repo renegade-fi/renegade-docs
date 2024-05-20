@@ -13,7 +13,7 @@ import {
   ORDER_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { formatNumber } from "@/lib/utils"
-import { Icon, LockIcon, UnlockIcon } from "@chakra-ui/icons"
+import { Icon } from "@chakra-ui/icons"
 import { Box, Flex, Image, Text } from "@chakra-ui/react"
 import {
   OrderMetadata,
@@ -198,11 +198,7 @@ function SingleOrder({
   )
 }
 
-interface OrdersPanelProps {
-  isLocked: boolean
-  toggleIsLocked: () => void
-}
-function OrdersPanel(props: OrdersPanelProps) {
+function OrdersPanel() {
   const balances = useBalances()
   const orderHistory = useOrderHistory({ sort: "desc" })
   const status = useStatus()
@@ -256,35 +252,15 @@ function OrdersPanel(props: OrdersPanelProps) {
   return (
     <>
       <Tooltip placement="left" label={ORDER_HISTORY_TOOLTIP}>
-        <Flex
-          position="relative"
-          alignItems="center"
-          justifyContent="center"
-          width="100%"
-          minHeight="var(--banner-height)"
+        <Box
+          display="grid"
+          height="var(--banner-height)"
+          color="text.primary"
           borderBottom="var(--border)"
+          placeContent="center"
         >
-          <Flex
-            position="absolute"
-            top="12px"
-            left="29px"
-            alignItems="center"
-            color="text.primary"
-            _hover={{
-              color: "text.secondary",
-            }}
-            cursor="pointer"
-            transition="color 0.3s ease"
-            onClick={props.toggleIsLocked}
-          >
-            {props.isLocked ? (
-              <LockIcon boxSize="11px" />
-            ) : (
-              <UnlockIcon boxSize="11px" />
-            )}
-          </Flex>
-          <Text color="text.primary">Orders</Text>
-        </Flex>
+          <Text>Orders</Text>
+        </Box>
       </Tooltip>
       {Content}
     </>
@@ -375,13 +351,7 @@ function CounterpartiesPanel() {
   )
 }
 
-interface OrdersAndCounterpartiesPanelExpandedProps {
-  isLocked: boolean
-  toggleIsLocked: () => void
-}
-function OrdersAndCounterpartiesPanelExpanded(
-  props: OrdersAndCounterpartiesPanelExpandedProps
-) {
+function OrdersAndCounterpartiesPanelExpanded() {
   return (
     <Flex
       flexDirection="column"
@@ -389,10 +359,7 @@ function OrdersAndCounterpartiesPanelExpanded(
       borderLeft="var(--border)"
       backdropFilter="blur(8px)"
     >
-      <OrdersPanel
-        isLocked={props.isLocked}
-        toggleIsLocked={props.toggleIsLocked}
-      />
+      <OrdersPanel />
       <OrderBookPanel />
       <CounterpartiesPanel />
     </Flex>
@@ -403,12 +370,7 @@ export function OrdersAndCounterpartiesPanel() {
   const { open } = useModalConnectKit()
   return (
     <Panel
-      panelExpanded={(isLocked, toggleIsLocked) => (
-        <OrdersAndCounterpartiesPanelExpanded
-          isLocked={isLocked}
-          toggleIsLocked={toggleIsLocked}
-        />
-      )}
+      panelExpanded={() => <OrdersAndCounterpartiesPanelExpanded />}
       panelCollapsedDisplayTexts={["Orders", "Counterparties"]}
       isOpenConnectKitModal={open}
       flipDirection={true}

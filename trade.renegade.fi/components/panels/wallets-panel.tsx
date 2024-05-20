@@ -9,12 +9,7 @@ import {
 } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { formatNumber, fundList, fundWallet } from "@/lib/utils"
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  LockIcon,
-  UnlockIcon,
-} from "@chakra-ui/icons"
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
@@ -200,11 +195,7 @@ function DepositWithdrawButtons() {
   )
 }
 
-interface RenegadeWalletPanelProps {
-  isLocked: boolean
-  toggleIsLocked: () => void
-}
-function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
+function RenegadeWalletPanel() {
   const { address } = useAccountWagmi()
   const { setView } = useApp()
   const balances = useBalances()
@@ -318,36 +309,15 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
   return (
     <>
       <Tooltip placement="right" label={RENEGADE_ACCOUNT_TOOLTIP}>
-        <Flex
-          position="relative"
-          alignItems="center"
-          justifyContent="center"
-          width="100%"
-          minHeight="var(--banner-height)"
-          borderColor="border"
+        <Box
+          display="grid"
+          height="var(--banner-height)"
+          color="text.primary"
           borderBottom="var(--border)"
+          placeContent="center"
         >
-          <Text color="text.primary">Renegade Wallet</Text>
-          <Flex
-            position="absolute"
-            top="12px"
-            left="29px"
-            alignItems="center"
-            color="text.primary"
-            _hover={{
-              color: "text.secondary",
-            }}
-            cursor="pointer"
-            transition="color 0.3s ease"
-            onClick={props.toggleIsLocked}
-          >
-            {props.isLocked ? (
-              <LockIcon boxSize="11px" />
-            ) : (
-              <UnlockIcon boxSize="11px" />
-            )}
-          </Flex>
-        </Flex>
+          <Text>Renegade Wallet</Text>
+        </Box>
       </Tooltip>
       {Content}
     </>
@@ -390,11 +360,7 @@ function HistorySection() {
   )
 }
 
-interface WalletsPanelExpandedProps {
-  isLocked: boolean
-  toggleIsLocked: () => void
-}
-function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
+function WalletsPanelExpanded() {
   return (
     <Flex
       flexDirection="column"
@@ -402,10 +368,7 @@ function WalletsPanelExpanded(props: WalletsPanelExpandedProps) {
       borderRight="var(--border)"
       backdropFilter="blur(8px)"
     >
-      <RenegadeWalletPanel
-        isLocked={props.isLocked}
-        toggleIsLocked={props.toggleIsLocked}
-      />
+      <RenegadeWalletPanel />
       <HistorySection />
       <DepositWithdrawButtons />
     </Flex>
@@ -416,12 +379,7 @@ export function WalletsPanel() {
   const { open } = useModalConnectKit()
   return (
     <Panel
-      panelExpanded={(isLocked, toggleIsLocked) => (
-        <WalletsPanelExpanded
-          isLocked={isLocked}
-          toggleIsLocked={toggleIsLocked}
-        />
-      )}
+      panelExpanded={() => <WalletsPanelExpanded />}
       panelCollapsedDisplayTexts={["Renegade Wallet", "History"]}
       isOpenConnectKitModal={open}
       flipDirection={false}
