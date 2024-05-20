@@ -7,6 +7,7 @@ import {
   RENEGADE_ACCOUNT_TOOLTIP,
   TASK_HISTORY_TOOLTIP,
 } from "@/lib/tooltip-labels"
+import { Direction } from "@/lib/types"
 import { formatNumber, fundList, fundWallet } from "@/lib/utils"
 import {
   ArrowDownIcon,
@@ -48,7 +49,10 @@ interface TokenBalanceProps {
 function TokenBalance(props: TokenBalanceProps) {
   const { setView, tokenIcons } = useApp()
   const token = Token.findByAddress(props.tokenAddr)
-  const [_, setBase] = useLocalStorage("base", "WETH", {
+  const [, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
+  const [, setDirection] = useLocalStorage("direction", Direction.BUY, {
     initializeWithValue: false,
   })
 
@@ -60,7 +64,11 @@ function TokenBalance(props: TokenBalanceProps) {
   const isZero = props.amount === BigInt(0)
 
   const handleClick = () => {
-    setBase(ticker)
+    if (ticker === "USDC") {
+      setDirection(Direction.BUY)
+    } else {
+      setBase(ticker)
+    }
     setView(ViewEnum.TRADING)
   }
   return (
