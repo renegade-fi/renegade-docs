@@ -164,12 +164,7 @@ function DepositWithdrawButtons() {
           gap="5px"
           color="text.primary"
           borderRight="var(--border)"
-          _hover={{
-            backgroundColor: "#000",
-            color: "text.muted",
-          }}
           cursor="pointer"
-          // transition="color 0.3s ease"
           onClick={() => {
             if (!address) return
 
