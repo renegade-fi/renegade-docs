@@ -171,26 +171,20 @@ function DepositWithdrawButtons() {
           cursor="pointer"
           // transition="color 0.3s ease"
           onClick={() => {
-            if (!address) return
+            if (!address) {
+              toast.error("Please connect your wallet to fund your account.")
+              return
+            }
 
-            toast.promise(
-              fundWallet(
-                [
-                  { ticker: "WETH", amount: "10" },
-                  { ticker: "USDC", amount: "1000000" },
-                ],
-                address
-              ),
-              {
-                loading: "Funding account...",
-                success: "Your account has been funded with test funds.",
-                error:
-                  "Funding failed: An unexpected error occurred. Please try again.",
-              }
-            )
+            toast.promise(fundWallet(fundList.slice(0, 2), address), {
+              loading: "Funding account...",
+              success: "Successfully funded account.",
+              error:
+                "Funding failed: An unexpected error occurred. Please try again.",
+            })
 
             // Fund additional wallets in background
-            fundWallet(fundList, address)
+            fundWallet(fundList.slice(2), address)
           }}
         >
           <Text>Airdrop</Text>
