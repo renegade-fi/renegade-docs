@@ -1,5 +1,7 @@
-import { Token, chain, formatAmount, parseAmount } from "@renegade-fi/react"
+import { readErc20BalanceOf } from "@/generated"
+import { Token, chain, parseAmount } from "@renegade-fi/react"
 import {
+  Address,
   PrivateKeyAccount,
   createPublicClient,
   createWalletClient,
@@ -9,6 +11,7 @@ import {
   parseEther,
 } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
+import { createConfig } from "wagmi"
 
 export const maxDuration = 300
 
@@ -22,6 +25,13 @@ const publicClient = createPublicClient({
   transport: http(),
 })
 
+const viemConfig = createConfig({
+  chains: [chain],
+  transports: {
+    [chain.id]: http(),
+  },
+})
+
 export async function POST(request: Request) {
   if (!process.env.DEV_PRIVATE_KEY) {
     return new Response("DEV_PRIVATE_KEY is required", {
@@ -29,8 +39,8 @@ export async function POST(request: Request) {
     })
   }
 
-  const requestData = await request.json()
-  const TOKENS_TO_FUND = requestData.tokens as {
+  const body = await request.json()
+  const TOKENS_TO_FUND = body.tokens as {
     ticker: string
     amount: string
   }[]
@@ -40,9 +50,9 @@ export async function POST(request: Request) {
     })
   }
 
-  const recipient = requestData.address as `0x${string}`
+  const recipient = body.address as `0x${string}`
   if (!recipient) {
-    return new Response("Address is required", {
+    return new Response("Recipient address is required", {
       status: 500,
     })
   }
@@ -58,12 +68,14 @@ export async function POST(request: Request) {
 
     // Loop through each token in TOKENS_TO_FUND and mint them
     for (const { ticker, amount } of TOKENS_TO_FUND) {
-      await mintTokens(account, ticker, amount, recipient)
+      await mintUpTo(
+        recipient,
+        Token.findByTicker(ticker).address,
+        parseAmount(amount, Token.findByTicker(ticker))
+      )
     }
 
-    return new Response("Success!", {
-      status: 200,
-    })
+    return new Response("Funding successful", { status: 200 })
   } catch (error) {
     return new Response(`Error funding ${recipient}: ${error}`, {
       status: 500,
@@ -100,66 +112,86 @@ async function fundEth(
           ethAmount
         )} ETH. Transaction hash: ${transaction.transactionHash}`
       )
-      break // Exit loop on success
+      break
     } catch (error: any) {
       if (error?.message?.includes("nonce")) {
         attempts++
         console.log(`Nonce error, retrying... Attempt ${attempts}`)
-        continue // Retry on nonce error
+        continue
       } else {
-        throw error // Rethrow if error is not nonce related
+        throw error
       }
     }
   }
 }
 
-async function mintTokens(
-  account: PrivateKeyAccount,
-  ticker: string,
-  amount: string,
-  recipient: `0x${string}`
-): Promise<void> {
+async function mintUpTo(
+  recipientAddr: Address,
+  token: Address,
+  amount: bigint
+) {
+  const balance = await readErc20BalanceOf(viemConfig, {
+    address: token,
+    args: [recipientAddr],
+  })
+  const mintAmount = amount - balance
+  if (mintAmount > 0) {
+    let attempts = 0
+    while (attempts < 5) {
+      try {
+        return await mint(recipientAddr, token, mintAmount)
+      } catch (error: any) {
+        if (error?.message?.includes("nonce")) {
+          attempts++
+          console.log(`Nonce error, retrying... Attempt ${attempts}`)
+          continue
+        } else {
+          throw error
+        }
+      }
+    }
+  } else {
+    console.log(
+      `No minting needed for ${
+        Token.findByAddress(token).ticker
+      } for address ${recipientAddr}`
+    )
+  }
+}
+
+async function mint(recipientAddr: Address, token: Address, amount: bigint) {
+  const account = privateKeyToAccount(
+    process.env.DEV_PRIVATE_KEY as `0x${string}`
+  )
   const walletClient = createWalletClient({
     account,
     chain,
     transport: http(),
   })
+  const { request } = await publicClient.simulateContract({
+    account,
+    address: token,
+    abi,
+    functionName: "mint",
+    args: [recipientAddr, amount],
+  })
 
-  const token = Token.findByTicker(ticker)
-  const tokenAmount = parseAmount(amount, token)
-
-  let attempts = 0
-  while (attempts < 5) {
-    try {
-      const { request: tokenRequest } = await publicClient.simulateContract({
-        account,
-        address: Token.findByTicker(ticker).address,
-        abi,
-        functionName: "mint",
-        args: [recipient, tokenAmount],
-      })
-
-      const hash = await walletClient.writeContract(tokenRequest)
-      const tx = await publicClient.waitForTransactionReceipt({
-        hash,
-        confirmations: 1,
-      })
-
-      console.log(
-        `Minted ${formatAmount(
-          tokenAmount,
-          token
-        )} ${ticker} to ${recipient}. Transaction hash: ${tx.transactionHash}`
-      )
-      break // Exit loop on success
-    } catch (error: any) {
-      if (error?.message?.includes("nonce")) {
-        attempts++
-        console.log(`Nonce error, retrying... Attempt ${attempts}`)
-        continue // Retry on nonce error
-      } else {
-        throw error // Rethrow if error is not nonce related
-      }
-    }
+  const hash = await walletClient.writeContract(request)
+  const tx = await publicClient.waitForTransactionReceipt({
+    hash,
+  })
+  if (tx.status === "success") {
+    console.log(
+      `Minted ${formatEther(amount)} ${
+        Token.findByAddress(token).ticker
+      } for address ${recipientAddr}`
+    )
+  } else {
+    console.log(
+      `Failed to mint ${formatEther(amount)} ${
+        Token.findByAddress(token).ticker
+      } for address ${recipientAddr}`
+    )
   }
+  return tx
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { fundList, fundWallet } from "@/lib/utils"
 import { connect, disconnect, useConfig } from "@renegade-fi/react"
 import {
@@ -7,13 +8,12 @@ import {
   createContext,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from "react"
 import { toast } from "sonner"
 import { useReadLocalStorage } from "usehooks-ts"
 import { Hex } from "viem"
-import { useAccount } from "wagmi"
+import { useAccount, useAccountEffect } from "wagmi"
 
 import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 
@@ -38,50 +38,46 @@ function AppProvider({
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
 
+  const fundedAddresses = useReadLocalStorage<string[]>(FUNDED_ADDRESSES, {
+    initializeWithValue: false,
+  })
   const config = useConfig()
 
   // Browser Wallet
   const { address } = useAccount()
-  const prevAddressRef = useRef<string>()
-  useEffect(() => {
-    if (
-      prevAddressRef.current &&
-      address &&
-      prevAddressRef.current !== address
-    ) {
+
+  useAccountEffect({
+    onDisconnect() {
       disconnect(config)
-    }
-    prevAddressRef.current = address
-  }, [address, config])
+    },
+  })
 
   // Sign In + Funding
   const { executeTaskWithToast } = useTaskCompletionToast()
-  const funded = useReadLocalStorage(`funded_${address}`)
+
+  // Attempt to fund once wallet is connected
+  useEffect(() => {
+    if (address && (!fundedAddresses || !fundedAddresses.includes(address))) {
+      fundWallet(fundList, address)
+    }
+  }, [address, fundedAddresses])
 
   const handleSignin = async (seed: Hex) => {
     const res = await connect(config, { seed })
     if (res?.taskId) {
       await executeTaskWithToast(res.taskId, "Connecting...")
     }
-    if (funded) return
-    toast.promise(
-      fundWallet(
-        [
-          { ticker: "WETH", amount: "10" },
-          { ticker: "USDC", amount: "1000000" },
-        ],
-        address!
-      ),
-      {
+    if (address && (!fundedAddresses || !fundedAddresses.includes(address))) {
+      toast.promise(fundWallet(fundList.slice(0, 2), address!), {
         loading: "Funding account...",
-        success: "Your account has been funded with test funds.",
+        success: "Successfully funded account.",
         error:
           "Funding failed: An unexpected error occurred. Please try again.",
-      }
-    )
+      })
 
-    // Fund additional wallets in background
-    fundWallet(fundList, address!)
+      // Fund additional tokens in background
+      fundWallet(fundList.slice(2), address!)
+    }
   }
 
   return (

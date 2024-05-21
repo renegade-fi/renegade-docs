@@ -1,6 +1,8 @@
+import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { env } from "@/env.mjs"
 import { Metadata } from "next"
 import numeral from "numeral"
+import { Address } from "viem"
 import { formatUnits } from "viem/utils"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -139,38 +141,35 @@ export function constructMetadata({
 
 export const fundWallet = async (
   tokens: { ticker: string; amount: string }[],
-  address: `0x${string}`
+  address: Address
 ) => {
-  try {
-    const response = await fetch(`/api/fund`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        tokens,
-        address,
-      }),
-    })
+  const response = await fetch(`/api/fund`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      tokens,
+      address,
+    }),
+  })
 
-    if (!response.ok) {
-      const text = await response.text()
-      throw new Error(
-        text ||
-          "Funding failed: An unexpected error occurred. Please try again."
-      )
-    }
-
+  if (!response.ok) {
     const text = await response.text()
-    safeLocalStorageSetItem(`funded_${address}`, "true")
-    console.log("Funding success:", text)
-  } catch (error) {
-    console.error("Error:", error)
-    throw error
+    console.error("could not fund", text)
+  } else {
+    const fundedAddresses = JSON.parse(
+      safeLocalStorageGetItem(FUNDED_ADDRESSES) || "[]"
+    )
+    const updatedAddresses = Array.from(new Set([...fundedAddresses, address]))
+    safeLocalStorageSetItem(FUNDED_ADDRESSES, JSON.stringify(updatedAddresses))
+    console.log("Funding success")
   }
 }
 
 export const fundList: { ticker: string; amount: string }[] = [
+  { ticker: "WETH", amount: "10" },
+  { ticker: "USDC", amount: "1000000" },
   {
     ticker: "WBTC",
     amount: "5",
