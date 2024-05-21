@@ -3,6 +3,7 @@
 import DepositButton from "@/app/(desktop)/deposit-button"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { useReadErc20BalanceOf } from "@/generated"
+import { formatNumber } from "@/lib/utils"
 import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons"
 import {
   Box,
@@ -55,6 +56,11 @@ export function DepositBody() {
       address: token.address,
       args: [address ?? "0x"],
     })
+  const formattedBalance = formatNumber(
+    l1Balance || BigInt(0),
+    token.decimals,
+    true
+  )
   const queryClient = useQueryClient()
   const { data: blockNumber } = useBlockNumber({ watch: true })
   useEffect(() => {
@@ -84,10 +90,12 @@ export function DepositBody() {
           transition="0.15s"
         >
           <HStack fontFamily="Aime" fontSize="1.8em" spacing="20px">
-            <div>
+            <Box position="relative">
               <Button
                 position="absolute"
                 top="-24px"
+                left="0"
+                color="text.secondary"
                 fontWeight="600"
                 onClick={() => setView(ViewEnum.TRADING)}
                 variant="link"
@@ -98,7 +106,7 @@ export function DepositBody() {
               <Text color="text.secondary" fontSize="34px">
                 Deposit
               </Text>
-            </div>
+            </Box>
             <InputGroup>
               <Input
                 width="200px"
@@ -143,15 +151,35 @@ export function DepositBody() {
                 </InputRightElement>
               )}
             </InputGroup>
-            <HStack
-              userSelect="none"
-              cursor="pointer"
-              onClick={onOpenTokenMenu}
-            >
-              <Text variant="trading-body-button">{base}</Text>
-              <ChevronDownIcon boxSize="20px" viewBox="6 6 12 12" />
-            </HStack>
+            <Box position="relative">
+              <HStack
+                userSelect="none"
+                cursor="pointer"
+                onClick={onOpenTokenMenu}
+              >
+                <Text variant="trading-body-button">{base}</Text>
+                <ChevronDownIcon
+                  color="white.100"
+                  boxSize="20px"
+                  viewBox="6 6 12 12"
+                />
+              </HStack>
+            </Box>
           </HStack>
+          <Text
+            marginTop="8px"
+            color="text.muted"
+            fontWeight="100"
+            textAlign="right"
+            _hover={{
+              color: "text.secondary",
+            }}
+            userSelect="text"
+            cursor="pointer"
+            onClick={handleSetMax}
+          >
+            Balance on Arbitrum: {formattedBalance} {base}
+          </Text>
         </Box>
         <DepositButton
           baseTokenAmount={baseTokenAmount}
