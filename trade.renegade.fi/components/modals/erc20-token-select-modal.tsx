@@ -35,6 +35,9 @@ export function ERC20TokenSelectModal({
 
   useEffect(() => {
     const fetchBalances = async () => {
+      if (!address) {
+        return
+      }
       const balancePromises = tokens.map(async (token) => {
         const balance = await readErc20BalanceOf(wagmiConfig, {
           address: token.address as Address,

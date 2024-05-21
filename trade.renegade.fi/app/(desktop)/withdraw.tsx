@@ -73,6 +73,7 @@ export function WithdrawBody() {
               <Button
                 position="absolute"
                 top="-24px"
+                color="text.secondary"
                 fontWeight="600"
                 onClick={() => setView(ViewEnum.TRADING)}
                 variant="link"
