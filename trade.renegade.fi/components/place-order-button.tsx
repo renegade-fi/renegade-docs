@@ -6,7 +6,6 @@ import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
   createOrder,
-  formatAmount,
   parseAmount,
   useBalances,
   useConfig,
@@ -17,11 +16,9 @@ import { useMemo } from "react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { v4 as uuidv4 } from "uuid"
-import { parseUnits } from "viem/utils"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { Tooltip } from "@/components/tooltip"
@@ -117,31 +114,14 @@ export function PlaceOrderButton({
   }
 
   const isDisabled = isConnected && (!baseTokenAmount || hasZeroBalance)
-  const costInUsd = useUSDPrice(
-    baseToken,
-    parseUnits(baseTokenAmount, baseToken.decimals)
-  )
 
   const hasInsufficientBalance = useMemo(() => {
     if (!baseTokenAmount) return false
-    const baseBalance =
-      balances.find(({ mint }) => mint === baseAddress)?.amount || BigInt(0)
-    const quoteBalance =
-      balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
-    if (direction === Direction.SELL) {
-      return baseBalance < parseAmount(baseTokenAmount, baseToken)
-    }
-    return parseFloat(formatAmount(quoteBalance, quoteToken)) < costInUsd
-  }, [
-    balances,
-    baseAddress,
-    baseToken,
-    baseTokenAmount,
-    costInUsd,
-    direction,
-    quoteAddress,
-    quoteToken,
-  ])
+    const sendMint = direction === Direction.SELL ? baseAddress : quoteAddress
+    const sendBalance =
+      balances.find(({ mint }) => mint === sendMint)?.amount || BigInt(0)
+    return !sendBalance
+  }, [balances, baseAddress, baseTokenAmount, direction, quoteAddress])
 
   return (
     <>
