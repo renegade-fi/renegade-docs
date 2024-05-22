@@ -1,5 +1,6 @@
 import { Text } from "@chakra-ui/react"
 import dayjs from "dayjs"
+import { TriangleAlert } from "lucide-react"
 
 export const ORDER_HISTORY_TOOLTIP =
   "Your private orders. Only you and your connected relayer can see these values."
@@ -25,11 +26,14 @@ export const ACTIVE_ORDERS_TOOLTIP =
   "The total number of outstanding orders in Renegade."
 export const ORDER_TOOLTIP = (
   base: string,
+  quote: string,
   currentAmount: string,
   originalAmount: string,
   fill: string,
   side: string,
-  createdAt: number
+  createdAt: number,
+  usdValue: string,
+  insufficientBalance?: boolean
 ) => {
   return (
     <Text fontFamily="Favorit Mono" whiteSpace="nowrap">
@@ -38,10 +42,29 @@ export const ORDER_TOOLTIP = (
       Remaining Size: {currentAmount} {base}
       <br />
       Fill: {fill}
+      {usdValue ? (
+        <>
+          <br />
+          Value: {usdValue}
+        </>
+      ) : null}
       <br />
       Side: {side}
       <br />
       Created: {dayjs.unix(createdAt).fromNow()}
+      <br />
+      {insufficientBalance && (
+        <Text
+          as="span"
+          alignItems="center"
+          gap="2"
+          display="flex"
+          marginTop="8px"
+        >
+          <TriangleAlert size="14" color="#fecb33" /> Insufficient{" "}
+          {side === "Buy" ? quote : base} to fill order
+        </Text>
+      )}
     </Text>
   )
 }

@@ -157,7 +157,7 @@ function TradingInner() {
             </Text>
             <Text variant="trading-body-button">{quote}</Text>
           </HStack>
-          <HelperText baseTicker={base} />
+          <HelperText base={Token.findByTicker(base)} />
         </Flex>
         <PlaceOrderButton
           baseTokenAmount={baseTokenAmount}
@@ -177,8 +177,8 @@ function TradingInner() {
   )
 }
 
-function HelperText({ baseTicker }: { baseTicker: string }) {
-  const usdPrice = useUSDPrice(baseTicker, 1)
+function HelperText({ base }: { base: Token }) {
+  const usdPrice = useUSDPrice(base)
   const formattedUsdPrice = numeral(usdPrice).format("$0.00")
   return (
     <Text color="text.muted" fontWeight="100" userSelect="text">
@@ -203,7 +203,7 @@ function InputWithMaxButton({
   })
   const [direction] = useLocalStorage("direction", Direction.BUY)
   const max = useMax(direction === Direction.SELL ? base : quote)
-  const usdPrice = useUSDPrice(base, 1)
+  const usdPrice = useUSDPrice(Token.findByTicker(base))
   const buyMax = (1 / usdPrice) * Number(max) * 0.99
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {

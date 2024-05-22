@@ -80,6 +80,7 @@ const styles = {
 const colors = {
   green: "#43e043",
   red: "#e04943",
+  yellow: "#fecb33",
   brown: "#231f20",
   "brown.light": "#372f2f",
   "white.100": "#ffffff",
