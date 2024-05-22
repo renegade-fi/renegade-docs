@@ -216,28 +216,23 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
     status === "looking up" ||
     status === "connecting"
 
-  const formattedBalances = useMemo<Array<[Address, bigint]>>(() => {
+  const formattedBalances = useMemo(() => {
     const wethAddress = Token.findByTicker("WETH").address
     const usdcAddress = Token.findByTicker("USDC").address
 
-    const nonzero: Array<[Address, bigint]> = Object.entries(balances).map(
-      ([_, b]) => [b.mint, b.amount]
-    )
-    const placeholders: Array<[Address, bigint]> = tokenMapping.tokens
-      .filter((t) => !nonzero.some(([a]) => a === t.address))
-      .map((t) => [t.address as Address, BigInt(0)])
-
-    const combined = [...nonzero, ...placeholders]
-
-    combined.sort((a, b) => {
-      if (a[0] === wethAddress) return -1
-      if (b[0] === wethAddress) return 1
-      if (a[0] === usdcAddress) return -1
-      if (b[0] === usdcAddress) return 1
+    balances.sort((a, b) => {
+      if (a.mint === wethAddress) return -1
+      if (b.mint === wethAddress) return 1
+      if (a.mint === usdcAddress) return -1
+      if (b.mint === usdcAddress) return 1
       return 0
     })
 
-    return combined
+    const placeholders = tokenMapping.tokens
+      .filter((t) => !balances.some((b) => b.mint === t.address))
+      .map((t) => ({ mint: t.address as Address, amount: BigInt(0) }))
+
+    return [...balances, ...placeholders]
   }, [balances])
 
   const Content = useMemo(() => {
@@ -251,9 +246,12 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               padding: "0 8px",
             }}
           >
-            {formattedBalances.map(([address, amount]) => (
-              <Box key={address} width="100%">
-                <TokenBalance tokenAddr={address} amount={amount} />
+            {formattedBalances.map((balance) => (
+              <Box key={balance.mint} width="100%">
+                <TokenBalance
+                  tokenAddr={balance.mint}
+                  amount={balance.amount}
+                />
               </Box>
             ))}
           </SimpleBar>
