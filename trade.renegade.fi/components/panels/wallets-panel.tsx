@@ -14,21 +14,10 @@ import {
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import {
-  Box,
-  Button,
-  Circle,
-  Flex,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Spacer,
-  Text,
-} from "@chakra-ui/react"
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
   formatAmount,
-  tokenMapping,
   useBalances,
   useStatus,
   useTaskHistory,
