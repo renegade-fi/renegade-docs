@@ -24,7 +24,6 @@ export function Tooltip({
       boxSizing="border-box"
       arrowShadowColor="#474554"
       backgroundColor="white.10"
-      closeOnScroll
       hasArrow
       label={label}
       paddingX={paddingX}
