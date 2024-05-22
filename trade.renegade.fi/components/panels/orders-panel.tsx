@@ -23,6 +23,7 @@ import {
   UseOrdersReturnType,
   cancelOrder,
   formatAmount,
+  useBalances,
   useConfig,
   useOrderBook,
   useOrderHistory,
@@ -33,18 +34,27 @@ import {
 import { useModal as useModalConnectKit } from "connectkit"
 import dayjs from "dayjs"
 import { X } from "lucide-react"
+import numeral from "numeral"
 import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
+import { formatUnits } from "viem"
 
 import { useMatchedOrders } from "@/hooks/use-matched-orders"
+import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 
 import { Tooltip } from "../tooltip"
 
-function SingleOrder({ order }: { order: OrderMetadata }) {
+function SingleOrder({
+  order,
+  sendBalance,
+}: {
+  order: OrderMetadata
+  sendBalance: bigint
+}) {
   const {
     id,
     state,
@@ -59,10 +69,8 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
   const quote = Token.findByAddress(quote_mint)
   const formattedAmount = formatNumber(amount, base.decimals)
   const formattedAmountLong = formatNumber(amount, base.decimals, true)
-  const formattedRemaining = formatNumber(
-    BigInt(amount) - BigInt(filled),
-    base.decimals
-  )
+  const remaining = BigInt(amount) - BigInt(filled)
+  const formattedRemaining = formatNumber(remaining, base.decimals)
   const formattedRemainingLong = formatNumber(
     BigInt(amount) - BigInt(filled),
     base.decimals,
@@ -73,12 +81,24 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
   const amountLabelLong =
     state === OrderState.Filled ? formattedAmountLong : formattedRemainingLong
   const formattedState = getReadableState(state)
-
   const fillLabel = `${Math.round((Number(filled) / Number(amount)) * 100)}%`
-
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
   )
+  const formattedSendBalance = parseFloat(
+    formatUnits(
+      sendBalance || BigInt(0),
+      side === "Buy" ? quote.decimals : base.decimals
+    )
+  )
+  const costInUsd = useUSDPrice(base, remaining)
+  const formattedQuoteValue = numeral(costInUsd).format("$0,0.00")
+  let insufficientSendBalance = false
+  if (side === "Buy" && costInUsd > formattedSendBalance) {
+    insufficientSendBalance = true
+  } else if (side === "Sell" && remaining > sendBalance) {
+    insufficientSendBalance = true
+  }
 
   const isColored = isCancellable || state === OrderState.SettlingMatch
 
@@ -105,11 +125,14 @@ function SingleOrder({ order }: { order: OrderMetadata }) {
       // @ts-ignore
       label={ORDER_TOOLTIP(
         base.ticker,
+        quote.ticker,
         formattedRemainingLong,
         formattedAmountLong,
         fillLabel,
         side,
-        Number(created) / 1000
+        Number(created) / 1000,
+        formattedQuoteValue,
+        insufficientSendBalance
       )}
     >
       <Flex
@@ -184,6 +207,7 @@ interface OrdersPanelProps {
   toggleIsLocked: () => void
 }
 function OrdersPanel(props: OrdersPanelProps) {
+  const balances = useBalances()
   const orderHistory = useOrderHistory({ sort: "desc" })
   const status = useStatus()
   const isConnected = status === "in relayer"
@@ -215,11 +239,23 @@ function OrdersPanel(props: OrdersPanelProps) {
         }}
       >
         {orderHistory.map((order) => {
-          return <SingleOrder key={order.id} order={order} />
+          const sendBalance =
+            balances.find(({ mint }) =>
+              order.data.side === "Buy"
+                ? mint === order.data.quote_mint
+                : mint === order.data.base_mint
+            )?.amount || BigInt(0)
+          return (
+            <SingleOrder
+              key={order.id}
+              order={order}
+              sendBalance={sendBalance}
+            />
+          )
         })}
       </SimpleBar>
     )
-  }, [isConnected, orderHistory])
+  }, [balances, isConnected, orderHistory])
 
   return (
     <>

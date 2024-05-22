@@ -17,6 +17,7 @@ import { useMemo } from "react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { v4 as uuidv4 } from "uuid"
+import { parseUnits } from "viem/utils"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
@@ -116,7 +117,10 @@ export function PlaceOrderButton({
   }
 
   const isDisabled = isConnected && (!baseTokenAmount || hasZeroBalance)
-  const costInUsd = useUSDPrice(base, parseFloat(baseTokenAmount))
+  const costInUsd = useUSDPrice(
+    baseToken,
+    parseUnits(baseTokenAmount, baseToken.decimals)
+  )
 
   const hasInsufficientBalance = useMemo(() => {
     if (!baseTokenAmount) return false

@@ -17,7 +17,6 @@ import {
 import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
-  formatAmount,
   tokenMapping,
   useBalances,
   useStatus,
@@ -55,10 +54,7 @@ function TokenBalance(props: TokenBalanceProps) {
 
   const formattedAmount = formatNumber(props.amount, token.decimals)
   const ticker = token.ticker
-  const usdPrice = useUSDPrice(
-    ticker,
-    parseFloat(formatAmount(props.amount, token))
-  )
+  const usdPrice = useUSDPrice(token, props.amount)
   const formattedUsdPrice = numeral(usdPrice).format("$0.00")
 
   const isZero = props.amount === BigInt(0)
