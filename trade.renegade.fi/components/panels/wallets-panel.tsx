@@ -14,7 +14,17 @@ import {
   LockIcon,
   UnlockIcon,
 } from "@chakra-ui/icons"
-import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Circle,
+  Flex,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  Spacer,
+  Text,
+} from "@chakra-ui/react"
 import {
   Token,
   formatAmount,
@@ -36,6 +46,7 @@ import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
+import { EmptyBalanceItem } from "@/components/panels/empty-balance-item"
 import { Panel, expandedPanelWidth } from "@/components/panels/panels"
 import { TaskHistoryList } from "@/components/panels/task-history-list"
 
@@ -228,9 +239,10 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
       return 0
     })
 
-    const placeholders = tokenMapping.tokens
-      .filter((t) => !balances.some((b) => b.mint === t.address))
-      .map((t) => ({ mint: t.address as Address, amount: BigInt(0) }))
+    const placeholders = Array.from({ length: 5 - balances.length }, () => ({
+      mint: "" as Address,
+      amount: BigInt(0),
+    }))
 
     return [...balances, ...placeholders]
   }, [balances])
@@ -246,14 +258,16 @@ function RenegadeWalletPanel(props: RenegadeWalletPanelProps) {
               padding: "0 8px",
             }}
           >
-            {formattedBalances.map((balance) => (
-              <Box key={balance.mint} width="100%">
+            {formattedBalances.map((balance) => {
+              if (!balance.mint) return <EmptyBalanceItem />
+              return (
                 <TokenBalance
+                  key={balance.mint}
                   tokenAddr={balance.mint}
                   amount={balance.amount}
                 />
-              </Box>
-            ))}
+              )
+            })}
           </SimpleBar>
           <Spacer />
         </>
