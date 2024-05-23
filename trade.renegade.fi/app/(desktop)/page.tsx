@@ -7,8 +7,6 @@ import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 import { OrdersAndCounterpartiesPanel } from "@/components/panels/orders-panel"
 import { WalletsPanel } from "@/components/panels/wallets-panel"
 
-export const dynamic = "force-dynamic"
-
 export default function Page() {
   return (
     <div
