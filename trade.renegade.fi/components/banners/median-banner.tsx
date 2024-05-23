@@ -2,7 +2,7 @@
 
 import { usePrice } from "@/contexts/PriceContext/price-context"
 import { BBO_TOOLTIP } from "@/lib/tooltip-labels"
-import { Box, Flex, Link, Spacer, Stack, Text } from "@chakra-ui/react"
+import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react"
 import type { Exchange } from "@renegade-fi/react"
 import { Token } from "@renegade-fi/react"
 import React, { useEffect, useState } from "react"
@@ -35,7 +35,7 @@ function LinkWrapper(props: {
         justifyContent="center"
         flexDirection={props.isMobile ? "column-reverse" : "row"}
         flexGrow="1"
-        gap="8px"
+        gap="3"
         height="100%"
         _hover={{ textDecoration: "none" }}
         userSelect="none"
@@ -53,7 +53,7 @@ function LinkWrapper(props: {
       justifyContent="center"
       flexDirection={props.isMobile ? "column-reverse" : "row"}
       flexGrow="1"
-      gap="8px"
+      gap="3"
       height="100%"
       _hover={{ textDecoration: "none" }}
       userSelect="none"
@@ -155,7 +155,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
       <Text variant={props.isMobile ? "rotate-right" : undefined}>
         {props.exchange[0].toUpperCase() + props.exchange.slice(1)}
       </Text>
-      <BannerSeparator flexGrow={1} />
+      <BannerSeparator flexGrow={0} />
       <LivePrices
         baseTicker={props.activeBaseTicker}
         quoteTicker={props.activeQuoteTicker}
@@ -178,6 +178,7 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
                 }
               : undefined
           }
+          marginBottom="-3px"
           lineHeight="1"
           variant={textVariant}
         >
@@ -468,13 +469,12 @@ export class MedianBanner extends React.Component<
           >
             <Flex
               alignItems="center"
-              justifyContent="center"
+              justifyContent="space-evenly"
               flexDirection={this.props.isMobile ? "column" : "row"}
               gap="16px"
               minWidth={this.props.isMobile ? undefined : "1200px"}
               minHeight={this.props.isMobile ? "310vw" : "var(--banner-height)"}
             >
-              <Spacer flexGrow="2" />
               <ExchangeConnectionTriple
                 activeBaseTicker={this.props.activeBaseTicker}
                 activeQuoteTicker={this.props.activeQuoteTicker}
@@ -506,7 +506,6 @@ export class MedianBanner extends React.Component<
                 initialPrice={this.props.report?.["okx"]}
                 isMobile={this.props.isMobile}
               />
-              <Spacer flexGrow="2" />
             </Flex>
           </Box>
         </Flex>
