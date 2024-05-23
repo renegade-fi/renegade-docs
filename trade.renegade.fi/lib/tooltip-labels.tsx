@@ -1,3 +1,4 @@
+import { env } from "@/env.mjs"
 import { Text } from "@chakra-ui/react"
 import dayjs from "dayjs"
 import { TriangleAlert } from "lucide-react"
@@ -74,3 +75,17 @@ export const INSUFFICIENT_BALANCE_TOOLTIP =
   "Insufficient balance to cover the entire order. Only part of the order will be filled."
 export const USER_ORDER_IN_ORDERBOOK =
   "Your order information is only visible to you and your connected relayer."
+
+export const OK_SEQUENCER_STATUS_TOOLTIP = () => (
+  <Text fontFamily="Favorit Mono">
+    Connected to sequencer at {env.NEXT_PUBLIC_RPC_URL}
+  </Text>
+)
+export const FAIL_SEQUENCER_STATUS_TOOLTIP = () => {
+  return (
+    <Text fontFamily="Favorit Mono">
+      Failed to connect to sequencer at {env.NEXT_PUBLIC_RPC_URL}. You may
+      experience degraded performance.
+    </Text>
+  )
+}

@@ -1,6 +1,7 @@
 "use client"
 
 import { OrderToaster } from "@/app/order-toaster"
+import { SequencerStatusIndicator } from "@/app/sequencer-status-indicator"
 import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
 import { PriceProvider } from "@/contexts/PriceContext/price-context"
@@ -304,6 +305,7 @@ export function Providers({
                         <TaskToaster />
                         <OrderToaster />
                         {children}
+                        <SequencerStatusIndicator />
                       </PriceProvider>
                     </ConnectKitProviderWithSignMessage>
                   </AppProvider>
