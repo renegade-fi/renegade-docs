@@ -6,6 +6,7 @@ import {
   LOOKUP_WALLET_START,
   LOOKUP_WALLET_SUCCESS,
 } from "@/constants/task-messages"
+import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { REMEMBER_ME_TOOLTIP } from "@/lib/tooltip-labels"
 import {
   Button,
@@ -37,6 +38,7 @@ const publicClient = createPublicClient({
 })
 
 export function DefaultStep() {
+  const { setView } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
   const { disconnect } = useDisconnectWagmi()
@@ -71,7 +73,13 @@ export function DefaultStep() {
           const { isLookup, job } = res
           toast.promise(job, {
             loading: isLookup ? LOOKUP_WALLET_START : CREATE_WALLET_START,
-            success: isLookup ? LOOKUP_WALLET_SUCCESS : CREATE_WALLET_SUCCESS,
+            success: () => {
+              if (!isLookup) {
+                setView(ViewEnum.DEPOSIT)
+                return CREATE_WALLET_SUCCESS
+              }
+              return LOOKUP_WALLET_SUCCESS
+            },
             error: isLookup ? LOOKUP_WALLET_ERROR : CREATE_WALLET_ERROR,
           })
         }

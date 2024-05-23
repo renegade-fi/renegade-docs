@@ -1,5 +1,6 @@
 "use client"
 
+import { PlaceOrderButton } from "@/app/(desktop)/place-order-button"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { Direction } from "@/lib/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
@@ -23,7 +24,6 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
-import { PlaceOrderButton } from "@/components/place-order-button"
 
 interface SelectableProps {
   text: string
@@ -56,10 +56,6 @@ const Selectable = React.forwardRef(
 Selectable.displayName = "selectable"
 
 export function TradingBody() {
-  return <TradingInner />
-}
-
-function TradingInner() {
   const { view } = useApp()
   const {
     isOpen: tokenMenuIsOpen,
