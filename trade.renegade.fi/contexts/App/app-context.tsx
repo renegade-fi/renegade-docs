@@ -39,13 +39,37 @@ function AppProvider({
   const config = useConfig()
 
   // Browser Wallet
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
 
-  useAccountEffect({
-    onDisconnect() {
+  // Disconnect/fund wallet on change
+  useEffect(() => {
+    const handleConnectorUpdate = (
+      data: {
+        accounts?: readonly `0x${string}`[] | undefined
+        chainId?: number | undefined
+      } & {
+        uid: string
+      }
+    ) => {
       disconnect(config)
-    },
-  })
+      if (
+        data.accounts &&
+        (!fundedAddresses || !fundedAddresses.includes(data.accounts[0]))
+      ) {
+        fundWallet(fundList, data.accounts[0])
+      }
+    }
+
+    if (connector?.emitter) {
+      connector.emitter.on("change", handleConnectorUpdate)
+    }
+
+    return () => {
+      if (connector?.emitter) {
+        connector?.emitter.off("change", handleConnectorUpdate)
+      }
+    }
+  }, [connector, config, fundedAddresses])
 
   // Attempt to fund once wallet is connected
   useEffect(() => {
@@ -53,6 +77,12 @@ function AppProvider({
       fundWallet(fundList, address)
     }
   }, [address, fundedAddresses])
+
+  useAccountEffect({
+    onDisconnect() {
+      disconnect(config)
+    },
+  })
 
   return (
     <AppStateContext.Provider
