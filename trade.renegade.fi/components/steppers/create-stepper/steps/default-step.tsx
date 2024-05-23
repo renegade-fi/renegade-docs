@@ -1,4 +1,11 @@
-import { useApp } from "@/contexts/App/app-context"
+import {
+  CREATE_WALLET_ERROR,
+  CREATE_WALLET_START,
+  CREATE_WALLET_SUCCESS,
+  LOOKUP_WALLET_ERROR,
+  LOOKUP_WALLET_START,
+  LOOKUP_WALLET_SUCCESS,
+} from "@/constants/task-messages"
 import { REMEMBER_ME_TOOLTIP } from "@/lib/tooltip-labels"
 import {
   Button,
@@ -8,8 +15,9 @@ import {
   ModalBody,
   Text,
 } from "@chakra-ui/react"
-import { chain } from "@renegade-fi/react"
+import { chain, connect, useConfig } from "@renegade-fi/react"
 import { CircleHelp, Unplug } from "lucide-react"
+import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 import { createPublicClient, http, verifyMessage } from "viem"
 import {
@@ -29,10 +37,11 @@ const publicClient = createPublicClient({
 })
 
 export function DefaultStep() {
-  const { onSignin } = useApp()
   const { onClose } = useStepper()
   const { address } = useAccountWagmi()
+  const { disconnect } = useDisconnectWagmi()
   const [rememberMe, setRememberMe] = useLocalStorage("rememberMe", false)
+  const config = useConfig()
   const { signMessage, status } = useSignMessageWagmi({
     mutation: {
       async onSuccess(data, variables) {
@@ -57,12 +66,19 @@ export function DefaultStep() {
         if (!valid) {
           throw new Error("Invalid signature")
         }
-        onSignin(data)
+        const res = await connect(config, { seed: data })
+        if (res?.job) {
+          const { isLookup, job } = res
+          toast.promise(job, {
+            loading: isLookup ? LOOKUP_WALLET_START : CREATE_WALLET_START,
+            success: isLookup ? LOOKUP_WALLET_SUCCESS : CREATE_WALLET_SUCCESS,
+            error: isLookup ? LOOKUP_WALLET_ERROR : CREATE_WALLET_ERROR,
+          })
+        }
         onClose()
       },
     },
   })
-  const { disconnect } = useDisconnectWagmi()
 
   return (
     <>

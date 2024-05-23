@@ -30,8 +30,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.77)(react@18.2.0)
   '@renegade-fi/react':
-    specifier: 0.0.0-20240524221025
-    version: 0.0.0-20240524221025(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+    specifier: ^0.0.28
+    version: 0.0.28(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
   '@t3-oss/env-nextjs':
     specifier: ^0.6.0
     version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -4267,8 +4267,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4)(react@18.2.0)
     dev: false
 
-  /@renegade-fi/core@0.0.0-20240524221025(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-fX7odDF0qY9A4FnWIgYaEp5pIZG3+vFOFLjd7sAYbP2vJ1d2J86ivncRLhd+ReyXrJexYzS4c7TgEViwl9kl5g==}
+  /@renegade-fi/core@0.0.28(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-ZAbuoSphGmJNwrz/js0cbqyGqCP0IxGpMCAkReB0dRX9Qi+DeBXdx4g4+WWtqnz5NyMX2Au8AbhNPTXK3GJUWw==}
     dependencies:
       axios: 1.7.1
       isomorphic-ws: 5.0.0(ws@8.13.0)
@@ -4288,12 +4288,12 @@ packages:
       - zod
     dev: false
 
-  /@renegade-fi/react@0.0.0-20240524221025(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
-    resolution: {integrity: sha512-dbk72HewIHU09vXJoL/bSsviZJ0NlB03iauDK6dfSRjqVNw1ET9HQdDlGHbZd+riIrPrn2npaK84aj0s4D8RKA==}
+  /@renegade-fi/react@0.0.28(@types/react@18.2.77)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4):
+    resolution: {integrity: sha512-+eK8/xj3OtLKQ6q+UpJ6rVqLvYxI9qId+EhHMwfSDl0RqSBJd5IXDvmiygSglP3ztBwCRiBgC3Nr3fSg4mFVXw==}
     peerDependencies:
       react: '>=18'
     dependencies:
-      '@renegade-fi/core': 0.0.0-20240524221025(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
+      '@renegade-fi/core': 0.0.28(@types/react@18.2.77)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0)(zod@3.22.4)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0)(react@18.2.0)
@@ -10475,6 +10475,7 @@ packages:
 
   /rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
