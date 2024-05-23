@@ -47,7 +47,11 @@ export function TradingTokenSelectModal({
       .sort((a, b) => Number(b.balance - a.balance)) // Sort in descending order
       .map(({ address, balance }) => ({
         address,
-        balance: formatNumber(balance, Token.findByAddress(address).decimals),
+        balance: formatNumber(
+          balance,
+          Token.findByAddress(address).decimals,
+          true
+        ),
       }))
   }, [balances, debouncedSearchTerm, tokens])
 
