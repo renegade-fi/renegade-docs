@@ -225,7 +225,7 @@ export class RelayerStatusBanner extends React.Component<
               <Text>renegade-relayer.eth</Text>
               <BannerSeparator flexGrow={1} />
               <HStack>
-                {connectionText}
+                <Text marginBottom="-3px">{connectionText}</Text>
                 <PulsingConnection
                   state={this.props.connectionState || "dead"}
                 />
@@ -233,17 +233,19 @@ export class RelayerStatusBanner extends React.Component<
             </Flex>
           </Tooltip>
           <BannerSeparator flexGrow={3} />
-          <Tooltip placement="bottom" label={FEES_TOOLTIP}>
-            <Text>Fees</Text>
-          </Tooltip>
-          <BannerSeparator flexGrow={1} />
-          <Tooltip placement="bottom" label={RELAYER_FEE_TOOLTIP}>
-            <Text>Relayer 0.08%</Text>
-          </Tooltip>
-          <BannerSeparator flexGrow={1} />
-          <Tooltip placement="bottom" label={PROTOCOL_FEE_TOOLTIP}>
-            <Text>Protocol 0.02%</Text>
-          </Tooltip>
+          <Flex alignItems="center" gap="3">
+            <Tooltip placement="bottom" label={FEES_TOOLTIP}>
+              <Text>Fees</Text>
+            </Tooltip>
+            <BannerSeparator flexGrow={1} />
+            <Tooltip placement="bottom" label={RELAYER_FEE_TOOLTIP}>
+              <Text>Relayer 0.08%</Text>
+            </Tooltip>
+            <BannerSeparator flexGrow={1} />
+            <Tooltip placement="bottom" label={PROTOCOL_FEE_TOOLTIP}>
+              <Text>Protocol 0.02%</Text>
+            </Tooltip>
+          </Flex>
           <Spacer flexGrow="2" />
         </Flex>
       </Box>

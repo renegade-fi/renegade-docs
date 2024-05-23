@@ -135,7 +135,6 @@ export const LivePrices = ({
         }
         alignItems="center"
         justifyContent="center"
-        flexGrow="1"
         width={isMobile ? "100%" : undefined}
         color="inherit"
         fontFamily="Favorit Mono"
