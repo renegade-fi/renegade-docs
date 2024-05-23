@@ -2,7 +2,7 @@
 
 import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { fundList, fundWallet } from "@/lib/utils"
-import { connect, disconnect, useConfig } from "@renegade-fi/react"
+import { disconnect, useConfig } from "@renegade-fi/react"
 import {
   PropsWithChildren,
   createContext,
@@ -10,12 +10,8 @@ import {
   useEffect,
   useState,
 } from "react"
-import { toast } from "sonner"
 import { useReadLocalStorage } from "usehooks-ts"
-import { Hex } from "viem"
 import { useAccount, useAccountEffect } from "wagmi"
-
-import useTaskCompletionToast from "@/hooks/use-task-completion-toast"
 
 export enum ViewEnum {
   TRADING,
@@ -27,7 +23,6 @@ export interface AppContextValue {
   setView: (view: ViewEnum) => void
   tokenIcons: Record<string, string>
   view: ViewEnum
-  onSignin: (seed: Hex) => Promise<void>
 }
 
 const AppStateContext = createContext<AppContextValue | undefined>(undefined)
@@ -52,9 +47,6 @@ function AppProvider({
     },
   })
 
-  // Sign In + Funding
-  const { executeTaskWithToast } = useTaskCompletionToast()
-
   // Attempt to fund once wallet is connected
   useEffect(() => {
     if (address && (!fundedAddresses || !fundedAddresses.includes(address))) {
@@ -62,28 +54,9 @@ function AppProvider({
     }
   }, [address, fundedAddresses])
 
-  const handleSignin = async (seed: Hex) => {
-    const res = await connect(config, { seed })
-    if (res?.taskId) {
-      await executeTaskWithToast(res.taskId, "Connecting...")
-    }
-    if (address && (!fundedAddresses || !fundedAddresses.includes(address))) {
-      toast.promise(fundWallet(fundList.slice(0, 2), address!), {
-        loading: "Funding account...",
-        success: "Successfully funded account.",
-        error:
-          "Funding failed: An unexpected error occurred. Please try again.",
-      })
-
-      // Fund additional tokens in background
-      fundWallet(fundList.slice(2), address!)
-    }
-  }
-
   return (
     <AppStateContext.Provider
       value={{
-        onSignin: handleSignin,
         setView,
         tokenIcons: tokenIcons || {},
         view,
