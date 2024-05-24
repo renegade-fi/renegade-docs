@@ -33,8 +33,8 @@ importers:
         specifier: ^11.11.0
         version: 11.11.5(@emotion/react@11.11.4(@types/react@18.2.77)(react@18.2.0))(@types/react@18.2.77)(react@18.2.0)
       '@renegade-fi/react':
-        specifier: ^0.0.30
-        version: 0.0.30(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
+        specifier: 0.0.31
+        version: 0.0.31(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
       '@t3-oss/env-nextjs':
         specifier: ^0.6.0
         version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -96,6 +96,9 @@ importers:
       '@next/bundle-analyzer':
         specifier: ^13.4.19
         version: 13.5.6(bufferutil@4.0.8)
+      '@tanstack/react-query-devtools':
+        specifier: ^5.37.1
+        version: 5.40.0(@tanstack/react-query@5.29.2(react@18.2.0))(react@18.2.0)
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^4.3.0
         version: 4.3.0(prettier@2.8.8)
@@ -2078,12 +2081,18 @@ packages:
     peerDependencies:
       react-native: '*'
 
-  '@renegade-fi/core@0.0.30':
-    resolution: {integrity: sha512-zlBipMI/GxYl8nqatLoAOs0R0pV+4jyWKl27GB82mtHUqreCcmLC44SmD6uUtlMc/ZIQ40zlp3uehPPTGQnp0w==}
-
-  '@renegade-fi/react@0.0.30':
-    resolution: {integrity: sha512-e5ziwjhtG5Q6RfZg68kDVRHHag1eaX61NMpUKf7kaHKLrkwwc5sfAJlqcM24LchuKTfSHah4gkWk+uNn4vSXUQ==}
+  '@renegade-fi/core@0.0.31':
+    resolution: {integrity: sha512-HpeUp8o3++XP8gLSA9U+HQrWEs3Dj9gq6b0dDvYWjn/MaMn8SnhmQDwh/KCUqNLCjJBKmrmZ3LALhqqNVTW+bA==}
     peerDependencies:
+      '@tanstack/query-core': '>=5.0.0'
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+
+  '@renegade-fi/react@0.0.31':
+    resolution: {integrity: sha512-EBRL2rb/5FTDqNrtO4YtxSWpJrvyQE4Hbxtib+Bh9R17rOSflmpvR5bRPRSwQNDWs2rQejupAAZhTH+wQ00glw==}
+    peerDependencies:
+      '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
 
   '@rushstack/eslint-patch@1.10.2':
@@ -2209,6 +2218,15 @@ packages:
 
   '@tanstack/query-core@5.29.0':
     resolution: {integrity: sha512-WgPTRs58hm9CMzEr5jpISe8HXa3qKQ8CxewdYZeVnA54JrPY9B1CZiwsCoLpLkf0dGRZq+LcX5OiJb0bEsOFww==}
+
+  '@tanstack/query-devtools@5.37.1':
+    resolution: {integrity: sha512-XcG4IIHIv0YQKrexTqo2zogQWR1Sz672tX2KsfE9kzB+9zhx44vRKH5si4WDILE1PIWQpStFs/NnrDQrBAUQpg==}
+
+  '@tanstack/react-query-devtools@5.40.0':
+    resolution: {integrity: sha512-JoQOQj/LKaHoHVMAh73R0pc4lIAHiZMV8L4DGHsTSvHcKi22LZmSC9aYBY9oMkqGpFtKmbspwrUIn55+czNSbA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.40.0
+      react: ^18 || ^19
 
   '@tanstack/react-query@5.29.2':
     resolution: {integrity: sha512-nyuWILR4u7H5moLGSiifLh8kIqQDLNOHGuSz0rcp+J75fNc8aQLyr5+I2JCHU3n+nJrTTW1ssgAD8HiKD7IFBQ==}
@@ -8677,7 +8695,7 @@ snapshots:
       nullthrows: 1.1.1
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)
 
-  '@renegade-fi/core@0.0.30(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
+  '@renegade-fi/core@0.0.31(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
     dependencies:
       axios: 1.7.2
       isomorphic-ws: 5.0.0(ws@8.13.0(bufferutil@4.0.8))
@@ -8685,6 +8703,8 @@ snapshots:
       tiny-invariant: 1.3.3
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       zustand: 4.5.2(@types/react@18.2.77)(react@18.2.0)
+    optionalDependencies:
+      '@tanstack/query-core': 5.29.0
     transitivePeerDependencies:
       - '@types/react'
       - bufferutil
@@ -8696,14 +8716,16 @@ snapshots:
       - ws
       - zod
 
-  '@renegade-fi/react@0.0.30(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
+  '@renegade-fi/react@0.0.31(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
     dependencies:
-      '@renegade-fi/core': 0.0.30(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
+      '@renegade-fi/core': 0.0.31(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
+      '@tanstack/react-query': 5.29.2(react@18.2.0)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       tiny-invariant: 1.3.3
     transitivePeerDependencies:
+      - '@tanstack/query-core'
       - '@types/react'
       - bufferutil
       - debug
@@ -8881,6 +8903,14 @@ snapshots:
       zod: 3.22.4
 
   '@tanstack/query-core@5.29.0': {}
+
+  '@tanstack/query-devtools@5.37.1': {}
+
+  '@tanstack/react-query-devtools@5.40.0(@tanstack/react-query@5.29.2(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@tanstack/query-devtools': 5.37.1
+      '@tanstack/react-query': 5.29.2(react@18.2.0)
+      react: 18.2.0
 
   '@tanstack/react-query@5.29.2(react@18.2.0)':
     dependencies:

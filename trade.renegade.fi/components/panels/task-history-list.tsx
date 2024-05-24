@@ -10,7 +10,10 @@ import {
 import { TaskItem } from "@/components/panels/task-item"
 
 export function TaskHistoryList() {
-  const history = useTaskHistory({ sort: "desc" })
+  const { data } = useTaskHistory()
+  const taskHistory = Array.from(data?.values() || []).sort((a, b) => {
+    return Number(b.created_at) - Number(a.created_at)
+  })
   const formattedTaskType = {
     [TaskType.NewWallet]: "New Wallet",
     [TaskType.UpdateWallet]: "Update Wallet",
@@ -37,7 +40,7 @@ export function TaskHistoryList() {
   }
   return (
     <>
-      {history.map((task) => {
+      {taskHistory.map((task) => {
         const createdAt = Number(task.created_at) / 1000
         const formattedState = formattedStates[task.state]
         switch (task.task_info.task_type) {
