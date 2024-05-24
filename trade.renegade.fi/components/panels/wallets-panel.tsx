@@ -318,12 +318,12 @@ function RenegadeWalletPanel() {
 }
 
 function HistorySection() {
-  const history = useTaskHistory()
-  const historyWithoutNewWallet = history.filter(
+  const { data } = useTaskHistory()
+  const taskHistory = Array.from(data?.values() || []).filter(
     (task) => task.task_info.task_type !== "NewWallet"
   )
   const balances = useBalances()
-  if (!historyWithoutNewWallet.length && !balances.length) return null
+  if (!taskHistory.length && !balances.length) return null
   return (
     <>
       <Tooltip placement="right" label={TASK_HISTORY_TOOLTIP}>

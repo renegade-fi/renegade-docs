@@ -7,7 +7,13 @@ import dayjs from "dayjs"
 
 import { Tooltip } from "@/components/tooltip"
 
-export function UserOrder({ order }: { order: OrderMetadata }) {
+export function UserOrder({
+  order,
+  timestamp,
+}: {
+  order: OrderMetadata
+  timestamp: bigint
+}) {
   const base = Token.findByAddress(order.data.base_mint)
   const quote = Token.findByAddress(order.data.quote_mint).ticker
   const formattedAmount = formatNumber(order.data.amount, base.decimals)
@@ -35,7 +41,7 @@ export function UserOrder({ order }: { order: OrderMetadata }) {
           <Text color={textColor} fontSize="1.2em">
             {getReadableState(order.state)}&nbsp;
           </Text>
-          <Text>{dayjs.unix(Number(order.created) / 1000).fromNow()}</Text>
+          <Text>{dayjs.unix(Number(timestamp)).fromNow()}</Text>
         </Flex>
         <Text>
           <Text as="span">{order.data.side}</Text>&nbsp;

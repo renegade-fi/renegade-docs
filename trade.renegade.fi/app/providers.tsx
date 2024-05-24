@@ -21,7 +21,9 @@ import {
   createConfig as createSDKConfig,
   useStatus,
 } from "@renegade-fi/react"
+import { focusManager } from "@tanstack/react-query"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -246,6 +248,35 @@ export function Providers({
     }
   }, [rememberMe])
 
+  // Invalidate query cache when the window loses focus
+  useEffect(() => {
+    focusManager.setEventListener((handleFocus) => {
+      if (typeof window !== "undefined" && window.addEventListener) {
+        const visibilitychangeHandler = () => {
+          handleFocus(document.visibilityState === "visible")
+        }
+        const focusHandler = () => {
+          handleFocus(document.hasFocus())
+        }
+        window.addEventListener(
+          "visibilitychange",
+          visibilitychangeHandler,
+          false
+        )
+        window.addEventListener("focus", focusHandler, false)
+        window.addEventListener("blur", focusHandler, false)
+        return () => {
+          window.removeEventListener(
+            "visibilitychange",
+            visibilitychangeHandler
+          )
+          window.removeEventListener("focus", focusHandler)
+          window.removeEventListener("blur", focusHandler)
+        }
+      }
+    })
+  }, [])
+
   return (
     <>
       <IntercomProvider
@@ -269,6 +300,7 @@ export function Providers({
                       <OrderToaster />
                       {children}
                       <LazyDatadog />
+                      <ReactQueryDevtools initialIsOpen={false} />
                     </ConnectKitProviderWithSignMessage>
                   </AppProvider>
                 </QueryClientProvider>

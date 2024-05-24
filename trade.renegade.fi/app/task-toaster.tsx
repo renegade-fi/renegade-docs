@@ -3,27 +3,18 @@ import {
   generateFailedToastMessage,
   generateStartToastMessage,
 } from "@/lib/task"
-import {
-  Task,
-  TaskType,
-  useTaskHistory,
-  useTaskHistoryWebSocket,
-} from "@renegade-fi/react"
-import { useEffect, useRef } from "react"
+import { Task, TaskType, useTaskHistoryWebSocket } from "@renegade-fi/react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 export function TaskToaster() {
-  const incomingTask = useTaskHistoryWebSocket()
-  const taskHistory = useTaskHistory()
+  const [incomingTask, setIncomingTask] = useState<Task>()
+  useTaskHistoryWebSocket({
+    onUpdate(task) {
+      setIncomingTask(task)
+    },
+  })
   const taskRef = useRef<Map<string, Task>>(new Map())
-
-  // Hydrate initial task history
-  useEffect(() => {
-    taskHistory.forEach((task) => {
-      if (taskRef.current.get(task.id)) return
-      taskRef.current.set(task.id, task)
-    })
-  }, [taskHistory])
 
   useEffect(() => {
     if (incomingTask) {
