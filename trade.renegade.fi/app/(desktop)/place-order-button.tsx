@@ -63,8 +63,8 @@ export function PlaceOrderButton({
 
   const isConnected = status === "in relayer"
 
-  const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find(
+  const { data: taskHistory } = useTaskHistory()
+  const isQueue = Array.from(taskHistory?.values() || []).find(
     (task) => task.state !== "Completed" && task.state !== "Failed"
   )
   const handlePlaceOrder = async () => {

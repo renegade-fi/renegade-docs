@@ -100,8 +100,8 @@ export default function DepositButton({
 
   // Deposit
   const config = useConfig()
-  const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find(
+  const { data: taskHistory } = useTaskHistory()
+  const isQueue = Array.from(taskHistory?.values() || []).find(
     (task) => task.state !== "Completed" && task.state !== "Failed"
   )
   const handleSignAndDeposit = async () => {

@@ -3,26 +3,19 @@ import {
   OrderMetadata,
   OrderState,
   Token,
-  useOrderHistory,
   useOrderHistoryWebSocket,
-  useOrders,
 } from "@renegade-fi/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 export function OrderToaster() {
-  const orderHistory = useOrderHistory()
-  const incomingOrder = useOrderHistoryWebSocket()
-  const orders = useOrders()
+  const [incomingOrder, setIncomingOrder] = useState<OrderMetadata>()
+  useOrderHistoryWebSocket({
+    onUpdate: (order) => {
+      setIncomingOrder(order)
+    },
+  })
   const orderMetadataRef = useRef<Map<string, OrderMetadata>>(new Map())
-
-  // Hydrate initial task history
-  useEffect(() => {
-    orderHistory.forEach((order) => {
-      if (orderMetadataRef.current.get(order.id)) return
-      orderMetadataRef.current.set(order.id, order)
-    })
-  }, [orderHistory])
 
   useEffect(() => {
     if (incomingOrder) {
@@ -60,7 +53,7 @@ export function OrderToaster() {
         )
       }
     }
-  }, [incomingOrder, orders])
+  }, [incomingOrder])
 
   return null
 }

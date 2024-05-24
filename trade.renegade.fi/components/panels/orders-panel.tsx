@@ -22,7 +22,7 @@ import {
   cancelOrder,
   useBalances,
   useConfig,
-  useOrderBook,
+  useNetworkOrders,
   useOrderHistory,
   useStatus,
   useTaskHistory,
@@ -98,8 +98,8 @@ function SingleOrder({
 
   const isColored = isCancellable || state === OrderState.SettlingMatch
 
-  const taskHistory = useTaskHistory()
-  const isQueue = taskHistory.find(
+  const { data: taskHistory } = useTaskHistory()
+  const isQueue = Array.from(taskHistory?.values() || []).find(
     (task) => task.state !== "Completed" && task.state !== "Failed"
   )
 
@@ -200,9 +200,12 @@ function SingleOrder({
 
 function OrdersPanel() {
   const balances = useBalances()
-  const orderHistory = useOrderHistory({ sort: "desc" })
+  const { data } = useOrderHistory()
   const status = useStatus()
   const isConnected = status === "in relayer"
+  const orderHistory = Array.from(data?.values() || []).sort(
+    (a, b) => Number(b.created) - Number(a.created)
+  )
 
   const Content = useMemo(() => {
     if (!isConnected || !orderHistory.length) {
@@ -268,12 +271,15 @@ function OrdersPanel() {
 }
 
 function OrderBookPanel() {
-  const networkOrders = useOrderBook()
+  const { data } = useNetworkOrders()
+  const networkOrders = Array.from(data?.values() || []).sort(
+    (a, b) => Number(b.timestamp) - Number(a.timestamp)
+  )
   const orderHistory = useOrderHistory()
 
   let panelBody: React.ReactElement
 
-  if (Object.values(networkOrders).length === 0) {
+  if (!networkOrders.length) {
     panelBody = (
       <Box display="grid" height="30vh" placeContent="center">
         <Text
@@ -297,11 +303,11 @@ function OrderBookPanel() {
         }}
       >
         {Object.values(networkOrders).map((networkOrder) => {
-          const userOrder = orderHistory.find(
-            ({ id }) => id === networkOrder.id
-          )
+          const userOrder = orderHistory.data?.get(networkOrder.id)
           if (userOrder) {
-            return <UserOrder order={userOrder} />
+            return (
+              <UserOrder order={userOrder} timestamp={networkOrder.timestamp} />
+            )
           }
           return <NetworkOrderItem order={networkOrder} />
         })}
@@ -331,7 +337,7 @@ function OrderBookPanel() {
 }
 
 function CounterpartiesPanel() {
-  const globalOrders = useOrderBook()
+  const { data } = useNetworkOrders()
   return (
     <Tooltip placement="left" label={ACTIVE_ORDERS_TOOLTIP}>
       <Flex
@@ -345,7 +351,7 @@ function CounterpartiesPanel() {
         borderTop="var(--border)"
       >
         <Text>Active Orders:&nbsp;</Text>
-        <Text>{Object.keys(globalOrders).length || "..."}</Text>
+        <Text>{Array.from(data?.values() || []).length || "..."}</Text>
       </Flex>
     </Tooltip>
   )
