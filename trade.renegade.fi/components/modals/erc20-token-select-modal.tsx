@@ -22,7 +22,7 @@ export function ERC20TokenSelectModal({
   onClose,
 }: ERC20TokenSelectModalProps) {
   const { address } = useAccount()
-  const blockNumber = useBlockNumber()
+  const { data: blockNumber } = useBlockNumber()
   const [_, setBase] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
