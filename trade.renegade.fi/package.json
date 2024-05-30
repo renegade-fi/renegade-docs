@@ -39,8 +39,7 @@
     "usehooks-ts": "^2.13.0",
     "uuid": "^9.0.1",
     "viem": "^2.9.28",
-    "wagmi": "^2.5.7",
-    "zod": "^3.21.4"
+    "wagmi": "^2.5.7"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.4.19",
