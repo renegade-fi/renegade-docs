@@ -97,7 +97,7 @@ export const getFormat = (price: number, long: boolean = false) => {
 export function constructMetadata({
   title = `Renegade Testnet | On-Chain Dark Pool`,
   description = `Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.`,
-  image = "https://www.renegade.fi/opengraph.png",
+  image = "/opengraph.png",
   noIndex = false,
 }: {
   title?: string
@@ -136,6 +136,11 @@ export function constructMetadata({
         follow: false,
       },
     }),
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon-16x16.png",
+      apple: "/apple-touch-icon.png",
+    },
   }
 }
 

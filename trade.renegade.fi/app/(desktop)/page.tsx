@@ -1,5 +1,4 @@
 import { Main } from "@/app/(desktop)/main"
-import backgroundPattern from "@/icons/background_pattern.png"
 import Image from "next/image"
 
 import { MedianBannerWrapper } from "@/components/banners/median-banner"
@@ -17,13 +16,7 @@ export default function Page() {
         position: "relative",
       }}
     >
-      <Image
-        alt="bg"
-        fill
-        priority
-        src={backgroundPattern}
-        style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
-      />
+      <Image alt="" fill priority src="/bg.png" />
       <MedianBannerWrapper />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />

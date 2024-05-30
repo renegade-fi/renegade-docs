@@ -7,10 +7,18 @@ import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
 import { Analytics } from "@vercel/analytics/react"
+import { Viewport } from "next"
 import React from "react"
 
 import { TokensBanner } from "@/components/banners/tokens-banner"
 import "@/styles/index.css"
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "black" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+}
 
 export const metadata = constructMetadata()
 
@@ -20,7 +28,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const icons = await TICKER_TO_LOGO_URL_HANDLE
-  // const prices = await getTokenBannerData(renegade)
   return (
     <html lang="en">
       <body>

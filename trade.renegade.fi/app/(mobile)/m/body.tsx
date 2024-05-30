@@ -1,15 +1,12 @@
 "use client"
 
 import { TokensBanner } from "@/app/(mobile)/m/tokens-banner"
-import backgroundPattern from "@/icons/background_pattern.png"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, Flex, HStack, Text } from "@chakra-ui/react"
 import { Exchange } from "@renegade-fi/react"
 import Image from "next/image"
 
 import { MedianBanner } from "@/components/banners/median-banner"
-
-import logoDark from "@/icons/logo_dark.svg"
 
 function BodyText() {
   return (
@@ -19,7 +16,7 @@ function BodyText() {
       flexDirection="column"
       flexGrow="1"
       paddingTop="25%"
-      backgroundImage={backgroundPattern.src}
+      backgroundImage={"/bg.png"}
       backgroundSize="cover"
     >
       <Flex
@@ -34,8 +31,8 @@ function BodyText() {
         <Image
           height="35"
           style={{ margin: "4px 0 8px 0" }}
-          alt="Renegade Logo"
-          src={logoDark}
+          alt=""
+          src="/logo_dark.svg"
         />
         <Text alignSelf="flex-end">is not yet available on mobile.</Text>
       </Flex>
