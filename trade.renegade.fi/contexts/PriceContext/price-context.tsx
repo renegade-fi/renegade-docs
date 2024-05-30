@@ -12,35 +12,42 @@ import React, {
   useRef,
   useState,
 } from "react"
-import { Address } from "viem"
 
-export const DEFAULT_QUOTE: Record<Exchange, Address> = {
+export const DEFAULT_QUOTE: Record<Exchange, `0x${string}`> = {
   binance: Token.findByTicker("USDT").address,
   coinbase: Token.findByTicker("USDC").address,
-  kraken: "0x0000000000000000000000000000000000000000" as Address,
+  kraken: "0x0000000000000000000000000000000000000000" as `0x${string}`,
   okx: Token.findByTicker("USDT").address,
 }
 
 type PriceContextValue = {
-  handleSubscribe: (exchange: Exchange, base: Address, quote?: Address) => void
+  handleSubscribe: (
+    exchange: Exchange,
+    base: `0x${string}`,
+    quote?: `0x${string}`
+  ) => void
   handleGetPrice: (
     exchange: Exchange,
-    base: Address,
-    quote?: Address
+    base: `0x${string}`,
+    quote?: `0x${string}`
   ) => number | undefined
   handleGetLastUpdate: (
     exchange: Exchange,
-    base: Address,
-    quote?: Address
+    base: `0x${string}`,
+    quote?: `0x${string}`
   ) => number | undefined
-  handleGetInitialPrice: (base: Address, quote?: Address) => number
+  handleGetInitialPrice: (base: `0x${string}`, quote?: `0x${string}`) => number
 }
 
 const PriceContext = createContext<PriceContextValue | null>(null)
 
 const invalid = [Token.findByTicker("USDT").address]
 
-export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
+export default function PriceProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const { getPriceReporterBaseUrl } = useConfig()
   const [priceReporter, setPriceReporter] = useState<WebSocketManager | null>(
     null
@@ -64,8 +71,8 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleSubscribe = (
     exchange: Exchange,
-    base: Address,
-    quote: Address = DEFAULT_QUOTE[exchange]
+    base: `0x${string}`,
+    quote: `0x${string}` = DEFAULT_QUOTE[exchange]
   ) => {
     if (!priceReporter || invalid.includes(base)) return
 
@@ -101,8 +108,8 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleGetPrice = (
     exchange: Exchange,
-    base: Address,
-    quote: Address = DEFAULT_QUOTE[exchange]
+    base: `0x${string}`,
+    quote: `0x${string}` = DEFAULT_QUOTE[exchange]
   ) => {
     const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     return prices[topic]
@@ -110,16 +117,16 @@ export const PriceProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleGetLastUpdate = (
     exchange: Exchange,
-    base: Address,
-    quote: Address = DEFAULT_QUOTE[exchange]
+    base: `0x${string}`,
+    quote: `0x${string}` = DEFAULT_QUOTE[exchange]
   ) => {
     const topic = PRICE_REPORTER_TOPIC(exchange, base, quote)
     return lastUpdateRef.current[topic]
   }
 
   const handleGetInitialPrice = (
-    base: Address,
-    quote: Address = DEFAULT_QUOTE["binance"]
+    base: `0x${string}`,
+    quote: `0x${string}` = DEFAULT_QUOTE["binance"]
   ) => {
     return initialPrice.current[`${base}-${quote}`] ?? 0
   }

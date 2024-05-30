@@ -25,7 +25,7 @@ import { useAccount, useBlockNumber } from "wagmi"
 
 import { ERC20TokenSelectModal } from "@/components/modals/erc20-token-select-modal"
 
-export function DepositBody() {
+export default function DepositBody() {
   const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,

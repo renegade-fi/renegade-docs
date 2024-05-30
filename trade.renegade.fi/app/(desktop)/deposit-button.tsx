@@ -1,4 +1,3 @@
-import { env } from "@/env.mjs"
 import {
   useReadErc20Allowance,
   useReadErc20BalanceOf,
@@ -70,10 +69,7 @@ export default function DepositButton({
   const { data: allowance, queryKey: allowanceQueryKey } =
     useReadErc20Allowance({
       address: Token.findByTicker(base).address,
-      args: [
-        address ?? "0x",
-        env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
-      ],
+      args: [address ?? "0x", process.env.NEXT_PUBLIC_PERMIT2_CONTRACT],
     })
 
   useEffect(() => {
@@ -94,7 +90,7 @@ export default function DepositButton({
     })
     await approve({
       address: Token.findByTicker(base).address,
-      args: [env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`, MAX_INT],
+      args: [process.env.NEXT_PUBLIC_PERMIT2_CONTRACT, MAX_INT],
       nonce,
     }).then(() => {
       // TODO: May need to await confirmation
@@ -117,8 +113,8 @@ export default function DepositButton({
     const { signature, nonce, deadline } = await signPermit2({
       amount,
       chainId: chain.id,
-      spender: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
-      permit2Address: env.NEXT_PUBLIC_PERMIT2_CONTRACT as `0x${string}`,
+      spender: process.env.NEXT_PUBLIC_DARKPOOL_CONTRACT,
+      permit2Address: process.env.NEXT_PUBLIC_PERMIT2_CONTRACT,
       token,
       walletClient,
       pkRoot,

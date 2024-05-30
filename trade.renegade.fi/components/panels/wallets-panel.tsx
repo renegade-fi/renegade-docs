@@ -26,7 +26,6 @@ import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { Address } from "viem"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
@@ -37,7 +36,7 @@ import { TaskHistoryList } from "@/components/panels/task-history-list"
 import { Tooltip } from "../tooltip"
 
 interface TokenBalanceProps {
-  tokenAddr: Address
+  tokenAddr: `0x${string}`
   userAddr?: string
   amount: bigint
 }
@@ -200,16 +199,16 @@ function RenegadeWalletPanel() {
     status === "looking up" ||
     status === "connecting"
 
-  const formattedBalances = useMemo<Array<[Address, bigint]>>(() => {
+  const formattedBalances = useMemo<Array<[`0x${string}`, bigint]>>(() => {
     const wethAddress = Token.findByTicker("WETH").address
     const usdcAddress = Token.findByTicker("USDC").address
 
-    const nonzero: Array<[Address, bigint]> = Object.entries(balances).map(
-      ([_, b]) => [b.mint, b.amount]
-    )
-    const placeholders: Array<[Address, bigint]> = tokenMapping.tokens
+    const nonzero: Array<[`0x${string}`, bigint]> = Object.entries(
+      balances
+    ).map(([_, b]) => [b.mint, b.amount])
+    const placeholders: Array<[`0x${string}`, bigint]> = tokenMapping.tokens
       .filter((t) => !nonzero.some(([a]) => a === t.address))
-      .map((t) => [t.address as Address, BigInt(0)])
+      .map((t) => [t.address as `0x${string}`, BigInt(0)])
 
     const combined = [...nonzero, ...placeholders]
 

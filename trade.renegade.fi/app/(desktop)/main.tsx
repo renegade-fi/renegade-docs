@@ -1,21 +1,19 @@
 "use client"
 
-import { DepositBody } from "@/app/(desktop)/deposit"
-import { TradingBody } from "@/app/(desktop)/trading"
-import { WithdrawBody } from "@/app/(desktop)/withdraw"
+import { TradingBody } from "./trading"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import dynamic from "next/dynamic"
+
+const Deposit = dynamic(() => import("./deposit"), { ssr: false })
+const Withdraw = dynamic(() => import("./withdraw"), { ssr: false })
 
 export function Main() {
   const { view } = useApp()
-  const CurrentView = {
-    [ViewEnum.TRADING]: TradingBody,
-    [ViewEnum.DEPOSIT]: DepositBody,
-    [ViewEnum.WITHDRAW]: WithdrawBody,
-  }[view]
-
   return (
     <>
-      <CurrentView />
+      {view === ViewEnum.TRADING && <TradingBody />}
+      {view === ViewEnum.DEPOSIT && <Deposit />}
+      {view === ViewEnum.WITHDRAW && <Withdraw />}
     </>
   )
 }

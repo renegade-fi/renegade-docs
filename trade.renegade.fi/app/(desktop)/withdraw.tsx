@@ -19,9 +19,9 @@ import { useLocalStorage } from "usehooks-ts"
 
 import { useMax } from "@/hooks/use-max"
 
-import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
+import TradingTokenSelectModal from "@/components/modals/renegade-token-select-modal"
 
-export function WithdrawBody() {
+export default function WithdrawBody() {
   const { setView } = useApp()
   const {
     isOpen: tokenMenuIsOpen,

@@ -3,7 +3,6 @@ import { formatNumber } from "@/lib/utils"
 import { Token, tokenMapping, useBalances } from "@renegade-fi/react"
 import { useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
-import { Address } from "viem"
 
 import { useDebounce } from "@/hooks/use-debounce"
 
@@ -13,7 +12,7 @@ type TradingTokenSelectModalProps = {
   isOpen: boolean
   onClose: () => void
 }
-export function TradingTokenSelectModal({
+export default function TradingTokenSelectModal({
   isOpen,
   onClose,
 }: TradingTokenSelectModalProps) {
@@ -28,8 +27,8 @@ export function TradingTokenSelectModal({
   const filteredBalances = useMemo(() => {
     return tokens
       .filter(({ address }) => {
-        const ticker = Token.findByAddress(address as Address).ticker
-        const name = Token.findByAddress(address as Address).name
+        const ticker = Token.findByAddress(address as `0x${string}`).ticker
+        const name = Token.findByAddress(address as `0x${string}`).name
         return (
           ticker.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
           name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
@@ -39,7 +38,7 @@ export function TradingTokenSelectModal({
         )
       })
       .map(({ address }) => ({
-        address: address as Address,
+        address: address as `0x${string}`,
         balance:
           balances.find((balance) => balance.mint === address)?.amount ??
           BigInt(0),

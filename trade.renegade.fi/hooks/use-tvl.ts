@@ -1,8 +1,7 @@
 import { renegadeConfig } from "@/app/providers"
-import { env } from "@/env.mjs"
 import { Token, chain } from "@renegade-fi/react"
 import { useCallback, useEffect, useState } from "react"
-import { Address, createPublicClient, http, parseAbi } from "viem"
+import { createPublicClient, http, parseAbi } from "viem"
 
 const abi = parseAbi([
   "function balanceOf(address owner) view returns (uint256)",
@@ -21,7 +20,7 @@ export const useTvl = (ticker: string) => {
       address: Token.findByTicker(ticker).address,
       abi,
       functionName: "balanceOf",
-      args: [env.NEXT_PUBLIC_DARKPOOL_CONTRACT as Address],
+      args: [process.env.NEXT_PUBLIC_DARKPOOL_CONTRACT],
     })
     setData(balance)
   }, [ticker])

@@ -1,7 +1,6 @@
 "use client"
 
 import { renegadeConfig } from "@/app/providers"
-import { env } from "@/env.mjs"
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
 import { lookupWallet, useWalletId } from "@renegade-fi/react"
 import Image from "next/image"
@@ -28,7 +27,9 @@ export const Footer = () => {
     }
   }, [])
 
-  const network = env.NEXT_PUBLIC_RPC_URL.includes("dev") ? "DEVNET" : "TESTNET"
+  const network = process.env.NEXT_PUBLIC_RPC_URL.includes("dev")
+    ? "DEVNET"
+    : "TESTNET"
 
   return (
     <>

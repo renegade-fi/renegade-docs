@@ -15,6 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 import { Token } from "@renegade-fi/react"
+import dynamic from "next/dynamic"
 import numeral from "numeral"
 import React, { createRef, useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
@@ -23,7 +24,11 @@ import { useMax } from "@/hooks/use-max"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
-import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
+
+const TradingTokenSelectModal = dynamic(
+  () => import("../../components/modals/renegade-token-select-modal"),
+  { ssr: false }
+)
 
 interface SelectableProps {
   text: string
