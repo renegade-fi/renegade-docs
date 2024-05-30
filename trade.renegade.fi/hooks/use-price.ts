@@ -4,12 +4,11 @@ import {
 } from "@/contexts/PriceContext/price-context"
 import { Exchange } from "@renegade-fi/react"
 import { useEffect, useState } from "react"
-import { Address } from "viem"
 
 export const usePrice = (
   exchange: Exchange,
-  base: Address,
-  quote: Address = DEFAULT_QUOTE[exchange]
+  base: `0x${string}`,
+  quote: `0x${string}` = DEFAULT_QUOTE[exchange]
 ) => {
   // const prevBase = usePrevious(base)
   const { handleSubscribe, handleGetPrice, handleGetInitialPrice } =

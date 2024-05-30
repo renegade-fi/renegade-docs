@@ -34,7 +34,7 @@ import React, { useMemo } from "react"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
-import { formatUnits } from "viem"
+import { formatUnits } from "viem/utils"
 
 import { useUSDPrice } from "@/hooks/use-usd-price"
 

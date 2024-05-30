@@ -1,8 +1,6 @@
 import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
-import { env } from "@/env.mjs"
 import { Metadata } from "next"
 import numeral from "numeral"
-import { Address } from "viem"
 import { formatUnits } from "viem/utils"
 
 export function safeLocalStorageGetItem(key: string): string | null {
@@ -111,7 +109,7 @@ export function constructMetadata({
     openGraph: {
       title,
       description,
-      url: env.NEXT_PUBLIC_URL,
+      url: process.env.NEXT_PUBLIC_URL,
       ...(image && {
         images: [
           {
@@ -129,7 +127,7 @@ export function constructMetadata({
       }),
       creator: "@renegade_fi",
     },
-    metadataBase: new URL(env.NEXT_PUBLIC_URL),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_URL),
     ...(noIndex && {
       robots: {
         index: false,
@@ -141,7 +139,7 @@ export function constructMetadata({
 
 export const fundWallet = async (
   tokens: { ticker: string; amount: string }[],
-  address: Address
+  address: `0x${string}`
 ) => {
   const response = await fetch(`/api/fund`, {
     method: "POST",

@@ -1,10 +1,10 @@
 "use client"
 
+import LazyDatadog from "@/app/(desktop)/telemetry"
 import { OrderToaster } from "@/app/order-toaster"
 import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
-import { PriceProvider } from "@/contexts/PriceContext/price-context"
-import { env } from "@/env.mjs"
+import PriceProvider from "@/contexts/PriceContext/price-context"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -16,8 +16,6 @@ import {
   keyframes,
   useDisclosure,
 } from "@chakra-ui/react"
-import { datadogLogs } from "@datadog/browser-logs"
-import { datadogRum } from "@datadog/browser-rum"
 import {
   RenegadeProvider,
   chain,
@@ -198,10 +196,10 @@ const components = {
 const theme = extendTheme({ config, styles, colors, components })
 
 export const renegadeConfig = createSDKConfig({
-  darkPoolAddress: env.NEXT_PUBLIC_DARKPOOL_CONTRACT as `0x${string}`,
-  priceReporterUrl: env.NEXT_PUBLIC_PRICE_REPORTER_URL,
-  relayerUrl: env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  rpcUrl: env.NEXT_PUBLIC_RPC_URL,
+  darkPoolAddress: process.env.NEXT_PUBLIC_DARKPOOL_CONTRACT,
+  priceReporterUrl: process.env.NEXT_PUBLIC_PRICE_REPORTER_URL,
+  relayerUrl: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
+  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL,
   ssr: true,
 })
 
@@ -222,7 +220,7 @@ export const wagmiConfig = createConfig(
     transports: {
       [chain.id]: http(),
     },
-    walletConnectProjectId: env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+    walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
   })
 )
 
@@ -249,45 +247,13 @@ export function Providers({
     }
   }, [rememberMe])
 
-  useEffect(() => {
-    async function loadLogging() {
-      datadogRum.init({
-        applicationId: env.NEXT_PUBLIC_DATADOG_APPLICATION_ID,
-        clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
-        site: "us5.datadoghq.com",
-        service: "staging-interface",
-        env: "staging",
-        version: "1.0.0",
-        sessionSampleRate: 100,
-        sessionReplaySampleRate: 100,
-        trackUserInteractions: true,
-        trackResources: true,
-        trackLongTasks: true,
-        defaultPrivacyLevel: "allow",
-        startSessionReplayRecordingManually: true,
-      })
-
-      datadogLogs.init({
-        clientToken: env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
-        site: "us5.datadoghq.com",
-        service: "staging-interface",
-        env: "staging",
-        forwardErrorsToLogs: true,
-        forwardConsoleLogs: "all",
-        sessionSampleRate: 100,
-      })
-
-      datadogRum.startSessionReplayRecording()
-    }
-    loadLogging()
-    return () => {
-      datadogRum.stopSessionReplayRecording()
-    }
-  }, [])
-
   return (
     <>
-      <IntercomProvider appId={env.NEXT_PUBLIC_INTERCOM_APP_ID} autoBoot>
+      <IntercomProvider
+        appId={process.env.NEXT_PUBLIC_INTERCOM_APP_ID}
+        autoBoot
+        initializeDelay={10000}
+      >
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
@@ -304,6 +270,7 @@ export function Providers({
                         <TaskToaster />
                         <OrderToaster />
                         {children}
+                        <LazyDatadog />
                       </PriceProvider>
                     </ConnectKitProviderWithSignMessage>
                   </AppProvider>

@@ -1,7 +1,6 @@
 import { readErc20BalanceOf } from "@/generated"
 import { Token, chain, parseAmount } from "@renegade-fi/react"
 import {
-  Address,
   PrivateKeyAccount,
   createPublicClient,
   createWalletClient,
@@ -126,8 +125,8 @@ async function fundEth(
 }
 
 async function mintUpTo(
-  recipientAddr: Address,
-  token: Address,
+  recipientAddr: `0x${string}`,
+  token: `0x${string}`,
   amount: bigint
 ) {
   const balance = await readErc20BalanceOf(viemConfig, {
@@ -159,7 +158,11 @@ async function mintUpTo(
   }
 }
 
-async function mint(recipientAddr: Address, token: Address, amount: bigint) {
+async function mint(
+  recipientAddr: `0x${string}`,
+  token: `0x${string}`,
+  amount: bigint
+) {
   const account = privateKeyToAccount(
     process.env.DEV_PRIVATE_KEY as `0x${string}`
   )
