@@ -1,13 +1,12 @@
 "use client"
 
-import { env } from "@/env.mjs"
 import "@/styles/fonts.css"
 import { useEffect, useState } from "react"
 
 const RELAYER_HOSTNAME =
-  env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"
+  process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"
     ? "http://localhost:3000"
-    : `https://${env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME}:3000`
+    : `https://${process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME}:3000`
 export default function GlobalError({}: {
   error: Error & { digest?: string }
   reset: () => void

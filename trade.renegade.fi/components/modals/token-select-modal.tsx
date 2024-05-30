@@ -19,10 +19,9 @@ import { Token } from "@renegade-fi/react"
 import Image from "next/image"
 import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
-import { Address } from "viem"
 
 type TokenSelectModalProps = {
-  addressAndBalances: { address: Address; balance: string }[]
+  addressAndBalances: { address: `0x${string}`; balance: string }[]
   isOpen: boolean
   onClose: () => void
   setBase: (ticker: string) => void
@@ -106,7 +105,7 @@ export function TokenSelectModal({
 
 interface RowProps {
   balance: string
-  address: Address
+  address: `0x${string}`
   onClick: () => void
 }
 

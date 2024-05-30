@@ -5,7 +5,6 @@ import { formatNumber } from "@/lib/utils"
 import { Token, tokenMapping } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
-import { Address } from "viem"
 import { useAccount, useBlockNumber } from "wagmi"
 
 import { useDebounce } from "@/hooks/use-debounce"
@@ -27,7 +26,7 @@ export function ERC20TokenSelectModal({
     initializeWithValue: false,
   })
   const [balances, setBalances] = useState<
-    { address: Address; balance: bigint }[]
+    { address: `0x${string}`; balance: bigint }[]
   >([])
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -40,10 +39,10 @@ export function ERC20TokenSelectModal({
       }
       const balancePromises = tokens.map(async (token) => {
         const balance = await readErc20BalanceOf(wagmiConfig, {
-          address: token.address as Address,
+          address: token.address as `0x${string}`,
           args: [address ?? "0x"],
         })
-        return { address: token.address as Address, balance }
+        return { address: token.address as `0x${string}`, balance }
       })
       const result = await Promise.all(balancePromises)
       setBalances(result)

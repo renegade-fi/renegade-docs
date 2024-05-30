@@ -1,4 +1,3 @@
-import "./env.mjs"
 import analyzer from "@next/bundle-analyzer"
 
 /** @type {import('next').NextConfig} */

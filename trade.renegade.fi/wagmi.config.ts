@@ -1,6 +1,6 @@
 import { defineConfig } from "@wagmi/cli"
 import { actions, react } from "@wagmi/cli/plugins"
-import { parseAbi } from "viem"
+import { parseAbi } from "viem/utils"
 
 const abi = parseAbi([
   "function balanceOf(address owner) view returns (uint256)",

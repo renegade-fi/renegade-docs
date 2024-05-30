@@ -1,6 +1,5 @@
 import { Token } from "@renegade-fi/react"
 import {
-  Address,
   TypedDataDomain,
   WalletClient,
   hashTypedData,
@@ -57,14 +56,14 @@ export async function signPermit2({
 }: {
   amount: bigint
   chainId: number
-  spender: Address
-  permit2Address: Address
+  spender: `0x${string}`
+  permit2Address: `0x${string}`
   token: Token
   walletClient: WalletClient
   pkRoot: bigint[]
 }) {
   if (!walletClient.account)
-    throw new Error("Address not found on wallet client")
+    throw new Error("`0x${string}` not found on wallet client")
 
   // Construct Domain
   const domain: TypedDataDomain = {

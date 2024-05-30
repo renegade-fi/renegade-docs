@@ -1,6 +1,5 @@
 "use client"
 
-import { env } from "@/env.mjs"
 import { useEffect, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -22,10 +21,10 @@ export function RelayerStatusData() {
       try {
         const response = await fetch(
           `${
-            env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"
+            process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME === "localhost"
               ? "http"
               : "https"
-          }://${env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME}:3000/v0/ping`
+          }://${process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME}:3000/v0/ping`
         )
         if (response.ok) {
           setPing("live")
