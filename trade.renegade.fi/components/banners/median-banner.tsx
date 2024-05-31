@@ -1,6 +1,6 @@
 "use client"
 
-import { usePrice } from "@/contexts/PriceContext/price-context"
+import { useLastUpdated } from "@/contexts/price-context"
 import { BBO_TOOLTIP } from "@/lib/tooltip-labels"
 import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react"
 import type { Exchange } from "@renegade-fi/react"
@@ -102,11 +102,10 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     median: "",
   }[props.exchange]
 
-  const { handleGetLastUpdate } = usePrice()
-  const lastUpdate = handleGetLastUpdate(
-    props.exchange,
-    Token.findByTicker(props.activeBaseTicker).address
-  )
+  const lastUpdate = useLastUpdated({
+    exchange: props.exchange,
+    baseAddress: Token.findByTicker(props.activeBaseTicker).address,
+  })
 
   const [state, setState] = useState<ConnectionState>(ConnectionState.Loading)
 

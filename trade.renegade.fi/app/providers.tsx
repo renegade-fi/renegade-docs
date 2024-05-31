@@ -4,7 +4,6 @@ import LazyDatadog from "@/app/(desktop)/telemetry"
 import { OrderToaster } from "@/app/order-toaster"
 import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
-import PriceProvider from "@/contexts/PriceContext/price-context"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -265,13 +264,11 @@ export function Providers({
                 <QueryClientProvider client={queryClient}>
                   <AppProvider tokenIcons={icons}>
                     <ConnectKitProviderWithSignMessage>
-                      <PriceProvider>
-                        <Toaster position="bottom-center" richColors />
-                        <TaskToaster />
-                        <OrderToaster />
-                        {children}
-                        <LazyDatadog />
-                      </PriceProvider>
+                      <Toaster position="bottom-center" richColors />
+                      <TaskToaster />
+                      <OrderToaster />
+                      {children}
+                      <LazyDatadog />
                     </ConnectKitProviderWithSignMessage>
                   </AppProvider>
                 </QueryClientProvider>

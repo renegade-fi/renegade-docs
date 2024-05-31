@@ -2,6 +2,7 @@
 
 import { PlaceOrderButton } from "@/app/(desktop)/place-order-button"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { usePrice } from "@/contexts/price-context"
 import { Direction } from "@/lib/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
@@ -179,8 +180,8 @@ export function TradingBody() {
 }
 
 function HelperText({ base }: { base: Token }) {
-  const usdPrice = useUSDPrice(base)
-  const formattedUsdPrice = numeral(usdPrice).format("$0.00")
+  const price = usePrice({ baseAddress: base.address })
+  const formattedUsdPrice = numeral(price).format("$0.00")
   return (
     <Text color="text.muted" fontWeight="100" userSelect="text">
       Trades are end-to-end encrypted and always clear at the real-time midpoint
