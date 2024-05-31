@@ -29,8 +29,6 @@ import { useButton } from "@/hooks/use-button"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
 
-import glyphDark from "@/icons/glyph_dark.svg"
-
 function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
   const [isCompleted, setIsCompleted] = React.useState(false)
@@ -92,7 +90,7 @@ function Glyph(props: GlyphProps) {
   return (
     <Flex alignItems="center" gap="20px">
       <Box ref={props.glyphRef} minWidth="50px">
-        <Image alt="Renegade Logo" height="38" src={glyphDark} />
+        <Image alt="" priority height="38" src="/glyph_dark.svg" />
       </Box>
       <Link
         color="white.90"

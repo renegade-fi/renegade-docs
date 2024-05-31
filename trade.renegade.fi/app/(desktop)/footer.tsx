@@ -6,8 +6,6 @@ import { lookupWallet, useWalletId } from "@renegade-fi/react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 
-import logoDark from "@/icons/logo_dark.svg"
-
 export const Footer = () => {
   const logoRef = useRef<HTMLDivElement>(null)
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
@@ -43,7 +41,7 @@ export const Footer = () => {
       >
         <Flex alignItems="center" gap="30px">
           <Box ref={logoRef} minWidth="200px">
-            <Image alt="Renegade Logo" height="30" src={logoDark} />
+            <Image alt="" priority height="30" src="/logo_dark.svg" />
           </Box>
           <Link
             color="white.90"
