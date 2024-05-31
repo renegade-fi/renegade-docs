@@ -1,8 +1,9 @@
 import { Footer } from "@/app/(desktop)/footer"
 import { MainNav } from "@/app/(desktop)/main-nav"
 import { Providers } from "@/app/providers"
+import { PriceStoreProvider } from "@/contexts/price-context"
 import { TICKER_TO_LOGO_URL_HANDLE } from "@/lib/tokens"
-import { constructMetadata } from "@/lib/utils"
+import { constructMetadata, getInitialPrices } from "@/lib/utils"
 import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
@@ -20,25 +21,27 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const icons = await TICKER_TO_LOGO_URL_HANDLE
-  // const prices = await getTokenBannerData(renegade)
+  const prices = await getInitialPrices()
   return (
     <html lang="en">
       <body>
-        <Providers icons={icons}>
-          <div
-            style={{
-              flexDirection: "column",
-              display: "flex",
-              minHeight: "100vh",
-              overflow: "hidden",
-            }}
-          >
-            <MainNav />
-            {children}
-            <TokensBanner />
-            <Footer />
-          </div>
-        </Providers>
+        <PriceStoreProvider initialPrices={prices}>
+          <Providers icons={icons}>
+            <div
+              style={{
+                flexDirection: "column",
+                display: "flex",
+                minHeight: "100vh",
+                overflow: "hidden",
+              }}
+            >
+              <MainNav />
+              {children}
+              <TokensBanner />
+              <Footer />
+            </div>
+          </Providers>
+        </PriceStoreProvider>
         <Analytics />
       </body>
     </html>

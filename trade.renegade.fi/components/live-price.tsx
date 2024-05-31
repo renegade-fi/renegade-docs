@@ -1,4 +1,5 @@
 import { BannerSeparator } from "./banner-separator"
+import { usePrice } from "@/contexts/price-context"
 import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { Box, Flex, Text } from "@chakra-ui/react"
@@ -6,7 +7,6 @@ import { type Exchange, Token } from "@renegade-fi/react"
 import { useMemo } from "react"
 
 import { usePrevious } from "@/hooks/use-previous"
-import { usePrice } from "@/hooks/use-price"
 
 interface LivePricesProps {
   baseTicker: string
@@ -42,8 +42,10 @@ export const LivePrices = ({
       return Math.abs(baseDefaultDecimals) + 2
     }
   }, [baseDefaultDecimals, baseTicker, quoteTicker])
-
-  const price = usePrice(exchange, Token.findByTicker(baseTicker).address)
+  const price = usePrice({
+    exchange,
+    baseAddress: Token.findByTicker(baseTicker).address,
+  })
   const prevPrice = usePrevious(price)
 
   // Given the previous and current price reports, determine the displayed
