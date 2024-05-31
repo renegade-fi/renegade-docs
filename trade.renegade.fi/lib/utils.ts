@@ -127,7 +127,7 @@ export function constructMetadata({
         card: "summary_large_image",
         images: [image],
       }),
-      creator: "@dubdotco",
+      creator: "@renegade_fi",
     },
     metadataBase: new URL(env.NEXT_PUBLIC_URL),
     ...(noIndex && {
