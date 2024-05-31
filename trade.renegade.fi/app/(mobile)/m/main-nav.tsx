@@ -5,8 +5,6 @@ import { Box, Flex, Link, Spacer, Text } from "@chakra-ui/react"
 import Image from "next/image"
 import React from "react"
 
-import glyphDark from "@/icons/glyph_dark.svg"
-
 const headerHeight = "calc(2 * var(--banner-height))"
 
 interface OverlayMenuProps {
@@ -40,7 +38,7 @@ function OverlayMenu(props: OverlayMenuProps) {
         transitionDelay="0.05s"
       >
         <Flex alignItems="center" justifyContent="center" padding="18px">
-          <Image alt="Renegade Logo" height="32" src={glyphDark} />
+          <Image alt="" priority height="32" src="/glyph_dark.svg" />
           <Spacer />
           <CloseIcon
             height="16px"
@@ -135,7 +133,7 @@ export function MobileNav() {
       borderBottom="var(--border)"
       transition="0.2s"
     >
-      <Image alt="Renegade Logo" height="32" src={glyphDark} />
+      <Image alt="" priority height="32" src="/glyph_dark.svg" />
       <Spacer />
       <HamburgerIcon
         height="24px"

@@ -9,8 +9,6 @@ import Image from "next/image"
 
 import { MedianBanner } from "@/components/banners/median-banner"
 
-import logoDark from "@/icons/logo_dark.svg"
-
 function BodyText() {
   return (
     <Flex
@@ -34,8 +32,8 @@ function BodyText() {
         <Image
           height="35"
           style={{ margin: "4px 0 8px 0" }}
-          alt="Renegade Logo"
-          src={logoDark}
+          alt=""
+          src="/logo_dark.svg"
         />
         <Text alignSelf="flex-end">is not yet available on mobile.</Text>
       </Flex>
