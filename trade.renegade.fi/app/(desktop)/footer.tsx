@@ -41,7 +41,13 @@ export const Footer = () => {
       >
         <Flex alignItems="center" gap="30px">
           <Box ref={logoRef} minWidth="200px">
-            <Image alt="" priority height="30" src="/logo_dark.svg" />
+            <Image
+              alt=""
+              priority
+              width="192"
+              height="30"
+              src="/logo_dark.svg"
+            />
           </Box>
           <Link
             color="white.90"

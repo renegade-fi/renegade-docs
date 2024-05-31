@@ -90,7 +90,7 @@ function Glyph(props: GlyphProps) {
   return (
     <Flex alignItems="center" gap="20px">
       <Box ref={props.glyphRef} minWidth="50px">
-        <Image alt="" priority height="38" src="/glyph_dark.svg" />
+        <Image alt="" priority height="38" width="31" src="/glyph_dark.svg" />
       </Box>
       <Link
         color="white.90"
