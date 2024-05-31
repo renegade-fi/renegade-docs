@@ -1,6 +1,6 @@
 "use client"
 
-import { usePrice } from "@/contexts/PriceContext/price-context"
+import { useLastUpdated } from "@/contexts/price-context"
 import { BBO_TOOLTIP } from "@/lib/tooltip-labels"
 import { Box, Flex, Link, Stack, Text } from "@chakra-ui/react"
 import type { Exchange } from "@renegade-fi/react"
@@ -13,14 +13,7 @@ import { LivePrices } from "@/components/live-price"
 import { PulsingConnection } from "@/components/pulsing-connection-indicator"
 import { Tooltip } from "@/components/tooltip"
 
-enum ConnectionState {
-  Live = "live",
-  Stale = "stale",
-  Loading = "loading",
-  NoData = "no data",
-}
-
-const STALE_THRESHOLD = 60_000 // 60 seconds
+const STALE_THRESHOLD = 60_000
 
 function LinkWrapper(props: {
   link?: string
@@ -102,53 +95,45 @@ function ExchangeConnectionTriple(props: ExchangeConnectionTripleProps) {
     median: "",
   }[props.exchange]
 
-  const { handleGetLastUpdate } = usePrice()
-  const lastUpdate = handleGetLastUpdate(
-    props.exchange,
-    Token.findByTicker(props.activeBaseTicker).address
-  )
+  const lastUpdate = useLastUpdated({
+    exchange: props.exchange,
+    baseAddress: Token.findByTicker(props.activeBaseTicker).address,
+  })
 
-  const [state, setState] = useState<ConnectionState>(ConnectionState.Loading)
-
+  const [noData, setNoData] = useState(false)
   useEffect(() => {
-    if (!lastUpdate) {
-      const timer = setTimeout(() => {
-        if (!lastUpdate) {
-          setState(ConnectionState.NoData)
-        }
-      }, 5000) // 30 seconds
+    const timeout = setTimeout(() => {
+      setNoData(true)
+    }, 10000)
+    return () => clearTimeout(timeout)
+  }, [])
 
-      return () => clearTimeout(timer)
+  const now = Date.now()
+  let connectionText = "LOADING"
+  if (noData && !lastUpdate) {
+    connectionText = "NO DATA"
+  } else if (lastUpdate) {
+    const delta = now - lastUpdate
+    if (delta > STALE_THRESHOLD) {
+      connectionText = "STALE"
     } else {
-      const newState =
-        Date.now() - lastUpdate > STALE_THRESHOLD
-          ? ConnectionState.Stale
-          : ConnectionState.Live
-      setState(newState)
+      connectionText = "LIVE"
     }
-  }, [lastUpdate])
+  }
 
-  const connectionText =
-    state === ConnectionState.Stale
-      ? "STALE"
-      : state === ConnectionState.Loading
-      ? "LOADING"
-      : state === ConnectionState.NoData
-      ? "NO DATA"
-      : "LIVE"
-  const textVariant =
-    state === ConnectionState.Stale
-      ? "status-red"
-      : state === ConnectionState.Loading || state === ConnectionState.NoData
-      ? "status-gray"
-      : "status-green"
+  let textVariant = "status-gray"
+  if (connectionText === "STALE") {
+    textVariant = "status-red"
+  } else if (connectionText === "LIVE") {
+    textVariant = "status-green"
+  }
 
-  const pulseState = {
-    [ConnectionState.Live]: "live",
-    [ConnectionState.Loading]: "loading",
-    [ConnectionState.Stale]: "dead",
-    [ConnectionState.NoData]: "loading",
-  }[state] as "live" | "loading" | "dead"
+  let pulseState: "live" | "dead" | "loading" = "live"
+  if (connectionText === "STALE") {
+    pulseState = "dead"
+  } else if (connectionText === "LOADING" || connectionText === "NO DATA") {
+    pulseState = "loading"
+  }
 
   return (
     <LinkWrapper link={link} isMobile={props.isMobile}>

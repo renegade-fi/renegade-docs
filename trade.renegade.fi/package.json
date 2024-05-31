@@ -34,12 +34,14 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-use-intercom": "^5.1.4",
+    "react-use-websocket": "^4.8.1",
     "simplebar-react": "^3.2.4",
     "sonner": "^1.4.0",
     "usehooks-ts": "^2.13.0",
     "uuid": "^9.0.1",
     "viem": "^2.9.28",
-    "wagmi": "^2.5.7"
+    "wagmi": "^2.5.7",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^13.4.19",
