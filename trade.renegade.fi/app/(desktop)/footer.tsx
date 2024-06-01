@@ -43,7 +43,7 @@ export const Footer = () => {
       >
         <Flex alignItems="center" gap="30px">
           <Box ref={logoRef} minWidth="200px">
-            <Image alt="Renegade Logo" height="30" src={logoDark} />
+            <Image alt="" height="30" width="192" priority src={logoDark} />
           </Box>
           <Link
             color="white.90"
