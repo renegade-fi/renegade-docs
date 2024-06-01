@@ -1,11 +1,9 @@
 "use client"
 
 import { TradingBody } from "./trading"
+import Deposit from "@/app/(desktop)/deposit"
+import Withdraw from "@/app/(desktop)/withdraw"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
-import dynamic from "next/dynamic"
-
-const Deposit = dynamic(() => import("./deposit"), { ssr: false })
-const Withdraw = dynamic(() => import("./withdraw"), { ssr: false })
 
 export function Main() {
   const { view } = useApp()
