@@ -131,7 +131,7 @@ export function constructMetadata({
     },
     icons: {
       icon: "/favicon.ico",
-      shortcut: "/favicon-16x16.png",
+      // shortcut: "/favicon-16x16.png",
       apple: "/apple-touch-icon.png",
     },
     metadataBase: new URL(env.NEXT_PUBLIC_URL),
