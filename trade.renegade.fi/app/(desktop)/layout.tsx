@@ -7,12 +7,20 @@ import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
 import { Analytics } from "@vercel/analytics/react"
+import { Viewport } from "next"
 import React from "react"
 
 import { TokensBanner } from "@/components/banners/tokens-banner"
 import "@/styles/index.css"
 
 export const metadata = constructMetadata()
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "black" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+}
 
 export default async function RootLayout({
   children,
