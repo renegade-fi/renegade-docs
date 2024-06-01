@@ -92,7 +92,7 @@ function Glyph(props: GlyphProps) {
   return (
     <Flex alignItems="center" gap="20px">
       <Box ref={props.glyphRef} minWidth="50px">
-        <Image alt="Renegade Logo" height="38" src={glyphDark} />
+        <Image alt="" height="38" width="31" priority src={glyphDark} />
       </Box>
       <Link
         color="white.90"
