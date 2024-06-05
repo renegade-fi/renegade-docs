@@ -149,11 +149,23 @@ export class RelayerStatusBanner extends React.Component<
   render() {
     let connectionText: React.ReactElement
     if (this.props.connectionState === "loading") {
-      connectionText = <Text variant="status-gray">CONNECTING</Text>
+      connectionText = (
+        <Text marginBottom="-3px" variant="status-gray">
+          CONNECTING
+        </Text>
+      )
     } else if (this.props.connectionState === "live") {
-      connectionText = <Text variant="status-green">CONNECTED</Text>
+      connectionText = (
+        <Text marginBottom="-3px" variant="status-green">
+          CONNECTED
+        </Text>
+      )
     } else if (this.props.connectionState === "dead") {
-      connectionText = <Text variant="status-red">DISCONNECTED</Text>
+      connectionText = (
+        <Text marginBottom="-3px" variant="status-red">
+          DISCONNECTED
+        </Text>
+      )
     } else {
       throw new Error("Invalid connection state: " + this.props.connectionState)
     }
@@ -225,7 +237,7 @@ export class RelayerStatusBanner extends React.Component<
               <Text>renegade-relayer.eth</Text>
               <BannerSeparator flexGrow={1} />
               <HStack>
-                <Text marginBottom="-3px">{connectionText}</Text>
+                {connectionText}
                 <PulsingConnection
                   state={this.props.connectionState || "dead"}
                 />

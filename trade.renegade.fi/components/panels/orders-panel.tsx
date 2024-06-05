@@ -306,10 +306,14 @@ function OrderBookPanel() {
           const userOrder = orderHistory.data?.get(networkOrder.id)
           if (userOrder) {
             return (
-              <UserOrder order={userOrder} timestamp={networkOrder.timestamp} />
+              <UserOrder
+                key={userOrder.id}
+                order={userOrder}
+                timestamp={networkOrder.timestamp}
+              />
             )
           }
-          return <NetworkOrderItem order={networkOrder} />
+          return <NetworkOrderItem key={networkOrder.id} order={networkOrder} />
         })}
       </SimpleBar>
     )
