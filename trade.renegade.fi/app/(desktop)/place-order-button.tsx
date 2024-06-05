@@ -4,10 +4,14 @@ import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
+  MAX_BALANCES,
+  MAX_ORDERS,
   Token,
   createOrder,
   formatAmount,
   parseAmount,
+  useBackOfQueueBalances,
+  useBackOfQueueOrders,
   useBalances,
   useConfig,
   useStatus,
@@ -105,18 +109,35 @@ export function PlaceOrderButton({
     return quoteBalance === BigInt(0)
   }, [balances, baseAddress, baseTokenAmount, direction, quoteAddress])
 
+  const backOfQueueBalances = useBackOfQueueBalances()
+  const orders = useBackOfQueueOrders()
+
+  const isMaxOrders = orders.length === MAX_ORDERS
+  const isMaxBalances = backOfQueueBalances.length === MAX_BALANCES
+  const isExistingBalance = balances.find(
+    ({ mint }) =>
+      mint === (direction === Direction.BUY ? baseAddress : quoteAddress)
+  )
+
+  const isDisabled =
+    isConnected &&
+    (hasZeroBalance || isMaxOrders || (isMaxBalances && !isExistingBalance))
+
   let placeOrderButtonContent: string
   if (shouldUse) {
     placeOrderButtonContent = buttonText
+  } else if (isMaxOrders) {
+    placeOrderButtonContent = "Max orders reached"
+  } else if (!isExistingBalance && isMaxBalances) {
+    placeOrderButtonContent = "Max balances reached"
   } else if (hasZeroBalance) {
-    placeOrderButtonContent = "Insufficient Balance"
+    placeOrderButtonContent = "Insufficient balance"
   } else {
     placeOrderButtonContent = `Place Order for ${
       baseTokenAmount || "0"
     } ${base}`
   }
 
-  const isDisabled = isConnected && (!baseTokenAmount || hasZeroBalance)
   const costInUsd = useUSDPrice(
     baseToken,
     parseUnits(baseTokenAmount, baseToken.decimals)
@@ -148,7 +169,7 @@ export function PlaceOrderButton({
       <Tooltip
         placement="bottom"
         label={
-          !shouldUse && !hasZeroBalance && hasInsufficientBalance
+          !isDisabled && hasInsufficientBalance
             ? INSUFFICIENT_BALANCE_TOOLTIP
             : ""
         }
