@@ -135,14 +135,15 @@ export const usePrice = ({
   }
 
   const { store, handleSubscribe } = context
-  const topic = `${exchange}-${baseAddress}-${DEFAULT_QUOTE[exchange]}`
+  const quoteAddress = DEFAULT_QUOTE[exchange]
+  const topic = `${exchange}-${baseAddress}-${quoteAddress}`
   const price = useStore(store, (state) => state.prices.get(topic))
 
   useEffect(() => {
     handleSubscribe({ exchange, baseAddress })
-  }, [baseAddress, exchange, handleSubscribe])
+  }, [baseAddress, exchange, handleSubscribe, quoteAddress])
 
-  return price ?? 0
+  return price ? price : 0
 }
 
 export const useLastUpdated = ({
