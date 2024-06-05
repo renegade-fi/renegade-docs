@@ -1,5 +1,6 @@
 import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
-import { Token, tokenMapping } from "@renegade-fi/react"
+import { DISPLAY_TOKENS } from "@/lib/tokens"
+import { Token } from "@renegade-fi/react"
 import { Metadata } from "next"
 import numeral from "numeral"
 import { formatUnits } from "viem/utils"
@@ -239,7 +240,7 @@ export async function getInitialPrices(): Promise<Map<string, number>> {
   const baseUrl = process.env.NEXT_PUBLIC_PRICE_REPORTER_URL
   const usdtAddress = Token.findByTicker("USDT").address
 
-  const promises = tokenMapping.tokens.map((token) => {
+  const promises = DISPLAY_TOKENS({ hideStables: true }).map((token) => {
     const topic = `binance-${token.address}-${usdtAddress}`
     return fetch(`https://${baseUrl}:3000/price/${topic}`)
       .then((res) => res.text())

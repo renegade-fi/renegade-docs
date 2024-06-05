@@ -3,6 +3,7 @@
 import { PlaceOrderButton } from "@/app/(desktop)/place-order-button"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { usePrice } from "@/contexts/price-context"
+import { STABLECOINS } from "@/lib/tokens"
 import { Direction } from "@/lib/types"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
@@ -26,7 +27,6 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
 
-const DISABLED_BASE_TOKENS = ["USDC"]
 interface SelectableProps {
   text: string
   onClick: () => void
@@ -103,7 +103,7 @@ export function TradingBody() {
   }, [baseTokenAmount, buySellSelectableRef])
 
   useEffect(() => {
-    if (view === ViewEnum.TRADING && DISABLED_BASE_TOKENS.includes(base)) {
+    if (view === ViewEnum.TRADING && STABLECOINS.includes(base)) {
       setBase("WETH")
     }
   }, [base, setBase, view])

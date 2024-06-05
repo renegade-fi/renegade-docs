@@ -1,8 +1,8 @@
 import { wagmiConfig } from "@/app/providers"
 import { readErc20BalanceOf } from "@/generated"
-import { TICKER_TO_NAME } from "@/lib/tokens"
+import { DISPLAY_TOKENS, TICKER_TO_NAME } from "@/lib/tokens"
 import { formatNumber } from "@/lib/utils"
-import { Token, tokenMapping } from "@renegade-fi/react"
+import { Token } from "@renegade-fi/react"
 import { useEffect, useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 import { useAccount, useBlockNumber } from "wagmi"
@@ -15,7 +15,6 @@ type ERC20TokenSelectModalProps = {
   isOpen: boolean
   onClose: () => void
 }
-const tokens = tokenMapping.tokens
 export function ERC20TokenSelectModal({
   isOpen,
   onClose,
@@ -37,7 +36,7 @@ export function ERC20TokenSelectModal({
       if (!address) {
         return
       }
-      const balancePromises = tokens.map(async (token) => {
+      const balancePromises = DISPLAY_TOKENS().map(async (token) => {
         const balance = await readErc20BalanceOf(wagmiConfig, {
           address: token.address as `0x${string}`,
           args: [address ?? "0x"],

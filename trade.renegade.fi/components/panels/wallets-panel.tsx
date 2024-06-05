@@ -2,6 +2,7 @@
 
 import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
+import { DISPLAY_TOKENS } from "@/lib/tokens"
 import {
   AIRDROP_TOOLTIP,
   RENEGADE_ACCOUNT_TOOLTIP,
@@ -13,7 +14,6 @@ import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons"
 import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react"
 import {
   Token,
-  tokenMapping,
   useBalances,
   useStatus,
   useTaskHistory,
@@ -206,7 +206,7 @@ function RenegadeWalletPanel() {
     const nonzero: Array<[`0x${string}`, bigint]> = Object.entries(
       balances
     ).map(([_, b]) => [b.mint, b.amount])
-    const placeholders: Array<[`0x${string}`, bigint]> = tokenMapping.tokens
+    const placeholders: Array<[`0x${string}`, bigint]> = DISPLAY_TOKENS()
       .filter((t) => !nonzero.some(([a]) => a === t.address))
       .map((t) => [t.address as `0x${string}`, BigInt(0)])
 
