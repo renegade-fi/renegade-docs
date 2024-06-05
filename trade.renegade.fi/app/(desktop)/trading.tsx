@@ -26,6 +26,7 @@ import { useUSDPrice } from "@/hooks/use-usd-price"
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
 import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
 
+const DISABLED_BASE_TOKENS = ["USDC"]
 interface SelectableProps {
   text: string
   onClick: () => void
@@ -102,7 +103,7 @@ export function TradingBody() {
   }, [baseTokenAmount, buySellSelectableRef])
 
   useEffect(() => {
-    if (view === ViewEnum.TRADING && base === "USDC") {
+    if (view === ViewEnum.TRADING && DISABLED_BASE_TOKENS.includes(base)) {
       setBase("WETH")
     }
   }, [base, setBase, view])
