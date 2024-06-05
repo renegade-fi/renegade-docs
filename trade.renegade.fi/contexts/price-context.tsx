@@ -51,7 +51,7 @@ export const PriceStoreProvider: React.FC<
   )
 
   const { readyState, sendJsonMessage } = useWebSocket(
-    "wss://dev.price-reporter.renegade.fi:4000/",
+    `wss://${process.env.NEXT_PUBLIC_PRICE_REPORTER_URL}:4000`,
     {
       filter: () => false,
       onMessage: (event) => {
@@ -106,10 +106,8 @@ export const PriceStoreProvider: React.FC<
     exchange: Exchange
     baseAddress: `0x${string}`
   }) => {
-    console.log("Request to subscribe to ", exchange, baseAddress)
     const topic = `${exchange}-${baseAddress}-${DEFAULT_QUOTE[exchange]}`
     if (!store.getState().subscriptions.has(topic)) {
-      console.log("Subscribing to ", topic)
       sendJsonMessage({
         method: "subscribe",
         topic,
