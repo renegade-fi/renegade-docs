@@ -1,6 +1,6 @@
-import { TICKER_TO_NAME } from "@/lib/tokens"
+import { DISPLAY_TOKENS, TICKER_TO_NAME } from "@/lib/tokens"
 import { formatNumber } from "@/lib/utils"
-import { Token, tokenMapping, useBalances } from "@renegade-fi/react"
+import { Token, useBalances } from "@renegade-fi/react"
 import { useMemo, useState } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -16,7 +16,6 @@ export function TradingTokenSelectModal({
   isOpen,
   onClose,
 }: TradingTokenSelectModalProps) {
-  const tokens = tokenMapping.tokens
   const balances = useBalances()
   const [_, setBase] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
@@ -25,7 +24,7 @@ export function TradingTokenSelectModal({
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   const filteredBalances = useMemo(() => {
-    return tokens
+    return DISPLAY_TOKENS()
       .filter(({ address }) => {
         const ticker = Token.findByAddress(address as `0x${string}`).ticker
         const name = Token.findByAddress(address as `0x${string}`).name
@@ -52,7 +51,7 @@ export function TradingTokenSelectModal({
           true
         ),
       }))
-  }, [balances, debouncedSearchTerm, tokens])
+  }, [balances, debouncedSearchTerm])
 
   return (
     <TokenSelectModal

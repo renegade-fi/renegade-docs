@@ -1,7 +1,7 @@
 "use client"
 
-import { TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
-import { Exchange, Token, tokenMapping } from "@renegade-fi/react"
+import { DISPLAY_TOKENS, TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
+import { Exchange, Token } from "@renegade-fi/react"
 import {
   PropsWithChildren,
   createContext,
@@ -89,7 +89,7 @@ export const PriceStoreProvider: React.FC<
 
   useEffect(() => {
     if (readyState === ReadyState.OPEN) {
-      for (const token of tokenMapping.tokens) {
+      for (const token of DISPLAY_TOKENS({ hideStables: true })) {
         const topic = `binance-${token.address}-${DEFAULT_QUOTE.binance}`
         sendJsonMessage({
           method: "subscribe",

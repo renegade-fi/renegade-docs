@@ -1,7 +1,7 @@
 "use client"
 
+import { DISPLAY_TOKENS } from "@/lib/tokens"
 import { Stack, Text } from "@chakra-ui/react"
-import { tokenMapping } from "@renegade-fi/react"
 import { useLocalStorage } from "usehooks-ts"
 
 import Marquee from "@/components/banners/marquee"
@@ -11,9 +11,7 @@ export function TokensBanner({}: { prices?: number[] }) {
   const [_, setBaseToken] = useLocalStorage("base", "WETH", {
     initializeWithValue: false,
   })
-  const tokens = tokenMapping.tokens.filter(
-    ({ ticker }) => !["USDC", "USDT"].includes(ticker)
-  )
+  const tokens = DISPLAY_TOKENS({ hideStables: true })
   return (
     <Marquee
       autoFill
