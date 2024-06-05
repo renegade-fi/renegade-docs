@@ -9,11 +9,14 @@ import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
+  MAX_BALANCES,
   Token,
   chain,
   deposit,
   getPkRootScalars,
   parseAmount,
+  useBackOfQueueBalances,
+  useBackOfQueueOrders,
   useConfig,
   useStatus,
   useTaskHistory,
@@ -153,8 +156,25 @@ export default function DepositButton({
   const hasInsufficientBalance = balance
     ? balance < parseAmount(baseTokenAmount, Token.findByTicker(base))
     : true
-  const isDisabled = isConnected && (!baseTokenAmount || hasInsufficientBalance)
   const needsApproval = allowance === BigInt(0) || allowance === undefined
+
+  const balances = useBackOfQueueBalances()
+  const orders = useBackOfQueueOrders()
+  const isMaxBalances = balances.length === MAX_BALANCES
+  const mints = balances.map((balance) => balance.mint)
+  const isExistingBalance = mints.includes(Token.findByTicker(base).address)
+  const orderResultsInNewBalance = orders.some(
+    (order) =>
+      !mints.includes(order.side === "Buy" ? order.base_mint : order.quote_mint)
+  )
+
+  const isDisabled =
+    isConnected &&
+    (hasInsufficientBalance ||
+      (!isExistingBalance &&
+        balances.length === MAX_BALANCES - 1 &&
+        orderResultsInNewBalance) ||
+      (!isExistingBalance && isMaxBalances))
 
   const handleClick = async () => {
     if (shouldUse) {
@@ -166,6 +186,25 @@ export default function DepositButton({
     } else {
       handleSignAndDeposit()
     }
+  }
+
+  let buttonContent: string
+  if (shouldUse) {
+    buttonContent = buttonText
+  } else if (hasInsufficientBalance) {
+    buttonContent = "Insufficient balance"
+  } else if (!isExistingBalance && isMaxBalances) {
+    buttonContent = "Max balances reached"
+  } else if (
+    !isExistingBalance &&
+    balances.length === MAX_BALANCES - 1 &&
+    orderResultsInNewBalance
+  ) {
+    buttonContent = "Unused balance slot needed for order"
+  } else if (needsApproval) {
+    buttonContent = `Approve ${base}`
+  } else {
+    buttonContent = `Deposit ${baseTokenAmount || "0"} ${base}`
   }
 
   return (
@@ -198,13 +237,7 @@ export default function DepositButton({
         onClick={handleClick}
         rightIcon={<ArrowForwardIcon />}
       >
-        {shouldUse
-          ? buttonText
-          : hasInsufficientBalance
-          ? "Insufficient balance"
-          : needsApproval
-          ? `Approve ${base}`
-          : `Deposit ${baseTokenAmount || "0"} ${base}`}
+        {buttonContent}
       </Button>
       {isOpen && <CreateStepper onClose={onClose} />}
     </>
