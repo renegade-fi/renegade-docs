@@ -2,9 +2,13 @@ import { useEffect } from "react"
 
 const LazyDatadog = () => {
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "development") {
+    if (
+      process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PUBLIC_VERCEL_ENV === "development"
+    ) {
       return
     }
+
     let datadogRum: any
     let datadogLogs
 
