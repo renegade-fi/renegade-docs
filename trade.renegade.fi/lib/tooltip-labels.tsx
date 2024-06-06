@@ -74,3 +74,7 @@ export const INSUFFICIENT_BALANCE_TOOLTIP =
   "Insufficient balance to cover the entire order. Only part of the order will be filled."
 export const USER_ORDER_IN_ORDERBOOK =
   "Your order information is only visible to you and your connected relayer."
+export const MIDPOINT_TOOLTIP =
+  "This order will clear at the middle of the Binance bid-ask spread."
+export const GAS_FEE_TOOLTIP =
+  "Gas fees for this transaction are paid for by your connected relayer."

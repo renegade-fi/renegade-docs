@@ -1,5 +1,3 @@
-import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
-import { INSUFFICIENT_BALANCE_TOOLTIP } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -7,35 +5,25 @@ import {
   MAX_BALANCES,
   MAX_ORDERS,
   Token,
-  createOrder,
-  formatAmount,
-  parseAmount,
   useBackOfQueueBalances,
   useBackOfQueueOrders,
   useBalances,
-  useConfig,
   useStatus,
-  useTaskHistory,
 } from "@renegade-fi/react"
 import { useMemo } from "react"
-import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { v4 as uuidv4 } from "uuid"
-import { parseUnits } from "viem/utils"
 import { useAccount as useAccountWagmi } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
-import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
-import { Tooltip } from "@/components/tooltip"
 
 export function PlaceOrderButton({
   baseTokenAmount,
-  setBaseTokenAmount,
+  onOpen,
 }: {
   baseTokenAmount: string
-  setBaseTokenAmount: (baseTokenAmount: string) => void
+  onOpen: () => void
 }) {
   const { address } = useAccountWagmi()
   const balances = useBalances()
@@ -62,40 +50,8 @@ export function PlaceOrderButton({
     signInText: "Sign in to Place Orders",
   })
 
-  const config = useConfig()
   const status = useStatus()
-
   const isConnected = status === "in relayer"
-
-  const { data: taskHistory } = useTaskHistory()
-  const isQueue = Array.from(taskHistory?.values() || []).find(
-    (task) => task.state !== "Completed" && task.state !== "Failed"
-  )
-  const handlePlaceOrder = async () => {
-    const id = uuidv4()
-    const parsedAmount = parseAmount(baseTokenAmount, baseToken)
-    setBaseTokenAmount("")
-    if (isQueue) {
-      toast.message(QUEUED_PLACE_ORDER_MSG(baseToken, parsedAmount, direction))
-    }
-    await createOrder(config, {
-      id,
-      base: baseAddress,
-      quote: quoteAddress,
-      side: direction,
-      amount: parsedAmount,
-    }).catch((e) => {
-      toast.error(
-        FAILED_PLACE_ORDER_MSG(
-          baseToken,
-          parsedAmount,
-          direction,
-          e.shortMessage ?? e.response.data
-        )
-      )
-      console.error(`Error placing order: ${e.response?.data ?? e.message}`)
-    })
-  }
 
   const hasZeroBalance = useMemo(() => {
     if (!baseTokenAmount) return false
@@ -138,82 +94,47 @@ export function PlaceOrderButton({
     } ${base}`
   }
 
-  const costInUsd = useUSDPrice(
-    baseToken,
-    parseUnits(baseTokenAmount, baseToken.decimals)
-  )
-
-  const hasInsufficientBalance = useMemo(() => {
-    if (!baseTokenAmount) return false
-    const baseBalance =
-      balances.find(({ mint }) => mint === baseAddress)?.amount || BigInt(0)
-    const quoteBalance =
-      balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
-    if (direction === Direction.SELL) {
-      return baseBalance < parseAmount(baseTokenAmount, baseToken)
-    }
-    return parseFloat(formatAmount(quoteBalance, quoteToken)) < costInUsd
-  }, [
-    balances,
-    baseAddress,
-    baseToken,
-    baseTokenAmount,
-    costInUsd,
-    direction,
-    quoteAddress,
-    quoteToken,
-  ])
-
   return (
     <>
-      <Tooltip
-        placement="bottom"
-        label={
-          !isDisabled && hasInsufficientBalance
-            ? INSUFFICIENT_BALANCE_TOOLTIP
-            : ""
+      <Button
+        padding="20px"
+        color="white.80"
+        fontSize="1.2em"
+        fontWeight="200"
+        opacity={
+          !baseTokenAmount ? "0" : !address || !isConnected ? "0.6" : "1"
         }
+        borderWidth="thin"
+        borderColor="white.40"
+        borderRadius="100px"
+        _hover={
+          isDisabled
+            ? { backgroundColor: "transparent" }
+            : {
+                borderColor: "white.60",
+                color: "white",
+              }
+        }
+        transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
+        visibility={baseTokenAmount ? "visible" : "hidden"}
+        cursor={cursor}
+        transition="0.15s"
+        backgroundColor="transparent"
+        isDisabled={isDisabled}
+        loadingText="Please wait for task completion"
+        onClick={() => {
+          if (shouldUse) {
+            buttonOnClick()
+          } else if (isDisabled) {
+            return
+          } else {
+            onOpen()
+          }
+        }}
+        rightIcon={<ArrowForwardIcon />}
       >
-        <Button
-          padding="20px"
-          color="white.80"
-          fontSize="1.2em"
-          fontWeight="200"
-          opacity={
-            !baseTokenAmount ? "0" : !address || !isConnected ? "0.6" : "1"
-          }
-          borderWidth="thin"
-          borderColor="white.40"
-          borderRadius="100px"
-          _hover={
-            isDisabled
-              ? { backgroundColor: "transparent" }
-              : {
-                  borderColor: "white.60",
-                  color: "white",
-                }
-          }
-          transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-          visibility={baseTokenAmount ? "visible" : "hidden"}
-          cursor={cursor}
-          transition="0.15s"
-          backgroundColor="transparent"
-          isDisabled={isDisabled}
-          loadingText="Please wait for task completion"
-          onClick={() => {
-            if (shouldUse) {
-              buttonOnClick()
-            } else if (isDisabled) {
-              return
-            } else {
-              handlePlaceOrder()
-            }
-          }}
-          rightIcon={<ArrowForwardIcon />}
-        >
-          {placeOrderButtonContent}
-        </Button>
-      </Tooltip>
+        {placeOrderButtonContent}
+      </Button>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
   )
