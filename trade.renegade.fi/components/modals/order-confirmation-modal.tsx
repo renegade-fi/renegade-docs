@@ -1,11 +1,10 @@
 import { useApp } from "@/contexts/App/app-context"
-import { usePrice } from "@/contexts/price-context"
 import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
 import {
   GAS_FEE_TOOLTIP,
   MIDPOINT_TOOLTIP,
-  PROTOCOL_FEE_TOOLTIP,
-  RELAYER_FEE_TOOLTIP,
+  ORDER_CONFIRMATION_PROTOCOL_FEE_TOOLTIP,
+  ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import {
@@ -175,7 +174,7 @@ export function OrderConfirmationModal({
                   fontSize="2.4em"
                   variant="trading-body-button"
                 >
-                  {formattedUsdPrice} {quote}
+                  ~{formattedUsdPrice} {quote}
                 </Text>
                 <Image
                   src={tokenIcons[quote]}
@@ -199,7 +198,10 @@ export function OrderConfirmationModal({
               <Flex alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="1" color="text.secondary">
                   <Text>Protocol Fee (0.02%)</Text>
-                  <Tooltip placement="top" label={PROTOCOL_FEE_TOOLTIP}>
+                  <Tooltip
+                    placement="top"
+                    label={ORDER_CONFIRMATION_PROTOCOL_FEE_TOOLTIP}
+                  >
                     <Info height={16} width={16} />
                   </Tooltip>
                 </Flex>
@@ -208,7 +210,10 @@ export function OrderConfirmationModal({
               <Flex alignItems="center" justifyContent="space-between">
                 <Flex alignItems="center" gap="1" color="text.secondary">
                   <Text>Relayer Fee (0.08%)</Text>
-                  <Tooltip placement="top" label={RELAYER_FEE_TOOLTIP}>
+                  <Tooltip
+                    placement="top"
+                    label={ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP}
+                  >
                     <Info height={16} width={16} />
                   </Tooltip>
                 </Flex>

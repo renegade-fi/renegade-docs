@@ -78,3 +78,7 @@ export const MIDPOINT_TOOLTIP =
   "This order will clear at the middle of the Binance bid-ask spread."
 export const GAS_FEE_TOOLTIP =
   "Gas fees for this transaction are paid for by your connected relayer."
+export const ORDER_CONFIRMATION_PROTOCOL_FEE_TOOLTIP =
+  "The fee you pay to the protocol. Only paid upon a successful match."
+export const ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP =
+  "The fee you pay to your relayer. Only paid upon a successful match."
