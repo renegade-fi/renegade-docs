@@ -23,6 +23,11 @@ const nextConfig = {
         destination: "https://renegadefi.typeform.com/access",
         permanent: true,
       },
+      {
+        source: "/testnet",
+        destination: "https://substack.renegade.fi/p/renegade-launches-public-testnet",
+        permanent: true,
+      },
     ]
   },
 }
