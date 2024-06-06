@@ -6,6 +6,8 @@ import type { Metadata } from "next"
 import React from "react"
 
 import "@/styles/index.css"
+import { PriceStoreProvider } from "@/contexts/price-context"
+import { getInitialPrices } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: {
@@ -21,10 +23,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const prices = await getInitialPrices()
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <PriceStoreProvider initialPrices={prices}>
+          <Providers>{children}</Providers>
+        </PriceStoreProvider>
       </body>
     </html>
   )
