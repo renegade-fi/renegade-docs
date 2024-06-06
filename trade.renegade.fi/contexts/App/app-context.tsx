@@ -51,12 +51,11 @@ function AppProvider({
         uid: string
       }
     ) => {
-      disconnect(config)
-      if (
-        data.accounts &&
-        (!fundedAddresses || !fundedAddresses.includes(data.accounts[0]))
-      ) {
-        fundWallet(fundList, data.accounts[0])
+      if (data.accounts) {
+        disconnect(config)
+        if (!fundedAddresses || !fundedAddresses.includes(data.accounts[0])) {
+          fundWallet(fundList, data.accounts[0])
+        }
       }
     }
 
