@@ -25,6 +25,7 @@ import { useMax } from "@/hooks/use-max"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { BlurredOverlay } from "@/components/modals/blurred-overlay"
+import { OrderConfirmationModal } from "@/components/modals/order-confirmation-modal"
 import { TradingTokenSelectModal } from "@/components/modals/renegade-token-select-modal"
 
 interface SelectableProps {
@@ -64,11 +65,15 @@ export function TradingBody() {
     onOpen: onOpenTokenMenu,
     onClose: onCloseTokenMenu,
   } = useDisclosure()
+  const {
+    isOpen: orderConfirmationIsOpen,
+    onOpen: onOpenOrderConfirmation,
+    onClose: onCloseOrderConfirmation,
+  } = useDisclosure()
   const [baseTokenAmount, setBaseTokenAmount] = useState("")
-  const [base, setBase] = useLocalStorage(
-    "base",
-    Token.findByTicker("WETH").ticker
-  )
+  const [base, setBase] = useLocalStorage("base", "WETH", {
+    initializeWithValue: false,
+  })
   const [quote] = useLocalStorage("quote", "USDC", {
     initializeWithValue: false,
   })
@@ -159,7 +164,7 @@ export function TradingBody() {
         </Flex>
         <PlaceOrderButton
           baseTokenAmount={baseTokenAmount}
-          setBaseTokenAmount={setBaseTokenAmount}
+          onOpen={onOpenOrderConfirmation}
         />
         <BlurredOverlay
           activeModal={activeModal}
@@ -170,6 +175,12 @@ export function TradingBody() {
       <TradingTokenSelectModal
         isOpen={tokenMenuIsOpen}
         onClose={onCloseTokenMenu}
+      />
+      <OrderConfirmationModal
+        amount={baseTokenAmount}
+        isOpen={orderConfirmationIsOpen}
+        setAmount={setBaseTokenAmount}
+        onClose={onCloseOrderConfirmation}
       />
     </>
   )
