@@ -1,4 +1,6 @@
 import { Providers } from "@/app/providers"
+import { PriceStoreProvider } from "@/contexts/price-context"
+import { getInitialPrices } from "@/lib/utils"
 import "@/styles/animations.css"
 import "@/styles/fonts.css"
 import "@/styles/globals.css"
@@ -6,8 +8,6 @@ import type { Metadata } from "next"
 import React from "react"
 
 import "@/styles/index.css"
-import { PriceStoreProvider } from "@/contexts/price-context"
-import { getInitialPrices } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: {
