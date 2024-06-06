@@ -1,6 +1,6 @@
 "use client"
 
-import { DISPLAY_TOKENS, TICKER_TO_DEFAULT_DECIMALS } from "@/lib/tokens"
+import { DISPLAY_TOKENS } from "@/lib/tokens"
 import { Exchange, Token } from "@renegade-fi/react"
 import {
   PropsWithChildren,
@@ -55,32 +55,32 @@ export const PriceStoreProvider: React.FC<
     {
       filter: () => false,
       onMessage: (event) => {
-        try {
-          const data = JSON.parse(event.data)
+        const data = JSON.parse(event.data)
 
-          if (data.topic && data.price) {
-            const { topic, price } = data
-            const prevPrice = store.getState().prices.get(topic)
-            const d = TICKER_TO_DEFAULT_DECIMALS[topic.split("-")[1]]
-            const priceNeedsUpdate =
-              !prevPrice || prevPrice.toFixed(d) !== price.toFixed(d)
+        if (data.topic && data.price) {
+          const { topic, price } = data
+          const prevPrice = store.getState().prices.get(topic)
+          // TODO: Use random delay to prevent flickering when price changes too fast
+          const priceNeedsUpdate =
+            !prevPrice || prevPrice.toFixed(2) !== price.toFixed(2)
 
-            if (priceNeedsUpdate) {
-              store.setState((state) => ({
-                prices: new Map(state.prices).set(topic, price),
-              }))
-            }
-
+          if (priceNeedsUpdate) {
             store.setState((state) => ({
-              lastUpdated: new Map(state.lastUpdated).set(topic, Date.now()),
-            }))
-          } else if (data.subscriptions) {
-            store.setState((state) => ({
-              subscriptions: new Set(state.subscriptions),
+              ...state,
+              prices: new Map(state.prices).set(topic, price),
             }))
           }
-        } catch (error) {
-          console.error(`Failed to parse message: ${event.data}`)
+
+          store.setState((state) => ({
+            ...state,
+            lastUpdated: new Map(state.lastUpdated).set(topic, Date.now()),
+          }))
+        }
+        if (data.subscriptions) {
+          store.setState((state) => ({
+            ...state,
+            subscriptions: new Set(data.subscriptions),
+          }))
         }
       },
       shouldReconnect: () => true,
