@@ -17,7 +17,13 @@ export default function Page() {
         position: "relative",
       }}
     >
-      <Image alt="" fill priority src={backgroundPattern} />
+      <Image
+        alt=""
+        fill
+        priority
+        src={backgroundPattern}
+        style={{ zIndex: -1 }}
+      />
       <MedianBannerWrapper />
       <div style={{ flexGrow: 1, display: "flex" }}>
         <WalletsPanel />
