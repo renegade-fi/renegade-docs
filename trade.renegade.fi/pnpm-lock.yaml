@@ -34,19 +34,19 @@ importers:
         version: 11.11.5(@emotion/react@11.11.4(@types/react@18.2.77)(react@18.2.0))(@types/react@18.2.77)(react@18.2.0)
       '@renegade-fi/react':
         specifier: 0.0.41
-        version: 0.0.41(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
+        version: 0.0.41(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
       '@t3-oss/env-nextjs':
         specifier: ^0.6.0
         version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
       '@tanstack/react-query':
         specifier: ^5.24.1
-        version: 5.29.2(react@18.2.0)
+        version: 5.40.1(react@18.2.0)
       '@vercel/analytics':
         specifier: ^1.2.2
         version: 1.2.2(next@14.2.0(@babel/core@7.24.4)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       connectkit:
         specifier: ^1.7.2
-        version: 1.7.3(@babel/core@7.24.4)(@tanstack/react-query@5.29.2(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-is@18.2.0)(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))
+        version: 1.7.3(@babel/core@7.24.4)(@tanstack/react-query@5.40.1(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-is@18.2.0)(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
@@ -88,7 +88,7 @@ importers:
         version: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       wagmi:
         specifier: ^2.5.7
-        version: 2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
+        version: 2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
       zustand:
         specifier: ^4.5.2
         version: 4.5.2(@types/react@18.2.77)(react@18.2.0)
@@ -98,7 +98,7 @@ importers:
         version: 13.5.6(bufferutil@4.0.8)
       '@tanstack/react-query-devtools':
         specifier: ^5.37.1
-        version: 5.40.0(@tanstack/react-query@5.29.2(react@18.2.0))(react@18.2.0)
+        version: 5.40.0(@tanstack/react-query@5.40.1(react@18.2.0))(react@18.2.0)
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^4.3.0
         version: 4.3.0(prettier@2.8.8)
@@ -2216,8 +2216,8 @@ packages:
       typescript: '>=4.7.2'
       zod: ^3.0.0
 
-  '@tanstack/query-core@5.29.0':
-    resolution: {integrity: sha512-WgPTRs58hm9CMzEr5jpISe8HXa3qKQ8CxewdYZeVnA54JrPY9B1CZiwsCoLpLkf0dGRZq+LcX5OiJb0bEsOFww==}
+  '@tanstack/query-core@5.40.0':
+    resolution: {integrity: sha512-eD8K8jsOIq0Z5u/QbvOmfvKKE/XC39jA7yv4hgpl/1SRiU+J8QCIwgM/mEHuunQsL87dcvnHqSVLmf9pD4CiaA==}
 
   '@tanstack/query-devtools@5.37.1':
     resolution: {integrity: sha512-XcG4IIHIv0YQKrexTqo2zogQWR1Sz672tX2KsfE9kzB+9zhx44vRKH5si4WDILE1PIWQpStFs/NnrDQrBAUQpg==}
@@ -2228,8 +2228,8 @@ packages:
       '@tanstack/react-query': ^5.40.0
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.29.2':
-    resolution: {integrity: sha512-nyuWILR4u7H5moLGSiifLh8kIqQDLNOHGuSz0rcp+J75fNc8aQLyr5+I2JCHU3n+nJrTTW1ssgAD8HiKD7IFBQ==}
+  '@tanstack/react-query@5.40.1':
+    resolution: {integrity: sha512-gOcmu+gpFd2taHrrgMM9RemLYYEDYfsCqszxCC0xtx+csDa4R8t7Hr7SfWXQP13S2sF+mOxySo/+FNXJFYBqcA==}
     peerDependencies:
       react: ^18.0.0
 
@@ -8695,7 +8695,7 @@ snapshots:
       nullthrows: 1.1.1
       react-native: 0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)
 
-  '@renegade-fi/core@0.0.40(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
+  '@renegade-fi/core@0.0.40(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
     dependencies:
       axios: 1.7.2
       isomorphic-ws: 5.0.0(ws@8.13.0(bufferutil@4.0.8))
@@ -8704,7 +8704,7 @@ snapshots:
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       zustand: 4.5.2(@types/react@18.2.77)(react@18.2.0)
     optionalDependencies:
-      '@tanstack/query-core': 5.29.0
+      '@tanstack/query-core': 5.40.0
     transitivePeerDependencies:
       - '@types/react'
       - bufferutil
@@ -8716,10 +8716,10 @@ snapshots:
       - ws
       - zod
 
-  '@renegade-fi/react@0.0.41(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
+  '@renegade-fi/react@0.0.41(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
     dependencies:
-      '@renegade-fi/core': 0.0.40(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
-      '@tanstack/react-query': 5.29.2(react@18.2.0)
+      '@renegade-fi/core': 0.0.40(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
+      '@tanstack/react-query': 5.40.1(react@18.2.0)
       json-bigint: 1.0.0
       react: 18.2.0
       react-use-websocket: 4.8.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -8902,19 +8902,19 @@ snapshots:
       typescript: 5.1.6
       zod: 3.22.4
 
-  '@tanstack/query-core@5.29.0': {}
+  '@tanstack/query-core@5.40.0': {}
 
   '@tanstack/query-devtools@5.37.1': {}
 
-  '@tanstack/react-query-devtools@5.40.0(@tanstack/react-query@5.29.2(react@18.2.0))(react@18.2.0)':
+  '@tanstack/react-query-devtools@5.40.0(@tanstack/react-query@5.40.1(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/query-devtools': 5.37.1
-      '@tanstack/react-query': 5.29.2(react@18.2.0)
+      '@tanstack/react-query': 5.40.1(react@18.2.0)
       react: 18.2.0
 
-  '@tanstack/react-query@5.29.2(react@18.2.0)':
+  '@tanstack/react-query@5.40.1(react@18.2.0)':
     dependencies:
-      '@tanstack/query-core': 5.29.0
+      '@tanstack/query-core': 5.40.0
       react: 18.2.0
 
   '@trivago/prettier-plugin-sort-imports@4.3.0(prettier@2.8.8)':
@@ -9144,13 +9144,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@wagmi/connectors@4.1.25(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@types/react@18.2.77)(@wagmi/core@2.6.16(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)':
+  '@wagmi/connectors@4.1.25(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@types/react@18.2.77)(@wagmi/core@2.6.16(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       '@coinbase/wallet-sdk': 3.9.1
       '@metamask/sdk': 0.14.3(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)
       '@safe-global/safe-apps-provider': 0.18.1(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       '@safe-global/safe-apps-sdk': 8.1.0(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
-      '@wagmi/core': 2.6.16(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
+      '@wagmi/core': 2.6.16(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
       '@walletconnect/ethereum-provider': 2.11.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.77)(react@18.2.0)
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
@@ -9182,14 +9182,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@wagmi/core@2.6.16(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)':
+  '@wagmi/core@2.6.16(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.5(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
       zustand: 4.4.1(@types/react@18.2.77)(react@18.2.0)
     optionalDependencies:
-      '@tanstack/query-core': 5.29.0
+      '@tanstack/query-core': 5.40.0
       typescript: 5.1.6
     transitivePeerDependencies:
       - '@types/react'
@@ -10066,9 +10066,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  connectkit@1.7.3(@babel/core@7.24.4)(@tanstack/react-query@5.29.2(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-is@18.2.0)(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)):
+  connectkit@1.7.3(@babel/core@7.24.4)(@tanstack/react-query@5.40.1(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react-is@18.2.0)(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)):
     dependencies:
-      '@tanstack/react-query': 5.29.2(react@18.2.0)
+      '@tanstack/react-query': 5.40.1(react@18.2.0)
       buffer: 6.0.3
       detect-browser: 5.3.0
       framer-motion: 6.5.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -10080,7 +10080,7 @@ snapshots:
       resize-observer-polyfill: 1.5.1
       styled-components: 5.3.11(@babel/core@7.24.4)(react-dom@18.2.0(react@18.2.0))(react-is@18.2.0)(react@18.2.0)
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
-      wagmi: 2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
+      wagmi: 2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
     transitivePeerDependencies:
       - '@babel/core'
       - react-is
@@ -13372,11 +13372,11 @@ snapshots:
 
   void-elements@3.1.0: {}
 
-  wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4):
+  wagmi@2.5.19(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@tanstack/query-core@5.40.0)(@tanstack/react-query@5.40.1(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4):
     dependencies:
-      '@tanstack/react-query': 5.29.2(react@18.2.0)
-      '@wagmi/connectors': 4.1.25(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@types/react@18.2.77)(@wagmi/core@2.6.16(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
-      '@wagmi/core': 2.6.16(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
+      '@tanstack/react-query': 5.40.1(react@18.2.0)
+      '@wagmi/connectors': 4.1.25(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0)))(@types/react@18.2.77)(@wagmi/core@2.6.16(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.24.4)(@babel/preset-env@7.24.4(@babel/core@7.24.4))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
+      '@wagmi/core': 2.6.16(@tanstack/query-core@5.40.0)(@types/react@18.2.77)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.1.6)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(zod@3.22.4)
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
       viem: 2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4)
