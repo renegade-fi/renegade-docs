@@ -2,7 +2,8 @@
 
 import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { fundList, fundWallet } from "@/lib/utils"
-import { disconnect, useConfig } from "@renegade-fi/react"
+import { useConfig } from "@renegade-fi/react"
+import { disconnect } from "@renegade-fi/react/actions"
 import {
   PropsWithChildren,
   createContext,

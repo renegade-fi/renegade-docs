@@ -1,5 +1,5 @@
 import { Text } from "@chakra-ui/react"
-import { MAX_BALANCES, MAX_ORDERS } from "@renegade-fi/react"
+import { MAX_BALANCES, MAX_ORDERS } from "@renegade-fi/react/constants"
 import dayjs from "dayjs"
 import { TriangleAlert } from "lucide-react"
 

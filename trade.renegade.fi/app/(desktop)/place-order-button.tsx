@@ -6,14 +6,13 @@ import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
-  MAX_BALANCES,
-  MAX_ORDERS,
   Token,
   useBackOfQueueBalances,
   useBackOfQueueOrders,
   useBalances,
   useStatus,
 } from "@renegade-fi/react"
+import { MAX_BALANCES, MAX_ORDERS } from "@renegade-fi/react/constants"
 import { useMemo } from "react"
 import { useLocalStorage } from "usehooks-ts"
 import { useAccount as useAccountWagmi } from "wagmi"

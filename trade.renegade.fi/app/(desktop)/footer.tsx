@@ -2,7 +2,8 @@
 
 import { renegadeConfig } from "@/app/providers"
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
-import { lookupWallet, useWalletId } from "@renegade-fi/react"
+import { useWalletId } from "@renegade-fi/react"
+import { lookupWallet } from "@renegade-fi/react/actions"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 

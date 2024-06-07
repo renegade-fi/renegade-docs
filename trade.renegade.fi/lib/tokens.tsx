@@ -33,7 +33,7 @@ import truLogo from "@/icons/tokens/tru.png"
 import usdtLogo from "@/icons/tokens/usdt.png"
 import wbtcLogo from "@/icons/tokens/wbtc.png"
 import wethLogo from "@/icons/tokens/weth.png"
-import { tokenMapping } from "@renegade-fi/react"
+import { tokenMapping } from "@renegade-fi/react/constants"
 import { StaticImageData } from "next/image"
 
 export const HIDDEN_TICKERS = ["USDT", "REN"]

@@ -23,13 +23,13 @@ import {
 } from "@chakra-ui/react"
 import {
   Token,
-  createOrder,
   formatAmount,
   parseAmount,
   useBalances,
   useConfig,
   useTaskHistory,
 } from "@renegade-fi/react"
+import { createOrder } from "@renegade-fi/react/actions"
 import { Info } from "lucide-react"
 import Image from "next/image"
 import numeral from "numeral"

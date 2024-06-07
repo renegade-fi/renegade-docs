@@ -13,11 +13,8 @@ import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
-  MAX_BALANCES,
   Token,
   chain,
-  deposit,
-  getPkRootScalars,
   parseAmount,
   useBackOfQueueBalances,
   useBackOfQueueOrders,
@@ -25,6 +22,8 @@ import {
   useStatus,
   useTaskHistory,
 } from "@renegade-fi/react"
+import { deposit, getPkRootScalars } from "@renegade-fi/react/actions"
+import { MAX_BALANCES } from "@renegade-fi/react/constants"
 import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"

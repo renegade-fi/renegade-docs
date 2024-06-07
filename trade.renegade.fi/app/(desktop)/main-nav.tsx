@@ -10,11 +10,8 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react"
-import {
-  disconnect as disconnectRenegade,
-  useConfig,
-  useStatus,
-} from "@renegade-fi/react"
+import { useConfig, useStatus } from "@renegade-fi/react"
+import { disconnect as disconnectRenegade } from "@renegade-fi/react/actions"
 import { ConnectKitButton } from "connectkit"
 import Image from "next/image"
 import React, { createRef, useEffect, useState } from "react"

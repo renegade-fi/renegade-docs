@@ -4,14 +4,13 @@ import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
   parseAmount,
-  payFees,
   useBalances,
   useConfig,
   useFees,
   useStatus,
   useTaskHistory,
-  withdraw,
 } from "@renegade-fi/react"
+import { payFees, withdraw } from "@renegade-fi/react/actions"
 import { useMemo } from "react"
 import { toast } from "sonner"
 import { useAccount } from "wagmi"
