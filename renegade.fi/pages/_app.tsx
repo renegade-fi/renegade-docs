@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <Component {...pageProps} />
+      <Component {...pageProps} />a
     </ChakraProvider>
   )
 }
