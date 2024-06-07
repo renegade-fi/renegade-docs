@@ -1,4 +1,5 @@
 import { Text } from "@chakra-ui/react"
+import { MAX_BALANCES, MAX_ORDERS } from "@renegade-fi/react"
 import dayjs from "dayjs"
 import { TriangleAlert } from "lucide-react"
 
@@ -82,3 +83,7 @@ export const ORDER_CONFIRMATION_PROTOCOL_FEE_TOOLTIP =
   "The fee you pay to the protocol. Only paid upon a successful match."
 export const ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP =
   "The fee you pay to your relayer. Only paid upon a successful match."
+export const MAX_BALANCES_TOOLTIP = `Renegade wallets can hold a maximum of ${MAX_BALANCES} balances at a time.`
+export const MAX_ORDERS_TOOLTIP = `Renegade wallets can hold a maximum of ${MAX_ORDERS} orders at a time.`
+export const MAX_BALANCES_PLACE_ORDER_TOOLTIP = `This order would result in more than ${MAX_BALANCES} balances.`
+export const UNUSED_BALANCE_NEEDED_TOOLTIP = `You have an open order that needs an empty balance slot to be filled.`
