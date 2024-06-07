@@ -7,7 +7,7 @@ import Figure from '../../src/figure.js'
 import IoiLight from '@site/static/img/ioi_light.svg'
 import IoiDark from '@site/static/img/ioi_dark.svg'
 
-# Indications of Interest
+# Indications of Interest test
 
 As discussed in [Lifecycle and Privacy](/core-concepts/privacy), the base-layer
 protocol has very strong privacy properties: No information whatsoever is
