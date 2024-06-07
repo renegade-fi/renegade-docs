@@ -16,7 +16,8 @@ import {
   ModalBody,
   Text,
 } from "@chakra-ui/react"
-import { chain, connect, useConfig } from "@renegade-fi/react"
+import { chain, useConfig } from "@renegade-fi/react"
+import { connect } from "@renegade-fi/react/actions"
 import { CircleHelp, Unplug } from "lucide-react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"

@@ -19,7 +19,6 @@ import {
   OrderMetadata,
   OrderState,
   Token,
-  cancelOrder,
   useBalances,
   useConfig,
   useNetworkOrders,
@@ -27,6 +26,7 @@ import {
   useStatus,
   useTaskHistory,
 } from "@renegade-fi/react"
+import { cancelOrder } from "@renegade-fi/react/actions"
 import { useModal as useModalConnectKit } from "connectkit"
 import { X } from "lucide-react"
 import numeral from "numeral"
