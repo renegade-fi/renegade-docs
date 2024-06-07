@@ -5,6 +5,10 @@ import {
 } from "@/generated"
 import { signPermit2 } from "@/lib/permit2"
 import { FAILED_DEPOSIT_MSG, QUEUED_DEPOSIT_MSG } from "@/lib/task"
+import {
+  MAX_BALANCES_TOOLTIP,
+  UNUSED_BALANCE_NEEDED_TOOLTIP,
+} from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -31,6 +35,7 @@ import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 import { useButton } from "@/hooks/use-button"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { Tooltip } from "@/components/tooltip"
 
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
@@ -209,36 +214,48 @@ export default function DepositButton({
 
   return (
     <>
-      <Button
-        padding="20px"
-        color="white.80"
-        fontSize="1.2em"
-        fontWeight="200"
-        opacity={baseTokenAmount ? 1 : 0}
-        borderWidth="thin"
-        borderColor="white.40"
-        borderRadius="100px"
-        _hover={
-          isDisabled
-            ? { backgroundColor: "transparent" }
-            : {
-                borderColor: "white.60",
-                color: "white",
-              }
+      <Tooltip
+        label={
+          !isExistingBalance && isMaxBalances
+            ? MAX_BALANCES_TOOLTIP
+            : !isExistingBalance &&
+              balances.length === MAX_BALANCES - 1 &&
+              orderResultsInNewBalance
+            ? UNUSED_BALANCE_NEEDED_TOOLTIP
+            : ""
         }
-        transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-        visibility={baseTokenAmount ? "visible" : "hidden"}
-        cursor={cursor}
-        transition="0.15s"
-        backgroundColor="transparent"
-        isDisabled={isDisabled}
-        isLoading={approveStatus === "pending"}
-        loadingText="Approving"
-        onClick={handleClick}
-        rightIcon={<ArrowForwardIcon />}
       >
-        {buttonContent}
-      </Button>
+        <Button
+          padding="20px"
+          color="white.80"
+          fontSize="1.2em"
+          fontWeight="200"
+          opacity={baseTokenAmount ? 1 : 0}
+          borderWidth="thin"
+          borderColor="white.40"
+          borderRadius="100px"
+          _hover={
+            isDisabled
+              ? { backgroundColor: "transparent" }
+              : {
+                  borderColor: "white.60",
+                  color: "white",
+                }
+          }
+          transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
+          visibility={baseTokenAmount ? "visible" : "hidden"}
+          cursor={cursor}
+          transition="0.15s"
+          backgroundColor="transparent"
+          isDisabled={isDisabled}
+          isLoading={approveStatus === "pending"}
+          loadingText="Approving"
+          onClick={handleClick}
+          rightIcon={<ArrowForwardIcon />}
+        >
+          {buttonContent}
+        </Button>
+      </Tooltip>
       {isOpen && <CreateStepper onClose={onClose} />}
     </>
   )

@@ -1,3 +1,7 @@
+import {
+  MAX_BALANCES_PLACE_ORDER_TOOLTIP,
+  MAX_ORDERS_TOOLTIP,
+} from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
@@ -17,6 +21,7 @@ import { useAccount as useAccountWagmi } from "wagmi"
 import { useButton } from "@/hooks/use-button"
 
 import { CreateStepper } from "@/components/steppers/create-stepper/create-stepper"
+import { Tooltip } from "@/components/tooltip"
 
 export function PlaceOrderButton({
   baseTokenAmount,
@@ -96,45 +101,55 @@ export function PlaceOrderButton({
 
   return (
     <>
-      <Button
-        padding="20px"
-        color="white.80"
-        fontSize="1.2em"
-        fontWeight="200"
-        opacity={
-          !baseTokenAmount ? "0" : !address || !isConnected ? "0.6" : "1"
+      <Tooltip
+        label={
+          isMaxOrders
+            ? MAX_ORDERS_TOOLTIP
+            : !isExistingBalance && isMaxBalances
+            ? MAX_BALANCES_PLACE_ORDER_TOOLTIP
+            : ""
         }
-        borderWidth="thin"
-        borderColor="white.40"
-        borderRadius="100px"
-        _hover={
-          isDisabled
-            ? { backgroundColor: "transparent" }
-            : {
-                borderColor: "white.60",
-                color: "white",
-              }
-        }
-        transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
-        visibility={baseTokenAmount ? "visible" : "hidden"}
-        cursor={cursor}
-        transition="0.15s"
-        backgroundColor="transparent"
-        isDisabled={isDisabled}
-        loadingText="Please wait for task completion"
-        onClick={() => {
-          if (shouldUse) {
-            buttonOnClick()
-          } else if (isDisabled) {
-            return
-          } else {
-            onOpen()
-          }
-        }}
-        rightIcon={<ArrowForwardIcon />}
       >
-        {placeOrderButtonContent}
-      </Button>
+        <Button
+          padding="20px"
+          color="white.80"
+          fontSize="1.2em"
+          fontWeight="200"
+          opacity={
+            !baseTokenAmount ? "0" : !address || !isConnected ? "0.6" : "1"
+          }
+          borderWidth="thin"
+          borderColor="white.40"
+          borderRadius="100px"
+          _hover={
+            isDisabled
+              ? { backgroundColor: "transparent" }
+              : {
+                  borderColor: "white.60",
+                  color: "white",
+                }
+          }
+          transform={baseTokenAmount ? "translateY(10px)" : "translateY(-10px)"}
+          visibility={baseTokenAmount ? "visible" : "hidden"}
+          cursor={cursor}
+          transition="0.15s"
+          backgroundColor="transparent"
+          isDisabled={isDisabled}
+          loadingText="Please wait for task completion"
+          onClick={() => {
+            if (shouldUse) {
+              buttonOnClick()
+            } else if (isDisabled) {
+              return
+            } else {
+              onOpen()
+            }
+          }}
+          rightIcon={<ArrowForwardIcon />}
+        >
+          {placeOrderButtonContent}
+        </Button>
+      </Tooltip>
       {signInIsOpen && <CreateStepper onClose={onCloseSignIn} />}
     </>
   )
