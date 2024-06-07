@@ -36,7 +36,7 @@ export default async function RootLayout({
               }}
             >
               <MainNav />
-              {children}1
+              {children}2
               <TokensBanner />
               <Footer />
             </div>
