@@ -262,7 +262,7 @@ function OrdersPanel() {
           borderBottom="var(--border)"
           placeContent="center"
         >
-          <Text>Orders</Text>
+          <Text>Relayer Info</Text>
         </Box>
       </Tooltip>
       {Content}

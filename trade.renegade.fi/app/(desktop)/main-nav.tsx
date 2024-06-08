@@ -28,7 +28,7 @@ import { CreateStepper } from "@/components/steppers/create-stepper/create-stepp
 
 import glyphDark from "@/icons/glyph_dark.svg"
 
-function FancyUnderline(props: { children: React.ReactElement }) {
+export function FancyUnderline(props: { children: React.ReactElement }) {
   const [isHovering, setIsHovering] = React.useState(false)
   const [isCompleted, setIsCompleted] = React.useState(false)
   const [delay, setDelay] = React.useState<NodeJS.Timeout | null>(null)

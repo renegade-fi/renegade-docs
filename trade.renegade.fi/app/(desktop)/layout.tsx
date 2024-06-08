@@ -38,7 +38,7 @@ export default async function RootLayout({
               <MainNav />
               {children}
               <TokensBanner />
-              <Footer />
+              {/* <Footer /> */}
             </div>
           </Providers>
         </PriceStoreProvider>
