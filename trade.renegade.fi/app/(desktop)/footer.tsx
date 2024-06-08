@@ -1,17 +1,20 @@
 "use client"
 
 import { renegadeConfig } from "@/app/providers"
+import { FAILED_REFRESH_WALLET_MSG, START_REFRESH_WALLET_MSG } from "@/lib/task"
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
-import { useWalletId } from "@renegade-fi/react"
-import { lookupWallet } from "@renegade-fi/react/actions"
+import { useStatus, useWalletId } from "@renegade-fi/react"
+import { refreshWallet } from "@renegade-fi/react/actions"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 
 import logoDark from "@/icons/logo_dark.svg"
 
 export const Footer = () => {
   const logoRef = useRef<HTMLDivElement>(null)
   const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
+  const status = useStatus()
   const walletId = useWalletId()
 
   useEffect(() => {
@@ -27,6 +30,14 @@ export const Footer = () => {
       document.removeEventListener("contextmenu", handleContextMenu)
     }
   }, [])
+
+  const handleRefreshWallet = async () => {
+    if (status === "in relayer") {
+      await refreshWallet(renegadeConfig)
+        .then(() => toast.message(START_REFRESH_WALLET_MSG))
+        .catch(() => toast.message(FAILED_REFRESH_WALLET_MSG))
+    }
+  }
 
   const network = process.env.NEXT_PUBLIC_RPC_URL.includes("dev")
     ? "DEVNET"
@@ -69,7 +80,7 @@ export const Footer = () => {
           fontSize="1.1em"
           fontWeight="300"
           transform="translateX(-50%)"
-          onClick={() => lookupWallet(renegadeConfig)}
+          onClick={handleRefreshWallet}
         >
           {network}
         </Text>
