@@ -33,6 +33,8 @@ export const START_CANCEL_ORDER_MSG = (
     base.decimals
   )} ${base.ticker}...`
 
+export const START_REFRESH_WALLET_MSG = "Refreshing wallet to on-chain state..."
+
 export const QUEUED_DEPOSIT_MSG = (mint: Token, amount: bigint) =>
   `Queued: Depositing ${formatNumber(amount, mint.decimals)} ${mint.ticker}.`
 
@@ -58,6 +60,8 @@ export const QUEUED_CANCEL_ORDER_MSG = (
     amount,
     base.decimals
   )} ${base.ticker}.`
+
+export const QUEUED_REFRESH_WALLET_MSG = "Queued: Refreshing wallet..."
 
 export const FAILED_DEPOSIT_MSG = (
   mint: Token,
@@ -93,6 +97,8 @@ export const FAILED_CANCEL_ORDER_MSG = (
     amount,
     base.decimals
   )} ${base.ticker}. Please try again.`
+
+export const FAILED_REFRESH_WALLET_MSG = "Failed to refresh wallet."
 
 export const getReadableState = (state: OrderState) => {
   switch (state) {
