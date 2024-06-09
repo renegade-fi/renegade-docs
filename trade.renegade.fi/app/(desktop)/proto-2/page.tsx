@@ -1,12 +1,12 @@
 import { Main } from "@/app/(desktop)/main"
-import { OrderHistoryTable } from "@/app/(desktop)/proto-1/order-history-table"
-import { RightSection } from "@/app/(desktop)/proto-1/right-section"
-import { TabsBar } from "@/app/(desktop)/proto-1/tabs"
+import { OrderHistoryTable } from "@/app/(desktop)/proto-2/order-history-table"
+import { RightSection } from "@/app/(desktop)/proto-2/right-section"
+import { TabsBar } from "@/app/(desktop)/proto-2/tabs"
 import backgroundPattern from "@/icons/background_pattern.png"
 import { Box } from "@chakra-ui/react"
 import Image from "next/image"
 
-import { MedianBannerWrapper } from "@/components/banners/median-banner"
+import { RelayerStatusData } from "@/components/banners/relayer-status-data"
 
 export default function Page() {
   return (
@@ -25,7 +25,7 @@ export default function Page() {
         src={backgroundPattern}
         style={{ zIndex: -1 }}
       />
-      <MedianBannerWrapper />
+      {/* <MedianBannerWrapper /> */}
       <div style={{ flexGrow: 1, display: "flex" }}>
         <div
           style={{
@@ -35,7 +35,7 @@ export default function Page() {
             overflowX: "hidden",
           }}
         >
-          {/* <RelayerStatusData /> */}
+          <RelayerStatusData />
           <div
             style={{
               display: "flex",

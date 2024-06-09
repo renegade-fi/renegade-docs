@@ -57,8 +57,8 @@ export function RightSection() {
           flexDirection="column"
           flexGrow={1}
           gap="8"
-          paddingX="8px"
-          paddingY="4px"
+          paddingX="12px"
+          paddingY="12px"
         >
           <Tooltip placement="left" label={RELAYER_NAME_TOOLTIP}>
             <Flex justifyContent="space-between">
@@ -141,7 +141,7 @@ export function RightSection() {
         </Tooltip>
         <SimpleBar
           style={{
-            height: "30vh",
+            height: "40vh",
             padding: "0 8px",
           }}
         >
