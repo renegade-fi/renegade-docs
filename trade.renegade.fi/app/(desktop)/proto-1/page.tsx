@@ -7,56 +7,60 @@ import { Box } from "@chakra-ui/react"
 import Image from "next/image"
 
 import { MedianBannerWrapper } from "@/components/banners/median-banner"
+import { TokensBanner } from "@/components/banners/tokens-banner"
 
 export default function Page() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        flexGrow: "1",
-        position: "relative",
-      }}
-    >
-      <Image
-        alt=""
-        fill
-        priority
-        src={backgroundPattern}
-        style={{ zIndex: -1 }}
-      />
-      <MedianBannerWrapper />
-      <div style={{ flexGrow: 1, display: "flex" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-            overflowX: "hidden",
-          }}
-        >
-          {/* <RelayerStatusData /> */}
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: "1",
+          position: "relative",
+        }}
+      >
+        <Image
+          alt=""
+          fill
+          priority
+          src={backgroundPattern}
+          style={{ zIndex: -1 }}
+        />
+        <MedianBannerWrapper />
+        <div style={{ flexGrow: 1, display: "flex" }}>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               flexGrow: 1,
+              overflowX: "hidden",
             }}
           >
-            <Main />
-            <Box
-              width="100%"
-              height="calc(40vh + 2 * var(--banner-height))"
-              // borderTop="var(--border)"
+            {/* <RelayerStatusData /> */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
             >
-              <TabsBar />
-              <OrderHistoryTable />
-            </Box>
+              <Main />
+              <Box
+                width="100%"
+                height="calc(40vh + 2 * var(--banner-height))"
+                // borderTop="var(--border)"
+              >
+                <TabsBar />
+                <OrderHistoryTable />
+              </Box>
+            </div>
           </div>
+          <RightSection />
+          {/* <OrdersAndCounterpartiesPanel /> */}
         </div>
-        <RightSection />
-        {/* <OrdersAndCounterpartiesPanel /> */}
       </div>
-    </div>
+      <TokensBanner />
+    </>
   )
 }

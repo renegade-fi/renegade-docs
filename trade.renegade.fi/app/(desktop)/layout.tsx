@@ -9,7 +9,6 @@ import "@/styles/globals.css"
 import { Analytics } from "@vercel/analytics/react"
 import React from "react"
 
-import { TokensBanner } from "@/components/banners/tokens-banner"
 import "@/styles/index.css"
 
 export const metadata = constructMetadata()
@@ -36,7 +35,7 @@ export default async function RootLayout({
             >
               <MainNav />
               {children}
-              <TokensBanner />
+              {/* <TokensBanner /> */}
               {/* <Footer /> */}
             </div>
           </Providers>
