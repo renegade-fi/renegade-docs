@@ -26,7 +26,10 @@ export const TabsBar = () => {
         <Text color="text.primary">Balances</Text>
       </FancyUnderline>
       <FancyUnderline>
-        <Text color="text.primary">Balances History</Text>
+        <Text color="text.primary">Order History</Text>
+      </FancyUnderline>
+      <FancyUnderline>
+        <Text color="text.primary">Balance History</Text>
       </FancyUnderline>
       <FancyUnderline>
         <Text color="text.primary">Fees</Text>
