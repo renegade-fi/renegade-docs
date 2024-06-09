@@ -7,8 +7,6 @@ import SimpleBar from "simplebar-react"
 import "simplebar-react/dist/simplebar.min.css"
 import { useLocalStorage } from "usehooks-ts"
 
-import { useTvl } from "@/hooks/use-tvl"
-
 import { LivePrices } from "@/components/live-price"
 import { NetworkOrderItem } from "@/components/panels/network-order"
 import { UserOrder } from "@/components/panels/user-order"
@@ -25,8 +23,6 @@ export function RightSection() {
   const [quote] = useLocalStorage("quote", "USDC", {
     initializeWithValue: false,
   })
-  const baseTvl = useTvl(base)
-  const quoteTvl = useTvl(quote)
   return (
     <Box
       flexDirection="column"

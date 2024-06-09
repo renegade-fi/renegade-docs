@@ -1,4 +1,3 @@
-import { Footer } from "@/app/(desktop)/footer"
 import { MainNav } from "@/app/(desktop)/main-nav"
 import { Providers } from "@/app/providers"
 import { PriceStoreProvider } from "@/contexts/price-context"
