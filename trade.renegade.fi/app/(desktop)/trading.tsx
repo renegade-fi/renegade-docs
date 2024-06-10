@@ -20,7 +20,6 @@ import {
 import { Token } from "@renegade-fi/react"
 import numeral from "numeral"
 import React, { createRef, useEffect, useRef, useState } from "react"
-import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
 
 import { useMax } from "@/hooks/use-max"
