@@ -14,7 +14,11 @@ import { createConfig } from "wagmi"
 
 export const maxDuration = 300
 
-// TODO: Make sure mint works
+// The cost of 20 approval transactions
+const APPROVAL_COST = parseEther("0.00019210.000192144") * BigInt(20)
+// The amount of ETH to send to the recipient
+const ETH_AMOUNT = parseEther("0.01")
+
 const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
 ])
@@ -62,8 +66,7 @@ export async function POST(request: Request) {
       process.env.DEV_PRIVATE_KEY as `0x${string}`
     )
 
-    const ethAmount = parseEther("0.1")
-    await fundEth(account, recipient, ethAmount)
+    await fundEth(account, recipient, ETH_AMOUNT)
 
     // Loop through each token in TOKENS_TO_FUND and mint them
     for (const { ticker, amount } of TOKENS_TO_FUND) {
@@ -87,6 +90,13 @@ async function fundEth(
   recipient: `0x${string}`,
   ethAmount: bigint
 ): Promise<void> {
+  const ethBalance = await publicClient.getBalance({
+    address: account.address,
+  })
+  if (ethBalance > APPROVAL_COST) {
+    console.log("Skipping ETH funding")
+    return
+  }
   const walletClient = createWalletClient({
     account,
     chain,

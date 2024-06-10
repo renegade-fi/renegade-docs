@@ -22,7 +22,7 @@ export const RELAYER_NAME_TOOLTIP =
   "Your currently connected relayer. Your relayer can view your private orders, but does not control your funds."
 export const TVL_TOOLTIP =
   "The total amount that has been deposited into the Renegade pools. "
-export const AIRDROP_TOOLTIP = "Click to get more testnet funds."
+export const FAUCET_TOOLTIP = "Click to get more testnet funds."
 export const ACTIVE_ORDERS_TOOLTIP =
   "The total number of outstanding orders in Renegade."
 export const ORDER_TOOLTIP = (
