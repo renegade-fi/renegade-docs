@@ -249,3 +249,11 @@ export async function getInitialPrices(): Promise<Map<string, number>> {
   const results = await Promise.all(promises)
   return new Map(results)
 }
+
+export function calculateMaxQuote(maxQuote: number, usdPrice: number) {
+  const baseMax = (maxQuote / usdPrice) * 0.99
+  if (baseMax < 0.000001) {
+    return
+  }
+  return baseMax
+}

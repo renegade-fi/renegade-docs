@@ -5,6 +5,7 @@ import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { usePrice } from "@/contexts/price-context"
 import { STABLECOINS } from "@/lib/tokens"
 import { Direction } from "@/lib/types"
+import { calculateMaxQuote } from "@/lib/utils"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import {
   Button,
@@ -213,7 +214,7 @@ function InputWithMaxButton({
   const [direction] = useLocalStorage("direction", Direction.BUY)
   const max = useMax(direction === Direction.SELL ? base : quote)
   const usdPrice = useUSDPrice(Token.findByTicker(base))
-  const buyMax = (1 / usdPrice) * Number(max) * 0.99
+  const buyMax = calculateMaxQuote(Number(max), usdPrice)
 
   const handleSetBaseTokenAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -228,19 +229,19 @@ function InputWithMaxButton({
   }
 
   const handleSetMax = () => {
-    if (max) {
-      if (direction === Direction.SELL) {
-        setBaseTokenAmount(max)
-      } else {
-        setBaseTokenAmount(buyMax.toString())
-      }
+    if (max && direction === Direction.SELL) {
+      setBaseTokenAmount(max)
+    } else if (buyMax && direction === Direction.BUY) {
+      setBaseTokenAmount(buyMax.toString())
     }
   }
-  const hideMaxButton =
-    !max ||
-    (direction === Direction.SELL
-      ? baseTokenAmount === max
-      : baseTokenAmount === buyMax.toString())
+
+  let hideMaxButton = true
+  if (direction === Direction.BUY && buyMax) {
+    hideMaxButton = baseTokenAmount === buyMax.toString()
+  } else if (direction === Direction.SELL && max) {
+    hideMaxButton = baseTokenAmount === max
+  }
 
   return (
     <InputGroup>
