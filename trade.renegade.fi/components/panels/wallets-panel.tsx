@@ -4,7 +4,7 @@ import { ConnectWalletButton, SignInButton } from "@/app/(desktop)/main-nav"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { DISPLAY_TOKENS } from "@/lib/tokens"
 import {
-  AIRDROP_TOOLTIP,
+  FAUCET_TOOLTIP,
   RENEGADE_ACCOUNT_TOOLTIP,
   TASK_HISTORY_TOOLTIP,
 } from "@/lib/tooltip-labels"
@@ -146,7 +146,7 @@ function TokenBalance(props: TokenBalanceProps) {
 function DepositWithdrawButtons() {
   const { address } = useAccountWagmi()
   return (
-    <Tooltip placement="right" label={AIRDROP_TOOLTIP}>
+    <Tooltip placement="right" label={FAUCET_TOOLTIP}>
       <Flex
         flexDirection="row"
         width="100%"
@@ -180,7 +180,7 @@ function DepositWithdrawButtons() {
             fundWallet(fundList.slice(2), address)
           }}
         >
-          <Text>Airdrop</Text>
+          <Text>Faucet</Text>
           <ArrowDownIcon transition="color 0.3s ease" />
         </Flex>
       </Flex>
