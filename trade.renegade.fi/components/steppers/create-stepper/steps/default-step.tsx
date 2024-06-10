@@ -69,7 +69,8 @@ export function DefaultStep() {
         if (!valid) {
           throw new Error("Invalid signature")
         }
-        const res = await connect(config, { seed: data })
+        config.setState((x) => ({ ...x, seed: data }))
+        const res = await connect(config)
         if (res?.job) {
           const { isLookup, job } = res
           toast.promise(job, {
