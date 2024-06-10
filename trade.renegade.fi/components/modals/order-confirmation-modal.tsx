@@ -7,6 +7,7 @@ import {
   ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
+import { formatNumber } from "@/lib/utils"
 import {
   Box,
   Button,
@@ -74,6 +75,15 @@ export function OrderConfirmationModal({
       numeral(usd * 0.0008).format("$0[.]00"),
     ]
   }, [usd])
+  const formattedAmount = formatNumber(
+    parseUnits(amount, baseToken.decimals),
+    baseToken.decimals
+  )
+  const formattedLongAmount = formatNumber(
+    parseUnits(amount, baseToken.decimals),
+    baseToken.decimals,
+    true
+  )
 
   const balances = useBalances()
 
@@ -149,13 +159,15 @@ export function OrderConfirmationModal({
                 {direction === Direction.BUY ? "Buy" : "Sell"}
               </Text>
               <Flex alignItems="center" justifyContent="space-between">
-                <Text
-                  marginBottom="-2"
-                  fontSize="2.4em"
-                  variant="trading-body-button"
-                >
-                  {amount} {base}
-                </Text>
+                <Tooltip label={`${formattedLongAmount} ${base}`}>
+                  <Text
+                    marginBottom="-2"
+                    fontSize="2.4em"
+                    variant="trading-body-button"
+                  >
+                    {formattedAmount} {base}
+                  </Text>
+                </Tooltip>
                 <Image
                   src={tokenIcons[base]}
                   height={36}
