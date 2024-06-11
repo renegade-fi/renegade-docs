@@ -91,7 +91,7 @@ async function fundEth(
   ethAmount: bigint
 ): Promise<void> {
   const ethBalance = await publicClient.getBalance({
-    address: account.address,
+    address: recipient,
   })
   if (ethBalance > APPROVAL_COST) {
     console.log("Skipping ETH funding")
