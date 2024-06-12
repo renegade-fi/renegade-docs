@@ -1,4 +1,6 @@
+import { FEES_TOOLTIP } from "@/lib/tooltip-labels"
 import { formatNumber } from "@/lib/utils"
+import { Box } from "@chakra-ui/react"
 import {
   TaskState,
   TaskType,
@@ -8,6 +10,7 @@ import {
 } from "@renegade-fi/react"
 
 import { TaskItem } from "@/components/panels/task-item"
+import { Tooltip } from "@/components/tooltip"
 
 export function TaskHistoryList() {
   const { data } = useTaskHistory()
@@ -54,14 +57,31 @@ export function TaskHistoryList() {
               />
             )
           case TaskType.PayOfflineFee:
+            const token = Token.findByAddress(task.task_info.mint)
             return (
-              <TaskItem
-                key={task.id}
-                name={formattedTaskType[task.task_info.task_type]}
-                createdAt={createdAt}
-                state={formattedState}
-                isFeeTask
-              />
+              <Tooltip placement="right" label={FEES_TOOLTIP}>
+                <Box>
+                  <TaskItem
+                    key={task.id}
+                    name={
+                      task.task_info.is_protocol
+                        ? "Protocol Fee"
+                        : "Relayer Fee"
+                    }
+                    createdAt={createdAt}
+                    state={formattedState}
+                    description={`${formatNumber(
+                      task.task_info.amount,
+                      token.decimals
+                    )} ${token.ticker}`}
+                    tooltip={`${formatNumber(
+                      task.task_info.amount,
+                      token.decimals,
+                      true
+                    )} ${token.ticker}`}
+                  />
+                </Box>
+              </Tooltip>
             )
           case TaskType.UpdateWallet:
             switch (task.task_info.update_type) {
