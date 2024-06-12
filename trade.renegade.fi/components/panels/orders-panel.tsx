@@ -54,7 +54,7 @@ function SingleOrder({
   const {
     id,
     state,
-    filled,
+    fills,
     created,
     data: { amount, base_mint, quote_mint, side },
   } = order
@@ -65,10 +65,12 @@ function SingleOrder({
   const quote = Token.findByAddress(quote_mint)
   const formattedAmount = formatNumber(amount, base.decimals)
   const formattedAmountLong = formatNumber(amount, base.decimals, true)
-  const remaining = BigInt(amount) - BigInt(filled)
+  const sortedFills = fills.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
+  const latestFill = sortedFills[sortedFills.length - 1]?.amount ?? 0
+  const remaining = BigInt(amount) - BigInt(latestFill)
   const formattedRemaining = formatNumber(remaining, base.decimals)
   const formattedRemainingLong = formatNumber(
-    BigInt(amount) - BigInt(filled),
+    BigInt(amount) - BigInt(latestFill),
     base.decimals,
     true
   )
@@ -77,7 +79,9 @@ function SingleOrder({
   const amountLabelLong =
     state === OrderState.Filled ? formattedAmountLong : formattedRemainingLong
   const formattedState = getReadableState(state)
-  const fillLabel = `${Math.round((Number(filled) / Number(amount)) * 100)}%`
+  const fillLabel = `${Math.round(
+    (Number(latestFill) / Number(amount)) * 100
+  )}%`
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
   )

@@ -1,4 +1,3 @@
-import { FEES_TOOLTIP } from "@/lib/tooltip-labels"
 import { Box, Flex, Spinner, Text } from "@chakra-ui/react"
 import dayjs from "dayjs"
 import { CheckIcon, TriangleAlert } from "lucide-react"
@@ -8,14 +7,12 @@ import { Tooltip } from "../tooltip"
 export function TaskItem({
   createdAt,
   description,
-  isFeeTask,
   name,
   state,
   tooltip,
 }: {
   createdAt: number
   description?: string
-  isFeeTask?: boolean
   name: string
   state: string
   tooltip?: string
@@ -39,47 +36,42 @@ export function TaskItem({
       : "text.primary"
 
   return (
-    <Tooltip placement="right" label={isFeeTask ? FEES_TOOLTIP : ""}>
-      <Box
-        justifyContent="center"
-        padding="4% 6%"
-        color="text.secondary"
-        fontSize="0.8em"
-        borderBottom="var(--secondary-border)"
-        _hover={{
-          color: "text.primary",
-        }}
-        role="group"
+    <Box
+      justifyContent="center"
+      padding="4% 6%"
+      color="text.secondary"
+      fontSize="0.8em"
+      borderBottom="var(--secondary-border)"
+      _hover={{
+        color: "text.primary",
+      }}
+      role="group"
+    >
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        minWidth="100%"
+        whiteSpace="nowrap"
       >
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          minWidth="100%"
-          whiteSpace="nowrap"
-        >
-          <Text fontSize="1.3em">{name}</Text>
-          <Flex gap="1" verticalAlign="middle">
-            <Box
-              _groupHover={{ color: iconColor }}
-              transition="color 0.3s ease"
-            >
-              {icon}
-            </Box>
-            <Text>{state}</Text>
-          </Flex>
+        <Text fontSize="1.3em">{name}</Text>
+        <Flex gap="1" verticalAlign="middle">
+          <Box _groupHover={{ color: iconColor }} transition="color 0.3s ease">
+            {icon}
+          </Box>
+          <Text>{state}</Text>
         </Flex>
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          minWidth="100%"
-          whiteSpace="nowrap"
-        >
-          <Tooltip label={tooltip}>
-            <Text>{description}</Text>
-          </Tooltip>
-          <Text>{dayjs.unix(createdAt).fromNow()}</Text>
-        </Flex>
-      </Box>
-    </Tooltip>
+      </Flex>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        minWidth="100%"
+        whiteSpace="nowrap"
+      >
+        <Tooltip label={tooltip}>
+          <Text>{description}</Text>
+        </Tooltip>
+        <Text>{dayjs.unix(createdAt).fromNow()}</Text>
+      </Flex>
+    </Box>
   )
 }

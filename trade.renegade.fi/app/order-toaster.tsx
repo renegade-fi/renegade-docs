@@ -29,22 +29,25 @@ export function OrderToaster() {
       orderMetadataRef.current.set(incomingOrder.id, incomingOrder)
 
       const {
-        filled,
+        fills,
         state,
-        data: { base_mint, side },
+        data: { base_mint, side, amount },
       } = incomingOrder
       const base = Token.findByAddress(base_mint)
-      const formattedFilled = formatNumber(filled, base.decimals)
-      const lastFilled = existingOrder?.filled || BigInt(0)
+      const formattedAmount = formatNumber(amount, base.decimals)
+      const prevFills = existingOrder?.fills || []
 
       if (state === OrderState.Filled) {
         toast.success(
           `Order completely filled: ${
             side === "Buy" ? "Bought" : "Sold"
-          } ${formattedFilled} ${base.ticker}`
+          } ${formattedAmount} ${base.ticker}`
         )
-      } else if (filled > lastFilled) {
-        const currentFill = filled - lastFilled
+      } else if (fills.length > prevFills.length) {
+        const sortedFills = fills.sort((a, b) =>
+          a.timestamp > b.timestamp ? 1 : -1
+        )
+        const currentFill = sortedFills[sortedFills.length - 1].amount
         const formattedCurrentFill = formatNumber(currentFill, base.decimals)
         toast.success(
           `Order partially filled: ${
