@@ -1,8 +1,7 @@
 "use client"
 
-import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { fundList, fundWallet } from "@/lib/utils"
-import { useConfig } from "@renegade-fi/react"
+import { chain, useConfig } from "@renegade-fi/react"
 import { disconnect } from "@renegade-fi/react/actions"
 import {
   PropsWithChildren,
@@ -11,8 +10,8 @@ import {
   useEffect,
   useState,
 } from "react"
-import { useReadLocalStorage } from "usehooks-ts"
-import { useAccount, useAccountEffect } from "wagmi"
+import { createPublicClient } from "viem"
+import { http, useAccount, useAccountEffect } from "wagmi"
 
 export enum ViewEnum {
   TRADING,
@@ -28,23 +27,25 @@ export interface AppContextValue {
 
 const AppStateContext = createContext<AppContextValue | undefined>(undefined)
 
+const publicClient = createPublicClient({
+  chain,
+  transport: http(),
+})
+
 function AppProvider({
   children,
   tokenIcons,
 }: PropsWithChildren & { tokenIcons?: Record<string, string> }) {
   const [view, setView] = useState<ViewEnum>(ViewEnum.TRADING)
 
-  const fundedAddresses = useReadLocalStorage<string[]>(FUNDED_ADDRESSES, {
-    initializeWithValue: false,
-  })
   const config = useConfig()
 
   // Browser Wallet
-  const { address, connector } = useAccount()
+  const { connector } = useAccount()
 
   // Disconnect/fund wallet on change
   useEffect(() => {
-    const handleConnectorUpdate = (
+    const handleConnectorUpdate = async (
       data: {
         accounts?: readonly `0x${string}`[] | undefined
         chainId?: number | undefined
@@ -54,7 +55,10 @@ function AppProvider({
     ) => {
       if (data.accounts) {
         disconnect(config)
-        if (!fundedAddresses || !fundedAddresses.includes(data.accounts[0])) {
+        const balance = await publicClient.getBalance({
+          address: data.accounts[0],
+        })
+        if (!balance) {
           fundWallet(fundList, data.accounts[0])
         }
       }
@@ -69,14 +73,7 @@ function AppProvider({
         connector?.emitter.off("change", handleConnectorUpdate)
       }
     }
-  }, [connector, config, fundedAddresses])
-
-  // Attempt to fund once wallet is connected
-  useEffect(() => {
-    if (address && (!fundedAddresses || !fundedAddresses.includes(address))) {
-      fundWallet(fundList, address)
-    }
-  }, [address, fundedAddresses])
+  }, [config, connector?.emitter])
 
   useAccountEffect({
     onDisconnect() {

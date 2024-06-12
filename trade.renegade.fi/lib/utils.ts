@@ -1,4 +1,3 @@
-import { FUNDED_ADDRESSES } from "@/constants/storage-keys"
 import { DISPLAY_TOKENS } from "@/lib/tokens"
 import { Token } from "@renegade-fi/react"
 import { Metadata } from "next"
@@ -143,7 +142,7 @@ export const fundWallet = async (
   tokens: { ticker: string; amount: string }[],
   address: `0x${string}`
 ) => {
-  const response = await fetch(`/api/fund`, {
+  await fetch(`/api/fund`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -153,86 +152,70 @@ export const fundWallet = async (
       address,
     }),
   })
-
-  if (!response.ok) {
-    const text = await response.text()
-    console.error("could not fund", text)
-  } else {
-    const fundedAddresses = JSON.parse(
-      safeLocalStorageGetItem(FUNDED_ADDRESSES) || "[]"
-    )
-    const updatedAddresses = Array.from(new Set([...fundedAddresses, address]))
-    safeLocalStorageSetItem(FUNDED_ADDRESSES, JSON.stringify(updatedAddresses))
-    console.log("Funding success")
-  }
 }
 
 export const fundList: { ticker: string; amount: string }[] = [
-  { ticker: "WETH", amount: "10" },
-  { ticker: "USDC", amount: "1000000" },
+  { ticker: "WETH", amount: "3" },
+  { ticker: "USDC", amount: "10000" },
   {
     ticker: "WBTC",
-    amount: "5",
+    amount: "0.2",
   },
   {
     ticker: "BNB",
-    amount: "100",
+    amount: "17",
   },
   {
     ticker: "MATIC",
-    amount: "100",
+    amount: "10000",
   },
   {
     ticker: "LDO",
-    amount: "100",
+    amount: "5000",
   },
   {
     ticker: "LINK",
-    amount: "100",
+    amount: "700",
   },
   {
     ticker: "UNI",
-    amount: "100",
+    amount: "1250",
   },
   {
     ticker: "SUSHI",
-    amount: "100",
+    amount: "5000",
   },
   {
     ticker: "1INCH",
-    amount: "100",
+    amount: "10000",
   },
   {
     ticker: "AAVE",
-    amount: "100",
+    amount: "120",
   },
   {
     ticker: "COMP",
-    amount: "100",
+    amount: "180",
   },
   {
     ticker: "MKR",
-    amount: "100",
-  },
-  {
-    ticker: "REN",
-    amount: "100",
+    amount: "3.75",
   },
   {
     ticker: "MANA",
-    amount: "100",
+    amount: "10000",
   },
   {
     ticker: "ENS",
-    amount: "100",
+    amount: "700",
   },
   {
     ticker: "DYDX",
-    amount: "100",
+    amount: "3333",
   },
   {
     ticker: "CRV",
-    amount: "100",
+    amount: "10000",
   },
 ]
 
