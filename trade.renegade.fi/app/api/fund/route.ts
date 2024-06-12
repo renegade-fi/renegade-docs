@@ -1,7 +1,6 @@
 import { readErc20BalanceOf } from "@/generated"
 import { Token, chain, parseAmount } from "@renegade-fi/react"
 import {
-  PrivateKeyAccount,
   createPublicClient,
   createWalletClient,
   formatEther,
@@ -15,9 +14,7 @@ import { createConfig } from "wagmi"
 export const maxDuration = 300
 
 // The cost of 20 approval transactions
-const APPROVAL_COST = parseEther("0.00019210.000192144") * BigInt(20)
-// The amount of ETH to send to the recipient
-const ETH_AMOUNT = parseEther("0.01")
+const APPROVAL_COST = parseEther("0.00019214") * BigInt(20)
 
 const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
@@ -35,6 +32,16 @@ const viemConfig = createConfig({
   },
 })
 
+// Account to fund ETH from
+const devAccount = privateKeyToAccount(
+  process.env.DEV_PRIVATE_KEY as `0x${string}`
+)
+const devWalletClient = createWalletClient({
+  account: devAccount,
+  chain,
+  transport: http(),
+})
+
 export async function POST(request: Request) {
   if (!process.env.DEV_PRIVATE_KEY) {
     return new Response("DEV_PRIVATE_KEY is required", {
@@ -47,6 +54,7 @@ export async function POST(request: Request) {
     ticker: string
     amount: string
   }[]
+
   if (!TOKENS_TO_FUND || !TOKENS_TO_FUND.length) {
     return new Response("Tokens are required", {
       status: 500,
@@ -61,12 +69,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Account to fund ETH from
-    const account = privateKeyToAccount(
-      process.env.DEV_PRIVATE_KEY as `0x${string}`
-    )
-
-    await fundEth(account, recipient, ETH_AMOUNT)
+    await fundEth(recipient, APPROVAL_COST)
 
     // Loop through each token in TOKENS_TO_FUND and mint them
     for (const { ticker, amount } of TOKENS_TO_FUND) {
@@ -86,41 +89,31 @@ export async function POST(request: Request) {
 }
 
 async function fundEth(
-  account: PrivateKeyAccount,
   recipient: `0x${string}`,
-  ethAmount: bigint
+  amount: bigint
 ): Promise<void> {
   const ethBalance = await publicClient.getBalance({
     address: recipient,
   })
-  if (ethBalance > APPROVAL_COST) {
+  const ethNeeded = amount - ethBalance
+  if (ethNeeded <= 0) {
     console.log("Skipping ETH funding")
     return
   }
-  const walletClient = createWalletClient({
-    account,
-    chain,
-    transport: http(),
-  })
 
   let attempts = 0
   while (attempts < 5) {
     try {
-      const hash = await walletClient.sendTransaction({
-        account,
+      const hash = await devWalletClient.sendTransaction({
         to: recipient,
-        value: ethAmount,
+        value: amount,
       })
 
-      const transaction = await publicClient.waitForTransactionReceipt({
+      await publicClient.waitForTransactionReceipt({
         hash,
       })
 
-      console.log(
-        `Funded ${recipient} with ${formatEther(
-          ethAmount
-        )} ETH. Transaction hash: ${transaction.transactionHash}`
-      )
+      console.log(`Funded ${recipient} with ${formatEther(amount)} ETH.`)
       break
     } catch (error: any) {
       if (error?.message?.includes("nonce")) {
@@ -173,23 +166,15 @@ async function mint(
   token: `0x${string}`,
   amount: bigint
 ) {
-  const account = privateKeyToAccount(
-    process.env.DEV_PRIVATE_KEY as `0x${string}`
-  )
-  const walletClient = createWalletClient({
-    account,
-    chain,
-    transport: http(),
-  })
   const { request } = await publicClient.simulateContract({
-    account,
+    account: devAccount,
     address: token,
     abi,
     functionName: "mint",
     args: [recipientAddr, amount],
   })
 
-  const hash = await walletClient.writeContract(request)
+  const hash = await devWalletClient.writeContract(request)
   const tx = await publicClient.waitForTransactionReceipt({
     hash,
   })
