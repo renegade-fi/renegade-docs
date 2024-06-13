@@ -66,11 +66,14 @@ function SingleOrder({
   const formattedAmount = formatNumber(amount, base.decimals)
   const formattedAmountLong = formatNumber(amount, base.decimals, true)
   const sortedFills = fills.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
-  const latestFill = sortedFills[sortedFills.length - 1]?.amount ?? 0
-  const remaining = BigInt(amount) - BigInt(latestFill)
+  const fillAmount = sortedFills.reduce(
+    (acc, fill) => acc + BigInt(fill.amount),
+    BigInt(0)
+  )
+  const remaining = BigInt(amount) - fillAmount
   const formattedRemaining = formatNumber(remaining, base.decimals)
   const formattedRemainingLong = formatNumber(
-    BigInt(amount) - BigInt(latestFill),
+    BigInt(amount) - fillAmount,
     base.decimals,
     true
   )
@@ -80,7 +83,7 @@ function SingleOrder({
     state === OrderState.Filled ? formattedAmountLong : formattedRemainingLong
   const formattedState = getReadableState(state)
   const fillLabel = `${Math.round(
-    (Number(latestFill) / Number(amount)) * 100
+    (Number(fillAmount) / Number(amount)) * 100
   )}%`
   const isCancellable = [OrderState.Created, OrderState.Matching].includes(
     state
