@@ -14,7 +14,7 @@ export const RENEGADE_ACCOUNT_TOOLTIP =
 export const BBO_TOOLTIP =
   "All prices are streamed from centralized exchanges in real-time, and all trades clear at the middle of the Binance bid-ask spread."
 export const FEES_TOOLTIP =
-  "Fees are only paid on matched orders, and must be paid before you withdraw funds from Renegade."
+  "Fees accrue on a balance as orders match, and must be paid before withdrawing."
 export const RELAYER_FEE_TOOLTIP =
   "The fee you pay to your relayer. To get lower relayer fees, run your own node."
 export const PROTOCOL_FEE_TOOLTIP = "The fee you pay to the protocol."
