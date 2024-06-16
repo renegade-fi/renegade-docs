@@ -1,5 +1,4 @@
 import { PriceLevel } from "@/lib/price-simulation"
-import { NextRequest, NextResponse } from "next/server"
 
 export const dynamic = "force-dynamic"
 export const runtime = "edge"
@@ -45,15 +44,20 @@ type OrderbookResponseData = {
  * The GET handler for this route, which fetches the current Binance orderbook
  * for the given pair, and returns it in the expected format.
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(request: Request): Promise<Response> {
   try {
     const symbol = getPairSymbolFromRequest(request)
+    console.log(`symbol: ${symbol}`)
     const binanceOrderbook = await fetchBinanceOrderbook(symbol)
+    console.log(`binanceOrderbook: ${binanceOrderbook}`)
     const orderbookRes = convertOrderbook(binanceOrderbook)
+    console.log(`orderbookRes: ${orderbookRes}`)
 
-    return NextResponse.json(orderbookRes)
+    return new Response(JSON.stringify(orderbookRes), {
+      headers: { "Content-Type": "application/json" },
+    })
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 })
+    return new Response(e.message, { status: 500 })
   }
 }
 
@@ -61,11 +65,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * Parses the base and quote tickers from the request's query parameters,
  * and remaps them to corresponding pair symbols that Binance expects.
  */
-function getPairSymbolFromRequest(request: NextRequest): string {
-  const base_ticker = request.nextUrl.searchParams
-    .get("base_ticker")
-    ?.toUpperCase()
-  const quote_ticker = request.nextUrl.searchParams
+function getPairSymbolFromRequest(request: Request): string {
+  const requestUrl = new URL(request.url)
+  const base_ticker = requestUrl.searchParams.get("base_ticker")?.toUpperCase()
+  const quote_ticker = requestUrl.searchParams
     .get("quote_ticker")
     ?.toUpperCase()
 
@@ -102,7 +105,11 @@ async function fetchBinanceOrderbook(
   binance_url.searchParams.set("symbol", symbol)
   binance_url.searchParams.set("limit", "5000")
 
+  console.log(`binance_url: ${binance_url}`)
+
   const res = await fetch(binance_url)
+  const text = await res.clone().text()
+  console.log(`res: ${text}`)
   return res.json()
 }
 
