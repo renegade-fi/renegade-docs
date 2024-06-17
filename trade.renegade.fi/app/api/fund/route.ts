@@ -24,11 +24,11 @@ const publicClient = createPublicClient({
   chain,
   transport: http(),
 })
-
 const viemConfig = createConfig({
   chains: [chain],
   transports: {
-    [chain.id]: http(),
+    [473474]: http(),
+    [421614]: http(),
   },
 })
 
@@ -95,8 +95,8 @@ async function fundEth(
   const ethBalance = await publicClient.getBalance({
     address: recipient,
   })
-  const ethNeeded = amount - ethBalance
-  if (ethNeeded <= 0) {
+  const amountToSend = amount - ethBalance
+  if (amountToSend <= 0) {
     console.log("Skipping ETH funding")
     return
   }
@@ -106,14 +106,14 @@ async function fundEth(
     try {
       const hash = await devWalletClient.sendTransaction({
         to: recipient,
-        value: amount,
+        value: amountToSend,
       })
 
       await publicClient.waitForTransactionReceipt({
         hash,
       })
 
-      console.log(`Funded ${recipient} with ${formatEther(amount)} ETH.`)
+      console.log(`Funded ${recipient} with ${formatEther(amountToSend)} ETH.`)
       break
     } catch (error: any) {
       if (error?.message?.includes("nonce")) {
