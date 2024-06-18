@@ -1,22 +1,18 @@
 import { renegadeConfig } from "@/app/providers"
-import { Token, chain } from "@renegade-fi/react"
+import { viemClient } from "@/lib/viem"
+import { Token } from "@renegade-fi/react"
 import { useCallback, useEffect, useState } from "react"
-import { createPublicClient, http, parseAbi } from "viem"
+import { parseAbi } from "viem"
 
 const abi = parseAbi([
   "function balanceOf(address owner) view returns (uint256)",
 ])
 
-const publicClient = createPublicClient({
-  chain,
-  transport: http(),
-})
-
 export const useTvl = (ticker: string) => {
   const [data, setData] = useState<bigint>(BigInt(0))
 
   const fetchBalance = useCallback(async () => {
-    const balance = await publicClient.readContract({
+    const balance = await viemClient.readContract({
       address: Token.findByTicker(ticker).address,
       abi,
       functionName: "balanceOf",

@@ -10,11 +10,11 @@ import {
   UNUSED_BALANCE_NEEDED_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
+import { viemClient } from "@/lib/viem"
 import { ArrowForwardIcon } from "@chakra-ui/icons"
 import { Button, useDisclosure } from "@chakra-ui/react"
 import {
   Token,
-  chain,
   parseAmount,
   useBackOfQueueBalances,
   useBackOfQueueOrders,
@@ -28,7 +28,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { createPublicClient, http, parseUnits } from "viem"
+import { parseUnits } from "viem"
 import { useAccount, useBlockNumber, useWalletClient } from "wagmi"
 
 import { useButton } from "@/hooks/use-button"
@@ -39,11 +39,6 @@ import { Tooltip } from "@/components/tooltip"
 const MAX_INT = BigInt(
   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 )
-
-const publicClient = createPublicClient({
-  chain,
-  transport: http(),
-})
 
 export default function DepositButton({
   baseTokenAmount,
@@ -92,7 +87,7 @@ export default function DepositButton({
   const { data: walletClient } = useWalletClient()
   const handleApprove = async () => {
     if (!isConnected || !walletClient) return
-    const nonce = await publicClient.getTransactionCount({
+    const nonce = await viemClient.getTransactionCount({
       address: walletClient.account.address,
     })
     await approve({
@@ -119,7 +114,7 @@ export default function DepositButton({
     // Generate Permit2 Signature
     const { signature, nonce, deadline } = await signPermit2({
       amount,
-      chainId: chain.id,
+      chainId: viemClient.chain.id,
       spender: process.env.NEXT_PUBLIC_DARKPOOL_CONTRACT,
       permit2Address: process.env.NEXT_PUBLIC_PERMIT2_CONTRACT,
       token,

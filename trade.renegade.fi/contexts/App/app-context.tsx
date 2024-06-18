@@ -1,7 +1,8 @@
 "use client"
 
 import { fundList, fundWallet } from "@/lib/utils"
-import { chain, useConfig } from "@renegade-fi/react"
+import { viemClient } from "@/lib/viem"
+import { useConfig } from "@renegade-fi/react"
 import { disconnect } from "@renegade-fi/react/actions"
 import {
   PropsWithChildren,
@@ -10,8 +11,7 @@ import {
   useEffect,
   useState,
 } from "react"
-import { createPublicClient } from "viem"
-import { http, useAccount, useAccountEffect } from "wagmi"
+import { useAccount, useAccountEffect } from "wagmi"
 
 export enum ViewEnum {
   TRADING,
@@ -26,11 +26,6 @@ export interface AppContextValue {
 }
 
 const AppStateContext = createContext<AppContextValue | undefined>(undefined)
-
-const publicClient = createPublicClient({
-  chain,
-  transport: http(),
-})
 
 function AppProvider({
   children,
@@ -70,7 +65,7 @@ function AppProvider({
   useEffect(() => {
     const handleFund = async () => {
       if (!address) return
-      const balance = await publicClient.getBalance({
+      const balance = await viemClient.getBalance({
         address,
       })
       if (!balance) {
