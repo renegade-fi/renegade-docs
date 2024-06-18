@@ -4,6 +4,7 @@ import LazyDatadog from "@/app/(desktop)/telemetry"
 import { OrderToaster } from "@/app/order-toaster"
 import { TaskToaster } from "@/app/task-toaster"
 import { AppProvider } from "@/contexts/App/app-context"
+import { chain, viemClient } from "@/lib/viem"
 import { menuAnatomy } from "@chakra-ui/anatomy"
 import { CacheProvider } from "@chakra-ui/next-js"
 import {
@@ -17,7 +18,6 @@ import {
 } from "@chakra-ui/react"
 import {
   RenegadeProvider,
-  chain,
   createConfig as createSDKConfig,
   useStatus,
 } from "@renegade-fi/react"
@@ -200,8 +200,8 @@ export const renegadeConfig = createSDKConfig({
   darkPoolAddress: process.env.NEXT_PUBLIC_DARKPOOL_CONTRACT,
   priceReporterUrl: process.env.NEXT_PUBLIC_PRICE_REPORTER_URL,
   relayerUrl: process.env.NEXT_PUBLIC_RENEGADE_RELAYER_HOSTNAME,
-  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL,
   ssr: true,
+  viemClient,
 })
 
 /*

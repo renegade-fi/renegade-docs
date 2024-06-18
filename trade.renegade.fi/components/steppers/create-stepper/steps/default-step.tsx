@@ -8,6 +8,7 @@ import {
 } from "@/constants/task-messages"
 import { ViewEnum, useApp } from "@/contexts/App/app-context"
 import { REMEMBER_ME_TOOLTIP } from "@/lib/tooltip-labels"
+import { viemClient } from "@/lib/viem"
 import {
   Button,
   Checkbox,
@@ -16,12 +17,12 @@ import {
   ModalBody,
   Text,
 } from "@chakra-ui/react"
-import { chain, useConfig } from "@renegade-fi/react"
+import { useConfig } from "@renegade-fi/react"
 import { connect } from "@renegade-fi/react/actions"
 import { CircleHelp, Unplug } from "lucide-react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
-import { createPublicClient, http, verifyMessage } from "viem"
+import { verifyMessage } from "viem"
 import {
   useAccount as useAccountWagmi,
   useDisconnect as useDisconnectWagmi,
@@ -32,11 +33,6 @@ import { useStepper } from "@/components/steppers/create-stepper/create-stepper"
 import { Tooltip } from "@/components/tooltip"
 
 const ROOT_KEY_MESSAGE_PREFIX = "Unlock your Renegade Wallet on chain ID:"
-
-const publicClient = createPublicClient({
-  chain,
-  transport: http(),
-})
 
 export function DefaultStep() {
   const { setView } = useApp()
@@ -50,7 +46,7 @@ export function DefaultStep() {
       async onSuccess(data, variables) {
         // If Cloudflare is down, Smart Contract accounts cannot be verified
         // EOA accounts can be verified using verifyMessage util
-        const valid = await publicClient
+        const valid = await viemClient
           .verifyMessage({
             address: address ?? `0x`,
             message: variables.message,
@@ -131,7 +127,7 @@ export function DefaultStep() {
               loadingText="Signing in to Renegade"
               onClick={() => {
                 signMessage({
-                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${chain.id}`,
+                  message: `${ROOT_KEY_MESSAGE_PREFIX} ${viemClient.chain.id}`,
                 })
               }}
             >

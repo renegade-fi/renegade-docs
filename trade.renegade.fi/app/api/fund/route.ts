@@ -1,7 +1,7 @@
 import { readErc20BalanceOf } from "@/generated"
-import { Token, chain, parseAmount } from "@renegade-fi/react"
+import { chain, viemClient } from "@/lib/viem"
+import { Token, parseAmount } from "@renegade-fi/react"
 import {
-  createPublicClient,
   createWalletClient,
   formatEther,
   http,
@@ -20,15 +20,10 @@ const abi = parseAbi([
   "function mint(address _address, uint256 value) external",
 ])
 
-const publicClient = createPublicClient({
-  chain,
-  transport: http(),
-})
 const viemConfig = createConfig({
   chains: [chain],
   transports: {
-    [473474]: http(),
-    [421614]: http(),
+    [chain.id]: http(),
   },
 })
 
@@ -92,7 +87,7 @@ async function fundEth(
   recipient: `0x${string}`,
   amount: bigint
 ): Promise<void> {
-  const ethBalance = await publicClient.getBalance({
+  const ethBalance = await viemClient.getBalance({
     address: recipient,
   })
   const amountToSend = amount - ethBalance
@@ -109,7 +104,7 @@ async function fundEth(
         value: amountToSend,
       })
 
-      await publicClient.waitForTransactionReceipt({
+      await viemClient.waitForTransactionReceipt({
         hash,
       })
 
@@ -166,7 +161,7 @@ async function mint(
   token: `0x${string}`,
   amount: bigint
 ) {
-  const { request } = await publicClient.simulateContract({
+  const { request } = await viemClient.simulateContract({
     account: devAccount,
     address: token,
     abi,
@@ -175,7 +170,7 @@ async function mint(
   })
 
   const hash = await devWalletClient.writeContract(request)
-  const tx = await publicClient.waitForTransactionReceipt({
+  const tx = await viemClient.waitForTransactionReceipt({
     hash,
   })
   if (tx.status === "success") {
