@@ -33,8 +33,8 @@ importers:
         specifier: ^11.11.0
         version: 11.11.5(@emotion/react@11.11.4(@types/react@18.2.77)(react@18.2.0))(@types/react@18.2.77)(react@18.2.0)
       '@renegade-fi/react':
-        specifier: ^0.0.45
-        version: 0.0.45(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(ws@8.13.0(bufferutil@4.0.8))
+        specifier: 0.0.0-canary-20240621213626
+        version: 0.0.0-canary-20240621213626(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)
       '@t3-oss/env-nextjs':
         specifier: ^0.6.0
         version: 0.6.1(typescript@5.1.6)(zod@3.22.4)
@@ -2090,8 +2090,8 @@ packages:
       '@tanstack/query-core':
         optional: true
 
-  '@renegade-fi/react@0.0.45':
-    resolution: {integrity: sha512-EiNIKh960Jg1QaONQDjfAJS7Y/TLzFBesl+2lLnM+9Im+OIlA9Lokk9nmmZxL3UyEbl05+9pudbcWhPZTqNn4g==}
+  '@renegade-fi/react@0.0.0-canary-20240621213626':
+    resolution: {integrity: sha512-bV+MMAvLE+IdhZln956ipAabAbNRyIL7RmufxU0NsajbtiaC8I7W0BnekGI8WSnyZ1jdEGFZ8mMR1iTKzn7gtQ==}
     peerDependencies:
       '@tanstack/react-query': '>=5.0.0'
       react: '>=18'
@@ -8713,7 +8713,7 @@ snapshots:
       - react
       - ws
 
-  '@renegade-fi/react@0.0.45(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(ws@8.13.0(bufferutil@4.0.8))':
+  '@renegade-fi/react@0.0.0-canary-20240621213626(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.77)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.1.6)(ws@8.13.0(bufferutil@4.0.8))(zod@3.22.4)':
     dependencies:
       '@renegade-fi/core': 0.0.44(@tanstack/query-core@5.29.0)(@types/react@18.2.77)(react@18.2.0)(viem@2.9.28(bufferutil@4.0.8)(typescript@5.1.6)(zod@3.22.4))(ws@8.13.0(bufferutil@4.0.8))
       '@tanstack/react-query': 5.29.2(react@18.2.0)
