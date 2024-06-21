@@ -203,9 +203,9 @@ function RenegadeWalletPanel() {
     const wethAddress = Token.findByTicker("WETH").address
     const usdcAddress = Token.findByTicker("USDC").address
 
-    const nonzero: Array<[`0x${string}`, bigint]> = Object.entries(
-      balances
-    ).map(([_, b]) => [b.mint, b.amount])
+    const nonzero: Array<[`0x${string}`, bigint]> = Array.from(
+      balances.values()
+    ).map((b) => [b.mint, b.amount])
     const placeholders: Array<[`0x${string}`, bigint]> = DISPLAY_TOKENS()
       .filter((t) => !nonzero.some(([a]) => a === t.address))
       .map((t) => [t.address as `0x${string}`, BigInt(0)])
@@ -224,7 +224,7 @@ function RenegadeWalletPanel() {
   }, [balances])
 
   const Content = useMemo(() => {
-    if (isConnected && balances.length) {
+    if (isConnected && balances.size) {
       return (
         <>
           <SimpleBar
@@ -292,7 +292,7 @@ function RenegadeWalletPanel() {
     }
   }, [
     address,
-    balances.length,
+    balances.size,
     formattedBalances,
     isConnected,
     isSigningIn,
@@ -325,7 +325,7 @@ function HistorySection() {
   )
   const balances = useBalances()
   if (status !== "in relayer") return null
-  if (!taskHistory.length && !balances.length) return null
+  if (!taskHistory.length && !balances.size) return null
   return (
     <>
       <Tooltip placement="right" label={TASK_HISTORY_TOOLTIP}>

@@ -38,9 +38,7 @@ export function TradingTokenSelectModal({
       })
       .map(({ address }) => ({
         address: address as `0x${string}`,
-        balance:
-          balances.find((balance) => balance.mint === address)?.amount ??
-          BigInt(0),
+        balance: balances.get(address)?.amount ?? BigInt(0),
       }))
       .sort((a, b) => Number(b.balance - a.balance)) // Sort in descending order
       .map(({ address, balance }) => ({

@@ -242,10 +242,10 @@ function OrdersPanel() {
       >
         {orderHistory.map((order) => {
           const sendBalance =
-            balances.find(({ mint }) =>
+            balances.get(
               order.data.side === "Buy"
-                ? mint === order.data.quote_mint
-                : mint === order.data.base_mint
+                ? order.data.quote_mint
+                : order.data.base_mint
             )?.amount || BigInt(0)
           return (
             <SingleOrder
