@@ -59,10 +59,8 @@ export function PlaceOrderButton({
 
   const hasZeroBalance = useMemo(() => {
     if (!baseTokenAmount) return false
-    const baseBalance =
-      balances.find(({ mint }) => mint === baseAddress)?.amount || BigInt(0)
-    const quoteBalance =
-      balances.find(({ mint }) => mint === quoteAddress)?.amount || BigInt(0)
+    const baseBalance = balances.get(baseAddress)?.amount || BigInt(0)
+    const quoteBalance = balances.get(quoteAddress)?.amount || BigInt(0)
     if (direction === Direction.SELL) {
       return baseBalance === BigInt(0)
     }
@@ -74,9 +72,8 @@ export function PlaceOrderButton({
 
   const isMaxOrders = orders.length === MAX_ORDERS
   const isMaxBalances = backOfQueueBalances.length === MAX_BALANCES
-  const isExistingBalance = balances.find(
-    ({ mint }) =>
-      mint === (direction === Direction.BUY ? baseAddress : quoteAddress)
+  const isExistingBalance = balances.get(
+    direction === Direction.BUY ? baseAddress : quoteAddress
   )
 
   const isDisabled =

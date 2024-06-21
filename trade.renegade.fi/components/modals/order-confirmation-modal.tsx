@@ -89,12 +89,8 @@ export function OrderConfirmationModal({
 
   const hasInsufficientBalance = useMemo(() => {
     if (!amount) return false
-    const baseBalance =
-      balances.find(({ mint }) => mint === baseToken.address)?.amount ||
-      BigInt(0)
-    const quoteBalance =
-      balances.find(({ mint }) => mint === quoteToken.address)?.amount ||
-      BigInt(0)
+    const baseBalance = balances.get(baseToken.address)?.amount || BigInt(0)
+    const quoteBalance = balances.get(quoteToken.address)?.amount || BigInt(0)
     if (direction === Direction.SELL) {
       return baseBalance < parseAmount(amount, baseToken)
     }

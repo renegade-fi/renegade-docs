@@ -41,9 +41,7 @@ export default function WithdrawButton({
   const balances = useBalances()
 
   const hasInsufficientBalance = useMemo(() => {
-    const renegadeBalance = balances.find(
-      (b) => b.mint === Token.findByTicker(baseTicker).address
-    )
+    const renegadeBalance = balances.get(Token.findByTicker(baseTicker).address)
     if (!renegadeBalance) return true
     return (
       renegadeBalance.amount <
@@ -74,7 +72,7 @@ export default function WithdrawButton({
       toast.message(QUEUED_WITHDRAWAL_MSG(token, amount))
     }
 
-    if (fees.length > 0) {
+    if (fees.size > 0) {
       await payFees(config)
     }
 
