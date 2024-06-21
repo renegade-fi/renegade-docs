@@ -5,6 +5,7 @@ import {
   MIDPOINT_TOOLTIP,
   ORDER_CONFIRMATION_PROTOCOL_FEE_TOOLTIP,
   ORDER_CONFIRMATION_RELAYER_FEE_TOOLTIP,
+  SAVINGS_TOOLTIP,
 } from "@/lib/tooltip-labels"
 import { Direction } from "@/lib/types"
 import { formatNumber } from "@/lib/utils"
@@ -41,6 +42,7 @@ import { useLocalStorage } from "usehooks-ts"
 import { v4 as uuidv4 } from "uuid"
 import { parseUnits } from "viem/utils"
 
+import { usePredictedSavings } from "@/hooks/use-savings"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { Tooltip } from "@/components/tooltip"
@@ -86,6 +88,20 @@ export function OrderConfirmationModal({
   )
 
   const balances = useBalances()
+  const predictedSavings = usePredictedSavings(
+    {
+      base: baseToken.address,
+      quote: quoteToken.address,
+      amount: parseAmount(amount, baseToken),
+      side: direction,
+    },
+    0.001,
+    usd
+  )
+  const formattedSavings = useMemo(
+    () => numeral(predictedSavings).format("$0[.]00"),
+    [predictedSavings]
+  )
 
   const hasInsufficientBalance = useMemo(() => {
     if (!amount) return false
@@ -239,6 +255,15 @@ export function OrderConfirmationModal({
                   </Tooltip>
                 </Flex>
                 <Text>$0.00</Text>
+              </Flex>
+              <Flex alignItems="center" justifyContent="space-between">
+                <Flex alignItems="center" gap="1" color="text.secondary">
+                  <Text>Savings vs. Binance</Text>
+                  <Tooltip placement="top" label={SAVINGS_TOOLTIP}>
+                    <Info height={16} width={16} />
+                  </Tooltip>
+                </Flex>
+                <Text>{formattedSavings}</Text>
               </Flex>
             </Flex>
             {hasInsufficientBalance && (

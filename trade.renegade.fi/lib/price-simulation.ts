@@ -8,52 +8,54 @@ export type PriceLevel = {
   quantity: number
 }
 
+/**
+ * The amount of base & quote assets transacted in a trade,
+ * from the end-users perspective
+ */
+export type TradeAmounts = {
+  /** The amount of the base asset transacted */
+  effectiveBaseAmount: number
+  /** The amount of the quote asset transacted */
+  effectiveQuoteAmount: number
+}
+
 /** An orderbook, comprised of bid/ask lists and a taker fee rate */
 export class Orderbook {
   /**
    * The orderbook bids (buy-side price levels), in descending order of price.
-   * Empty upon initialization.
    */
   bids: PriceLevel[] = []
 
   /**
    * The orderbook asks (sell-side price levels), in ascending order of price.
-   * Empty upon initialization.
    */
   asks: PriceLevel[] = []
 
   /**
    * The percentage fee to apply to trades against this orderbook.
-   * Defaults to 10 bips, this is the Binance taker fee for traders w/ <20M
-   * in monthly trading volume.
    */
   feeRate: number = 0.001
 
-  /** Adds bids to the orderbook, maintaining a descending sorting by price */
-  addBids(bids: PriceLevel[]) {
-    this.bids.push(...bids)
-    this.bids.sort((a, b) => b.price - a.price)
-  }
-
-  /** Adds asks to the orderbook, maintaining an ascending sorting by price */
-  addAsks(asks: PriceLevel[]) {
-    this.asks.push(...asks)
-    this.asks.sort((a, b) => a.price - b.price)
-  }
-
-  /** Sets the fee rate used by the orderbook */
-  setFeeRate(feeRate: number) {
+  /**
+   * Creates an orderbook initialized with the given bids, asks, and fee rate.
+   * The bids and asks are assumed to be sorted in descending and ascending order of price, respectively.
+   * The fee rate defaults to 10 bps, the Binance taker fee for traders w/ <20M in monthly trading volume.
+   */
+  constructor(bids: PriceLevel[], asks: PriceLevel[], feeRate: number = 0.001) {
+    this.bids = bids
+    this.asks = asks
     this.feeRate = feeRate
   }
 
   /**
-   * Simulates the effective price of a trade on an orderbook, inclusive of fees
+   * Simulates the effective amounts of base/quote transacted in a trade on the orderbook,
+   * inclusive of fees & price impact
    * @param quantity The amount of the base asset to trade
    * @param direction The direction of the trade (buy/sell)
    * @param feeRate The percentage fee to apply to the trade, deducted from the received asset
-   * @returns The effective price of the trade (inclusive of fees) denominated in the quote asset
+   * @returns The effective amounts of base/quote transacted from the end-users perspective
    */
-  simulateTradePrice(quantity: number, direction: Direction): number {
+  simulateTradeAmounts(quantity: number, direction: Direction): TradeAmounts {
     const levels = direction === Direction.BUY ? [...this.asks] : [...this.bids]
     let remaining = quantity
     let effectiveQuoteAmount = 0
@@ -76,9 +78,10 @@ export class Orderbook {
         ? effectiveQuoteAmount * (1 - this.feeRate)
         : effectiveQuoteAmount
 
-    let effectivePrice = effectiveQuoteAmount / effectiveBaseAmount
-
-    return effectivePrice
+    return {
+      effectiveBaseAmount,
+      effectiveQuoteAmount,
+    }
   }
 
   /**
