@@ -4,6 +4,8 @@ import { Metadata } from "next"
 import numeral from "numeral"
 import { formatUnits } from "viem/utils"
 
+import { OrderbookResponseData } from "@/app/api/get-binance-orderbook/route"
+
 export function safeLocalStorageGetItem(key: string): string | null {
   if (typeof window !== "undefined") {
     return localStorage.getItem(key)
@@ -239,4 +241,19 @@ export function calculateMaxQuote(maxQuote: number, usdPrice: number) {
     return
   }
   return baseMax
+}
+
+export async function getBinanceOrderbook(
+  base_ticker: string,
+  quote_ticker: string,
+  timestamp: number
+): Promise<OrderbookResponseData> {
+  const url = new URL("/api/get-binance-orderbook", window.location.origin)
+  url.searchParams.set("base_ticker", base_ticker)
+  url.searchParams.set("quote_ticker", quote_ticker)
+  url.searchParams.set("timestamp", timestamp.toString())
+  const req = new Request(url)
+  req.headers.set("Content-Type", "application/json")
+  const res = await fetch(req)
+  return res.json()
 }

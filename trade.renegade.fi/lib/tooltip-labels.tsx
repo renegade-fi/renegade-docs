@@ -87,3 +87,5 @@ export const MAX_BALANCES_TOOLTIP = `Renegade wallets can hold a maximum of ${MA
 export const MAX_ORDERS_TOOLTIP = `Renegade wallets can hold a maximum of ${MAX_ORDERS} orders at a time.`
 export const MAX_BALANCES_PLACE_ORDER_TOOLTIP = `This order would result in more than ${MAX_BALANCES} balances.`
 export const UNUSED_BALANCE_NEEDED_TOOLTIP = `You have an open order that needs an empty balance slot to be filled.`
+export const SAVINGS_TOOLTIP =
+  "What you save in price impact, spread, and fees. Assumes a 0.1% Binance taker fee."

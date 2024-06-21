@@ -91,7 +91,7 @@ type OrderbookMap = {
 }
 
 /** The reponse data from this route */
-type OrderbookResponseData = {
+export type OrderbookResponseData = {
   timestamp: number
   bids: PriceLevel[]
   asks: PriceLevel[]
