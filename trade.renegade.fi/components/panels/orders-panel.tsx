@@ -2,6 +2,10 @@
 
 import { useApp } from "@/contexts/App/app-context"
 import {
+  RENEGADE_PROTOCOL_FEE_RATE,
+  RENEGADE_RELAYER_FEE_RATE,
+} from "@/lib/constants"
+import {
   FAILED_CANCEL_ORDER_MSG,
   QUEUED_CANCEL_ORDER_MSG,
   getReadableState,
@@ -36,6 +40,7 @@ import "simplebar-react/dist/simplebar.min.css"
 import { toast } from "sonner"
 import { formatUnits } from "viem/utils"
 
+import { useSavingsPerFill } from "@/hooks/use-savings"
 import { useUSDPrice } from "@/hooks/use-usd-price"
 
 import { NetworkOrderItem } from "@/components/panels/network-order"
@@ -110,6 +115,11 @@ function SingleOrder({
     (task) => task.state !== "Completed" && task.state !== "Failed"
   )
 
+  const totalSavings = useSavingsPerFill(
+    order,
+    RENEGADE_PROTOCOL_FEE_RATE + RENEGADE_RELAYER_FEE_RATE
+  ).reduce((acc, curr) => acc + curr, 0)
+
   const handleCancel = async () => {
     if (isQueue) {
       toast.message(QUEUED_CANCEL_ORDER_MSG(base, amount, side))
@@ -135,6 +145,7 @@ function SingleOrder({
         side,
         Number(created) / 1000,
         formattedQuoteValue,
+        totalSavings,
         insufficientSendBalance
       )}
     >

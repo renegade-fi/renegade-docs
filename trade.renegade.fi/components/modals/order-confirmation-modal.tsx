@@ -1,4 +1,8 @@
 import { useApp } from "@/contexts/App/app-context"
+import {
+  RENEGADE_PROTOCOL_FEE_RATE,
+  RENEGADE_RELAYER_FEE_RATE,
+} from "@/lib/constants"
 import { FAILED_PLACE_ORDER_MSG, QUEUED_PLACE_ORDER_MSG } from "@/lib/task"
 import {
   GAS_FEE_TOOLTIP,
@@ -73,8 +77,8 @@ export function OrderConfirmationModal({
   const formattedUsdPrice = numeral(usd).format("0[.]00")
   const [protocolFee, relayerFee] = useMemo(() => {
     return [
-      numeral(usd * 0.0002).format("$0[.]00"),
-      numeral(usd * 0.0008).format("$0[.]00"),
+      numeral(usd * RENEGADE_PROTOCOL_FEE_RATE).format("$0[.]00"),
+      numeral(usd * RENEGADE_RELAYER_FEE_RATE).format("$0[.]00"),
     ]
   }, [usd])
   const formattedAmount = formatNumber(
@@ -95,7 +99,7 @@ export function OrderConfirmationModal({
       amount: parseAmount(amount, baseToken),
       side: direction,
     },
-    0.001,
+    RENEGADE_PROTOCOL_FEE_RATE + RENEGADE_RELAYER_FEE_RATE,
     usd
   )
   const formattedSavings = useMemo(

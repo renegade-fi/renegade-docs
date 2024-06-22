@@ -2,6 +2,7 @@ import { Text } from "@chakra-ui/react"
 import { MAX_BALANCES, MAX_ORDERS } from "@renegade-fi/react/constants"
 import dayjs from "dayjs"
 import { TriangleAlert } from "lucide-react"
+import numeral from "numeral"
 
 export const ORDER_HISTORY_TOOLTIP =
   "Your private orders. Only you and your connected relayer can see these values."
@@ -34,6 +35,7 @@ export const ORDER_TOOLTIP = (
   side: string,
   createdAt: number,
   usdValue: string,
+  totalSavings: number,
   insufficientBalance?: boolean
 ) => {
   return (
@@ -54,6 +56,9 @@ export const ORDER_TOOLTIP = (
       <br />
       Created: {dayjs.unix(createdAt).fromNow()}
       <br />
+      {totalSavings > 0 && (
+        <Text>Savings: {numeral(totalSavings).format("$0[.]00")}</Text>
+      )}
       {insufficientBalance && (
         <Text
           as="span"

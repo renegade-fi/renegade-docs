@@ -72,8 +72,7 @@ export function usePredictedSavings(
 
 export function useSavingsPerFill(
   order: OrderMetadata,
-  renegadeFeeRate: number,
-  updateDep: any
+  renegadeFeeRate: number
 ): Array<number> {
   const [savingsPerFill, setSavingsPerFill] = useState<Array<number>>([])
 
@@ -133,7 +132,6 @@ export function useSavingsPerFill(
     order.data.side,
     order.fills,
     renegadeFeeRate,
-    updateDep,
   ])
 
   return savingsPerFill
