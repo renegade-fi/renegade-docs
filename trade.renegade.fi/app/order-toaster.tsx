@@ -45,7 +45,7 @@ export function OrderToaster() {
         )
       } else if (fills.length > prevFills.length) {
         const sortedFills = fills.sort((a, b) =>
-          a.timestamp > b.timestamp ? 1 : -1
+          a.price.timestamp > b.price.timestamp ? 1 : -1
         )
         const currentFill = sortedFills[sortedFills.length - 1].amount
         const formattedCurrentFill = formatNumber(currentFill, base.decimals)

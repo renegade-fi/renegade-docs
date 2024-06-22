@@ -89,24 +89,24 @@ export function useSavingsPerFill(
 
       const savingsPerFill = await Promise.all(
         fills.map(async (fill) => {
-          const { amount, price, timestamp } = fill
-          const priceFloat = parseFloat(formatAmount(price, quote, 10))
+          const { amount, price } = fill
           const quantityFloat = parseFloat(formatAmount(amount, base, 10))
-          const timestampNum = Number(timestamp)
+          const timestamp = Number(price.timestamp)
 
-          const { tradeAmounts } = await simBinanceTradeAndMidpoint(
-            base,
-            quote,
-            direction,
-            quantityFloat,
-            timestampNum
-          )
+          const { tradeAmounts, midpointPrice } =
+            await simBinanceTradeAndMidpoint(
+              base,
+              quote,
+              direction,
+              quantityFloat,
+              timestamp
+            )
 
           return calculateSavings(
             tradeAmounts,
             quantityFloat,
             direction,
-            priceFloat,
+            midpointPrice,
             renegadeFeeRate
           )
         })
@@ -121,7 +121,7 @@ export function useSavingsPerFill(
     fetchSavingsPerFill(
       order.data.base_mint,
       order.data.quote_mint,
-      order.data.side as Direction,
+      order.data.side === "Buy" ? Direction.BUY : Direction.SELL,
       order.fills,
       renegadeFeeRate
     )

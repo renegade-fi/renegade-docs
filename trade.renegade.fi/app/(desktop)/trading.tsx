@@ -177,12 +177,14 @@ export function TradingBody() {
         isOpen={tokenMenuIsOpen}
         onClose={onCloseTokenMenu}
       />
-      <OrderConfirmationModal
-        amount={baseTokenAmount}
-        isOpen={orderConfirmationIsOpen}
-        setAmount={setBaseTokenAmount}
-        onClose={onCloseOrderConfirmation}
-      />
+      {orderConfirmationIsOpen && (
+        <OrderConfirmationModal
+          amount={baseTokenAmount}
+          isOpen={orderConfirmationIsOpen}
+          setAmount={setBaseTokenAmount}
+          onClose={onCloseOrderConfirmation}
+        />
+      )}
     </>
   )
 }

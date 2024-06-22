@@ -70,7 +70,9 @@ function SingleOrder({
   const quote = Token.findByAddress(quote_mint)
   const formattedAmount = formatNumber(amount, base.decimals)
   const formattedAmountLong = formatNumber(amount, base.decimals, true)
-  const sortedFills = fills.sort((a, b) => (a.timestamp > b.timestamp ? 1 : -1))
+  const sortedFills = fills.sort((a, b) =>
+    a.price.timestamp > b.price.timestamp ? 1 : -1
+  )
   const fillAmount = sortedFills.reduce(
     (acc, fill) => acc + BigInt(fill.amount),
     BigInt(0)

@@ -195,6 +195,7 @@ async function constructBinanceOrderbook(
   })
 
   // Apply the updates to the map
+  // (they are given in ascending order by time, i.e. most recent is last)
   updates.forEach((update) => {
     update.bid.forEach((level) => {
       orderbookMap.bids[level.price] = level.volume
@@ -205,7 +206,6 @@ async function constructBinanceOrderbook(
   })
 
   // Use the timestamp of the most recent update
-  // (they are given in ascending order by time, i.e. most recent is last)
   const lastUpdateIdx = updates.length - 1
   const finalTimestamp = updates[lastUpdateIdx].exchangeTimestamp
 
@@ -231,7 +231,7 @@ async function fetchBinanceOrderbookSnapshot(
     endDate
   )
 
-  const res = await fetch(req)
+  const res = await fetch(req, { cache: "no-store" })
   const orderbookRes: AmberdataOrderbookSnapshotResponse = await res.json()
 
   // The Amberdata response contains snapshots in ascending order of timestamp,
@@ -255,7 +255,7 @@ async function fetchBinanceOrderbookUpdates(
     desiredTimestamp
   )
 
-  const res = await fetch(req)
+  const res = await fetch(req, { cache: "no-store" })
   const updatesRes: AmberdataOrderbookUpdateResponse = await res.json()
   return updatesRes.payload.data
 }
