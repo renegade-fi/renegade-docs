@@ -21,8 +21,11 @@ import {
   createConfig as createSDKConfig,
   useStatus,
 } from "@renegade-fi/react"
-import { focusManager } from "@tanstack/react-query"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  QueryClient,
+  QueryClientProvider,
+  focusManager,
+} from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
 import dayjs from "dayjs"

@@ -18,7 +18,7 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { useConfig } from "@renegade-fi/react"
-import { connect } from "@renegade-fi/react/actions"
+import { connect, getSkRoot } from "@renegade-fi/react/actions"
 import { CircleHelp, Unplug } from "lucide-react"
 import { toast } from "sonner"
 import { useLocalStorage } from "usehooks-ts"
@@ -66,7 +66,17 @@ export function DefaultStep() {
           throw new Error("Invalid signature")
         }
         config.setState((x) => ({ ...x, seed: data }))
-        const res = await connect(config)
+        const skRoot = getSkRoot(config)
+        const blinderShare = config.utils.derive_blinder_share(skRoot)
+
+        // Check if WalletUpdated events exist onchain
+        const logs = await fetch(`/api/get-logs?blinderShare=${blinderShare}`)
+          .then((res) => res.json())
+          .then((data) => data.logs)
+
+        const res = await connect(config, {
+          isCreateWallet: logs === 0,
+        })
         if (res?.job) {
           const { isLookup, job } = res
           toast.promise(job, {
