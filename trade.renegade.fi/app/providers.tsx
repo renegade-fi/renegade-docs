@@ -217,7 +217,7 @@ export const wagmiConfig = createConfig(
     appDescription:
       "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.",
     appName: "Renegade | On-Chain Dark Pool",
-    appIcon: "https://www.renegade.fi/glyph_light.svg",
+    appIcon: "/glyph_light.svg",
     appUrl: "https://renegade.fi",
     chains: [chain],
     ssr: true,
