@@ -100,7 +100,7 @@ function Glyph(props: GlyphProps) {
         }
         pointerEvents={props.showDownloadPrompt ? undefined : "none"}
         transition="0.2s"
-        href="https://renegade.fi/logos.zip"
+        href="/logos.zip"
         isExternal
       >
         Download Logo Pack
