@@ -8,13 +8,7 @@ description: Frequently Asked Questions about Renegade.
 
 ### What is the current status of Renegade?
 
-The project is under active development. As of April 2024, the network is fully
-working end-to-end and is undergoing load testing as we roll out the public
-testnet.
-
-For priority access onto the whitelisted testnet, [sign up
-here](https://renegadefi.typeform.com/access). Otherwise, you can follow along
-with our open-source code on [GitHub](https://github.com/renegade-fi).
+Renegade is live on Arbitrum One mainnet as of September 3rd, 2024.
 
 ### Midpoint prices sound too good to be true. What's the tradeoff?
 
@@ -26,12 +20,12 @@ environments, the market is often skewed and it may take some time to fill your
 trade. To trade off quality-of-execution for time-to-execution and increase
 counter-flow, see [Indications of Interest](/advanced-concepts/ioi).
 
-### What are the fees? What governance power is there?
+### What are the fees?
 
-There is an in-protocol fee of 2 basis points (0.02%). Governance power is
-minimized, and can neither arbitrarily upgrade the contract nor halt withdraws.
-See the [Fees and Governance](/core-concepts/fees-and-governance) section for
-more details.
+There is an in-protocol fee of 2 basis points (0.02%). Relayers can charge
+addition fees on top of the protocol fee, and the frontend relayer at
+[trade.renegade.fi](https://trade.renegade.fi) charges an addition 2 basis
+points.
 
 ### What blockchain is Renegade built on?
 
@@ -50,15 +44,15 @@ and has no hardware trust assumptions.
 
 Order placement and cancellation is &lt;1ms if you are running in super-relayer
 mode (see [Super Relayers](/advanced-concepts/super-relayers)). We are
-constantly optimizing both latency and gas fees, but current estimates are
-~500ms to match an order (fully parallelizable over all outstanding
-counterparty orders). Gas costs are ~0.5 USD to create a new wallet, and ~1 USD
-for each deposit/withdraw or positive order match. Certain flags exist to
-maximize privacy, in exchange for higher gas fees.
+constantly optimizing both latency and gas fees, but current estimates are ~1s
+to match an order (fully parallelizable over all outstanding counterparty
+orders). Gas costs are ~0.2 USD to create a new wallet, and ~0.3 USD for each
+deposit/withdraw or positive order match. Certain flags exist to maximize
+privacy, in exchange for higher gas fees.
 
 ### Does Renegade custody assets? Does Renegade need KYC?
 
-No, never. The protocol is open, permissionless, and immutable. Traders can
+No, never. The protocol is open, permissionless, and non-custodial. Traders can
 voluntarily opt-in to match with a subset of counterparties that have passed
 KYC, but this is not required.
 
