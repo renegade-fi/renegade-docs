@@ -33,7 +33,8 @@ import LogoDark from '@site/static/img/logo_dark.svg'
   />
 </div>
 
-Renegade is a new type of decentralized exchange, an **on-chain dark pool**.
+Renegade is a new type of decentralized exchange, an **on-chain dark pool**,
+live on Arbitrum.
 
 Current DEXes are completely transparent: Anyone can see your balances and
 trade history. In contrast, Renegade gives you **universal trade privacy**.
@@ -104,16 +105,13 @@ Super Relayers, see the [Advanced Concepts](/advanced-concepts/ioi). And
 finally, for the most precise description of the protocol, see the detailed
 [Whitepaper](/getting-started/whitepaper).
 
-## Get Access to Renegade
+## Trade on Renegade
 
-Renegade is currently in a private testnet, with a public release expected in
-early Q2 2024. The network will be rolled out to whitelisted testnet
-participants over time: [Sign up here](https://renegadefi.typeform.com/access)
-for priority access.
-
-Otherwise, feel free to contact us with any questions or feedback:
+Renegade is live on Arbitrum One mainnet. Check it out at
+[trade.renegade.fi](https://trade.renegade.fi), and feel free to contact us with
+any questions or feedback.
 
 - [@renegade_fi](https://twitter.com/renegade_fi) on Twitter.
 - [chris@renegade.fi](mailto:chris@renegade.fi) via email.
-- [Discord](https://discord.gg/renegade-fi) for quick questions.
+- [Discord](https://discord.renegade.fi) for quick questions.
 - [Jobs](https://jobs.renegade.fi) for careers.
