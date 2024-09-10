@@ -50,6 +50,14 @@ const sidebars = {
         "advanced-concepts/crypto-stack",
       ],
     },
+    {
+      type: "category",
+      label: "API Docs",
+      collapsed: false,
+      items: [
+        "typescript-sdk/getting-started",
+      ],
+    },
   ],
 }
 
