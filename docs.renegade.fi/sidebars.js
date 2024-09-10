@@ -52,10 +52,11 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "API Docs",
+      label: "Technical Reference",
       collapsed: false,
       items: [
-        "typescript-sdk/getting-started",
+        "technical-reference/useful-addresses",
+        "technical-reference/typescript-sdk",
       ],
     },
   ],
