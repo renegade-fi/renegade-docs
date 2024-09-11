@@ -24,7 +24,19 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
 
-  plugins: [require.resolve("./plugins.js")],
+  plugins: [require.resolve("./plugins.js"), 
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        redirects: [
+          {
+            to: '/technical-reference/typescript-sdk',
+            from: '/typescript-sdk/getting-started',
+          },
+        ],
+      },
+    ],
+  ],
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
