@@ -670,6 +670,14 @@ await createOrder(config, {
 - side
     - `"buy" | "sell"`
     - The side this order is for
+- amount
+    - `bigint`
+    - Amount to place the order for (should be multiplied by the number of decimals the ERC-20 supports)
+- worstCasePrice (optional)
+    - `string`
+    - A number formatted as a string representing the worst case price that the order may be executed at. For buy side orders this is a maximum price, for sell side orders this is a minimum price.
+    - If no worst case price is provided, the action will fall back to setting default values (`u64::MAX` for buy side orders and `0` for sell side orders)
+    - Value should be decimal corrected according to the token pair (e.g. `price * 10**(quoteDecimals - baseDecimals)`)
 
 **Return Type**
 
