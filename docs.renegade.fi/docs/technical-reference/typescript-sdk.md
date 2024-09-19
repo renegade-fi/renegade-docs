@@ -656,6 +656,7 @@ await createOrder(config, {
   quote: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
   side: "buy",
   amount: BigInt(1000000000000000000),
+  worstCasePrice: ((4000 * 1.5) * 10 ** (6 - 18)).toString() // For a buy order: maximum price of 6000 USDC per ETH
 })
 ```
 
