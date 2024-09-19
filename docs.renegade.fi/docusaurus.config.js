@@ -2,18 +2,26 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const { themes } = require("prism-react-renderer")
-const {
-  DESCRIPTION,
-  SHORT_DESCRIPTION,
-  DOCS_TITLE,
-  DOCS_OPENGRAPH,
-  DOCS_BASE_URL,
-  TWITTER_HANDLE,
-  SHORT_NAME,
-  ORGANIZATION_JSONLD,
-} = require("../seo")
 const lightCodeTheme = themes.github
 const darkCodeTheme = themes.dracula
+
+// SEO constants (moved from seo.ts)
+const BASE_URL = "https://renegade.fi";
+const DESCRIPTION = "Trade any ERC-20 with zero price impact. Renegade is a MPC-based dark pool, delivering zero slippage cryptocurrency trades via anonymous crosses at midpoint prices.";
+const DOCS_OPENGRAPH = "https://renegade-assets.s3.us-east-2.amazonaws.com/opengraph-docs.png";
+const DOCS_TITLE = "Renegade | Docs";
+const DOCS_BASE_URL = "https://docs.renegade.fi";
+const SHORT_DESCRIPTION = "On-chain dark pool. MPC-based cryptocurrency DEX for anonymous crosses at midpoint prices.";
+const SHORT_NAME = "Renegade";
+const TWITTER_HANDLE = "@renegade_fi";
+const ORGANIZATION_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  url: BASE_URL,
+  logo: "https://renegade-assets.s3.us-east-2.amazonaws.com/glyph-light.svg",
+  name: `${SHORT_NAME} | On-Chain Dark Pool`,
+  sameAs: ["https://twitter.com/renegade_fi"],
+};
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
