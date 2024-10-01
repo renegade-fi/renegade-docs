@@ -98,12 +98,12 @@ This SDK exposes actions that are used to interact with a relayer, such as fetch
 ### Types
 This SDK provides types for various data structures used in the API. 
 
-- [`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/wallet.ts#L34): contains a user's balances, orders, and keys
-- [`Order`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/order.ts#L1): contains an order's parameters
-- [`Balance`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/wallet.ts#L15): contains the amount of an ERC-20 token a user has in addition to the fee amount owed for that token.
-- [`KeyChain`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/wallet.ts#L22): contains a user's key hierarchy as defined [here](../advanced-concepts/super-relayers.md).
-- [`OrderMetadata`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/order.ts#L19): contains useful metadata such as the order's ID, status, creation time, and [`PartialOrderFills`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/order.ts#L27) since creation.
-- [`Task`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/task.ts#L1): contains a task's ID, status, type, and creation time.
+- [`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34): contains a user's balances, orders, and keys
+- [`Order`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L1): contains an order's parameters
+- [`Balance`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L15): contains the amount of an ERC-20 token a user has in addition to the fee amount owed for that token.
+- [`KeyChain`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L22): contains a user's key hierarchy as defined [here](../advanced-concepts/super-relayers.md).
+- [`OrderMetadata`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L20): contains useful metadata such as the order's ID, status, creation time, and [`PartialOrderFills`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L28) since creation.
+- [`Task`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/task.ts#L1): contains a task's ID, status, type, and creation time.
 
 ### Token
 
@@ -305,7 +305,7 @@ console.log("Wallet balances: ", wallet.balances)
 
 **Return Type**
 
-[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/wallet.ts#L34)
+[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
 
 **Error**
 
@@ -339,7 +339,7 @@ console.log("Wallet balances: ", wallet.balances)
 
 **Return Type**
 
-[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/bd7455916d3b69f35511337e2cf6b681247dd654/packages/core/src/types/wallet.ts#L34)
+[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
 
 **Error**
 
@@ -656,7 +656,8 @@ await createOrder(config, {
   quote: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
   side: "buy",
   amount: BigInt(1000000000000000000),
-  worstCasePrice: ((4000 * 1.5) * 10 ** (6 - 18)).toString() // For a buy order: maximum price of 6000 USDC per ETH
+  worstCasePrice: ((4000 * 1.5) * 10 ** (6 - 18)).toString(), // For a buy order: maximum price of 6000 USDC per ETH
+  minFillSize: BigInt(100000000000000000) // Minimum fill size of 0.1 ETH
 })
 ```
 
@@ -679,6 +680,10 @@ await createOrder(config, {
     - A number formatted as a string representing the worst case price that the order may be executed at. For buy side orders this is a maximum price, for sell side orders this is a minimum price.
     - If no worst case price is provided, the action will fall back to setting default values (`u64::MAX` for buy side orders and `0` for sell side orders)
     - Value should be decimal corrected according to the token pair (e.g. `price * 10**(quoteDecimals - baseDecimals)`)
+- minFillSize (optional)
+    - `bigint`
+    - The minimum fill size for the order. It should be equal to or less than the amount.
+    - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
 
 **Return Type**
 
