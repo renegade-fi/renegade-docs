@@ -738,6 +738,43 @@ An error may be thrown if:
 - the provided `id` mint does not exist in the wallet's list of orders
 - the API request authorization is incorrect / missing
 
+### getOrderHistory
+
+Action for fetching the order history of a wallet from your connected relayer.
+
+**Import**
+
+```jsx
+import { getOrderHistory } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```jsx
+await getOrderHistory(config, {
+    limit: 5
+})
+```
+
+**Parameters**
+
+- limit (optional)
+    - `number`
+    - the number of orders to fetch
+
+**Return Type**
+
+`Promise<Map<string, OrderMetadata>>`
+
+Promise that resolves to a Map where the keys are order IDs and the values are `OrderMetadata` objects.
+
+**Error**
+
+An error may be thrown if:
+
+- a `seed` does not exist in the provided `config`
+- the API request authorization is incorrect / missing
+
 ## Examples
 
 ### Create a wallet
