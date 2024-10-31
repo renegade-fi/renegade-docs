@@ -92,14 +92,17 @@ A wallet is a data structure that contains a user's balances, orders, and keys. 
 ### Config
 The `Config` object is responsible for storing Renegade wallet state and internals. Most actions require a `Config` object to be passed as the first argument, as it contains the derivation key used to derive keys used to sign API requests and wallet updates.
 
+### Auth Config
+The `AuthConfig` object is specifically used to interact with the relayer using API keys. If you are using a managed Renegade wallet, you will not need to interact with this object. If you are a permissioned user with API keys, you should follow the instructions [here](#createauthconfig) to create an `AuthConfig` object.
+
 ### Actions
 This SDK exposes actions that are used to interact with a relayer, such as fetching a wallet's state or placing an order. Actions that access private wallet data require API authorization headers, which are automatically added for you when using the SDK. Browse the list of available actions [below](#actions-1).
 
 ### Types
 This SDK provides types for various data structures used in the API. 
 
-- [`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34): contains a user's balances, orders, and keys
-- [`Order`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L1): contains an order's parameters
+- [`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34): contains a user's balances, orders, and keys.
+- [`Order`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L1): contains an order's parameters.
 - [`Balance`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L15): contains the amount of an ERC-20 token a user has in addition to the fee amount owed for that token.
 - [`KeyChain`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L22): contains a user's key hierarchy as defined [here](../advanced-concepts/super-relayers.md).
 - [`OrderMetadata`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L20): contains useful metadata such as the order's ID, status, creation time, and [`PartialOrderFills`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L28) since creation.
@@ -151,7 +154,7 @@ const usdc = Token.findByTicker("USDC")
 
 console.log("USDC address: ", usdc.address)
 
-const weth = Token.findByAddress("0xaf88d065e77c8cc2239327c5edb3a432268e5831")
+const weth = Token.findByAddress("0xdf8d259c04020562717557f2b5a3cf28e92707d1")
 
 console.log("WETH address: ", weth.address)
 ```
@@ -205,6 +208,44 @@ export const config = createConfig({
 
 ```jsx
 import { type Config } from '@renegade-fi/node'
+```
+
+### createAuthConfig
+
+**Import**
+
+```jsx
+import { createAuthConfig } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```jsx
+import { createAuthConfig } from "@renegade-fi/node"
+ 
+export const config = createAuthConfig({
+  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
+  apiKey: API_KEY,
+  apiSecret: API_SECRET,
+});
+```
+
+**Parameters**
+
+- authServerUrl
+    - `string`
+    - The auth server’s URL.
+- apiKey
+    - `string`
+    - The API key. Used to authorize requests to the server.
+- apiSecret
+    - `string`
+    - The API secret. Used to sign requests to the server.
+
+**Return Type**
+
+```jsx
+import { type AuthConfig } from '@renegade-fi/node'
 ```
 
 ## Actions
@@ -370,7 +411,7 @@ import { deposit } from "@renegade-fi/node"
 ```jsx
 const { taskId } = await deposit(config, {
   fromAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   amount: BigInt(1000000),
   permitNonce: nonce,
   permitDeadline: deadline,
@@ -450,7 +491,7 @@ const walletClient = createWalletClient({
 })
 
 await executeDeposit(config, {
-  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   amount: BigInt(1000000),
   permit2Address: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
   walletClient,
@@ -519,7 +560,7 @@ import { payFees, withdraw } from "@renegade-fi/node"
 import { payFees, withdraw } from "@renegade-fi/node"
 await payFees(config)
 await withdraw(config, {
-  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   amount: BigInt(1000000),
   destinationAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
 })
@@ -567,7 +608,7 @@ import { executeWithdrawal } from "@renegade-fi/node"
 ```jsx
 await executeWithdrawal(config, {
   destinationAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   amount: BigInt(1000000),
   awaitTask: true,
 })
@@ -652,8 +693,8 @@ import { createOrder } from "@renegade-fi/node"
 
 ```jsx
 await createOrder(config, {
-  base: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-  quote: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+  base: "0xcf8a4dbdc5c23a599bf045784b3740b1722c86dd",
+  quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   side: "buy",
   amount: BigInt(1000000000000000000),
   worstCasePrice: ((4000 * 1.5) * 10 ** (6 - 18)).toString(), // For a buy order: maximum price of 6000 USDC per ETH
@@ -775,6 +816,108 @@ An error may be thrown if:
 - a `seed` does not exist in the provided `config`
 - the API request authorization is incorrect / missing
 
+## External (Atomic) Matching
+
+Renegade supports matching orders between two types of parties:
+- Internal parties who have state committed to the darkpool
+- External parties who have no state in the darkpool
+
+When an external party wants to match with orders in the darkpool, they can request an `ExternalMatchBundle` from the relayer. This bundle contains everything needed to execute the match on-chain, including:
+- Match details (amounts and tokens involved)
+- A ready-to-submit transaction that settles the match via direct ERC-20 transfers
+
+:::note
+External matches can be partially filled - you may receive a match for less than your requested amount, but it will never be less than your specified `minFillSize`.
+:::
+
+### getExternalMatchBundle
+
+Action for requesting an external match bundle from the relayer.
+
+**Prerequisites**
+
+Before executing an external match:
+1. Ensure you have sufficient token balance to fulfill your side of the trade
+2. Grant the darkpool contract approval to spend the tokens you're selling
+3. Have enough ETH for transaction gas fees
+
+**Flow**
+1. Request an `ExternalMatchBundle` with your desired trade parameters
+2. Review the returned match details to ensure they meet your requirements
+3. Submit the provided transaction to settle the match on-chain
+4. The protocol will:
+   - Update the internal party's state
+   - Execute the token transfers between parties
+
+**Import**
+
+```typescript
+import { getExternalMatchBundle } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```typescript
+const config = createAuthConfig({
+  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
+  apiKey: API_KEY,
+  apiSecret: API_SECRET,
+});
+
+const bundle = await getExternalMatchBundle(config, {
+    base: "0xcf8a4dbdc5c23a599bf045784b3740b1722c86dd", // WETH
+    quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
+    side: "buy",
+    amount: BigInt(1000000000000000000), // 1 * 10^18
+    minFillSize: BigInt(100000000000000000) // Minimum fill size of 0.1 ETH
+});
+```
+
+:::tip
+This action requires an `AuthConfig` object instead of a `Config` object. [See here for more details](#auth-config)
+:::
+
+**Parameters**
+
+- base
+    - `0x${string}`
+    - ERC-20 contract address of the base asset.
+- quote
+    - `0x${string}`
+    - ERC-20 contract address of the quote asset (must be USDC).
+- side
+    - `"buy" | "sell"`
+    - The side this order is for
+- amount
+    - `bigint`
+    - Amount to place the order for (should be multiplied by the number of decimals the ERC-20 supports)
+- minFillSize (optional)
+    - `bigint`
+    - The minimum fill size for the order. It should be equal to or less than the amount.
+    - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
+
+**Return Type**
+
+`Promise<ExternalMatchBundle>`
+
+An `ExternalMatchBundle` that contains:
+- the result of the match, including the amount that is filled (will be at least the `minFillSize` and at most the `amount`, partial fills are possible)
+- a transaction that can be submitted on-chain to settle the given external order
+
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/externalOrder.ts#L19)
+
+:::note
+You are responsible for submitting the transaction request contained within the returned `ExternalMatchBundle` to an RPC node. See the [complete example below](#settle-an-external-order) for how to execute the entire external matching flow.
+:::
+
+**Error**
+
+An error may be thrown if:
+
+- the provided `base` mint does not exist in the token mapping
+- the provided `quote` mint does not exist in the token mapping
+- the API request authorization is incorrect / missing
+
 ## Examples
 
 ### Create a wallet
@@ -794,3 +937,7 @@ An error may be thrown if:
 - [Stackblitz Demo](https://stackblitz.com/edit/nodets-7cdu1z?embed=1&file=src%2Fmain.ts&view=editor)
 
 ### Withdraw (Coming soon)
+
+### Settle an external order
+
+- [Stackblitz Demo](https://stackblitz.com/edit/nodets-dllivb?embed=1&file=src%2Fmain.ts&view=editor)
