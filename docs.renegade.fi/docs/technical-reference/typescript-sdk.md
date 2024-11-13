@@ -693,7 +693,7 @@ import { createOrder } from "@renegade-fi/node"
 
 ```jsx
 await createOrder(config, {
-  base: "0xcf8a4dbdc5c23a599bf045784b3740b1722c86dd",
+  base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a",
   quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
   side: "buy",
   amount: BigInt(1000000000000000000),
@@ -865,7 +865,7 @@ const config = createAuthConfig({
 });
 
 const bundle = await getExternalMatchBundle(config, {
-    base: "0xcf8a4dbdc5c23a599bf045784b3740b1722c86dd", // WETH
+    base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH
     quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
     side: "buy",
     amount: BigInt(1000000000000000000), // 1 * 10^18
