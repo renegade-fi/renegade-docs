@@ -865,11 +865,14 @@ const config = createAuthConfig({
 });
 
 const bundle = await getExternalMatchBundle(config, {
+  order: {
     base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH
     quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
     side: "buy",
-    amount: BigInt(1000000000000000000), // 1 * 10^18
-    minFillSize: BigInt(100000000000000000) // Minimum fill size of 0.1 ETH
+    baseAmount: BigInt(1000000000000000000), // 1 ETH (amount must be adjusted for token decimals - 18 in this case)
+    minFillSize: BigInt(100000000000000000) // 0.1 ETH (amount must be adjusted for token decimals - 18 in this case)
+  },
+  doGasEstimation: true // Optional: include gas estimation in response
 });
 ```
 
@@ -879,30 +882,43 @@ This action requires an `AuthConfig` object instead of a `Config` object. [See h
 
 **Parameters**
 
-- base
-    - `0x${string}`
-    - ERC-20 contract address of the base asset.
-- quote
-    - `0x${string}`
-    - ERC-20 contract address of the quote asset (must be USDC).
-- side
-    - `"buy" | "sell"`
-    - The side this order is for
-- amount
-    - `bigint`
-    - Amount to place the order for (should be multiplied by the number of decimals the ERC-20 supports)
-- minFillSize (optional)
-    - `bigint`
-    - The minimum fill size for the order. It should be equal to or less than the amount.
-    - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
+- order
+  - `object`
+  - Contains the following properties:
+    - base
+      - `0x${string}`
+      - ERC-20 contract address of the base asset.
+    - quote
+      - `0x${string}`
+      - ERC-20 contract address of the quote asset (must be USDC).
+    - side
+      - `"buy" | "sell"`
+      - The side this order is for
+    - baseAmount (required if quoteAmount not provided)
+      - `bigint`
+      - Raw amount of base asset to trade (must be adjusted for token decimals, e.g. multiply by 10^18 for ETH)
+    - quoteAmount (required if baseAmount not provided)
+      - `bigint`
+      - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
+    - minFillSize (optional)
+      - `bigint`
+      - The minimum fill size for the order in raw units (must be adjusted for token decimals like baseAmount/quoteAmount)
+      - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
+
+:::note
+You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
+:::
 
 **Return Type**
 
 `Promise<ExternalMatchBundle>`
 
 An `ExternalMatchBundle` that contains:
-- the result of the match, including the amount that is filled (will be at least the `minFillSize` and at most the `amount`, partial fills are possible)
-- a transaction that can be submitted on-chain to settle the given external order
+- `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
+- `settlement_tx`: A transaction that can be submitted on-chain to settle the given external order. Will include a gas estimation if `doGasEstimation` is `true`.
+- `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade
+- `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
+- `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
 
 [See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/externalOrder.ts#L19)
 
@@ -916,6 +932,7 @@ An error may be thrown if:
 
 - the provided `base` mint does not exist in the token mapping
 - the provided `quote` mint does not exist in the token mapping
+- neither `baseAmount` nor `quoteAmount` is provided
 - the API request authorization is incorrect / missing
 
 ## Examples
