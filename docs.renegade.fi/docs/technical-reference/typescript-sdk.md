@@ -902,8 +902,11 @@ This action requires an `AuthConfig` object instead of a `Config` object. [See h
       - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
     - minFillSize (optional)
       - `bigint`
-      - The minimum fill size for the order in raw units (must be adjusted for token decimals like baseAmount/quoteAmount)
-      - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
+      - Minimum fill size for the order. Must be denominated in the same units as the non-zero amount field:
+        - When using `baseAmount`: specified in base token units
+        - When using `quoteAmount`: specified in quote token units
+      - If specified larger than the total order size, will be set to the total order size.
+      - If specified as 0, will be set to the total order size.
 
 :::note
 You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
