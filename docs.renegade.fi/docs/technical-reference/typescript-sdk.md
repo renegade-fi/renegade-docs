@@ -830,9 +830,153 @@ When an external party wants to match with orders in the darkpool, they can requ
 External matches can be partially filled - you may receive a match for less than your requested amount, but it will never be less than your specified `minFillSize`.
 :::
 
-### getExternalMatchBundle
+There are two ways to request an external match bundle:
+- [Using the quote + assemble pattern (recommended)](#method-1-recommended-quote--assemble)
+- [Fetching a bundle directly](#method-2-direct)
 
-Action for requesting an external match bundle from the relayer.
+These are detailed below:
+
+### Method 1 (Recommended): Quote + Assemble
+
+This method is recommended because it is subject to less stringent rate limits, and has access to better liquidity.
+
+**Prerequisites**
+
+Before executing an external match:
+1. Ensure you have sufficient token balance to fulfill your side of the trade
+2. Grant the darkpool contract approval to spend the tokens you're selling
+3. Have enough ETH for transaction gas fees
+
+**Flow**
+
+1. Request an `ExternalMatchQuote` with your desired trade parameters using the `getExternalMatchQuote` action
+2. Review the returned quote and decide whether to proceed with the trade
+3. Assemble the quote into an `ExternalMatchBundle` using the `assembleExternalQuote` action
+4. Submit the provided transaction to settle the match on-chain
+5. The protocol will:
+   - Update the internal party's state
+   - Execute the token transfers between parties
+
+**Import**
+
+```typescript
+import { getExternalMatchQuote, assembleExternalQuote } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```typescript
+const config = createAuthConfig({
+  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
+  apiKey: API_KEY,
+  apiSecret: API_SECRET,
+});
+
+const quote = await getExternalMatchQuote(config, {
+  order: {
+    base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH
+    quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
+    side: "buy",
+    baseAmount: BigInt(1000000000000000000), // 1 ETH (amount must be adjusted for token decimals - 18 in this case)
+    minFillSize: BigInt(100000000000000000) // 0.1 ETH (amount must be adjusted for token decimals - 18 in this case)
+  },
+});
+
+// ... Quote Validation ... //
+
+const bundle = await assembleExternalQuote(config, {
+  quote
+});
+```
+
+:::tip
+This action requires an `AuthConfig` object instead of a `Config` object. [See here for more details](#auth-config)
+:::
+
+**getExternalMatchQuote Parameters**
+
+- order
+  - `object`
+  - Contains the following properties:
+    - base
+      - `0x${string}`
+      - ERC-20 contract address of the base asset.
+    - quote
+      - `0x${string}`
+      - ERC-20 contract address of the quote asset (must be USDC).
+    - side
+      - `"buy" | "sell"`
+      - The side this order is for
+    - baseAmount (required if quoteAmount not provided)
+      - `bigint`
+      - Raw amount of base asset to trade (must be adjusted for token decimals, e.g. multiply by 10^18 for ETH)
+    - quoteAmount (required if baseAmount not provided)
+      - `bigint`
+      - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
+    - minFillSize (optional)
+      - `bigint`
+      - Minimum fill size for the order. Must be denominated in the same units as the non-zero amount field:
+        - When using `baseAmount`: specified in base token units
+        - When using `quoteAmount`: specified in quote token units
+      - If specified larger than the total order size, will be set to the total order size.
+      - If specified as 0, will be set to the total order size.
+
+:::note
+You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
+:::
+
+**getExternalMatchQuote Return Type**
+
+`Promise<SignedExternalMatchQuote>`
+
+A `SignedExternalMatchQuote` that contains:
+- `quote`: The `ExternalMatchQuote` object containing:
+  - `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
+  - `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
+  - `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
+  - `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade, after fees are deducted
+  - `price`: The price at which the quote will be executed
+  - `timestamp`: The timestamp at which the quote was created
+- `signature`: A signature of the quote by the relayer, to ensure the quote is authentic when assembled
+
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L31)
+
+**Error**
+
+An error may be thrown if:
+
+- the provided `base` mint does not exist in the token mapping
+- the provided `quote` mint does not exist in the token mapping
+- neither `baseAmount` nor `quoteAmount` is provided
+- the API request authorization is incorrect / missing
+
+**assembleExternalQuote Parameters** 
+
+- quote
+  - `SignedExternalMatchQuote`
+  - The `SignedExternalMatchQuote` returned from `getExternalMatchQuote`
+- doGasEstimation (optional)
+  - `boolean`
+  - Whether to include gas estimation in the returned `ExternalMatchBundle`
+
+**assembleExternalQuote Return Type** <a name="assembleexternalquote-return-type"></a>
+
+`Promise<ExternalMatchBundle>`
+
+An `ExternalMatchBundle` that contains:
+- `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
+- `settlement_tx`: A transaction that can be submitted on-chain to settle the given external order. Will include a gas estimation if `doGasEstimation` is `true`.
+- `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade
+- `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
+- `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
+
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
+
+### Method 2: Direct
+
+:::warning
+This method is subject to higher rate limits, it is recommended to use the quote + assemble pattern instead.
+:::
 
 **Prerequisites**
 
@@ -880,7 +1024,7 @@ const bundle = await getExternalMatchBundle(config, {
 This action requires an `AuthConfig` object instead of a `Config` object. [See here for more details](#auth-config)
 :::
 
-**Parameters**
+**getExternalMatchBundle Parameters**
 
 - order
   - `object`
@@ -908,22 +1052,13 @@ This action requires an `AuthConfig` object instead of a `Config` object. [See h
       - If specified larger than the total order size, will be set to the total order size.
       - If specified as 0, will be set to the total order size.
 
-:::note
-You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
-:::
-
-**Return Type**
+**getExternalMatchBundle Return Type**
 
 `Promise<ExternalMatchBundle>`
 
-An `ExternalMatchBundle` that contains:
-- `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
-- `settlement_tx`: A transaction that can be submitted on-chain to settle the given external order. Will include a gas estimation if `doGasEstimation` is `true`.
-- `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade
-- `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
-- `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
+See the [assembleExternalQuote](#assembleexternalquote-return-type) section for more details.
 
-[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/externalOrder.ts#L19)
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
 
 :::note
 You are responsible for submitting the transaction request contained within the returned `ExternalMatchBundle` to an RPC node. See the [complete example below](#settle-an-external-order) for how to execute the entire external matching flow.
@@ -960,4 +1095,4 @@ An error may be thrown if:
 
 ### Settle an external order
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-dllivb?embed=1&file=src%2Fmain.ts&view=editor)
+- [Stackblitz Demo](https://stackblitz.com/edit/nodets-xkwpj2?file=src%2Fmain.ts)
