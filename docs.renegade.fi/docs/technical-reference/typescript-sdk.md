@@ -955,6 +955,9 @@ An error may be thrown if:
 - quote
   - `SignedExternalMatchQuote`
   - The `SignedExternalMatchQuote` returned from `getExternalMatchQuote`
+- updatedOrder (optional)
+  - `ExternalOrder`
+  - The updated order to assemble the quote for. If not provided, the quote will use the order specified in the `getExternalMatchQuote` call. This field allows you to tweak the order before assembling the quote. Note that only the `baseAmount`, `quoteAmount`, and `minFillSize` fields may be updated; any other updates will be rejected.
 - doGasEstimation (optional)
   - `boolean`
   - Whether to include gas estimation in the returned `ExternalMatchBundle`
