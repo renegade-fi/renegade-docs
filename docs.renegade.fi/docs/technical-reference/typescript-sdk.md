@@ -830,15 +830,7 @@ When an external party wants to match with orders in the darkpool, they can requ
 External matches can be partially filled - you may receive a match for less than your requested amount, but it will never be less than your specified `minFillSize`.
 :::
 
-There are two ways to request an external match bundle:
-- [Using the quote + assemble pattern (recommended)](#method-1-recommended-quote--assemble)
-- [Fetching a bundle directly](#method-2-direct)
-
-These are detailed below:
-
-### Method 1 (Recommended): Quote + Assemble
-
-This method is recommended because it is subject to less stringent rate limits, and has access to better liquidity.
+### Generating an External Match
 
 **Prerequisites**
 
@@ -974,58 +966,6 @@ An `ExternalMatchBundle` that contains:
 - `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
 
 [See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
-
-### Method 2: Direct
-
-:::warning
-This method is subject to higher rate limits, it is recommended to use the quote + assemble pattern instead.
-:::
-
-**Prerequisites**
-
-Before executing an external match:
-1. Ensure you have sufficient token balance to fulfill your side of the trade
-2. Grant the darkpool contract approval to spend the tokens you're selling
-3. Have enough ETH for transaction gas fees
-
-**Flow**
-1. Request an `ExternalMatchBundle` with your desired trade parameters
-2. Review the returned match details to ensure they meet your requirements
-3. Submit the provided transaction to settle the match on-chain
-4. The protocol will:
-   - Update the internal party's state
-   - Execute the token transfers between parties
-
-**Import**
-
-```typescript
-import { getExternalMatchBundle } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```typescript
-const config = createAuthConfig({
-  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
-  apiKey: API_KEY,
-  apiSecret: API_SECRET,
-});
-
-const bundle = await getExternalMatchBundle(config, {
-  order: {
-    base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH
-    quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
-    side: "buy",
-    baseAmount: BigInt(1000000000000000000), // 1 ETH (amount must be adjusted for token decimals - 18 in this case)
-    minFillSize: BigInt(100000000000000000) // 0.1 ETH (amount must be adjusted for token decimals - 18 in this case)
-  },
-  doGasEstimation: true // Optional: include gas estimation in response
-});
-```
-
-:::tip
-This action requires an `AuthConfig` object instead of a `Config` object. [See here for more details](#auth-config)
-:::
 
 **getExternalMatchBundle Parameters**
 
