@@ -1099,6 +1099,15 @@ An error may be thrown if:
 - the provided `quote` mint does not exist in the token mapping
 - neither `baseAmount` nor `quoteAmount` is provided
 - the API request authorization is incorrect / missing
+- rate limits have been exceeded, see below
+
+### External Match Rate Limits
+
+The rate limits for the external match endpoints are as follows: 
+- **Quote**: 100 requests per minute
+- **Assemble**: 5 _unsettled_ bundles per minute. That is, if an assembled bundle is submitted on-chain, the rate limiter will reset. 
+If an assembled match is not settled on-chain, the rate limiter will remove one token from the per-minute allowance.
+
 
 ## External Key Management
 
