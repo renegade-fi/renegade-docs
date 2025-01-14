@@ -251,13 +251,13 @@ export const config = createAuthConfig({
 import { type AuthConfig } from '@renegade-fi/node'
 ```
 
-### createExternalConfig
+### createExternalKeyConfig
 
 Creates a configuration object for interacting with the relayer using an externally managed wallet. The required secrets should be obtained from [generateWalletSecrets](#generating-wallet-secrets) first.
 
 **Import**
 ```typescript
-import { createExternalConfig } from "@renegade-fi/node"
+import { createExternalKeyConfig } from "@renegade-fi/node"
 ```
 
 **Parameters**
@@ -281,7 +281,7 @@ import { createExternalConfig } from "@renegade-fi/node"
 
 **Basic Example**
 ```typescript
-const config = createExternalConfig({
+const config = createExternalKeyConfig({
   signMessage,
   publicKey: "0x04800db50009a01fab58a239f204ca14e85682ca0991cb6914f34c4fbd0131eedb54d0ccbe392922e57486b031779bf8b6feab57971c2c406df291c0ab9c529a3d",
   symmetricKey: walletSecrets.symmetric_key,
@@ -1223,7 +1223,7 @@ Make sure you are using an `ExternalConfig` object when calling `createWallet` o
 
 ### Actions
 
-Once you have created an Externally Managed Wallet, you can use it to interact with the relayer. When using an Externally Managed Wallet, you should instantiate an [`ExternalConfig`](#createexternalconfig) object instead of a `Config` object and pass it as the first parameter actions. Otherwise, usage is the same as described in the [actions](#actions-1) section above.
+Once you have created an Externally Managed Wallet, you can use it to interact with the relayer. When using an Externally Managed Wallet, you should instantiate an [`ExternalConfig`](#createExternalKeyConfig) object instead of a `Config` object and pass it as the first parameter actions. Otherwise, usage is the same as described in the [actions](#actions-1) section above.
 
 
 ### Key Rotation
