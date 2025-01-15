@@ -204,7 +204,7 @@ export const config = createConfig({
     - `string`
     - The relayer’s URL.
 - viemClient
-    - `PublicClient`
+    - [`PublicClient`](https://viem.sh/docs/clients/public)
     - Viem client used for wallet specific tasks e.g. signing a message.
 
 **Return Type**
@@ -278,9 +278,23 @@ import { createExternalKeyConfig } from "@renegade-fi/node"
   - HTTP URL of the relayer
 - `websocketUrl`: `string`
   - WebSocket URL of the relayer
+- `darkPoolAddress`
+    - `0x${string}`
+    - The darkpool contract’s address.
+- `viemClient`
+    - [`PublicClient`](https://viem.sh/docs/clients/public)
+    - Viem client used for wallet specific tasks e.g. signing a message.
 
 **Basic Example**
 ```typescript
+import { createExternalKeyConfig } from "@renegade-fi/node"
+import { createPublicClient, http } from 'viem'
+import { arbitrumSepolia } from 'viem/chains'
+ 
+const publicClient = createPublicClient({ 
+  chain: arbitrumSepolia,
+  transport: http()
+})
 const config = createExternalKeyConfig({
   signMessage,
   publicKey: "0x04800db50009a01fab58a239f204ca14e85682ca0991cb6914f34c4fbd0131eedb54d0ccbe392922e57486b031779bf8b6feab57971c2c406df291c0ab9c529a3d",
@@ -288,6 +302,8 @@ const config = createExternalKeyConfig({
   walletId: walletSecrets.wallet_id,
   relayerUrl: "https://testnet.cluster0.renegade.fi:3000",
   websocketUrl: "wss://testnet.cluster0.renegade.fi:4000",
+  darkPoolAddress: "0x9af58f1ff20ab22e819e40b57ffd784d115a9ef5",
+  viemClient: publicClient,
 });
 ```
 
@@ -575,7 +591,7 @@ const walletClient = createWalletClient({
 })
 
 await executeDeposit(config, {
-  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
+  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
   amount: BigInt(1000000),
   permit2Address: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
   walletClient,
@@ -601,7 +617,7 @@ await executeDeposit(config, {
 - viemConfig
     - [`Config`](https://wagmi.sh/core/api/createConfig#config)
     - wagmi specific config for using wagmi actions
-- awaitTask
+- awaitTask (optional)
     - `boolean`
     - Whether or not to await task completion before resolving.
 
@@ -621,6 +637,7 @@ An error may be thrown if:
 - the provided wallet client is not configured properly
 - the provided wagmi config is not configured properly
 - the API request authorization is incorrect / missing
+- the provided `RenegadeConfig` does not have a `viemClient`
 
 ### withdraw
 
@@ -709,7 +726,7 @@ await executeWithdrawal(config, {
 - amount
     - `bigint`
     - Amount to withdraw (should be multiplied by the number of decimals the ERC-20 supports)
-- awaitTask
+- awaitTask (optional)
     - `boolean`
     - Whether or not to await task completion before resolving.
 
