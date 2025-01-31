@@ -30,12 +30,34 @@ const viemClient = createPublicClient({
 })
 
 export const config = createConfig({
+  chainId: arbitrum.id,
   darkPoolAddress: "0x30bd8eab29181f790d7e495786d4b96d7afdc518",
   priceReporterUrl: "mainnet.price-reporter.renegade.fi",
   relayerUrl: "mainnet.cluster0.renegade.fi",
   viemClient,
 })
 ```
+
+:::tip
+
+If you have your chain ID configured in your `.env` file, you can use the `isSupportedChainId` function to check if a chain is supported. This function also acts as a type guard, narrowing the type to `SupportedChainId` when it returns `true`.
+
+```jsx
+import { isSupportedChainId } from "@renegade-fi/node"
+
+// Get chain ID from environment variables and convert to number
+const chainId = Number(process.env.CHAIN_ID)
+const isSupported = isSupportedChainId(chainId)
+
+if (isSupported) {
+  // chainId is now narrowed to SupportedChainId type
+  console.log("Chain is supported: ", chainId)
+} else {
+  console.log("Chain is not supported")
+}
+```
+
+:::
 
 :::tip
 
@@ -78,7 +100,7 @@ For Typescript configuration, check out this [example repo](https://stackblitz.c
 ## Protocol Core Concepts
 
 ### Relayer
-A relayer node is resposible for the matching and settlement of orders. Each individual relayer manages one or more wallets, meaning they are able to view the plaintext wallet but are unable to modify a wallet. In order to modify a wallet (placing orders, depositing assets, etc.), users sign updates to their wallet state and queue asynchronous “tasks” in the relayer.
+A relayer node is resposible for the matching and settlement of orders. Each individual relayer manages one or more wallets, meaning they are able to view the plaintext wallet but are unable to modify a wallet. In order to modify a wallet (placing orders, depositing assets, etc.), users sign updates to their wallet state and queue asynchronous "tasks" in the relayer.
 
 :::note
 Relayers manage task queues for each wallet, which means you do not necessarily need to wait for a task to complete before creating a new task. This is why two functions exist for fetching a wallet's state: [`getWalletFromRelayer`](#getwalletfromrelayer) (current wallet state) and [`getBackOfQueueWallet`](#getbackofqueuewallet) (wallet state after current task queue is cleared).
@@ -185,6 +207,7 @@ const publicClient = createPublicClient({
 })
 
 export const config = createConfig({
+  chainId: arbitrum.id,
   darkPoolAddress: "0x30bd8eab29181f790d7e495786d4b96d7afdc518",
   priceReporterUrl: "mainnet.price-reporter.renegade.fi",
   relayerUrl: "mainnet.cluster0.renegade.fi",
@@ -196,13 +219,13 @@ export const config = createConfig({
 
 - darkPoolAddress
     - `0x${string}`
-    - The darkpool contract’s address.
+    - The darkpool contract's address.
 - priceReporterUrl
     - `string`
-    - The price reporter’s URL.
+    - The price reporter's URL.
 - relayerUrl
     - `string`
-    - The relayer’s URL.
+    - The relayer's URL.
 - viemClient
     - [`PublicClient`](https://viem.sh/docs/clients/public)
     - Viem client used for wallet specific tasks e.g. signing a message.
@@ -237,7 +260,7 @@ export const config = createAuthConfig({
 
 - authServerUrl
     - `string`
-    - The auth server’s URL.
+    - The auth server's URL.
 - apiKey
     - `string`
     - The API key. Used to authorize requests to the server.
@@ -280,7 +303,7 @@ import { createExternalKeyConfig } from "@renegade-fi/node"
   - WebSocket URL of the relayer
 - `darkPoolAddress`
     - `0x${string}`
-    - The darkpool contract’s address.
+    - The darkpool contract's address.
 - `viemClient`
     - [`PublicClient`](https://viem.sh/docs/clients/public)
     - Viem client used for wallet specific tasks e.g. signing a message.
@@ -296,6 +319,7 @@ const publicClient = createPublicClient({
   transport: http()
 })
 const config = createExternalKeyConfig({
+  chainId: arbitrumSepolia.id,
   signMessage,
   publicKey: "0x04800db50009a01fab58a239f204ca14e85682ca0991cb6914f34c4fbd0131eedb54d0ccbe392922e57486b031779bf8b6feab57971c2c406df291c0ab9c529a3d",
   symmetricKey: walletSecrets.symmetric_key,
@@ -428,7 +452,7 @@ An error may be thrown if:
 
 ### getWalletFromRelayer
 
-Action for fetching a wallet’s state from your connected relayer.
+Action for fetching a wallet's state from your connected relayer.
 
 **Import**
 
@@ -538,7 +562,7 @@ const { taskId } = await deposit(config, {
     - The latest possible block timestamp for when this permit is valid.
 - permit
     - `0x${string}`
-    - The corresponding EIP-712 signature for the permit2 message, signed by `owner`. If the recovered address from signature verification does not match `owner`, the call will fail.
+    - The corresponding EIP-712 signature for the permit2 message, signed by `owner`. If the recovered address from signature verification does not match `owner`, the call will fail.
 
 **Return Type**
 
