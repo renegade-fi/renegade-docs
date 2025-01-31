@@ -941,6 +941,55 @@ An error may be thrown if:
 - a `seed` does not exist in the provided `config`
 - the API request authorization is incorrect / missing
 
+## Order WebSocket Notifications
+
+The `createOrderWebSocket` function establishes a WebSocket connection to receive real-time updates about order state changes.
+
+### Key Features
+
+- Receives immediate notifications for:
+  - Order state transitions (Created, Matching, Filled, etc.)
+  - Partial fills and their details
+  - Order cancellations
+- Provides complete order metadata with each update
+- Maintains persistent connection for continuous monitoring
+
+### Basic Usage
+
+```typescript
+import { createOrderWebSocket, OrderState, type OrderMetadata } from '@renegade-fi/node'
+
+// Initialize WebSocket connection
+const ws = createOrderWebSocket({
+  config,
+  onUpdate: (order: OrderMetadata) => {
+    // Handle order state changes
+    switch (order.state) {
+      case OrderState.Filled:
+        console.log('Order filled:', {
+          id: order.id,
+          amount: order.data.amount,
+          fills: order.fills
+        })
+        break
+      case OrderState.Cancelled:
+        console.log('Order cancelled:', order.id)
+        break
+      default:
+        console.log('Order state update:', order.state)
+    }
+  }
+})
+
+// Establish WebSocket connection
+ws.connect()
+
+// Clean up on process exit
+process.on('SIGINT', () => {
+  ws.disconnect()
+})
+```
+
 ## External (Atomic) Matching
 
 Renegade supports matching orders between two types of parties:
