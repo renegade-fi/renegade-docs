@@ -1198,6 +1198,31 @@ The rate limits for the external match endpoints are as follows:
 - **Assemble**: 5 _unsettled_ bundles per minute. That is, if an assembled bundle is submitted on-chain, the rate limiter will reset. 
 If an assembled match is not settled on-chain, the rate limiter will remove one token from the per-minute allowance.
 
+## External Match Gas Sponsorship
+The Renegade relayer will cover the gas cost of external match transactions, up to a daily limit. When requested, the relayer will re-route the settlement transaction through a gas rebate contract. This contract refunds the cost of the transaction (in ether) to the configured address. If no address is given, the rebate is sent to `tx.origin`. 
+
+To request gas sponsorship, simply add `requestGasSponsorship` to the `AssembleExternalQuoteParameters` type:
+```typescript
+  const bundle = await assembleExternalQuote(config, {
+    quote,
+    requestGasSponsorship: true,
+    refundAddress: '0xdeadbeef...',  // tx.origin if not set
+    updatedOrder: {
+      base: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
+      quote: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
+      side: 'sell',
+      quoteAmount: BigInt(20_000_000), // $20
+    },
+  })
+```
+
+For a full example, see [`examples/gas_sponsorship`](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/gas-sponsorship).
+
+### Gas Sponsorship Notes
+
+- There is some overhead to the gas rebate contract, so the gas cost paid by the user is non-zero. This value is consistently around **17k gas**, or around **$0.0004** with current gas prices.
+- The gas estimate returned by `eth_estimateGas` will _not_ reflect the rebate, as the rebate does not _reduce_ the gas used; it merely refunds the ether paid for the gas. If you wish to understand the true gas cost ahead of time, the transaction can be simulated (e.g. with `alchemy_simulateExecution` or similar).
+- The rate limits currently sponsor up to **~500 matches/day** ($100 in gas). 
 
 ## External Key Management
 
