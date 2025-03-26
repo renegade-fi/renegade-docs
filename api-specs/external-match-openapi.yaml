@@ -1,0 +1,353 @@
+openapi: 3.0.0
+info:
+  title: Renegade Darkpool API
+  version: 0.1.4
+  description: |
+    API for interacting with the Renegade darkpool.
+
+    Authentication is handled via HMAC-SHA256 request signing. Each request must include:
+    1. An API key in the x-renegade-api-key header
+    2. An expiration timestamp in the x-renegade-auth-expiration header
+    3. An HMAC-SHA256 signature in the x-renegade-auth header
+    4. The SDK version in the x-renegade-sdk-version header
+
+    The signature is calculated using:
+    - The request path
+    - All headers with the x-renegade prefix (except the auth header)
+    - The request body
+
+    The signature is base64-encoded and the expiration timestamp is in milliseconds.
+  contact:
+    name: Renegade
+    email: joey@renegade.fi
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://testnet.auth-server.renegade.fi
+    description: Sepolia Testnet
+  - url: https://mainnet.auth-server.renegade.fi
+    description: Mainnet
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-renegade-api-key
+      description: |
+        API key for initial authentication. This is required for all requests.
+
+    AuthKey:
+      type: apiKey
+      in: header
+      name: x-renegade-auth
+      description: |
+        Part of the HMAC authentication scheme. Contains the base64-encoded HMAC-SHA256 
+        signature calculated from:
+        - Request path
+        - All x-renegade-* headers (except this one)
+        - Request body
+        The signature is generated using a pre-shared base64-encoded secret key.
+
+    AuthExpiration:
+      type: apiKey
+      in: header
+      name: x-renegade-auth-expiration
+      description: |
+        Part of the HMAC authentication scheme. Contains the Unix timestamp in 
+        milliseconds when the request signature expires (typically 10 seconds 
+        after request creation).
+
+    SdkVersion:
+      type: apiKey
+      in: header
+      name: x-renegade-sdk-version
+      description: Version identifier of the SDK making the request.
+
+  schemas:
+    OrderSide:
+      type: string
+      enum: [Buy, Sell]
+
+    ApiExternalAssetTransfer:
+      type: object
+      properties:
+        mint:
+          type: string
+          description: Token address
+        amount:
+          type: integer
+          description: Amount of tokens
+
+    ApiTimestampedPrice:
+      type: object
+      properties:
+        price:
+          type: string
+          description: Price as a string
+        timestamp:
+          type: integer
+          description: Unix timestamp in milliseconds since epoch
+
+    ApiExternalMatchResult:
+      type: object
+      properties:
+        quote_mint:
+          type: string
+          description: Quote token address
+        base_mint:
+          type: string
+          description: Base token address
+        quote_amount:
+          type: integer
+          description: Amount of quote tokens
+        base_amount:
+          type: integer
+          description: Amount of base tokens
+        direction:
+          $ref: "#/components/schemas/OrderSide"
+
+    FeeTake:
+      type: object
+      properties:
+        relayer_fee:
+          type: integer
+          description: Fee paid to the relayer
+        protocol_fee:
+          type: integer
+          description: Fee paid to the protocol
+
+    ExternalOrder:
+      type: object
+      oneOf:
+        - required: [base_amount]
+          properties:
+            base_amount:
+              type: integer
+              description: Amount of base tokens
+              minimum: 1
+        - required: [quote_amount]
+          properties:
+            quote_amount:
+              type: integer
+              description: Amount of quote tokens
+              minimum: 1
+        - required: [exact_base_output]
+          properties:
+            exact_base_output:
+              type: integer
+              description: Exact base token output amount
+              minimum: 1
+        - required: [exact_quote_output]
+          properties:
+            exact_quote_output:
+              type: integer
+              description: Exact quote token output amount
+              minimum: 1
+      properties:
+        quote_mint:
+          type: string
+          description: Quote token address
+        base_mint:
+          type: string
+          description: Base token address
+        side:
+          $ref: "#/components/schemas/OrderSide"
+        min_fill_size:
+          type: integer
+          description: Minimum fill size
+          default: 0
+      required:
+        - quote_mint
+        - base_mint
+        - side
+
+    ApiExternalQuote:
+      type: object
+      properties:
+        order:
+          $ref: "#/components/schemas/ExternalOrder"
+        match_result:
+          $ref: "#/components/schemas/ApiExternalMatchResult"
+        fees:
+          $ref: "#/components/schemas/FeeTake"
+        send:
+          $ref: "#/components/schemas/ApiExternalAssetTransfer"
+        receive:
+          $ref: "#/components/schemas/ApiExternalAssetTransfer"
+        price:
+          $ref: "#/components/schemas/ApiTimestampedPrice"
+        timestamp:
+          type: integer
+          description: Unix timestamp in milliseconds since epoch
+
+    ApiSignedExternalQuote:
+      type: object
+      properties:
+        quote:
+          $ref: "#/components/schemas/ApiExternalQuote"
+        signature:
+          type: string
+          description: Signature of the quote, a base64-encoded HMAC-SHA256 hash of the quote by the Relayer's admin API key
+
+    GasSponsorshipInfo:
+      type: object
+      properties:
+        refund_amount:
+          type: integer
+          description: Amount to refund
+        refund_native_eth:
+          type: boolean
+          description: Whether to refund in native ETH
+        refund_address:
+          type: string
+          description: Address to refund to
+
+    SignedGasSponsorshipInfo:
+      type: object
+      properties:
+        gas_sponsorship_info:
+          $ref: "#/components/schemas/GasSponsorshipInfo"
+        signature:
+          type: string
+          description: Signature of the gas sponsorship info
+
+    AtomicMatchApiBundle:
+      type: object
+      properties:
+        match_result:
+          $ref: "#/components/schemas/ApiExternalMatchResult"
+        fees:
+          $ref: "#/components/schemas/FeeTake"
+        receive:
+          $ref: "#/components/schemas/ApiExternalAssetTransfer"
+        send:
+          $ref: "#/components/schemas/ApiExternalAssetTransfer"
+        settlement_tx:
+          type: object
+          properties:
+            tx_type:
+              type: string
+              description: Transaction type
+            to:
+              type: string
+              description: Contract address
+            data:
+              type: string
+              description: Transaction calldata as hex encoded bytes
+            value:
+              type: string
+              description: ETH value to send
+
+    ExternalQuoteRequest:
+      type: object
+      properties:
+        external_order:
+          $ref: "#/components/schemas/ExternalOrder"
+
+    ExternalQuoteResponse:
+      type: object
+      properties:
+        signed_quote:
+          $ref: "#/components/schemas/ApiSignedExternalQuote"
+        gas_sponsorship_info:
+          $ref: "#/components/schemas/SignedGasSponsorshipInfo"
+
+    AssembleExternalMatchRequest:
+      type: object
+      properties:
+        do_gas_estimation:
+          type: boolean
+          description: Whether to estimate gas
+          default: false
+        receiver_address:
+          type: string
+          description: Address to receive the match
+        signed_quote:
+          $ref: "#/components/schemas/ApiSignedExternalQuote"
+          required: true
+        updated_order:
+          $ref: "#/components/schemas/ExternalOrder"
+          required: false
+        gas_sponsorship_info:
+          $ref: "#/components/schemas/SignedGasSponsorshipInfo"
+
+    ExternalMatchResponse:
+      type: object
+      properties:
+        match_bundle:
+          $ref: "#/components/schemas/AtomicMatchApiBundle"
+        gas_sponsored:
+          type: boolean
+          description: Whether the match has received gas sponsorship
+          default: false
+        gas_sponsorship_info:
+          $ref: "#/components/schemas/GasSponsorshipInfo"
+
+paths:
+  /v0/matching-engine/quote:
+    post:
+      summary: Request a quote for an order
+      description: |
+        Request a quote for an external order. Rate limited to 100 requests per minute.
+      security:
+        - ApiKeyAuth: []
+        - AuthKey: []
+        - AuthExpiration: []
+        - SdkVersion: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExternalQuoteRequest"
+      responses:
+        "200":
+          description: Quote successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalQuoteResponse"
+        "204":
+          description: No quote available
+        "429":
+          description: Rate limit exceeded
+        "401":
+          description: Unauthorized
+        "400":
+          description: Bad request
+
+  /v0/matching-engine/assemble-external-match:
+    post:
+      summary: Assemble a quote into a match bundle
+      description: |
+        Assemble a signed quote into a match bundle. Rate limited to 5 *unsettled* bundles per minute.
+        See the docs for more information.
+      security:
+        - ApiKeyAuth: []
+        - AuthKey: []
+        - AuthExpiration: []
+        - SdkVersion: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssembleExternalMatchRequest"
+      responses:
+        "200":
+          description: Match bundle successfully assembled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalMatchResponse"
+        "204":
+          description: No match bundle available
+        "429":
+          description: Rate limit exceeded
+        "401":
+          description: Unauthorized
+        "400":
+          description: Bad request
