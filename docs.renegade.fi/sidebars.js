@@ -57,6 +57,7 @@ const sidebars = {
       items: [
         "technical-reference/useful-addresses",
         "technical-reference/typescript-sdk",
+        "technical-reference/price-reporter",
       ],
     },
   ],
