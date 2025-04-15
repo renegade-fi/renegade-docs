@@ -35,7 +35,7 @@ paths:
           description: Trading pair identifier in format {exchange}-{base_token}-{quote_token}
           schema:
             type: string
-            example: binance-0x1234-0x5678
+            example: renegade-0x1234-0x5678
       responses:
         '200':
           description: Successful price retrieval

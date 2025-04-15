@@ -14,7 +14,6 @@ The Price Reporter API provides real-time prices used by Renegade to execute tra
 - Real-time execution prices
 - HTTP and WebSocket access
 - No authentication required
-- Public, rate-limited endpoints
 
 > **Note:** These are the exact prices Renegade uses for all platform trades.
 
@@ -80,25 +79,6 @@ ws.onopen = () => {
   )
 }
 ```
-
----
-
-## Glossary
-
-**Base Token Address**  
-The contract address of the token for which you want the Renegade execution price.
-
-**Topic**  
-A string identifier in the format `renegade-{baseTokenAddress}` that specifies a token for price queries or subscriptions.
-
-**Renegade**  
-The exchange identifier used in all topics, representing prices as determined and executed by Renegade.
-
-**Mainnet**  
-Refers to Arbitrum Mainnet (chain id: 42161).
-
-**Testnet**  
-Refers to Arbitrum Sepolia (chain id: 421614).
 
 ---
 
@@ -176,26 +156,22 @@ getPrice("renegade-0x82af49447d8a07e3bd95bd0d56f35241523fbab1")
     1610.3049999999998
     ```
 
-- **404 Not Found**
-
-  - Content-Type: `text/plain`
-  - Body:
-    ```
-    Invalid (exchange, base) tuple
-    ```
-
 - **500 Internal Server Error**
   - Content-Type: `text/plain`
   - Body:
     ```
-    Internal server error
+    Invalid (exchange, base, quote) tuple
     ```
 
-**Error Conditions**
+### Error Handling
 
-- The exchange is not supported (must be `renegade`)
-- The topic format is invalid
-- The token is not supported or the address is invalid
+Error messages are returned as plain text. The message will describe the issue, such as an invalid topic format, unsupported token, or internal server error.
+
+**Example error messages:**
+
+```
+Invalid (exchange, base, quote) tuple: renegade does not support the pair (0x..., 0x...)
+```
 
 ---
 
@@ -255,12 +231,12 @@ ws.send(
 
 ### Error Handling
 
-Error messages are returned as plain text. The message will describe the issue, such as an invalid topic format or unsupported token.
+Error messages are returned as plain text. The message will describe the issue, such as an invalid topic format, unsupported token, or internal server error.
 
-**Example error message:**
+**Example error messages:**
 
 ```
-Invalid (exchange, base) tuple: renegade does not support the token 0x...
+Invalid (exchange, base, quote) tuple: renegade does not support the pair (0x..., 0x...)
 ```
 
 ### Minimal JavaScript Example
@@ -296,25 +272,3 @@ ws.onopen = () => {
 ```
 
 ---
-
-## Rate Limits
-
-TODO?
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Invalid Topic Format**
-
-   - Ensure token addresses are correct and match the required format.
-   - Confirm the exchange identifier is `renegade`.
-   - Verify the token is supported.
-
-2. **Connection Issues**
-
-   - Check your network connectivity.
-   - Verify you are using the correct WebSocket or HTTP URL and port.
-   - Implement reconnection logic for WebSocket clients.
