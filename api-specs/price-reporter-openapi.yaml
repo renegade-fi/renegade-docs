@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  title: Renegade Price Reporter API
+  version: 1.0.0
+  description: |
+    API for retrieving real-time execution prices used by Renegade.
+
+    No authentication is required. All endpoints are publicly accessible.
+
+    - Prices are sourced from the Binance API and represent the rates Renegade uses internally for all supported tokens.
+    - Only tokens whitelisted by Renegade are available. See the documentation for the list of supported tokens.
+
+  contact:
+    name: Renegade
+    email: joey@renegade.fi
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: https://mainnet.price-reporter.renegade.fi:3000
+    description: Arbitrum Mainnet
+  - url: https://testnet.price-reporter.renegade.fi:3000
+    description: Arbitrum Sepolia Testnet
+
+paths:
+  /price/{topic}:
+    get:
+      summary: Get current price for a trading pair
+      description: Retrieves the current price for a specified trading pair from the price reporter service.
+      parameters:
+        - name: topic
+          in: path
+          required: true
+          description: Trading pair identifier in format {exchange}-{base_token}-{quote_token}
+          schema:
+            type: string
+            example: binance-0x1234-0x5678
+      responses:
+        '200':
+          description: Successful price retrieval
+          content:
+            text/plain:
+              schema:
+                type: number
+                description: Current price as a decimal number
+                example: 123.45
+        '404':
+          description: Topic not found
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Not Found
+        '500':
+          description: Server error
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: Error message describing the issue
+                example: Invalid (exchange, base, quote) tuple
+      tags:
+        - Price
+
+components: {}
