@@ -262,6 +262,10 @@ components:
           type: boolean
           description: Whether to estimate gas
           default: false
+        allow_shared:
+          type: boolean
+          description: Whether to allow the returned bundle to be shared with other clients. Enabling shared bundles will allow a higher rate limit.
+          default: false
         receiver_address:
           type: string
           description: Address to receive the match
