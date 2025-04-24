@@ -58,6 +58,7 @@ const sidebars = {
         "technical-reference/useful-addresses",
         "technical-reference/typescript-sdk",
         "technical-reference/price-reporter",
+        "technical-reference/relayer",
       ],
     },
   ],
