@@ -85,11 +85,6 @@ console.log("Wallet balances: ", wallet.balances)
 
 ### Environment Setup
 
-:::note
-
-You must expose a `TOKEN_MAPPING` environment variable to use the SDK. You can do so by adding a `.env` file in the root of your project. See this [repo](https://stackblitz.com/edit/nodets-bnycf1?file=.env.example&view=editor) for an example. You can find the token mapping for your environment [here](../technical-reference/useful-addresses.md).
-
-:::
 
 We recommend using Node v22 as it [provides a WebSocket client to Node.js](https://nodejs.org/en/blog/announcements/v22-release-announce#websocket) without external dependencies. If you are on a lower version of Node, you should provide your own WebSocket client, such as `ws`.
 
@@ -135,12 +130,16 @@ This SDK provides types for various data structures used in the API.
 
 ### Token
 
-The `Token` class is used to store ERC-20 token metadata. It encapsulates information such as the token's address, name, decimals, and ticker symbol. This metadata is sourced from the `TOKEN_MAPPING` defined in your `.env` file.
+For a list of tokens that Renegade supports, along with useful metadata, you should install the `Token` package:
+
+```bash
+npm install @renegade-fi/token
+```
 
 **Import**
 
 ```js
-import { Token } from "@renegade-fi/node"
+import { Token } from "@renegade-fi/token"
 ```
 
 **Properties**
@@ -150,39 +149,56 @@ import { Token } from "@renegade-fi/node"
 - `decimals`: The number of decimals the token uses.
 - `ticker`: The ticker symbol of the token.
 
-**Static Methods**
+**Initialization**
+Before using `Token` methods, the token mapping must be initialized either asynchronously or synchronously:
+
 ```js
-static findByTicker(ticker: string): Token
+// Async initialization
+await Token.fetchRemapFromRepo(42161)
+
+// Sync initialization
+Token.parseRemapFromString(process.env.TOKEN_MAPPING)
 ```
+
+**Static Methods**
+
+```js
+static fromTicker(ticker: string): Token
+```
+
 **Returns**
+
 - `Token` - The Token instance matching the given ticker.
 
 **Throws**
-- `Error` - If no token with the given ticker is found in the TOKEN_MAPPING.
+
+- `Error` - If the mapping has not been initialized.
+- `Error` - If no token with the given ticker is found in the map.
 
 ```js
-static findByAddress(address: `0x${string}`): Token
+static fromAddress(address: `0x${string}`): Token
 ```
+
 **Returns**
+
 - `Token` - The Token instance matching the given address.
 
 **Throws**
-- `Error` - If no token with the given address is found in the TOKEN_MAPPING.
 
+- `Error` - If the mapping has not been initialized.
+- `Error` - If no token with the given address is found in the map.
 
 **Usage**
 
 ```jsx
-import { Token } from "@renegade-fi/node"
+import { Token } from "@renegade-fi/token"
 
-const usdc = Token.findByTicker("USDC")
+// Async Initialization
+await Token.fetchRemapFromRepo(42161)
 
-console.log("USDC address: ", usdc.address)
-
-const weth = Token.findByAddress("0xdf8d259c04020562717557f2b5a3cf28e92707d1")
-
-console.log("WETH address: ", weth.address)
+const WETH = Token.fromTicker("WETH")
 ```
+
 
 ## Configuration
 
@@ -575,7 +591,6 @@ Promise that resolves to the ID of the `deposit` task in the connected relayer.
 An error may be thrown if:
 
 - a `seed` does not exist in the provided `config`
-- the provided `mint` does not exist in the token mapping
 - the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
 - the wallet update signature is incorrect / missing
 - the Permit2 permit is incorrect / missing
@@ -656,7 +671,6 @@ Promise that resolves to the ID of the `deposit` task in the connected relayer.
 An error may be thrown if:
 
 - a `seed` does not exist in the provided `config`
-- the provided `mint` does not exist in the token mapping
 - the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
 - the provided wallet client is not configured properly
 - the provided wagmi config is not configured properly
@@ -713,7 +727,6 @@ Promise that resolves to the ID of the `withdraw` task in the connected relayer.
 An error may be thrown if:
 
 - a `seed` does not exist in the provided `config`
-- the provided `mint` does not exist in the token mapping
 - the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
 - there exist one or more balances with non-zero fees, meaning you must pay fees
 - the API request authorization is incorrect / missing
@@ -765,7 +778,6 @@ Promise that resolves to the ID of the `withdraw` task in the connected relayer.
 An error may be thrown if:
 
 - a `seed` does not exist in the provided `config`
-- the provided `mint` does not exist in the token mapping
 - the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
 - the API request authorization is incorrect / missing
 
@@ -862,8 +874,6 @@ Promise that resolves to the ID of the `place order` task in the connected relay
 An error may be thrown if:
 
 - a `seed` does not exist in the provided `config`
-- the provided `base` mint does not exist in the token mapping
-- the provided `quote` mint does not exist in the token mapping
 - the API request authorization is incorrect / missing
 
 ### cancelOrder
@@ -1111,8 +1121,6 @@ A `SignedExternalMatchQuote` that contains:
 
 An error may be thrown if:
 
-- the provided `base` mint does not exist in the token mapping
-- the provided `quote` mint does not exist in the token mapping
 - neither `baseAmount` nor `quoteAmount` is provided
 - the API request authorization is incorrect / missing
 
@@ -1185,8 +1193,6 @@ You are responsible for submitting the transaction request contained within the 
 
 An error may be thrown if:
 
-- the provided `base` mint does not exist in the token mapping
-- the provided `quote` mint does not exist in the token mapping
 - neither `baseAmount` nor `quoteAmount` is provided
 - the API request authorization is incorrect / missing
 - rate limits have been exceeded, see below
