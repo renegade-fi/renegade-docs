@@ -15,82 +15,78 @@ npm install @renegade-fi/node@latest @wagmi/core viem@2.x
 
 This SDK is responsible for interacting with a relayer. Some actions, such as `createWallet` or `deposit`, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [wagmi](https://wagmi.sh/core/getting-started) and [viem](https://viem.sh/docs/getting-started).
 
-### Create Config
+## Quick Start
 
-Create and export a new Renegade config using `createConfig`.
+1. Set up your `RenegadeClient`
 
-```jsx
-import { createConfig } from "@renegade-fi/node"
-import { createPublicClient, http } from 'viem'
-import { arbitrum } from 'viem/chains'
- 
-const viemClient = createPublicClient({ 
-  chain: arbitrum,
-  transport: http()
+Firstly, set up your `RenegadeClient` with a desired chain and seed.
+
+```js
+const client = RenegadeClient.new({
+    chainId,
+    seed,
+});
+```
+
+:::tip 
+Renegade is currently deployed on 
+- Mainnets: 
+  - Arbitrum One (42161)
+  - Base Mainnet (8453)
+- Testnets: 
+  - Arbitrum Sepolia (421614)
+  - Base Sepolia (84532) 
+:::
+
+Generate a seed like so:
+```js
+import { privateKeyToAccount } from "viem/accounts";
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+```
+
+:::tip 
+We recomend using `viem` to perform on-chain interactions.
+:::
+
+2. Create your Renegade wallet
+```js
+await client.createWallet();
+```
+3. Interact with the protocol
+
+Now that you have a `RenegadeClient` and wallet set up, you can now interact with the Renegade protocol. See below for more methods.
+<!-- TODO: Add link -->
+```js
+import { createPublicClient, createWalletClient, http} from 'viem'
+import { arbitrumSepolia } from 'viem/chains'
+import { privateKeyToAccount } from "viem/accounts";
+
+const publicClient = createPublicClient({
+  chain: arbitrumSepolia,
+  transport: http(),
 })
-
-export const config = createConfig({
-  chainId: arbitrum.id,
-  darkPoolAddress: "0x30bd8eab29181f790d7e495786d4b96d7afdc518",
-  priceReporterUrl: "mainnet.price-reporter.renegade.fi",
-  relayerUrl: "mainnet.cluster0.renegade.fi",
-  viemClient,
-})
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+const walletClient = createWalletClient({
+    account,
+    chain,
+    transport: http(),
+});
+await client.executeDeposit({
+    amount: BigInt(10000000000000000), // 0.01 WETH
+    mint: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH on Arbitrum Sepolia
+    publicClient,
+    walletClient,
+});
 ```
 
-:::tip
 
-If you have your chain ID configured in your `.env` file, you can use the `isSupportedChainId` function to check if a chain is supported. This function also acts as a type guard, narrowing the type to `SupportedChainId` when it returns `true`.
-
-```jsx
-import { isSupportedChainId } from "@renegade-fi/node"
-
-// Get chain ID from environment variables and convert to number
-const chainId = Number(process.env.CHAIN_ID)
-const isSupported = isSupportedChainId(chainId)
-
-if (isSupported) {
-  // chainId is now narrowed to SupportedChainId type
-  console.log("Chain is supported: ", chainId)
-} else {
-  console.log("Chain is not supported")
-}
-```
-
-:::
-
-:::tip
-
-Follow the instructions [here](https://viem.sh/docs/clients/public) to properly configure `viemClient` for either the Arbitrum One chain or the Arbitrum Sepolia chain, depending on which environment you want to use.
-
-:::
-
-:::note
-
-`darkPoolAddress` is the address of the darkpool proxy contract, **not** the implementation contract itself. You can find the darkpool proxy address for your environment [here](../technical-reference/useful-addresses.md).
-
-:::
-
-### Use the SDK
-
-Now, you can pass the `config` to use actions.
-
-```jsx
-import { backOfQueueWallet } from "@renegade-fi/node"
-
-const wallet = await getBackOfQueueWallet(config)
-
-console.log("Wallet balances: ", wallet.balances)
-```
-
-### Environment Setup
-
-
-We recommend using Node v22 as it [provides a WebSocket client to Node.js](https://nodejs.org/en/blog/announcements/v22-release-announce#websocket) without external dependencies. If you are on a lower version of Node, you should provide your own WebSocket client, such as `ws`.
-
-This SDK makes exclusive use of ES Modules. Check out [this guide](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) for more info on ESM support and Frequently Asked Questions across various tools and setups.
-
-For Typescript configuration, check out this [example repo](https://stackblitz.com/edit/nodets-bnycf1?file=tsconfig.json&view=editor) for a reference `tsconfig.json`.
 
 ## Protocol Core Concepts
 
@@ -105,15 +101,6 @@ Relayers manage task queues for each wallet, which means you do not necessarily 
 A wallet is a data structure that contains a user's balances, orders, and keys. To create a wallet, you must sign a message using your Ethereum wallet to generate a derivation key. This derivation key is used to derive the required fields of a wallet, such as the keychain. Learn more about keychains [here](../advanced-concepts/super-relayers.md).
 
 ## SDK Core Concepts
-
-### Config
-The `Config` object is responsible for storing Renegade wallet state and internals. Most actions require a `Config` object to be passed as the first argument, as it contains the derivation key used to derive keys used to sign API requests and wallet updates.
-
-### Auth Config
-The `AuthConfig` object is specifically used to interact with the relayer using API keys. If you are using a managed Renegade wallet, you will not need to interact with this object. If you are a permissioned user with API keys, you should follow the instructions [here](#createauthconfig) to create an `AuthConfig` object.
-
-### External Config
-The `ExternalConfig` object is used to interact with the relayer using an Externally Managed Wallet. The main difference between this and the `Config` object is that the `ExternalConfig` object does not contain a derivation key. Instead, the user will derive required fields of a wallet, such as the keychain, and custody the wallet secrets themselves. Learn more about Externally Managed Wallets [here](#external-key-management).
 
 ### Actions
 This SDK exposes actions that are used to interact with a relayer, such as fetching a wallet's state or placing an order. Actions that access private wallet data require API authorization headers, which are automatically added for you when using the SDK. Browse the list of available actions [below](#actions-1).
@@ -153,11 +140,23 @@ import { Token } from "@renegade-fi/token"
 Before using `Token` methods, the token mapping must be initialized either asynchronously or synchronously:
 
 ```js
-// Async initialization
-await Token.fetchRemapFromRepo(42161)
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
 
-// Sync initialization
-Token.parseRemapFromString(process.env.TOKEN_MAPPING)
+const chainId = arbitrumSepolia.id;
+
+// Asynchronous Initialization
+await Token.fetchRemapFromRepo(chainId);
+const WETH = Token.fromTicker("WETH");
+const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
+
+// Sync Initialization
+import remap from "./remap.json";
+
+Token.addRemapFromString(chainId, JSON.stringify(remap));
+const WETH = Token.fromTicker("WETH");
+const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
+
 ```
 
 **Static Methods**
@@ -188,81 +187,509 @@ static fromAddress(address: `0x${string}`): Token
 - `Error` - If the mapping has not been initialized.
 - `Error` - If no token with the given address is found in the map.
 
-**Usage**
-
-```jsx
-import { Token } from "@renegade-fi/token"
-
-// Async Initialization
-await Token.fetchRemapFromRepo(42161)
-
-const WETH = Token.fromTicker("WETH")
-```
-
-
-## Configuration
-
-### createConfig
-
-**Import**
-
-```jsx
-import { createConfig } from "@renegade-fi/node"
-```
+## Renegade Client
+### new
 
 **Usage**
 
-```jsx
-import { createConfig } from "@renegade-fi/node"
-import { createPublicClient, http } from 'viem'
-import { arbitrum } from 'viem/chains'
- 
-const publicClient = createPublicClient({ 
-  chain: arbitrum,
-  transport: http()
-})
+```js
+import { privateKeyToAccount } from "viem/accounts";
+import { arbitrumSepolia } from "viem/chains";
 
-export const config = createConfig({
-  chainId: arbitrum.id,
-  darkPoolAddress: "0x30bd8eab29181f790d7e495786d4b96d7afdc518",
-  priceReporterUrl: "mainnet.price-reporter.renegade.fi",
-  relayerUrl: "mainnet.cluster0.renegade.fi",
-  viemClient: publicClient,
-})
+const chainId = arbitrumSepolia.id;
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+
+const client = RenegadeClient.new({
+    chainId,
+    seed,
+});
 ```
 
 **Parameters**
 
-- darkPoolAddress
+- chainId
+    - `number`
+    - ID of the chain to interact with
+- seed
     - `0x${string}`
-    - The darkpool contract's address.
-- priceReporterUrl
-    - `string`
-    - The price reporter's URL.
-- relayerUrl
-    - `string`
-    - The relayer's URL.
-- viemClient
-    - [`PublicClient`](https://viem.sh/docs/clients/public)
-    - Viem client used for wallet specific tasks e.g. signing a message.
+    - Renegade wallet secret. Generated using `RelayerClient.generateSeedMessage()`
+
+**Returns**
+
+A `RenegadeClient` instance that is used to interact with the Renegade protocol.
+
+**Error**
+
+An error may be thrown if:
+
+- an invalid chain ID is passed
+
+### newArbitrumOneClient
+
+Same as `new` but with Arbitrum One's chain ID preset.
+
+**Usage**
+
+```js
+import { privateKeyToAccount } from "viem/accounts";
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+
+const client = RenegadeClient.newArbitrumOneClient({
+    chainId,
+});
+```
+
+### newArbitrumSepoliaClient
+
+Same as `new` but with Arbitrum Sepolia's chain ID preset.
+
+**Usage**
+
+```js
+import { privateKeyToAccount } from "viem/accounts";
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+
+const client = RenegadeClient.newArbitrumOneClient({
+    chainId,
+});
+```
+
+### newBaseMainnetClient
+
+Same as `new` but with Base Mainnet's chain ID preset.
+
+**Usage**
+
+```js
+import { privateKeyToAccount } from "viem/accounts";
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+
+const client = RenegadeClient.newBaseMainnetClient({
+    chainId,
+});
+```
+
+### newBaseSepoliaClient
+
+Same as `new` but with Base Sepolia's chain ID preset.
+
+**Usage**
+
+```js
+import { privateKeyToAccount } from "viem/accounts";
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+
+const seed = await account.signMessage({
+    message: RenegadeClient.generateSeedMessage(chainId),
+});
+
+const client = RenegadeClient.newBaseSepoliaClient({
+    chainId,
+});
+```
+
+### createWallet
+
+Start a `create wallet` task on your connected relayer.
+
+**Usage**
+
+```js
+await client.createWallet();
+```
 
 **Return Type**
 
-```jsx
-import { type Config } from '@renegade-fi/node'
+`Promise<void>`
+
+Promise that resolves when the `create wallet` task has finished and the wallet has successfully been fetched from the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- a wallet with the same wallet ID already exists in the state of the connected relayer
+
+### lookupWallet
+
+Start a `lookup wallet` task on your connected relayer.
+
+**Usage**
+
+```js
+await client.lookupWallet();
 ```
+
+**Return Type**
+
+`Promise<void>`
+
+Promise that resolves when the `lookup wallet` task has finished and the wallet has successfully been fetched from the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- a wallet with the same wallet ID already exists in the state of the connected relayer
+- a wallet was not able to be found on-chain
+
+### getWallet
+
+Retrieve the latest wallet state from the connected relayer.
+
+**Usage**
+
+```js
+const wallet = await client.getWallet();
+```
+
+**Return Type**
+
+[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
+
+**Error**
+
+An error may be thrown if:
+
+- the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
+
+### getBackOfQueueWallet
+
+Retrieve the latest back of queue wallet state from the connected relayer.
+
+:::note
+Your connected relayer will manage a queue of tasks for you. By fetching the back of queue wallet, you are fetching your wallet state *after* all tasks in the queue have completed, which may not be the case. If a task fails, all subsequent tasks will transition to the `Failed` state and your queue will be cleared.
+:::
+
+**Usage**
+
+```js
+const wallet = await client.getBackOfQueueWallet();
+```
+
+**Return Type**
+
+[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
+
+**Error**
+
+An error may be thrown if:
+
+- the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
+
+### executeDeposit
+Start a `deposit` task on your connected relayer. Will also prepare the deposit by: 
+- sending a transaction to approve the ERC-20
+- signing a Permit2 `permit` if needed.
+Transfers ERC-20 tokens from your EVM address to your Renegade wallet.
+
+**Usage**
+
+```js
+import { createPublicClient, createWalletClient, http} from 'viem'
+import { arbitrumSepolia } from 'viem/chains'
+import { privateKeyToAccount } from "viem/accounts";
+
+const publicClient = createPublicClient({
+  chain: arbitrumSepolia,
+  transport: http(),
+})
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const account = privateKeyToAccount(PRIVATE_KEY);
+const walletClient = createWalletClient({
+    account,
+    chain,
+    transport: http(),
+});
+
+const mint = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a"; // WETH
+const amount = BigInt(10000000000000000); // 0.01 WETH
+
+await client.executeDeposit({
+    amount,
+    mint,
+    publicClient,
+    walletClient,
+});
+```
+
+**Parameters**
+
+- mint
+    - `0x${string}`
+    - ERC-20 contract address.
+- amount
+    - `bigint`
+    - Amount to deposit (should be multiplied by the number of decimals the ERC-20 supports)
+- publicClient
+    - [`PublicClient`](https://viem.sh/docs/clients/public)
+    - viem Public Client used to read allowance.
+- walletClient
+    - [`WalletClient`](https://viem.sh/docs/clients/wallet#wallet-client)
+    - viem Wallet Client used to sign messages.
+
+**Return Type**
+
+`Promise<{ taskId: string }>`
+
+Promise that resolves to the ID of the `deposit` task in the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
+- the provided Wallet Client is not configured properly
+
+**Error**
+
+An error may be thrown if:
+
+- the wallet already contains the maximum number of balances (12)
+
+### executeWithdraw
+
+Start a `withdraw` task on your connected relayer, Will also prepare the withdrawal by paying fees if needed. Transfers ERC-20 tokens from your Renegade wallet to your EVM address.
+
+**Usage**
+
+```js
+const mint = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a"; // WETH
+const amount = BigInt(10000000000000000); // 0.01 WETH
+const destinationAddr = "0x..." // your public EVM address 
+
+await client.executeWithdraw({
+    amount,
+    mint,
+    destinationAddr,
+});
+
+```
+
+**Parameters**
+
+- destinationAddr
+    - `0x${string}`
+    - Account to transfer ERC-20 to.
+- mint
+    - `0x${string}`
+    - ERC-20 contract address.
+- amount
+    - `bigint`
+    - Amount to withdraw (should be multiplied by the number of decimals the ERC-20 supports)
+
+**Return Type**
+
+`Promise<{ taskId: string }>`
+
+Promise that resolves to the ID of the `withdraw` task in the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
+
+### payFees
+
+Start the `payFee` task(s) on your connected relayer.
+
+:::warning
+
+You most likely will not invoke this function directly, as it is part of the [`executeWithdrawal`](#executewithdrawal) function.
+
+:::
+
+**Usage**
+
+```js
+await client.payFees();
+```
+
+**Return Type**
+
+`Promise<{ taskIds: string[] }>`
+
+Promise that resolves to an array of IDs of `payFee` tasks in the connected relayer.
+
+### placeOrder
+
+Start a `place order` task on your connected relayer.
+
+**Usage**
+
+```js
+const WETH_ADDRESS = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a";
+const USDC_ADDRESS = "0xdf8d259c04020562717557f2b5a3cf28e92707d1";
+const amount = BigInt(10000000000000000); // 0.01 WETH
+const worstCasePrice = (4000 * 1.5 * 10 ** (6 - 18)).toString(); // For a buy order: maximum price of 6000 USDC per ETH
+const minFillSize = amount; // Minimum fill size of 0.01 ETH
+const side = "buy";
+
+const order = {
+    base: WETH_ADDRESS,
+    quote: USDC_ADDRESS,
+    side,
+    amount,
+    worstCasePrice,
+    minFillSize,
+} as const;
+
+await client.placeOrder(order);
+```
+
+**Parameters**
+
+- base
+    - `0x${string}`
+    - ERC-20 contract address of the base asset.
+- quote
+    - `0x${string}`
+    - ERC-20 contract address of the quote asset (must be USDC).
+- side
+    - `"buy" | "sell"`
+    - The side this order is for
+- amount
+    - `bigint`
+    - Amount to place the order for (should be multiplied by the number of decimals the ERC-20 supports)
+- worstCasePrice (optional)
+    - `string`
+    - A number formatted as a string representing the worst case price that the order may be executed at. For buy side orders this is a maximum price, for sell side orders this is a minimum price.
+    - If no worst case price is provided, the action will fall back to setting default values (`u64::MAX` for buy side orders and `0` for sell side orders)
+    - Value should be decimal corrected according to the token pair (e.g. `price * 10**(quoteDecimals - baseDecimals)`)
+- minFillSize (optional)
+    - `bigint`
+    - The minimum fill size for the order. It should be equal to or less than the amount.
+    - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
+
+**Return Type**
+
+`Promise<{ taskId: string }>`
+
+Promise that resolves to the ID of the `place order` task in the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- the wallet already contains the maximum number of orders (4)
+
+### cancelOrder
+
+Start a `cancel wallet` task on your connected relayer.
+
+**Import**
+
+```js
+import { cancelOrder } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```js
+// Cancel all orders
+let wallet = await client.getBackOfQueueWallet();
+
+const orderIds = wallet.orders.map((order) => order.id);
+
+for (const id of orderIds) {
+    await client.cancelOrder({ id });
+}
+```
+
+**Parameters**
+
+- id
+    - `string`
+    - the ID of the order to cancel
+
+**Return Type**
+
+`Promise<{ taskId: string }>`
+
+Promise that resolves to the ID of the `cancel order` task in the connected relayer.
+
+**Error**
+
+An error may be thrown if:
+
+- the provided `id` mint does not exist in the wallet's list of orders
+
+### getOrderHistory
+
+<!-- TODO: -->
+
+### generateSeedMessage
+
+Generate the secret from which to derive your Renegade wallet.
+
+**Import**
+
+```js
+import { cancelOrder } from "@renegade-fi/node"
+```
+
+**Usage**
+
+```js
+// Generate message to sign
+const message = RenegadeClient.generateSeedMessage(chainId);
+
+// Use WalletClient to sign
+const seed = await account.signMessage({ message });
+```
+
+**Parameters**
+
+- chainId
+    - `string`
+    - the ID of the chain to deposit/withdraw funds from
+
+**Return Type**
+
+`string`
+
+Message to derive Renegade wallet secrets from.
+
+## Configuration
 
 ### createAuthConfig
 
 **Import**
 
-```jsx
+```js
 import { createAuthConfig } from "@renegade-fi/node"
 ```
 
 **Usage**
 
-```jsx
+```js
 import { createAuthConfig } from "@renegade-fi/node"
  
 export const config = createAuthConfig({
@@ -286,7 +713,7 @@ export const config = createAuthConfig({
 
 **Return Type**
 
-```jsx
+```js
 import { type AuthConfig } from '@renegade-fi/node'
 ```
 
@@ -390,543 +817,19 @@ import { type ExternalConfig } from '@renegade-fi/node'
 
 ## Actions
 
-### createWallet
-
-Action for starting a `create wallet` task on your connected relayer.
-
-**Import**
-
-```jsx
-import { createWallet } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-import { createWallet, ROOT_KEY_MESSAGE_PREFIX } from "@renegade-fi/node"
-import { privateKeyToAccount } from "viem/accounts"
-import { arbitrum } from "viem/chains"
- 
-const account = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') 
-
-const seed = await account.signMessage({
-  message: `${ROOT_KEY_MESSAGE_PREFIX} ${arbitrum.id}`,
-})
-
-config.setState((x) => ({ ...x, seed }))
-
-await createWallet(config).then(() => console.log("Finished creating a wallet"))
-```
-
-**Return Type**
-
-`Promise<void>`
-
-Promise that resolves when the `create wallet` task has finished and the wallet has successfully been fetched from the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- a wallet with the same wallet ID already exists in the state of the connected relayer
-
-### lookupWallet
-
-Action for starting a `lookup wallet` task on your connected relayer.
-
-**Import**
-
-```jsx
-import { lookupWallet } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-import { lookupWallet } from "@renegade-fi/node"
-import { arbitrum } from "viem/chains"
- 
-config.setState((x) => ({ ...x, seed }))
-
-await lookupWallet(config).then(() => console.log('Finished looking up wallet'))
-```
-
-**Return Type**
-
-`Promise<void>`
-
-Promise that resolves when the `lookup wallet` task has finished and the wallet has successfully been fetched from the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- a wallet with the same wallet ID already exists in the state of the connected relayer
-- a wallet was not able to be found on-chain
-
-### getWalletFromRelayer
-
-Action for fetching a wallet's state from your connected relayer.
-
-**Import**
-
-```jsx
-import { getWalletFromRelayer } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-const wallet = await getWalletFromRelayer(config)
-
-console.log("Wallet balances: ", wallet.balances)
-```
-
-**Return Type**
-
-[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
-- the API request authorization is incorrect / missing
-
-### getBackOfQueueWallet
-
-Action for fetching the back of queue wallet state from your connected relayer.
-
-:::note
-Your connected relayer will manage a queue of tasks for you. By fetching the back of queue wallet, you are fetching your wallet state *after* all tasks in the queue have completed, which may not be the case. If a task fails, all subsequent tasks will transition to the `Failed` state and your queue will be cleared.
-:::
-
-**Import**
-
-```jsx
-import { getBackOfQueueWallet } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-const wallet = await getBackOfQueueWallet(config)
-
-console.log("Wallet balances: ", wallet.balances)
-```
-
-**Return Type**
-
-[`Wallet`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L34)
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
-- the API request authorization is incorrect / missing
-
-### deposit
-
-Action for starting a `deposit` task on your connected relayer. Transfers ERC-20 tokens from your Arbitrum address to your Renegade wallet.
-
-:::warning
-
-You most likely want to use [`executeDeposit`](#executedeposit) instead, as it will check for and execute ERC-20 allowances and permits as needed.
-
-:::
-
-**Import**
-
-```jsx
-import { deposit } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-const { taskId } = await deposit(config, {
-  fromAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
-  amount: BigInt(1000000),
-  permitNonce: nonce,
-  permitDeadline: deadline,
-  permit: signature,
-})
-```
-
-**Parameters**
-
-- fromAddr
-    - `0x${string}`
-    - Account to transfer ERC-20 from.
-- mint
-    - `0x${string}`
-    - ERC-20 contract address.
-- amount
-    - `bigint`
-    - Amount to deposit (should be multiplied by the number of decimals the ERC-20 supports)
-- permitNonce
-    - `bigint`
-    - A unique number, chosen by our app, to identify this permit. Once a permit is consumed, any other permit using that nonce will be invalid.
-- permitDeadline
-    - `bigint`
-    - The latest possible block timestamp for when this permit is valid.
-- permit
-    - `0x${string}`
-    - The corresponding EIP-712 signature for the permit2 message, signed by `owner`. If the recovered address from signature verification does not match `owner`, the call will fail.
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `deposit` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
-- the wallet update signature is incorrect / missing
-- the Permit2 permit is incorrect / missing
-- the API request authorization is incorrect / missing
-
-### executeDeposit
-
-Action for starting a `deposit` task on your connected relayer, sending a transaction to approve the ERC-20 and signing a Permit2 `permit` if needed. Transfers ERC-20 tokens from your Arbitrum address to your Renegade wallet.
-
-**Import**
-
-```jsx
-import { executeDeposit } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-import { createPublicClient, http } from "viem"
-import { arbitrum } from "viem/chains"
-import { createConfig as createWagmiConfig } from '@wagmi/core'
-
-// Wagmi config
-const viemConfig = createWagmiConfig({
-  chains: [arbitrum],
-  transports: {
-    [arbitrum.id]: http(),
-  },
-})
-
-const account = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') 
-
-const walletClient = createWalletClient({ 
-  account, 
-  chain: arbitrum,
-  transport: http()
-})
-
-await executeDeposit(config, {
-  mint: "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
-  amount: BigInt(1000000),
-  permit2Address: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
-  walletClient,
-  viemConfig,
-  awaitTask: true,
-})
-```
-
-**Parameters**
-
-- mint
-    - `0x${string}`
-    - ERC-20 contract address.
-- amount
-    - `bigint`
-    - Amount to deposit (should be multiplied by the number of decimals the ERC-20 supports)
-- permit2Address
-    - `0x${string}`
-    - Permit2 contract address.
-- walletClient
-    - [`WalletClient`](https://viem.sh/docs/clients/wallet#wallet-client)
-    - viem Wallet Client used to sign messages.
-- viemConfig
-    - [`Config`](https://wagmi.sh/core/api/createConfig#config)
-    - wagmi specific config for using wagmi actions
-- awaitTask (optional)
-    - `boolean`
-    - Whether or not to await task completion before resolving.
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `deposit` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
-- the provided wallet client is not configured properly
-- the provided wagmi config is not configured properly
-- the API request authorization is incorrect / missing
-- the provided `RenegadeConfig` does not have a `viemClient`
-
-### withdraw
-
-Action for starting a `withdraw` task on your connected relayer. Transfers ERC-20 tokens from your Renegade wallet to your Arbitrum address.
-
-:::warning
-
-You most likely want to use [`executeWithdrawal`](#executewithdrawal) instead, as it will check for and pay fees if needed.
-
-:::
-
-**Import**
-
-```jsx
-import { payFees, withdraw } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-import { payFees, withdraw } from "@renegade-fi/node"
-await payFees(config)
-await withdraw(config, {
-  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
-  amount: BigInt(1000000),
-  destinationAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-})
-```
-
-**Parameters**
-
-- destinationAddr
-    - `0x${string}`
-    - Account to transfer ERC-20 to.
-- mint
-    - ERC-20 contract address.
-- amount
-    - `bigint`
-    - Amount to withdraw (must be multiplied by the number of decimals the ERC-20 supports)
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `withdraw` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
-- there exist one or more balances with non-zero fees, meaning you must pay fees
-- the API request authorization is incorrect / missing
-
-### executeWithdrawal
-
-Action for starting a `withdraw` task on your connected relayer, paying fees if needed. Transfers ERC-20 tokens from your Renegade wallet to your Arbitrum address.
-
-**Import**
-
-```jsx
-import { executeWithdrawal } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-await executeWithdrawal(config, {
-  destinationAddr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-  mint: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
-  amount: BigInt(1000000),
-  awaitTask: true,
-})
-```
-
-**Parameters**
-
-- destinationAddr
-    - `0x${string}`
-    - Account to transfer ERC-20 to.
-- mint
-    - `0x${string}`
-    - ERC-20 contract address.
-- amount
-    - `bigint`
-    - Amount to withdraw (should be multiplied by the number of decimals the ERC-20 supports)
-- awaitTask (optional)
-    - `boolean`
-    - Whether or not to await task completion before resolving.
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `withdraw` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
-- the API request authorization is incorrect / missing
-
-### payFees
-
-Action for starting necessary `payFee` task(s) on your connected relayer.
-
-:::warning
-
-You most likely will not invoke this function directly, as it is part of the [`executeWithdrawal`](#executewithdrawal) function.
-
-:::
-
-**Import**
-
-```jsx
-import { payFees } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-await payFees(config)
-```
-
-**Return Type**
-
-`Promise<{ taskIds: string[] }>`
-
-Promise that resolves to an array of IDs of `payFee` tasks in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the API request authorization is incorrect / missing
-
-### createOrder
-
-Action for starting a `place order` task on your connected relayer.
-
-**Import**
-
-```jsx
-import { createOrder } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-await createOrder(config, {
-  base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a",
-  quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1",
-  side: "buy",
-  amount: BigInt(1000000000000000000),
-  worstCasePrice: ((4000 * 1.5) * 10 ** (6 - 18)).toString(), // For a buy order: maximum price of 6000 USDC per ETH
-  minFillSize: BigInt(100000000000000000) // Minimum fill size of 0.1 ETH
-})
-```
-
-**Parameters**
-
-- base
-    - `0x${string}`
-    - ERC-20 contract address of the base asset.
-- quote
-    - `0x${string}`
-    - ERC-20 contract address of the quote asset (must be USDC).
-- side
-    - `"buy" | "sell"`
-    - The side this order is for
-- amount
-    - `bigint`
-    - Amount to place the order for (should be multiplied by the number of decimals the ERC-20 supports)
-- worstCasePrice (optional)
-    - `string`
-    - A number formatted as a string representing the worst case price that the order may be executed at. For buy side orders this is a maximum price, for sell side orders this is a minimum price.
-    - If no worst case price is provided, the action will fall back to setting default values (`u64::MAX` for buy side orders and `0` for sell side orders)
-    - Value should be decimal corrected according to the token pair (e.g. `price * 10**(quoteDecimals - baseDecimals)`)
-- minFillSize (optional)
-    - `bigint`
-    - The minimum fill size for the order. It should be equal to or less than the amount.
-    - If not provided, it defaults to `BigInt(0)`, allowing any fill size.
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `place order` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the API request authorization is incorrect / missing
-
-### cancelOrder
-
-Action for starting a `cancel wallet` task on your connected relayer.
-
-**Import**
-
-```jsx
-import { cancelOrder } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```jsx
-await cancelOrder(config, {
-  id: "f801854d-b225-4855-926b-a24069446dfc",
-})
-```
-
-**Parameters**
-
-- id
-    - `string`
-    - the ID of the order to cancel
-
-**Return Type**
-
-`Promise<{ taskId: string }>`
-
-Promise that resolves to the ID of the `cancel order` task in the connected relayer.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the provided `id` mint does not exist in the wallet's list of orders
-- the API request authorization is incorrect / missing
-
 ### getOrderHistory
 
 Action for fetching the order history of a wallet from your connected relayer.
 
 **Import**
 
-```jsx
+```js
 import { getOrderHistory } from "@renegade-fi/node"
 ```
 
 **Usage**
 
-```jsx
+```js
 await getOrderHistory(config, {
     limit: 5
 })
