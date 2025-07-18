@@ -944,7 +944,7 @@ To assemble a malleable match, use the `assembleMalleableQuote` function. This f
 **Usage**
 
 ```js
-const tokens = await client.getSupportedTokens();
+const prices = await client.getSupportedTokens();
 ```
 
 **Return Type**
