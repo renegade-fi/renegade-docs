@@ -127,16 +127,16 @@ const order = {
     base: WETH_ADDRESS,
     quote: USDC_ADDRESS,
     side,
-    quoteAmount,
+    quoteAmount
 } as const;
 
-const quote = await client.getQuote({ order, });
+const quote = await client.getQuote({ order });
 ```
 
 3. Assemble the quote
 
 ```js
-const bundle = await client.assembleQuote({ quote, });
+const bundle = await client.assembleQuote({ quote });
 ```
 
 4. Submit the provided transaction to settle the match on-chain
@@ -182,77 +182,6 @@ This SDK provides types for various data structures used in the API.
 - [`KeyChain`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/wallet.ts#L22): contains a user's key hierarchy as defined [here](../advanced-concepts/super-relayers.md).
 - [`OrderMetadata`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L20): contains useful metadata such as the order's ID, status, creation time, and [`PartialOrderFills`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/order.ts#L28) since creation.
 - [`Task`](https://github.com/renegade-fi/typescript-sdk/blob/main/packages/core/src/types/task.ts#L1): contains a task's ID, status, type, and creation time.
-
-### Token
-
-For a list of tokens that Renegade supports, along with useful metadata, you should install the `Token` package:
-
-```bash
-npm install @renegade-fi/token
-```
-
-**Import**
-
-```js
-import { Token } from "@renegade-fi/token"
-```
-
-**Properties**
-
-- `address`: The address of the ERC-20 token.
-- `name`: The name of the token.
-- `decimals`: The number of decimals the token uses.
-- `ticker`: The ticker symbol of the token.
-
-**Initialization**
-Before using `Token` methods, the token mapping must be initialized either asynchronously or synchronously:
-
-```js
-import { Token } from "@renegade-fi/token";
-import { arbitrumSepolia } from "viem/chains";
-
-const chainId = arbitrumSepolia.id;
-
-// Asynchronous Initialization
-await Token.fetchRemapFromRepo(chainId);
-const WETH = Token.fromTicker("WETH");
-const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
-
-// Sync Initialization
-import remap from "./remap.json";
-
-Token.addRemapFromString(chainId, JSON.stringify(remap));
-const WETH = Token.fromTicker("WETH");
-const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
-```
-
-**Static Methods**
-
-```js
-static fromTicker(ticker: string): Token
-```
-
-**Returns**
-
-- `Token` - The Token instance matching the given ticker.
-
-**Throws**
-
-- `Error` - If the mapping has not been initialized.
-- `Error` - If no token with the given ticker is found in the map.
-
-```js
-static fromAddress(address: `0x${string}`): Token
-```
-
-**Returns**
-
-- `Token` - The Token instance matching the given address.
-
-**Throws**
-
-- `Error` - If the mapping has not been initialized.
-- `Error` - If no token with the given address is found in the map.
 
 ## Renegade Client
 
@@ -540,7 +469,6 @@ await client.executeWithdraw({
     mint,
     destinationAddr,
 });
-
 ```
 
 **Parameters**
@@ -1398,26 +1326,332 @@ config.setPublicKey(newPublicKey);
 Key rotation is supported in all wallet update operations including deposits, withdrawals, and order placement.
 :::
 
-## Examples
+## Token
 
-### Create a wallet
+For a list of tokens that Renegade supports, along with useful metadata, you should install the `Token` package:
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-yppjgz?embed=1&file=src%2Fmain.ts&view=editor)
+```bash
+npm install @renegade-fi/token
+```
 
-### Place an order
+**Import**
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-sr1qf2?embed=1&file=src%2Fmain.ts&view=editor)
+```js
+import { Token } from "@renegade-fi/token"
+```
 
-### Cancel an order
+**Properties**
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-fusaar?embed=1&file=src%2Fmain.ts&view=editor)
+- `address`: The address of the ERC-20 token.
+- `name`: The name of the token.
+- `decimals`: The number of decimals the token uses.
+- `ticker`: The ticker symbol of the token.
 
-### Deposit
+:::note
+The `Token` class is not required for interacting with the Renegade API, as all methods accept token address strings directly. This class is provided purely for convenience to easily access token metadata such as decimals, ticker symbols, and names. You can use token addresses directly in all API calls without needing to instantiate Token objects.
+:::
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-7cdu1z?embed=1&file=src%2Fmain.ts&view=editor)
+### fetchRemapFromRepo
 
-### Withdraw (Coming soon)
+Initialize the token mapping asynchronously by fetching from the repository.
 
-### Settle an external order
+**Usage**
 
-- [Stackblitz Demo](https://stackblitz.com/edit/nodets-xkwpj2?file=src%2Fmain.ts)
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+
+const chainId = arbitrumSepolia.id;
+
+await Token.fetchRemapFromRepo(chainId);
+```
+
+**Parameters**
+
+- chainId
+    - `number`
+    - ID of the chain to fetch token mapping for
+
+**Return Type**
+
+`Promise<void>`
+
+Promise that resolves when the token mapping has been successfully fetched and initialized.
+
+**Error**
+
+An error may be thrown if:
+
+- the chain ID is not supported
+- the network request fails
+- the fetched mapping data is invalid
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+
+const chainId = arbitrumSepolia.id;
+
+// Initialize token mapping
+await Token.fetchRemapFromRepo(chainId);
+
+// Now you can use token methods
+const WETH = Token.fromTicker("WETH");
+const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
+```
+
+Check out the usage of `fetchRemapFromRepo` in the [Token Async Initialization](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/token/async-initialization) example.
+
+### addRemapFromString
+
+Initialize the token mapping synchronously using a provided JSON string.
+
+**Usage**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+import remap from "./remap.json";
+
+const chainId = arbitrumSepolia.id;
+
+Token.addRemapFromString(chainId, JSON.stringify(remap));
+```
+
+**Parameters**
+
+- chainId
+    - `number`
+    - ID of the chain to set token mapping for
+- remap
+    - `string`
+    - JSON string containing the token mapping data
+
+**Return Type**
+
+`void`
+
+**Error**
+
+An error may be thrown if:
+
+- the chain ID is invalid
+- the remap string is not valid JSON
+- the mapping data structure is invalid
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+import remap from "./remap.json";
+
+const chainId = arbitrumSepolia.id;
+
+// Initialize token mapping synchronously
+Token.addRemapFromString(chainId, JSON.stringify(remap));
+
+// Now you can use token methods
+const WETH = Token.fromTicker("WETH");
+const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
+```
+
+Check out the usage of `addRemapFromString` in the [Token Sync Initialization](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/token/sync-initialization) example.
+
+### fromTicker
+
+Retrieve a Token instance by its ticker symbol.
+
+**Usage**
+
+```js
+const WETH = Token.fromTicker("WETH");
+```
+
+**Parameters**
+
+- ticker
+    - `string`
+    - The ticker symbol of the token to retrieve
+
+**Return Type**
+
+`Token`
+
+The Token instance matching the given ticker.
+
+**Error**
+
+An error may be thrown if:
+
+- the mapping has not been initialized
+- no token with the given ticker is found in the map
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+
+const chainId = arbitrumSepolia.id;
+
+// Initialize mapping first
+await Token.fetchRemapFromRepo(chainId);
+
+// Get token by ticker
+const WETH = Token.fromTicker("WETH");
+console.log(WETH.address); // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
+console.log(WETH.decimals); // 18
+```
+
+### fromAddress
+
+Retrieve a Token instance by its contract address.
+
+**Usage**
+
+```js
+const token = Token.fromAddress("0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a");
+```
+
+**Parameters**
+
+- address
+    - `0x${string}`
+    - The contract address of the token to retrieve
+
+**Return Type**
+
+`Token`
+
+The Token instance matching the given address.
+
+**Error**
+
+An error may be thrown if:
+
+- the mapping has not been initialized
+- no token with the given address is found in the map
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia } from "viem/chains";
+
+const chainId = arbitrumSepolia.id;
+
+// Initialize mapping first
+await Token.fetchRemapFromRepo(chainId);
+
+// Get token by address
+const token = Token.fromAddress("0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a");
+console.log(token.ticker); // "WETH"
+console.log(token.name); // "Wrapped Ether"
+```
+
+### fromTickerOnChain
+
+Retrieve a Token instance by its ticker symbol on a specific chain.
+
+**Usage**
+
+```js
+import { arbitrumSepolia } from "viem/chains";
+
+const WETH = Token.fromTickerOnChain("WETH", arbitrumSepolia.id);
+```
+
+**Parameters**
+
+- ticker
+    - `string`
+    - The ticker symbol of the token to retrieve
+- chain
+    - `ChainId`
+    - The chain ID to get the token from
+
+**Return Type**
+
+`Token`
+
+The Token instance matching the given ticker on the specified chain. Returns a default token if no match is found.
+
+**Error**
+
+An error may be thrown if:
+
+- the chain ID is invalid
+- the token mapping for the specified chain has not been initialized
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia, baseSepolia } from "viem/chains";
+
+// Initialize mappings for multiple chains
+await Token.fetchRemapFromRepo(arbitrumSepolia.id);
+await Token.fetchRemapFromRepo(baseSepolia.id);
+
+// Get WETH from different chains
+const wethArbitrum = Token.fromTickerOnChain("WETH", arbitrumSepolia.id);
+const wethBase = Token.fromTickerOnChain("WETH", baseSepolia.id);
+
+console.log(wethArbitrum.address); // Arbitrum WETH address
+console.log(wethBase.address); // Base WETH address
+```
+
+### fromAddressOnChain
+
+Retrieve a Token instance by its contract address on a specific chain.
+
+**Usage**
+
+```js
+import { arbitrumSepolia } from "viem/chains";
+
+const token = Token.fromAddressOnChain("0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", arbitrumSepolia.id);
+```
+
+**Parameters**
+
+- address
+    - `Address`
+    - The contract address of the token to retrieve
+- chain
+    - `ChainId`
+    - The chain ID to get the token from
+
+**Return Type**
+
+`Token`
+
+The Token instance matching the given address on the specified chain. Returns a default token if no match is found.
+
+**Error**
+
+An error may be thrown if:
+
+- the chain ID is invalid
+- the token mapping for the specified chain has not been initialized
+
+**Example**
+
+```js
+import { Token } from "@renegade-fi/token";
+import { arbitrumSepolia, baseSepolia } from "viem/chains";
+
+// Initialize mappings for multiple chains
+await Token.fetchRemapFromRepo(arbitrumSepolia.id);
+await Token.fetchRemapFromRepo(baseSepolia.id);
+
+// Get token by address on specific chain
+const tokenArbitrum = Token.fromAddressOnChain("0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", arbitrumSepolia.id);
+const tokenBase = Token.fromAddressOnChain("0x31a5552AF53C35097Fdb20FFf294c56dc66FA04c", baseSepolia.id);
+
+console.log(tokenArbitrum.ticker); // "WETH"
+console.log(tokenBase.ticker); // "WETH"
+```
