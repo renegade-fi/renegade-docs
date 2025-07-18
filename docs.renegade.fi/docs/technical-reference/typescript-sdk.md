@@ -22,6 +22,7 @@ This SDK is responsible for interacting with a relayer. Some actions, such as `c
 Firstly, set up your `RenegadeClient` with a desired chain and seed.
 
 ```js
+import { RenegadeClient } from "@renegade-fi/node";
 const client = RenegadeClient.new({
     chainId,
     seed,
@@ -41,13 +42,15 @@ Renegade is currently deployed on
 Generate a seed like so:
 ```js
 import { privateKeyToAccount } from "viem/accounts";
+import { arbitrumSepolia } from "viem/chains";
+
+const chainId = arbitrumSepolia.id;
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const account = privateKeyToAccount(PRIVATE_KEY);
 
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
+const message = RenegadeClient.generateSeedMessage(chainId);
+const seed = await account.signMessage({ message });
 ```
 
 :::tip 
@@ -60,8 +63,8 @@ await client.createWallet();
 ```
 3. Interact with the protocol
 
-Now that you have a `RenegadeClient` and wallet set up, you can now interact with the Renegade protocol. See below for more methods.
-<!-- TODO: Add link -->
+Now that you have a `RenegadeClient` and wallet set up, you can now interact with the Renegade protocol. See [below](#renegade-client) for more methods.
+
 ```js
 import { createPublicClient, createWalletClient, http} from 'viem'
 import { arbitrumSepolia } from 'viem/chains'
@@ -643,17 +646,30 @@ An error may be thrown if:
 
 ### getOrderHistory
 
-<!-- TODO: -->
+Retrive your order history from your connected relayer.
+
+**Usage**
+
+```js
+const history = await client.getOrderHistory({ limit: 5 })
+```
+
+**Parameters**
+
+- limit (optional)
+    - `number`
+    - the number of orders to fetch
+
+**Return Type**
+
+`Promise<Map<string, OrderMetadata>>`
+
+Promise that resolves to a Map where the keys are order IDs and the values are `OrderMetadata` objects.
+
 
 ### generateSeedMessage
 
 Generate the secret from which to derive your Renegade wallet.
-
-**Import**
-
-```js
-import { cancelOrder } from "@renegade-fi/node"
-```
 
 **Usage**
 
