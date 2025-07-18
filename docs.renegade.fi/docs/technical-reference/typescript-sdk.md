@@ -939,12 +939,12 @@ The external match API allows for a quote to be assembled into a malleable match
 
 To assemble a malleable match, use the `assembleMalleableQuote` function. This function is identical to `assembleExternalQuote` but returns a `MalleableExternalMatchResponse` instead of an `ExternalMatchResponse`. The [`malleable-external-match` example](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/malleable_external_match.ts) shows how to use the helper methods on the `MalleableExternalMatchResponse` to se the base amount and compute information about the bundle at a given base amount.
 
-### supportedTokens
+### getSupportedTokens
 
 **Usage**
 
 ```js
-const tokens = await client.getSupportedTokens();
+const prices = await client.getSupportedTokens();
 ```
 
 **Return Type**
@@ -958,6 +958,30 @@ type ApiToken = {
   address: string;
   /** The token symbol */
   symbol: string;
+};
+```
+
+### getTokenPrices
+
+**Usage**
+
+```js
+const tokens = await client.getTokenPrices();
+```
+
+**Return Type**
+
+`Promise<{ token_prices: TokenPrice[] }>`
+An object containing a list of `TokenPrice`s.
+
+```ts
+type TokenPrice = {
+    /// The mint (ERC20 address) of the base token
+    base_token: string;
+    /// The mint (ERC20 address) of the quote token
+    quote_token: string;
+    /// The price data for this token
+    price: number;
 };
 ```
 
