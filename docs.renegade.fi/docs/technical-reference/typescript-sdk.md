@@ -15,7 +15,7 @@ npm install @renegade-fi/node@latest @wagmi/core viem@2.x
 
 This SDK is responsible for interacting with a relayer. Some actions, such as `createWallet` or `deposit`, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [wagmi](https://wagmi.sh/core/getting-started) and [viem](https://viem.sh/docs/getting-started).
 
-## Quick Start
+## Dark Pool Quick Start
 
 1. Set up your `RenegadeClient`
 
@@ -63,7 +63,7 @@ await client.createWallet();
 ```
 3. Interact with the protocol
 
-Now that you have a `RenegadeClient` and wallet set up, you can now interact with the Renegade protocol. See [below](#renegade-client) for more methods.
+Now that you have a `RenegadeClient` and wallet set up, you can interact with the Renegade protocol. See [below](#renegade-client) for more ways to interact with the protocol.
 
 ```js
 import { createPublicClient, createWalletClient, http} from 'viem'
@@ -89,7 +89,72 @@ await client.executeDeposit({
 });
 ```
 
+## External Match API Quick Start
 
+**Prerequisites**
+
+Before executing an external match:
+1. Ensure you have sufficient token balance to fulfill your side of the trade
+2. Grant the darkpool contract approval to spend the tokens you're selling
+3. Have enough ETH for transaction gas fees
+
+**Quick Start**
+
+1. Set up your `ExternalMatchClient`
+
+Firstly, set up your `ExternalMatchClient` with your API key and secret, along with the desired chain.
+
+```js
+import { ExternalMatchClient } from "@renegade-fi/node";
+import { arbitrumSepolia } from "viem/chains";
+
+const client = ExternalMatchClient.new({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+    chainId: arbitrumSepolia.id,
+});
+```
+
+2. Request a quote
+
+```js
+const WETH_ADDRESS = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a";
+const USDC_ADDRESS = "0xdf8d259c04020562717557f2b5a3cf28e92707d1";
+const quoteAmount = BigInt(2_000_000); // 2 USDC
+const side = "buy";
+
+const order = {
+    base: WETH_ADDRESS,
+    quote: USDC_ADDRESS,
+    side,
+    quoteAmount,
+} as const;
+
+const quote = await client.getQuote({ order, });
+```
+
+3. Assemble the quote
+
+```js
+const bundle = await client.assembleQuote({ quote, });
+```
+
+4. Submit the provided transaction to settle the match on-chain
+
+```js
+const tx = bundle.match_bundle.settlement_tx;
+const hash = await walletClient.sendTransaction({
+    to: tx.to,
+    data: tx.data,
+    type: "eip1559",
+});
+```
+
+5. The protocol will:
+   - Update the internal party's state
+   - Execute the token transfers between parties
+
+See [below](#external-match-client) for more information about External Matching.
 
 ## Protocol Core Concepts
 
@@ -191,6 +256,7 @@ static fromAddress(address: `0x${string}`): Token
 - `Error` - If no token with the given address is found in the map.
 
 ## Renegade Client
+
 ### new
 
 **Usage**
@@ -204,9 +270,8 @@ const chainId = arbitrumSepolia.id;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const account = privateKeyToAccount(PRIVATE_KEY);
 
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
+const message = RenegadeClient.generateSeedMessage(chainId);
+const seed = await account.signMessage({ message });
 
 const client = RenegadeClient.new({
     chainId,
@@ -240,17 +305,8 @@ Same as `new` but with Arbitrum One's chain ID preset.
 **Usage**
 
 ```js
-import { privateKeyToAccount } from "viem/accounts";
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const account = privateKeyToAccount(PRIVATE_KEY);
-
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
-
 const client = RenegadeClient.newArbitrumOneClient({
-    chainId,
+    seed,
 });
 ```
 
@@ -261,17 +317,8 @@ Same as `new` but with Arbitrum Sepolia's chain ID preset.
 **Usage**
 
 ```js
-import { privateKeyToAccount } from "viem/accounts";
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const account = privateKeyToAccount(PRIVATE_KEY);
-
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
-
 const client = RenegadeClient.newArbitrumOneClient({
-    chainId,
+    seed
 });
 ```
 
@@ -282,17 +329,8 @@ Same as `new` but with Base Mainnet's chain ID preset.
 **Usage**
 
 ```js
-import { privateKeyToAccount } from "viem/accounts";
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const account = privateKeyToAccount(PRIVATE_KEY);
-
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
-
 const client = RenegadeClient.newBaseMainnetClient({
-    chainId,
+    seed
 });
 ```
 
@@ -303,17 +341,8 @@ Same as `new` but with Base Sepolia's chain ID preset.
 **Usage**
 
 ```js
-import { privateKeyToAccount } from "viem/accounts";
-
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const account = privateKeyToAccount(PRIVATE_KEY);
-
-const seed = await account.signMessage({
-    message: RenegadeClient.generateSeedMessage(chainId),
-});
-
 const client = RenegadeClient.newBaseSepoliaClient({
-    chainId,
+    seed
 });
 ```
 
@@ -693,52 +722,416 @@ const seed = await account.signMessage({ message });
 
 Message to derive Renegade wallet secrets from.
 
-## Configuration
+## External Match Client
 
-### createAuthConfig
+Renegade supports matching orders between two types of parties:
+- Internal parties who have state committed to the darkpool
+- External parties who have no state in the darkpool
 
-**Import**
+When an external party wants to match with orders in the darkpool, they can request an `ExternalMatchBundle` from the relayer. This bundle contains everything needed to execute the match on-chain, including:
+- Match details (amounts and tokens involved)
+- A ready-to-submit transaction that settles the match via direct ERC-20 transfers
 
-```js
-import { createAuthConfig } from "@renegade-fi/node"
-```
+:::note
+External matches can be partially filled - you may receive a match for less than your requested amount, but it will never be less than your specified `minFillSize`.
+:::
+
+### new
 
 **Usage**
 
 ```js
-import { createAuthConfig } from "@renegade-fi/node"
- 
-export const config = createAuthConfig({
-  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
-  apiKey: API_KEY,
-  apiSecret: API_SECRET,
+import { ExternalMatchClient } from "@renegade-fi/node";
+import { arbitrumSepolia } from "viem/chains";
+
+const client = ExternalMatchClient.new({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+    chainId: arbitrumSepolia.id,
 });
 ```
 
 **Parameters**
 
-- authServerUrl
-    - `string`
-    - The auth server's URL.
+- chainId
+    - `number`
+    - ID of the chain to interact with
 - apiKey
     - `string`
-    - The API key. Used to authorize requests to the server.
+    - Your API key
 - apiSecret
     - `string`
-    - The API secret. Used to sign requests to the server.
+    - Your API secret
+
+**Returns**
+
+An `ExternalMatchClient` instance that is used to interact with Renegade's External Match API
+
+**Error**
+
+An error may be thrown if:
+
+- an invalid chain ID is passed
+
+### newArbitrumOneClient
+
+Same as `new` but with Arbitrum One's chain ID preset.
+
+**Usage**
+
+```js
+const client = ExternalMatchClient.newArbitrumOneClient({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+});
+```
+
+### newArbitrumSepoliaClient
+
+Same as `new` but with Arbitrum Sepolia's chain ID preset.
+
+**Usage**
+
+```js
+const client = ExternalMatchClient.newArbitrumSepoliaClient({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+});
+```
+
+### newBaseMainnetClient
+
+Same as `new` but with Base Mainnet's chain ID preset.
+
+**Usage**
+
+```js
+const client = ExternalMatchClient.newBaseMainnetClient({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+});
+```
+
+### newBaseSepoliaClient
+
+Same as `new` but with Base Sepolia's chain ID preset.
+
+**Usage**
+
+```js
+const client = ExternalMatchClient.newBaseSepoliaClient({
+    apiKey: API_KEY,
+    apiSecret: API_SECRET,
+});
+```
+
+### getQuote
+
+**Usage**
+
+```js
+const WETH_ADDRESS = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a";
+const USDC_ADDRESS = "0xdf8d259c04020562717557f2b5a3cf28e92707d1";
+const quoteAmount = BigInt(2_000_000); // 2 USDC
+const side = "buy";
+
+const order = {
+    base: WETH_ADDRESS,
+    quote: USDC_ADDRESS,
+    side,
+    quoteAmount,
+} as const;
+
+const quote = await client.getQuote({ order });
+```
+
+**Parameters**
+
+- order
+  - `object`
+  - Contains the following properties:
+    - base
+      - `0x${string}`
+      - ERC-20 contract address of the base asset.
+    - quote
+      - `0x${string}`
+      - ERC-20 contract address of the quote asset (must be USDC).
+    - side
+      - `"buy" | "sell"`
+      - The side this order is for
+    - baseAmount (required if quoteAmount not provided)
+      - `bigint`
+      - Raw amount of base asset to trade (must be adjusted for token decimals, e.g. multiply by 10^18 for ETH)
+    - quoteAmount (required if baseAmount not provided)
+      - `bigint`
+      - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
+    - minFillSize (optional)
+      - `bigint`
+      - Minimum fill size for the order. Must be denominated in the same units as the non-zero amount field:
+        - When using `baseAmount`: specified in base token units
+        - When using `quoteAmount`: specified in quote token units
+      - If specified larger than the total order size, will be set to the total order size.
+      - If specified as 0, will be set to the total order size.
+
+:::note
+You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
+:::
 
 **Return Type**
 
+`Promise<SignedExternalMatchQuote>`
+
+A `SignedExternalMatchQuote` that contains:
+- `quote`: The `ExternalMatchQuote` object containing:
+  - `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
+  - `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
+  - `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
+  - `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade, after fees are deducted
+  - `price`: The price at which the quote will be executed
+  - `timestamp`: The timestamp at which the quote was created
+- `signature`: A signature of the quote by the relayer, to ensure the quote is authentic when assembled
+
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L31)
+
+**Error**
+
+An error may be thrown if:
+
+- neither `baseAmount` nor `quoteAmount` is provided
+- the API request authorization is incorrect / missing
+
+### assembleQuote
+
+**Usage**
+
 ```js
-import { type AuthConfig } from '@renegade-fi/node'
+const bundle = await client.assembleQuote({ quote });
 ```
+
+**Parameters** 
+
+- quote
+  - `SignedExternalMatchQuote`
+  - The `SignedExternalMatchQuote` returned from `getExternalMatchQuote`
+- updatedOrder (optional)
+  - `ExternalOrder`
+  - The updated order to assemble the quote for. If not provided, the quote will use the order specified in the `getExternalMatchQuote` call. This field allows you to tweak the order before assembling the quote. Note that only the `baseAmount`, `quoteAmount`, and `minFillSize` fields may be updated; any other updates will be rejected.
+- doGasEstimation (optional)
+  - `boolean`
+  - Whether to include gas estimation in the returned `ExternalMatchBundle`
+
+**Return Type** <a name="assembleexternalquote-return-type"></a>
+
+`Promise<ExternalMatchBundle>`
+
+An `ExternalMatchBundle` that contains:
+- `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
+- `settlement_tx`: A transaction that can be submitted on-chain to settle the given external order. Will include a gas estimation if `doGasEstimation` is `true`.
+- `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade
+- `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
+- `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
+
+[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
+
+
+### assembleMalleableQuote
+
+The external match API allows for a quote to be assembled into a malleable match. A malleable match is a match that specifies a range of allowable base amounts, rather than an exact amount. This can be used, for example, to fit a Renegade match into a larger route with variable output amounts.
+
+To assemble a malleable match, use the `assembleMalleableQuote` function. This function is identical to `assembleExternalQuote` but returns a `MalleableExternalMatchResponse` instead of an `ExternalMatchResponse`. The [`malleable-external-match` example](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/malleable_external_match.ts) shows how to use the helper methods on the `MalleableExternalMatchResponse` to se the base amount and compute information about the bundle at a given base amount.
+
+### Rate Limits
+
+The rate limits for the external match endpoints are as follows: 
+- **Quote**: 100 requests per minute
+- **Assemble**: 5 _unsettled_ bundles per minute. That is, if an assembled bundle is submitted on-chain, the rate limiter will reset. 
+If an assembled match is not settled on-chain, the rate limiter will remove one token from the per-minute allowance.
+
+### Gas Sponsorship
+The Renegade relayer will cover the gas cost of external match transactions, up to a daily limit. When requested, the relayer will re-route the settlement transaction through a gas rebate contract. This contract refunds the cost of the transaction, either in native Ether, or in terms of the buy-side token in the external match.
+The rebate can optionally be sent to a configured address.
+
+For in-kind sponsorship, if no refund address is given, the rebate is sent to the receiver of the match. This is equivalent to the receiver getting a better price in the match, and as such the quoted price returned by the SDK is updated to reflect that.
+
+:::note
+In-kind gas sponsorship is enabled by default!
+:::
+
+However, if you'd like to disable gas sponsorship, simply add `disableGasSponsorship` to the `GetExternalMatchQuoteParameters` type:
+```js
+const WETH_ADDRESS = "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a";
+const USDC_ADDRESS = "0xdf8d259c04020562717557f2b5a3cf28e92707d1";
+const quoteAmount = BigInt(2_000_000); // 2 USDC
+const side = "buy";
+
+const order = {
+    base: WETH_ADDRESS,
+    quote: USDC_ADDRESS,
+    side,
+    quoteAmount,
+} as const;
+
+const quote = await client.getQuote({
+    order,
+    disableGasSponsorship: true
+});
+```
+
+For examples on how to configure gas sponsorship, see [`examples/native_eth_gas_sponsorship`](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/native-eth-gas-sponsorship), and [`examples/in_kind_gas_sponsorship`](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/in-kind-gas-sponsorship)
+
+#### Additional Notes on Gas Sponsorship
+
+- The refund amount may not exactly equal the gas costs, as this must be estimated before constructing the transaction so it can be returned in the quote.
+- The gas estimate returned by `eth_estimateGas` will _not_ reflect the rebate, as the rebate does not _reduce_ the gas used; it merely refunds the ether paid for the gas. If you wish to understand the true gas cost ahead of time, the transaction can be simulated (e.g. with `alchemy_simulateExecution` or similar).
+- The rate limits currently sponsor up to **~500 matches/day** ($100 in gas). 
+
+## Order WebSocket Notifications
+
+The `createOrderWebSocket` function establishes a WebSocket connection to receive real-time updates about order state changes.
+
+### Key Features
+
+- Receives immediate notifications for:
+  - Order state transitions (Created, Matching, Filled, etc.)
+  - Partial fills and their details
+  - Order cancellations
+- Provides complete order metadata with each update
+- Maintains persistent connection for continuous monitoring
+
+### Basic Usage
+
+```js
+import { createOrderWebSocket, OrderState, type OrderMetadata } from '@renegade-fi/node'
+
+// Initialize WebSocket connection
+const ws = createOrderWebSocket({
+  config,
+  onUpdate: (order: OrderMetadata) => {
+    // Handle order state changes
+    switch (order.state) {
+      case OrderState.Filled:
+        console.log('Order filled:', {
+          id: order.id,
+          amount: order.data.amount,
+          fills: order.fills
+        })
+        break
+      case OrderState.Cancelled:
+        console.log('Order cancelled:', order.id)
+        break
+      default:
+        console.log('Order state update:', order.state)
+    }
+  }
+})
+
+// Establish WebSocket connection
+ws.connect()
+
+// Clean up on process exit
+process.on('SIGINT', () => {
+  ws.disconnect()
+})
+```
+
+## External Key Management
+
+Renegade supports external key management as an alternative to the default managed wallet approach. This allows you to maintain complete control over your wallet's cryptographic secrets rather than having them derived and managed by the SDK.
+
+### Key Components
+
+The external key management flow consists of three main components:
+
+1. **Wallet Secrets** - A set of cryptographic materials you generate and store:
+   - Wallet ID & symmetric key: Used for API authentication
+   - Blinder & share seeds: Used for wallet encryption
+   - Match key: Used during order matching
+
+2. **ExternalConfig** - A configuration object that connects your externally managed keys to the SDK
+   - Does not store or derive keys internally
+   - Requires you to provide signing capabilities and public keys
+   
+3. **Actions** - Standard SDK actions that work with your external keys
+   - Require wallet secrets for initial wallet creation/lookup
+   - Support key rotation for ongoing security
+
+### Generating Wallet Secrets
+
+The `generateWalletSecrets` function creates the cryptographic materials needed for an externally managed wallet. 
+
+**Import**
+```js
+import { generateWalletSecrets } from "@renegade-fi/node"
+```
+
+**Parameters**
+- `signer`: A function that generates a secp256k1 signature for a given message
+  - Input: Unhashed message as hex string
+  - Output: Signature as hex string with recovery bit
+  - Must NOT prefix with Ethereum signed message header
+
+**Example**
+```js
+// Create a signer function that generates a secp256k1 signature for a given message
+const signer = async (message: string) => {
+  // Hash the raw message (do not add Ethereum message prefix)
+  const hashedMessage = keccak256(message);
+  
+  // Sign the hash with your private key
+  const sig = await secp.signAsync(
+    hashedMessage.slice(2),
+    env.PRIVATE_KEY.slice(2),
+    { lowS: true, extraEntropy: false }
+  );
+  
+  // Format signature as r[32] || s[32] || v[1]
+  return concatHex([
+    numberToHex(sig.r, { size: 32 }),  // r component
+    numberToHex(sig.s, { size: 32 }),  // s component
+    numberToHex(sig.recovery ? 1 : 0, { size: 1 })  // recovery bit
+  ]);
+};
+
+const walletSecrets = await generateWalletSecrets(signer);
+```
+
+**Return Value**
+```js
+type GeneratedSecrets {
+  /** Identifies your wallet to the relayer */
+  wallet_id: string
+
+  /** Used to generate blinding values for wallet state encryption */
+  blinder_seed: `0x${string}`
+
+  /** Used to generate secret shares for wallet state encryption */
+  share_seed: `0x${string}`
+
+  /** Used to authenticate API requests to the relayer */
+  symmetric_key: `0x${string}`
+
+  /** Used during order matching process */
+  sk_match: `0x${string}`
+}
+```
+
+:::warning Security Best Practices
+- Store wallet secrets in secure, encrypted storage
+- Never expose secrets in logs or client-side code
+- Back up secrets securely - they cannot be recovered if lost
+- Consider using a hardware security module (HSM) for production deployments
+:::
+
+:::info
+Some Ethereum libraries (e.g. `viem`) automatically prefix messages with "\x19Ethereum Signed Message:\n". This will break signature verification - ensure your signer uses the raw message.
+:::
 
 ### createExternalKeyConfig
 
 Creates a configuration object for interacting with the relayer using an externally managed wallet. The required secrets should be obtained from [generateWalletSecrets](#generating-wallet-secrets) first.
 
 **Import**
-```typescript
+```js
 import { createExternalKeyConfig } from "@renegade-fi/node"
 ```
 
@@ -768,7 +1161,7 @@ import { createExternalKeyConfig } from "@renegade-fi/node"
     - Viem client used for wallet specific tasks e.g. signing a message.
 
 **Basic Example**
-```typescript
+```js
 import { createExternalKeyConfig } from "@renegade-fi/node"
 import { createPublicClient, http } from 'viem'
 import { arbitrumSepolia } from 'viem/chains'
@@ -791,7 +1184,7 @@ const config = createExternalKeyConfig({
 ```
 
 **Signing Function Example**
-```typescript
+```js
 // Example signing function implementation
 const signMessage = async (message: string) => {
   // Validate input
@@ -827,430 +1220,10 @@ The `signMessage` function and `publicKey` must form a valid signing pair. The r
 :::
 
 **Return Type**
-```typescript
+```js
 import { type ExternalConfig } from '@renegade-fi/node'
 ```
 
-## Actions
-
-### getOrderHistory
-
-Action for fetching the order history of a wallet from your connected relayer.
-
-**Import**
-
-```js
-import { getOrderHistory } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```js
-await getOrderHistory(config, {
-    limit: 5
-})
-```
-
-**Parameters**
-
-- limit (optional)
-    - `number`
-    - the number of orders to fetch
-
-**Return Type**
-
-`Promise<Map<string, OrderMetadata>>`
-
-Promise that resolves to a Map where the keys are order IDs and the values are `OrderMetadata` objects.
-
-**Error**
-
-An error may be thrown if:
-
-- a `seed` does not exist in the provided `config`
-- the API request authorization is incorrect / missing
-
-## Order WebSocket Notifications
-
-The `createOrderWebSocket` function establishes a WebSocket connection to receive real-time updates about order state changes.
-
-### Key Features
-
-- Receives immediate notifications for:
-  - Order state transitions (Created, Matching, Filled, etc.)
-  - Partial fills and their details
-  - Order cancellations
-- Provides complete order metadata with each update
-- Maintains persistent connection for continuous monitoring
-
-### Basic Usage
-
-```typescript
-import { createOrderWebSocket, OrderState, type OrderMetadata } from '@renegade-fi/node'
-
-// Initialize WebSocket connection
-const ws = createOrderWebSocket({
-  config,
-  onUpdate: (order: OrderMetadata) => {
-    // Handle order state changes
-    switch (order.state) {
-      case OrderState.Filled:
-        console.log('Order filled:', {
-          id: order.id,
-          amount: order.data.amount,
-          fills: order.fills
-        })
-        break
-      case OrderState.Cancelled:
-        console.log('Order cancelled:', order.id)
-        break
-      default:
-        console.log('Order state update:', order.state)
-    }
-  }
-})
-
-// Establish WebSocket connection
-ws.connect()
-
-// Clean up on process exit
-process.on('SIGINT', () => {
-  ws.disconnect()
-})
-```
-
-## External (Atomic) Matching
-
-Renegade supports matching orders between two types of parties:
-- Internal parties who have state committed to the darkpool
-- External parties who have no state in the darkpool
-
-When an external party wants to match with orders in the darkpool, they can request an `ExternalMatchBundle` from the relayer. This bundle contains everything needed to execute the match on-chain, including:
-- Match details (amounts and tokens involved)
-- A ready-to-submit transaction that settles the match via direct ERC-20 transfers
-
-:::note
-External matches can be partially filled - you may receive a match for less than your requested amount, but it will never be less than your specified `minFillSize`.
-:::
-
-### Generating an External Match
-
-**Prerequisites**
-
-Before executing an external match:
-1. Ensure you have sufficient token balance to fulfill your side of the trade
-2. Grant the darkpool contract approval to spend the tokens you're selling
-3. Have enough ETH for transaction gas fees
-
-**Flow**
-
-1. Request an `ExternalMatchQuote` with your desired trade parameters using the `getExternalMatchQuote` action
-2. Review the returned quote and decide whether to proceed with the trade
-3. Assemble the quote into an `ExternalMatchBundle` using the `assembleExternalQuote` action
-4. Submit the provided transaction to settle the match on-chain
-5. The protocol will:
-   - Update the internal party's state
-   - Execute the token transfers between parties
-
-**Import**
-
-```typescript
-import { getExternalMatchQuote, assembleExternalQuote } from "@renegade-fi/node"
-```
-
-**Usage**
-
-```typescript
-const config = createAuthConfig({
-  authServerUrl: "https://mainnet.auth-server.renegade.fi:3000",
-  apiKey: API_KEY,
-  apiSecret: API_SECRET,
-});
-
-const quote = await getExternalMatchQuote(config, {
-  order: {
-    base: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH
-    quote: "0xdf8d259c04020562717557f2b5a3cf28e92707d1", // USDC
-    side: "buy",
-    baseAmount: BigInt(1000000000000000000), // 1 ETH (amount must be adjusted for token decimals - 18 in this case)
-    minFillSize: BigInt(100000000000000000) // 0.1 ETH (amount must be adjusted for token decimals - 18 in this case)
-  },
-});
-
-// ... Quote Validation ... //
-
-const bundle = await assembleExternalQuote(config, {
-  quote
-});
-```
-
-:::tip
-This action requires an `AuthConfig` object instead of a `Config` object. [See here for more details](#auth-config)
-:::
-
-**getExternalMatchQuote Parameters**
-
-- order
-  - `object`
-  - Contains the following properties:
-    - base
-      - `0x${string}`
-      - ERC-20 contract address of the base asset.
-    - quote
-      - `0x${string}`
-      - ERC-20 contract address of the quote asset (must be USDC).
-    - side
-      - `"buy" | "sell"`
-      - The side this order is for
-    - baseAmount (required if quoteAmount not provided)
-      - `bigint`
-      - Raw amount of base asset to trade (must be adjusted for token decimals, e.g. multiply by 10^18 for ETH)
-    - quoteAmount (required if baseAmount not provided)
-      - `bigint`
-      - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
-    - minFillSize (optional)
-      - `bigint`
-      - Minimum fill size for the order. Must be denominated in the same units as the non-zero amount field:
-        - When using `baseAmount`: specified in base token units
-        - When using `quoteAmount`: specified in quote token units
-      - If specified larger than the total order size, will be set to the total order size.
-      - If specified as 0, will be set to the total order size.
-
-:::note
-You must provide exactly one of either `baseAmount` or `quoteAmount` in your order. Providing both will result in an error.
-:::
-
-**getExternalMatchQuote Return Type**
-
-`Promise<SignedExternalMatchQuote>`
-
-A `SignedExternalMatchQuote` that contains:
-- `quote`: The `ExternalMatchQuote` object containing:
-  - `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
-  - `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
-  - `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
-  - `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade, after fees are deducted
-  - `price`: The price at which the quote will be executed
-  - `timestamp`: The timestamp at which the quote was created
-- `signature`: A signature of the quote by the relayer, to ensure the quote is authentic when assembled
-
-[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L31)
-
-**Error**
-
-An error may be thrown if:
-
-- neither `baseAmount` nor `quoteAmount` is provided
-- the API request authorization is incorrect / missing
-
-**assembleExternalQuote Parameters** 
-
-- quote
-  - `SignedExternalMatchQuote`
-  - The `SignedExternalMatchQuote` returned from `getExternalMatchQuote`
-- updatedOrder (optional)
-  - `ExternalOrder`
-  - The updated order to assemble the quote for. If not provided, the quote will use the order specified in the `getExternalMatchQuote` call. This field allows you to tweak the order before assembling the quote. Note that only the `baseAmount`, `quoteAmount`, and `minFillSize` fields may be updated; any other updates will be rejected.
-- doGasEstimation (optional)
-  - `boolean`
-  - Whether to include gas estimation in the returned `ExternalMatchBundle`
-
-**assembleExternalQuote Return Type** <a name="assembleexternalquote-return-type"></a>
-
-`Promise<ExternalMatchBundle>`
-
-An `ExternalMatchBundle` that contains:
-- `match_result`: Details about the match, including the filled amount in raw units (not decimal adjusted)
-- `settlement_tx`: A transaction that can be submitted on-chain to settle the given external order. Will include a gas estimation if `doGasEstimation` is `true`.
-- `receive`: The asset and raw amount (not decimal adjusted) you will receive from the trade
-- `send`: The asset and raw amount (not decimal adjusted) you will send in the trade
-- `fees`: The fees that will be taken by the relayer and protocol (not decimal adjusted)
-
-[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
-
-**getExternalMatchBundle Parameters**
-
-- order
-  - `object`
-  - Contains the following properties:
-    - base
-      - `0x${string}`
-      - ERC-20 contract address of the base asset.
-    - quote
-      - `0x${string}`
-      - ERC-20 contract address of the quote asset (must be USDC).
-    - side
-      - `"buy" | "sell"`
-      - The side this order is for
-    - baseAmount (required if quoteAmount not provided)
-      - `bigint`
-      - Raw amount of base asset to trade (must be adjusted for token decimals, e.g. multiply by 10^18 for ETH)
-    - quoteAmount (required if baseAmount not provided)
-      - `bigint`
-      - Raw amount of quote asset to trade (must be adjusted for token decimals, e.g. multiply by 10^6 for USDC)
-    - minFillSize (optional)
-      - `bigint`
-      - Minimum fill size for the order. Must be denominated in the same units as the non-zero amount field:
-        - When using `baseAmount`: specified in base token units
-        - When using `quoteAmount`: specified in quote token units
-      - If specified larger than the total order size, will be set to the total order size.
-      - If specified as 0, will be set to the total order size.
-
-**getExternalMatchBundle Return Type**
-
-`Promise<ExternalMatchBundle>`
-
-See the [assembleExternalQuote](#assembleexternalquote-return-type) section for more details.
-
-[See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
-
-:::note
-You are responsible for submitting the transaction request contained within the returned `ExternalMatchBundle` to an RPC node. See the [complete example below](#settle-an-external-order) for how to execute the entire external matching flow.
-:::
-
-**Error**
-
-An error may be thrown if:
-
-- neither `baseAmount` nor `quoteAmount` is provided
-- the API request authorization is incorrect / missing
-- rate limits have been exceeded, see below
-
-### External Match Rate Limits
-
-The rate limits for the external match endpoints are as follows: 
-- **Quote**: 100 requests per minute
-- **Assemble**: 5 _unsettled_ bundles per minute. That is, if an assembled bundle is submitted on-chain, the rate limiter will reset. 
-If an assembled match is not settled on-chain, the rate limiter will remove one token from the per-minute allowance.
-
-## External Match Gas Sponsorship
-The Renegade relayer will cover the gas cost of external match transactions, up to a daily limit. When requested, the relayer will re-route the settlement transaction through a gas rebate contract. This contract refunds the cost of the transaction, either in native Ether, or in terms of the buy-side token in the external match.
-The rebate can optionally be sent to a configured address.
-
-For in-kind sponsorship, if no refund address is given, the rebate is sent to the receiver of the match. This is equivalent to the receiver getting a better price in the match, and as such the quoted price returned by the SDK is updated to reflect that.
-
-:::note
-In-kind gas sponsorship is enabled by default!
-:::
-
-However, if you'd like to disable gas sponsorship, simply add `disableGasSponsorship` to the `GetExternalMatchQuoteParameters` type:
-```typescript
-  const quote = await getExternalMatchQuote(config, {
-    disableGasSponsorship: true,
-    order: {
-      base: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-      quote: '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
-      side: 'sell',
-      quoteAmount: BigInt(20_000_000), // $20
-    },
-  })
-```
-
-For examples on how to configure gas sponsorship, see [`examples/native_eth_gas_sponsorship`](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/native-eth-gas-sponsorship), and [`examples/in_kind_gas_sponsorship`](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/in-kind-gas-sponsorship)
-
-### Gas Sponsorship Notes
-
-- The refund amount may not exactly equal the gas costs, as this must be estimated before constructing the transaction so it can be returned in the quote.
-- The gas estimate returned by `eth_estimateGas` will _not_ reflect the rebate, as the rebate does not _reduce_ the gas used; it merely refunds the ether paid for the gas. If you wish to understand the true gas cost ahead of time, the transaction can be simulated (e.g. with `alchemy_simulateExecution` or similar).
-- The rate limits currently sponsor up to **~500 matches/day** ($100 in gas). 
-
-### Malleable External Matches
-
-The external match API allows for a quote to be assembled into a malleable match. A malleable match is a match that specifies a range of allowable base amounts, rather than an exact amount. This can be used, for example, to fit a Renegade match into a larger route with variable output amounts.
-
-To assemble a malleable match, use the `assembleMalleableQuote` function. This function is identical to `assembleExternalQuote` but returns a `MalleableExternalMatchResponse` instead of an `ExternalMatchResponse`. The [`malleable-external-match` example](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/malleable_external_match.ts) shows how to use the helper methods on the `MalleableExternalMatchResponse` to se the base amount and compute information about the bundle at a given base amount.
-
-## External Key Management
-
-Renegade supports external key management as an alternative to the default managed wallet approach. This allows you to maintain complete control over your wallet's cryptographic secrets rather than having them derived and managed by the SDK.
-
-### Key Components
-
-The external key management flow consists of three main components:
-
-1. **Wallet Secrets** - A set of cryptographic materials you generate and store:
-   - Wallet ID & symmetric key: Used for API authentication
-   - Blinder & share seeds: Used for wallet encryption
-   - Match key: Used during order matching
-
-2. **ExternalConfig** - A configuration object that connects your externally managed keys to the SDK
-   - Does not store or derive keys internally
-   - Requires you to provide signing capabilities and public keys
-   
-3. **Actions** - Standard SDK actions that work with your external keys
-   - Require wallet secrets for initial wallet creation/lookup
-   - Support key rotation for ongoing security
-
-### Generating Wallet Secrets
-
-The `generateWalletSecrets` function creates the cryptographic materials needed for an externally managed wallet. 
-
-**Import**
-```typescript
-import { generateWalletSecrets } from "@renegade-fi/node"
-```
-
-**Parameters**
-- `signer`: A function that generates a secp256k1 signature for a given message
-  - Input: Unhashed message as hex string
-  - Output: Signature as hex string with recovery bit
-  - Must NOT prefix with Ethereum signed message header
-
-**Example**
-```typescript
-// Create a signer function that generates a secp256k1 signature for a given message
-const signer = async (message: string) => {
-  // Hash the raw message (do not add Ethereum message prefix)
-  const hashedMessage = keccak256(message);
-  
-  // Sign the hash with your private key
-  const sig = await secp.signAsync(
-    hashedMessage.slice(2),
-    env.PRIVATE_KEY.slice(2),
-    { lowS: true, extraEntropy: false }
-  );
-  
-  // Format signature as r[32] || s[32] || v[1]
-  return concatHex([
-    numberToHex(sig.r, { size: 32 }),  // r component
-    numberToHex(sig.s, { size: 32 }),  // s component
-    numberToHex(sig.recovery ? 1 : 0, { size: 1 })  // recovery bit
-  ]);
-};
-
-const walletSecrets = await generateWalletSecrets(signer);
-```
-
-**Return Value**
-```typescript
-type GeneratedSecrets {
-  /** Identifies your wallet to the relayer */
-  wallet_id: string
-
-  /** Used to generate blinding values for wallet state encryption */
-  blinder_seed: `0x${string}`
-
-  /** Used to generate secret shares for wallet state encryption */
-  share_seed: `0x${string}`
-
-  /** Used to authenticate API requests to the relayer */
-  symmetric_key: `0x${string}`
-
-  /** Used during order matching process */
-  sk_match: `0x${string}`
-}
-```
-
-:::warning Security Best Practices
-- Store wallet secrets in secure, encrypted storage
-- Never expose secrets in logs or client-side code
-- Back up secrets securely - they cannot be recovered if lost
-- Consider using a hardware security module (HSM) for production deployments
-:::
-
-:::info
-Some Ethereum libraries (e.g. `viem`) automatically prefix messages with "\x19Ethereum Signed Message:\n". This will break signature verification - ensure your signer uses the raw message.
-:::
 
 ### Wallet Creation / Lookup
 
@@ -1289,7 +1262,7 @@ Keys can be rotated during any wallet update operation by providing a new public
 3. Use the new key for future operations
 
 **Example**
-```typescript
+```js
 // Generate new signing keypair
 const newSigningKey = generateNewSigningKey(); // Your key generation logic
 const newPublicKey = derivePublicKey(newSigningKey);
