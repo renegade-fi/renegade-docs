@@ -10,10 +10,10 @@ description: Getting started with the Renegade Typescript SDK.
 To add the Renegade SDK to your project, install the required packages.
 
 ```bash
-npm install @renegade-fi/node@latest @wagmi/core viem@2.x
+npm install @renegade-fi/node@latest viem@latest
 ```
 
-This SDK is responsible for interacting with a relayer. Some actions, such as `createWallet` or `deposit`, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [wagmi](https://wagmi.sh/core/getting-started) and [viem](https://viem.sh/docs/getting-started).
+This SDK is responsible for interacting with a relayer. Some actions, such as depositing funds into your Renegade, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [viem](https://viem.sh/docs/getting-started).
 
 ## Dark Pool Quick Start
 
@@ -933,12 +933,33 @@ An `ExternalMatchBundle` that contains:
 
 [See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
 
-
 ### assembleMalleableQuote
 
 The external match API allows for a quote to be assembled into a malleable match. A malleable match is a match that specifies a range of allowable base amounts, rather than an exact amount. This can be used, for example, to fit a Renegade match into a larger route with variable output amounts.
 
 To assemble a malleable match, use the `assembleMalleableQuote` function. This function is identical to `assembleExternalQuote` but returns a `MalleableExternalMatchResponse` instead of an `ExternalMatchResponse`. The [`malleable-external-match` example](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/malleable_external_match.ts) shows how to use the helper methods on the `MalleableExternalMatchResponse` to se the base amount and compute information about the bundle at a given base amount.
+
+### supportedTokens
+
+**Usage**
+
+```js
+const tokens = await client.getSupportedTokens();
+```
+
+**Return Type**
+
+`Promise<{ tokens: ApiToken[] }>`
+An object containing a list of tokens that the Renegade External Match API supports.
+
+```ts
+type ApiToken = {
+  /** The token address */
+  address: string;
+  /** The token symbol */
+  symbol: string;
+};
+```
 
 ### Rate Limits
 
