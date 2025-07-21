@@ -224,7 +224,6 @@ import remap from "./remap.json";
 Token.addRemapFromString(chainId, JSON.stringify(remap));
 const WETH = Token.fromTicker("WETH");
 const WETH_ADDRESS = WETH.address; // 0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a
-
 ```
 
 **Static Methods**
@@ -368,6 +367,10 @@ An error may be thrown if:
 
 - a wallet with the same wallet ID already exists in the state of the connected relayer
 
+**Example**
+
+Check out the usage of `createWallet` in the [Create Wallet](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/create-wallet) example.
+
 ### lookupWallet
 
 Start a `lookup wallet` task on your connected relayer.
@@ -391,6 +394,10 @@ An error may be thrown if:
 - a wallet with the same wallet ID already exists in the state of the connected relayer
 - a wallet was not able to be found on-chain
 
+**Example**
+
+Check out the usage of `lookupWallet` in the [Lookup Wallet](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/lookup-wallet) example.
+
 ### getWallet
 
 Retrieve the latest wallet state from the connected relayer.
@@ -410,6 +417,10 @@ const wallet = await client.getWallet();
 An error may be thrown if:
 
 - the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
+
+**Example**
+
+Check out the usage of `getWallet` in the [Get Wallet](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/get-wallet) example.
 
 ### getBackOfQueueWallet
 
@@ -434,6 +445,10 @@ const wallet = await client.getBackOfQueueWallet();
 An error may be thrown if:
 
 - the wallet is not currently indexed by your connected relayer, in which case you should `createWallet` or `lookupWallet`
+
+**Example**
+
+Check out the usage of `getBackOfQueueWallet` in the [Get Back of Queue Wallet](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/get-back-of-queue-wallet) example.
 
 ### executeDeposit
 Start a `deposit` task on your connected relayer. Will also prepare the deposit by: 
@@ -505,6 +520,10 @@ An error may be thrown if:
 
 - the wallet already contains the maximum number of balances (12)
 
+**Example**
+
+Check out the usage of `executeDeposit` in the [Deposit](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/deposit) example.
+
 ### executeWithdraw
 
 Start a `withdraw` task on your connected relayer, Will also prepare the withdrawal by paying fees if needed. Transfers ERC-20 tokens from your Renegade wallet to your EVM address.
@@ -548,6 +567,10 @@ An error may be thrown if:
 
 - the provided `amount` is less than the minimum transfer amount set by your connected relayer (currently 1 USDC)
 
+**Example**
+
+Check out the usage of `executeWithdraw` in the [Withdraw](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/withdraw) example.
+
 ### payFees
 
 Start the `payFee` task(s) on your connected relayer.
@@ -569,6 +592,10 @@ await client.payFees();
 `Promise<{ taskIds: string[] }>`
 
 Promise that resolves to an array of IDs of `payFee` tasks in the connected relayer.
+
+**Example**
+
+Check out the usage of `payFees` in the [Pay Fees](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/pay-fees) example.
 
 ### placeOrder
 
@@ -632,6 +659,10 @@ An error may be thrown if:
 
 - the wallet already contains the maximum number of orders (4)
 
+**Example**
+
+Check out the usage of `placeOrder` in the [Place Order](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/place-order) example.
+
 ### cancelOrder
 
 Start a `cancel wallet` task on your connected relayer.
@@ -673,6 +704,10 @@ An error may be thrown if:
 
 - the provided `id` mint does not exist in the wallet's list of orders
 
+**Example**
+
+Check out the usage of `cancelOrder` in the [Cancel Order](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/cancel-order) example.
+
 ### getOrderHistory
 
 Retrive your order history from your connected relayer.
@@ -694,6 +729,10 @@ const history = await client.getOrderHistory({ limit: 5 })
 `Promise<Map<string, OrderMetadata>>`
 
 Promise that resolves to a Map where the keys are order IDs and the values are `OrderMetadata` objects.
+
+**Example**
+
+Check out the usage of `getOrderHistory` in the [Get Order History](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/get-order-history) example.
 
 
 ### generateSeedMessage
@@ -721,6 +760,10 @@ const seed = await account.signMessage({ message });
 `string`
 
 Message to derive Renegade wallet secrets from.
+
+**Example**
+
+Check out the usage of `generateSeedMessage` in the [Get Wallet](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/relayer/get-wallet) example.
 
 ## External Match Client
 
@@ -900,6 +943,10 @@ An error may be thrown if:
 - neither `baseAmount` nor `quoteAmount` is provided
 - the API request authorization is incorrect / missing
 
+**Example**
+
+Check out the usage of `getQuote` in the [Basic External Match](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/external-match/basic) example.
+
 ### assembleQuote
 
 **Usage**
@@ -933,11 +980,20 @@ An `ExternalMatchBundle` that contains:
 
 [See type &#8599;](https://github.com/renegade-fi/typescript-sdk/blob/52f628853833943857a57701af5555ffa1731fcd/packages/core/src/types/externalMatch.ts#L14)
 
+**Example**
+
+Check out the usage of `assembleQuote` in the [Basic External Match](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/external-match/basic) example.
+
 ### assembleMalleableQuote
 
 The external match API allows for a quote to be assembled into a malleable match. A malleable match is a match that specifies a range of allowable base amounts, rather than an exact amount. This can be used, for example, to fit a Renegade match into a larger route with variable output amounts.
 
 To assemble a malleable match, use the `assembleMalleableQuote` function. This function is identical to `assembleExternalQuote` but returns a `MalleableExternalMatchResponse` instead of an `ExternalMatchResponse`. The [`malleable-external-match` example](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/malleable_external_match.ts) shows how to use the helper methods on the `MalleableExternalMatchResponse` to se the base amount and compute information about the bundle at a given base amount.
+
+
+**Example**
+
+Check out the usage of `assembleMalleableQuote` in the [Assemble Malleable Quote](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/external-match/malleable) example.
 
 ### getSupportedTokens
 
@@ -961,12 +1017,16 @@ type ApiToken = {
 };
 ```
 
+**Example**
+
+Check out the usage of `getSupportedTokens` in the [Get Supported Tokens](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/external-match/supported-tokens) example.
+
 ### getTokenPrices
 
 **Usage**
 
 ```js
-const tokens = await client.getTokenPrices();
+const prices = await client.getTokenPrices();
 ```
 
 **Return Type**
@@ -984,6 +1044,10 @@ type TokenPrice = {
     price: number;
 };
 ```
+
+**Example**
+
+Check out the usage of `getTokenPrices` in the [Get Token Prices](https://stackblitz.com/github/renegade-fi/typescript-sdk/tree/main/examples/external-match/token-prices) example.
 
 ### Rate Limits
 
