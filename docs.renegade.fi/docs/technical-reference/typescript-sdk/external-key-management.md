@@ -10,11 +10,15 @@ slug: /technical-reference/typescript-sdk/external-key-management
 
 Renegade supports external key management as an alternative to the default managed wallet approach. This allows you to maintain complete control over your wallet's cryptographic secrets rather than having them derived and managed by the SDK.
 
+:::note
+Importantly, this enables using a Renegade wallet with a non-deterministic signer; e.g. an MPC wallet provider. The wallet secrets may be generated ahead of time and custodied independently of the key management system.
+:::
+
 ### Key Components
 
 The external key management flow consists of three main components:
 
-1. **Wallet Secrets** - A set of cryptographic materials you generate and store:
+1. **Wallet Secrets** - The **secret** cryptographic material you generate and store:
    - Wallet ID & symmetric key: Used for API authentication
    - Blinder & share seeds: Used for wallet encryption
    - Match key: Used during order matching
@@ -51,8 +55,8 @@ const signer = async (message: string) => {
   
   // Sign the hash with your private key
   const sig = await secp.signAsync(
-    hashedMessage.slice(2),
-    env.PRIVATE_KEY.slice(2),
+    hashedMessage.slice(2), // Remove the '0x' prefix
+    env.PRIVATE_KEY.slice(2), // Remove the '0x' prefix
     { lowS: true, extraEntropy: false }
   );
   
@@ -148,8 +152,8 @@ const config = createExternalKeyConfig({
   publicKey: "0x04800db50009a01fab58a239f204ca14e85682ca0991cb6914f34c4fbd0131eedb54d0ccbe392922e57486b031779bf8b6feab57971c2c406df291c0ab9c529a3d",
   symmetricKey: walletSecrets.symmetric_key,
   walletId: walletSecrets.wallet_id,
-  relayerUrl: "https://testnet.cluster0.renegade.fi:3000",
-  websocketUrl: "wss://testnet.cluster0.renegade.fi:4000",
+  relayerUrl: "https://arbitrum-sepolia.cluster0.renegade.fi:3000",
+  websocketUrl: "wss://arbitrum-sepolia.cluster0.renegade.fi:4000",
   darkPoolAddress: "0x9af58f1ff20ab22e819e40b57ffd784d115a9ef5",
   viemClient: publicClient,
 });
@@ -219,7 +223,7 @@ Make sure you are using an `ExternalConfig` object when calling `createWallet` o
 
 ### Actions
 
-Once you have created an Externally Managed Wallet, you can use it to interact with the relayer. When using an Externally Managed Wallet, you should instantiate an [`ExternalConfig`](#createExternalKeyConfig) object instead of a `Config` object and pass it as the first parameter actions. Otherwise, usage is the same as described in the [Wallet Actions](./wallet-actions) page.
+Once you have created an Externally Managed Wallet, you can use it to interact with the relayer. When using an Externally Managed Wallet, you should instantiate an `ExternalConfig` object instead of a `Config` object and pass it as the first parameter actions. Otherwise, usage is the same as described in the [Wallet Actions](./wallet-actions) page.
 
 
 ### Key Rotation

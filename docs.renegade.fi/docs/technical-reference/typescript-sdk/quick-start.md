@@ -16,7 +16,7 @@ To add the Renegade SDK to your project, install the required packages.
 npm install @renegade-fi/node@latest viem@latest
 ```
 
-This SDK is responsible for interacting with a relayer. Some actions, such as depositing funds into your Renegade, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [viem](https://viem.sh/docs/getting-started).
+This SDK is responsible for interacting with a relayer (see [Core Concepts](./core-concepts#relayer)). Some actions, such as depositing funds into Renegade, require using your Ethereum wallet to sign messages or approve tokens. To perform these actions, we recommend using [viem](https://viem.sh/docs/getting-started).
 
 ## Darkpool Quick Start
 
@@ -43,7 +43,7 @@ const seed = await account.signMessage({ message });
 
 // Finally, create the client with the seed
 // The SDK will handle the process of generating a wallet from the seed
-const client = RenegadeClient.new({
+const renegadeClient = RenegadeClient.new({
     chainId,
     seed,
 });
@@ -68,16 +68,18 @@ We recomend using `viem` to perform on-chain interactions.
 
 Now that you have a `RenegadeClient` and wallet set up, you can interact with the Renegade protocol. See [Wallet Actions](./wallet-actions) for more ways to interact with the protocol.
 
-
 ```js
 import { createPublicClient, createWalletClient, http} from 'viem'
 import { arbitrumSepolia } from 'viem/chains'
 import { privateKeyToAccount } from "viem/accounts";
 
+// Create a viem public client for RPC interactions
 const publicClient = createPublicClient({
   chain: arbitrumSepolia,
   transport: http(),
 })
+
+// Create a viem wallet client for signing
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const account = privateKeyToAccount(PRIVATE_KEY);
 const walletClient = createWalletClient({
@@ -85,7 +87,9 @@ const walletClient = createWalletClient({
     chain,
     transport: http(),
 });
-await client.executeDeposit({
+
+// ... Using the renegadeClient created above ... //
+await renegadeClient.executeDeposit({
     amount: BigInt(10000000000000000), // 0.01 WETH
     mint: "0xc3414a7ef14aaaa9c4522dfc00a4e66e74e9c25a", // WETH on Arbitrum Sepolia
     publicClient,
