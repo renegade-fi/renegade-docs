@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 title: External Key Management
 hide_title: true
 description: How to manage your Renegade wallet with external keys
