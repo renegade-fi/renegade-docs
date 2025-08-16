@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 title: Tokens
 hide_title: true
 description: How to use the Renegade Token object

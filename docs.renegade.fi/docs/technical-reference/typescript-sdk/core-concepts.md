@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 title: Core Concepts
 hide_title: true
 description: Core concepts of the Renegade protocol
