@@ -53,16 +53,16 @@ See the [Example Here](https://github.com/renegade-fi/golang-sdk/blob/main/examp
 npm install @renegade-fi/renegade-sdk
 
 # Using yarn
-yarn add renegade-sdk
+yarn add @renegade-fi/renegade-sdk
 
 # Using bun
-bun add renegade-sdk```
+bun add @renegade-fi/renegade-sdk
 ```
 
-- **GitHub**: [renegade-fi/typescript-external-match-client](https://github.com/renegade-fi/typescript-external-match-client)
+- **GitHub**: [renegade-fi/typescript-sdk](https://github.com/renegade-fi/typescript-sdk/tree/main/packages/external-match)
 - **npm**: [@renegade-fi/renegade-sdk](https://www.npmjs.com/package/@renegade-fi/renegade-sdk)
 
-See the [Example Here](https://github.com/renegade-fi/typescript-external-match-client/blob/main/examples/basic.ts) for basic use.
+See the [Example Here](https://github.com/renegade-fi/typescript-sdk/tree/main/examples/external-match/basic) for basic use.
 
 
 ### Python SDK
