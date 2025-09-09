@@ -83,5 +83,5 @@ See the [Example Here](https://github.com/renegade-fi/python-sdk/blob/main/examp
 ## Getting Help
 
 - **Documentation**: Each SDK includes comprehensive documentation and examples
-- **Telegram**: Ping us on [Telegram](https://t.me/jkraut) for questions.
+- **Telegram**: Ping us on [Telegram](https://t.me/chrisliambender) for questions.
 - **Email**: Contact us at hello@renegade.fi for support.
