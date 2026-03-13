@@ -30,7 +30,11 @@ const config = {
   url: DOCS_BASE_URL,
   baseUrl: "/",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: "warn",
+    },
+  },
   favicon: "img/favicon.ico",
 
   plugins: [require.resolve("./plugins.js")],
@@ -50,7 +54,7 @@ const config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          sidebarCollapsible: true,
+          sidebarCollapsible: false,
         },
         theme: {
           customCss: [
@@ -64,13 +68,15 @@ const config = {
   ],
 
   themeConfig: {
-    algolia: {
-      appId: process.env.ALGOLIA_APP_ID,
-      apiKey: process.env.ALGOLIA_API_KEY,
-      indexName: process.env.ALGOLIA_INDEX_NAME,
-      contextualSearch: true,
-      externalUrlRegex: "renegade.fi",
-    },
+    ...(process.env.ALGOLIA_APP_ID && {
+      algolia: {
+        appId: process.env.ALGOLIA_APP_ID,
+        apiKey: process.env.ALGOLIA_API_KEY,
+        indexName: process.env.ALGOLIA_INDEX_NAME,
+        contextualSearch: true,
+        externalUrlRegex: "renegade.fi",
+      },
+    }),
     colorMode: {
       defaultMode: "dark",
       disableSwitch: false,
@@ -86,21 +92,6 @@ const config = {
         {
           label: "Twitter",
           href: "https://twitter.com/renegade_fi",
-          position: "right",
-        },
-        {
-          label: "Discord",
-          href: "https://discord.gg/renegade-fi",
-          position: "right",
-        },
-        {
-          label: "Substack",
-          href: "https://renegadefi.substack.com",
-          position: "right",
-        },
-        {
-          label: "Whitepaper",
-          href: "https://whitepaper.renegade.fi",
           position: "right",
         },
         {

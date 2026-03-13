@@ -1,0 +1,103 @@
+---
+sidebar_position: 2
+title: Solver RFQ
+description: Integration Quickstart for Solver RFQs
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Quickstart: Request for Quotes
+
+### Requests for Quotes
+
+RFQs allow solvers to request a trade and receive ready-to-execute transaction
+calldata. When a solver signs and submits this transaction, their trade will
+execute atomically.
+
+Solvers may even bundle this transaction with others to atomically complete a
+multi-step trade such as a Cowswap intent, but how this may be done is beyond
+the scope of this guide.
+
+We call the API endpoint that serves said calldata an *auth server*.
+
+The following example demonstrates how to use Renegade's SDK to:
+
+1. Request a quote from Renegade's auth server
+2. Assemble the quote (as calldata) into a transaction
+3. Submit it on-chain
+
+To get your own values for `EXTERNAL_MATCH_KEY` and `EXTERNAL_MATCH_SECRET`,
+please contact [chris@renegade.fi](mailto:chris@renegade.fi).
+
+<Tabs queryString="sdk">
+<TabItem value="rust" label="Rust" default>
+
+The full Rust source code can be found
+[here](https://github.com/renegade-fi/quickstart-docs-snippets/blob/main/src/lib.rs).
+
+```rust
+// 1. Create an external match client
+let api_key = std::env::var("EXTERNAL_MATCH_KEY")?;
+let api_secret = std::env::var("EXTERNAL_MATCH_SECRET")?;
+let ext_client = ExternalMatchClient::new_base_sepolia_client(&api_key, &api_secret)?;
+
+// 2. Ensure the darkpool has approval to spend USDC before requesting a
+//    quote, so that the settlement tx can be submitted immediately
+let private_key = std::env::var("PRIVATE_KEY")?;
+let signer = PrivateKeySigner::from_str(&private_key)?;
+let provider = ProviderBuilder::new()
+    .wallet(EthereumWallet::from(signer))
+    .connect_http(RPC_URL.parse()?);
+
+let darkpool: Address = ext_client.get_exchange_metadata().await?.settlement_contract_address.parse()?;
+let input_mint: Address = USDC.parse()?;
+let erc20 = IERC20::new(input_mint, &provider);
+let allowance = erc20.allowance(provider.default_signer_address(), darkpool).call().await?;
+if allowance < U256::from(10_000_000u128) {
+    erc20.approve(darkpool, U256::MAX).send().await?.watch().await?;
+    println!("Approved darkpool to spend USDC");
+}
+
+// 3. Build an external order
+let order = ExternalOrderBuilderV2::new()
+    .input_mint(USDC)
+    .output_mint(WETH)
+    .input_amount(10_000_000) // 10 USDC
+    .build()?;
+
+// 4. Request a quote
+let Some(quote) = ext_client.request_quote_v2(order).await? else {
+    println!("No quote available");
+    return Ok(());
+};
+
+println!(
+    "Quote: receive {} of {}",
+    quote.quote.receive.amount, quote.quote.receive.mint
+);
+
+// 5. Assemble the quote into a settlement transaction
+let Some(resp) = ext_client.assemble_quote_v2(quote).await? else {
+    println!("No bundle returned");
+    return Ok(());
+};
+
+// 6. Submit the settlement transaction on-chain
+let tx = resp.settlement_tx().with_gas_limit(1_000_000);
+let pending = provider.send_transaction(tx).await?;
+let receipt = pending.get_receipt().await?;
+if receipt.status() {
+    println!("Settlement tx confirmed: {:#x}", receipt.transaction_hash);
+} else {
+    println!("Settlement tx reverted: {:#x} (bundle may have expired)", receipt.transaction_hash);
+}
+```
+
+</TabItem>
+<TabItem value="typescript" label="TypeScript">
+
+Coming soon.
+
+</TabItem>
+</Tabs>

@@ -1,0 +1,80 @@
+---
+sidebar_position: 3
+title: Direct Matches
+description: Quickstart for Direct Matches
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Quickstart: Implementing Direct Matches
+
+Renegade uses the deposit-trade-withdraw pattern. Once a user deposits funds,
+they may submit or cancel orders. Our crossing network matches orders and
+settles them. Users may withdraw their funds at any time.
+
+The following example demonstrates how to use Renegade's SDK to:
+
+1. Deposit USDC into Renegade
+2. Place an order to buy WETH
+3. Cancel a partially filled order
+4. Withdraw WETH from Renegade
+
+<Tabs queryString="sdk">
+<TabItem value="rust" label="Rust" default>
+
+The full Rust source code, including the defintion of the `ensure_allowances()`
+helper function, can be found
+[here](https://github.com/renegade-fi/quickstart-docs-snippets/blob/main/src/lib.rs).
+
+```rust
+// 1. Create a client
+let private_key = std::env::var("PRIVATE_KEY")?;
+let signer = PrivateKeySigner::from_str(&private_key)?;
+let client = RenegadeClient::new_base_sepolia(&signer)?;
+
+// 2. Create the Renegade account if absent
+if client.get_account().await.is_err() {
+    client.create_account().await?;
+}
+
+// 3. Approve & deposit USDC
+let usdc_mint: Address = USDC.parse()?;
+let deposit_amount: u128 = 100_000; // 0.1 USDC (6 decimals)
+// Perform any necessary ERC20 approvals
+ensure_allowances(&client, usdc_mint, deposit_amount, &signer).await?;
+client.deposit(usdc_mint, deposit_amount).await?;
+
+// 4. Place a buy order for WETH
+let order = client
+    .new_order_builder()
+    .with_input_mint(USDC)?
+    .with_output_mint(WETH)?
+    .with_input_amount(deposit_amount)
+    .with_order_type(OrderType::PublicOrder)
+    .build()?;
+
+client.place_order(order).await?;
+
+// 5. Wait for a match (in production, poll or use websockets)
+tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+
+// 6. Cancel unfilled orders
+let orders = client.get_orders(false /* include_historic */).await?;
+for order in orders {
+    println!("Cancelling order... {}", &order.id);
+    client.cancel_order(order.id).await?;
+}
+
+// 7. Withdraw USDC (no match occurred, so withdraw what we deposited)
+let usdc_balance = client.get_balance_by_mint(usdc_mint).await?;
+client.withdraw(usdc_mint, usdc_balance.amount).await?;
+```
+
+</TabItem>
+<TabItem value="typescript" label="TypeScript">
+
+Coming soon.
+
+</TabItem>
+</Tabs>

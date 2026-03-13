@@ -1,0 +1,183 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - wj/v2
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs.renegade.fi
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: docs.renegade.fi/package-lock.json
+
+      - name: Cache fonts
+        id: cache-fonts
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/src/fonts
+          key: fonts-ABCFavoritExtendedVariable-FAMAime-Regular-FAMAime-Bold-ABCFavoritExpanded-Regular-ABCFavoritMono-Regular-ABCFavorit-Light-ABCFavorit-Regular
+
+      - name: Download fonts from S3
+        if: steps.cache-fonts.outputs.cache-hit != 'true'
+        run: bash scripts/download-fonts.sh testnet-fonts us-east-2 "ABCFavoritExtendedVariable.woff2 FAMAime-Regular.woff2 FAMAime-Bold.woff2 ABCFavoritExpanded-Regular-Named.ttf ABCFavoritMono-Regular.ttf ABCFavorit-Light-Named.ttf ABCFavorit-Regular-Named.ttf"
+
+      - name: Get rust-sdk latest commit
+        id: rust-sdk-rev
+        run: echo "sha=$(git ls-remote https://github.com/renegade-fi/rust-sdk.git HEAD | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Rust SDK docs
+        id: cache-rust-docs
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/static/sdk/rust
+          key: rust-sdk-docs-${{ steps.rust-sdk-rev.outputs.sha }}
+
+      - name: Install Rust toolchain
+        if: steps.cache-rust-docs.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Generate Rust SDK docs
+        if: steps.cache-rust-docs.outputs.cache-hit != 'true'
+        run: bash scripts/generate-rust-docs.sh
+
+      - name: Get typescript-sdk latest commit
+        id: ts-sdk-rev
+        run: echo "sha=$(git ls-remote https://github.com/renegade-fi/typescript-sdk.git HEAD | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache TypeScript SDK docs
+        id: cache-ts-docs
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/static/sdk/typescript
+          key: ts-sdk-docs-${{ steps.ts-sdk-rev.outputs.sha }}
+
+      - name: Install pnpm
+        if: steps.cache-ts-docs.outputs.cache-hit != 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Cache pnpm store
+        if: steps.cache-ts-docs.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store/v3
+          key: pnpm-store-${{ steps.ts-sdk-rev.outputs.sha }}
+          restore-keys: |
+            pnpm-store-
+
+      - name: Generate TypeScript SDK docs
+        if: steps.cache-ts-docs.outputs.cache-hit != 'true'
+        run: bash scripts/generate-ts-docs.sh
+
+      - name: Get golang-sdk latest commit
+        id: go-sdk-rev
+        run: echo "sha=$(git ls-remote https://github.com/renegade-fi/golang-sdk.git HEAD | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Go SDK docs
+        id: cache-go-docs
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/static/sdk/go
+          key: go-sdk-docs-${{ steps.go-sdk-rev.outputs.sha }}
+
+      - name: Set up Go
+        if: steps.cache-go-docs.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Cache Go module and build cache
+        if: steps.cache-go-docs.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/go/bin
+            ~/.cache/go-build
+          key: go-deps-${{ steps.go-sdk-rev.outputs.sha }}
+          restore-keys: |
+            go-deps-
+
+      - name: Generate Go SDK docs
+        if: steps.cache-go-docs.outputs.cache-hit != 'true'
+        run: bash scripts/generate-go-docs.sh
+
+      - name: Get python-sdk latest commit
+        id: python-sdk-rev
+        run: echo "sha=$(git ls-remote https://github.com/renegade-fi/python-sdk.git HEAD | cut -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Python SDK docs
+        id: cache-python-docs
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/static/sdk/python
+          key: python-sdk-docs-${{ steps.python-sdk-rev.outputs.sha }}
+
+      - name: Set up Python
+        if: steps.cache-python-docs.outputs.cache-hit != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Cache pip packages
+        if: steps.cache-python-docs.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-deps-${{ steps.python-sdk-rev.outputs.sha }}
+          restore-keys: |
+            pip-deps-
+
+      - name: Generate Python SDK docs
+        if: steps.cache-python-docs.outputs.cache-hit != 'true'
+        run: bash scripts/generate-python-docs.sh
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: docs.renegade.fi/node_modules
+          key: node-modules-${{ hashFiles('docs.renegade.fi/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs.renegade.fi/build
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

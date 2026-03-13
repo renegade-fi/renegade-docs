@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="doc2go">
+    <link href="../../../../../_/css/main.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../../../_/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../../../_/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../../../_/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="../../../../../_/icons/favicon.ico"><title>client</title>
+</head>
+  <body>
+    <nav>
+        <a href="../../../..">github.com</a>/<a href="../../..">renegade-fi</a>/<a href="../..">golang-sdk</a>/<a href="..">client</a>/renegade_client<span class="navbar-right">
+          <a href="../../../../..">Root</a> | <a href="#pkg-index">Index</a></span>
+      </nav>
+    <main><h2 id="pkg-overview">package client</h2>
+<pre class="chroma"><span class="kn">import</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="s">&#34;github.com/renegade-fi/golang-sdk/client/renegade_client&#34;</span></pre>
+<p>Package client provides a client for the renegade API
+<h3 id="pkg-index">Index</h3>
+<ul>
+  <li><a href="#pkg-variables">Variables</a></li><li>
+      <a href="#ChainConfig">type ChainConfig</a>
+      </li>
+  <li>
+      <a href="#DepositWitness">type DepositWitness</a>
+      </li>
+  <li>
+      <a href="#EIP712Domain">type EIP712Domain</a>
+      <ul>
+          <li><a href="#ConstructEIP712Domain">func ConstructEIP712Domain(chainID *big.Int, verifyingContract common.Address) EIP712Domain</a></li>
+          <li><a href="#EIP712Domain.Hash">func (domain EIP712Domain) Hash() common.Hash</a></li>
+          </ul>
+      </li>
+  <li>
+      <a href="#PermitWitnessTransferFrom">type PermitWitnessTransferFrom</a>
+      </li>
+  <li>
+      <a href="#RenegadeClient">type RenegadeClient</a>
+      <ul>
+          <li><a href="#NewRenegadeClient">func NewRenegadeClient(baseURL string, ethKey *ecdsa.PrivateKey) (*RenegadeClient, error)</a></li>
+          <li><a href="#NewRenegadeClientWithConfig">func NewRenegadeClientWithConfig(baseURL string, ethKey *ecdsa.PrivateKey, config ChainConfig) (*RenegadeClient, error)</a></li>
+          <li><a href="#NewSepoliaRenegadeClient">func NewSepoliaRenegadeClient(baseURL string, ethKey *ecdsa.PrivateKey) (*RenegadeClient, error)</a></li>
+          <li><a href="#RenegadeClient.CancelOrder">func (c *RenegadeClient) CancelOrder(orderId uuid.UUID) (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.CheckWallet">func (c *RenegadeClient) CheckWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.CreateWallet">func (c *RenegadeClient) CreateWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.Deposit">func (c *RenegadeClient) Deposit(mint string, amount *big.Int, ethPrivateKey *ecdsa.PrivateKey) (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.GetBackOfQueueWallet">func (c *RenegadeClient) GetBackOfQueueWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.GetWallet">func (c *RenegadeClient) GetWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.LookupWallet">func (c *RenegadeClient) LookupWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.PayFees">func (c *RenegadeClient) PayFees() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.PlaceOrder">func (c *RenegadeClient) PlaceOrder(order *wallet.Order) (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.RefreshWallet">func (c *RenegadeClient) RefreshWallet() (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.Withdraw">func (c *RenegadeClient) Withdraw(mint string, amount *big.Int) (*wallet.Wallet, error)</a></li>
+          <li><a href="#RenegadeClient.WithdrawToAddress">func (c *RenegadeClient) WithdrawToAddress(mint string, amount *big.Int, destination string) (*wallet.Wallet, error)</a></li>
+          </ul>
+      </li>
+  </ul><h3 id="pkg-variables">Variables</h3>
+  <pre class="chroma"><span class="kd">var</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="c1">// ArbitrumOneConfig is the configuration for the Arbitrum One chain</span><span class="w">
+</span><span class="w">	</span><span id="ArbitrumOneConfig"><span class="nx">ArbitrumOneConfig</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><a href="#ChainConfig"><span class="nx">ChainConfig</span></a><span class="p">{</span><span class="w">
+</span><span class="w">		</span><span class="nx">ChainID</span><span class="p">:</span><span class="w">         </span><span class="mi">42161</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">Permit2Address</span><span class="p">:</span><span class="w">  </span><span class="s">&#34;0x000000000022D473030F116dDEE9F6B43aC78BA3&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">DarkpoolAddress</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;0x30bd8eab29181f790d7e495786d4b96d7afdc518&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">EthereumRpcUrl</span><span class="p">:</span><span class="w">  </span><span class="s">&#34;https://arb1.arbitrum.io/rpc&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// ArbitrumSepoliaConfig is the configuration for the Arbitrum Sepolia chain</span><span class="w">
+</span><span class="w">	</span><span id="ArbitrumSepoliaConfig"><span class="nx">ArbitrumSepoliaConfig</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><a href="#ChainConfig"><span class="nx">ChainConfig</span></a><span class="p">{</span><span class="w">
+</span><span class="w">		</span><span class="nx">ChainID</span><span class="p">:</span><span class="w">         </span><span class="mi">421614</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">Permit2Address</span><span class="p">:</span><span class="w">  </span><span class="s">&#34;0x9458198bcc289c42e460cb8ca143e5854f734442&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">DarkpoolAddress</span><span class="p">:</span><span class="w"> </span><span class="s">&#34;0x9af58f1ff20ab22e819e40b57ffd784d115a9ef5&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">		</span><span class="nx">EthereumRpcUrl</span><span class="p">:</span><span class="w">  </span><span class="s">&#34;https://sepolia-rollup.arbitrum.io/rpc&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">)</span></pre>
+  <h3 id="pkg-types">Types</h3>
+  <h3 id="ChainConfig">type ChainConfig</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">ChainConfig</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// ChainID is the chain ID of the chain</span><span class="w">
+</span><span class="w">	</span><span id="ChainConfig.ChainID"><span class="nx">ChainID</span></span><span class="w"> </span><a href="https://pkg.go.dev/builtin#uint64"><span class="kt">uint64</span></a><span class="w">
+</span><span class="w">	</span><span class="c1">// Permit2Address is the address of the Permit2 contract</span><span class="w">
+</span><span class="w">	</span><span id="ChainConfig.Permit2Address"><span class="nx">Permit2Address</span></span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="w">
+</span><span class="w">	</span><span class="c1">// DarkpoolAddress is the address of the Darkpool contract</span><span class="w">
+</span><span class="w">	</span><span id="ChainConfig.DarkpoolAddress"><span class="nx">DarkpoolAddress</span></span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="w">
+</span><span class="w">	</span><span class="c1">// EthereumRpcUrl is the URL of the Ethereum RPC</span><span class="w">
+</span><span class="w">	</span><span id="ChainConfig.EthereumRpcUrl"><span class="nx">EthereumRpcUrl</span></span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="w"> </span><span class="cp">//nolint:revive</span><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>ChainConfig represents the configuration for a specific chain
+<h3 id="DepositWitness">type DepositWitness</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">DepositWitness</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// PkRoot is the root of the public key serialized as u256 values</span><span class="w">
+</span><span class="w">	</span><span id="DepositWitness.PkRoot"><span class="nx">PkRoot</span></span><span class="w"> </span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>DepositWitness is the witness for the permit
+<h3 id="EIP712Domain">type EIP712Domain</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">EIP712Domain</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span id="EIP712Domain.Name"><span class="nx">Name</span></span><span class="w">              </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="w">
+</span><span class="w">	</span><span id="EIP712Domain.ChainId"><span class="nx">ChainId</span></span><span class="w">           </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="w"> </span><span class="cp">//nolint:revive</span><span class="w">
+</span><span class="w">	</span><span id="EIP712Domain.VerifyingContract"><span class="nx">VerifyingContract</span></span><span class="w"> </span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common"><span class="nx">common</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common#Address"><span class="nx">Address</span></a><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>EIP712Domain is the domain for the permit
+<h4 id="ConstructEIP712Domain">func ConstructEIP712Domain</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">ConstructEIP712Domain</span><span class="p">(</span><span class="nx">chainID</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="p">,</span><span class="w"> </span><span class="nx">verifyingContract</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common"><span class="nx">common</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common#Address"><span class="nx">Address</span></a><span class="p">)</span><span class="w"> </span><a href="#EIP712Domain"><span class="nx">EIP712Domain</span></a></pre>
+  <p>ConstructEIP712Domain constructs an EIP712Domain
+<h4 id="EIP712Domain.Hash">func (EIP712Domain) Hash</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">domain</span><span class="w"> </span><a href="#EIP712Domain"><span class="nx">EIP712Domain</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Hash</span><span class="p">()</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common"><span class="nx">common</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common#Hash"><span class="nx">Hash</span></a></pre>
+  <p>Hash hashes the EIP712Domain
+<h3 id="PermitWitnessTransferFrom">type PermitWitnessTransferFrom</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">PermitWitnessTransferFrom</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span id="PermitWitnessTransferFrom.Permitted"><span class="nx">Permitted</span></span><span class="w"> </span><a href="../../abis"><span class="nx">abis</span></a><span class="p">.</span><a href="../../abis#ISignatureTransferTokenPermissions"><span class="nx">ISignatureTransferTokenPermissions</span></a><span class="w">
+</span><span class="w">	</span><span id="PermitWitnessTransferFrom.Spender"><span class="nx">Spender</span></span><span class="w">   </span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common"><span class="nx">common</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/common#Address"><span class="nx">Address</span></a><span class="w">
+</span><span class="w">	</span><span id="PermitWitnessTransferFrom.Nonce"><span class="nx">Nonce</span></span><span class="w">     </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="w">
+</span><span class="w">	</span><span id="PermitWitnessTransferFrom.Deadline"><span class="nx">Deadline</span></span><span class="w">  </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="w">
+</span><span class="w">	</span><span id="PermitWitnessTransferFrom.Witness"><span class="nx">Witness</span></span><span class="w">   </span><span class="o">*</span><a href="#DepositWitness"><span class="nx">DepositWitness</span></a><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>PermitWitnessTransferFrom is the permit for the deposit
+<h3 id="RenegadeClient">type RenegadeClient</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">RenegadeClient</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// contains filtered or unexported fields</span><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>RenegadeClient represents a client for the renegade API
+<h4 id="NewRenegadeClient">func NewRenegadeClient</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewRenegadeClient</span><span class="p">(</span><span class="nx">baseURL</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">ethKey</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/crypto/ecdsa"><span class="nx">ecdsa</span></a><span class="p">.</span><a href="https://pkg.go.dev/crypto/ecdsa#PrivateKey"><span class="nx">PrivateKey</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>NewRenegadeClient creates a new Client with the given base URL and auth key
+<h4 id="NewRenegadeClientWithConfig">func NewRenegadeClientWithConfig</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewRenegadeClientWithConfig</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">baseURL</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">ethKey</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/crypto/ecdsa"><span class="nx">ecdsa</span></a><span class="p">.</span><a href="https://pkg.go.dev/crypto/ecdsa#PrivateKey"><span class="nx">PrivateKey</span></a><span class="p">,</span><span class="w"> </span><span class="nx">config</span><span class="w"> </span><a href="#ChainConfig"><span class="nx">ChainConfig</span></a><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>NewRenegadeClientWithConfig creates a new Client with the given base URL, auth
+key, and chain config
+<h4 id="NewSepoliaRenegadeClient">func NewSepoliaRenegadeClient</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewSepoliaRenegadeClient</span><span class="p">(</span><span class="nx">baseURL</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">ethKey</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/crypto/ecdsa"><span class="nx">ecdsa</span></a><span class="p">.</span><a href="https://pkg.go.dev/crypto/ecdsa#PrivateKey"><span class="nx">PrivateKey</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>NewSepoliaRenegadeClient creates a new Client with the given base URL and auth key
+<h4 id="RenegadeClient.CancelOrder">func (*RenegadeClient) CancelOrder</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">CancelOrder</span><span class="p">(</span><span class="nx">orderId</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/google/uuid@v1.6.0"><span class="nx">uuid</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/google/uuid@v1.6.0#UUID"><span class="nx">UUID</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>CancelOrder cancels an order via the Renegade API.
+<p>This method sends a request to the Renegade API to cancel an order for the
+client&apos;s wallet. It uses the client&apos;s wallet ID and the provided order ID to
+construct the request. The method first retrieves the latest wallet state,
+cancels the order locally, and then sends the update to the API.
+<p>Parameters:
+<ul>
+<li>orderId: The UUID of the order to cancel.
+</ul>
+<p>Returns:
+<ul>
+<li>*api_types.CancelOrderResponse: Contains the task ID and the canceled order if successful.
+<li>error: An error if the order cancellation fails, nil otherwise.
+</ul>
+<h4 id="RenegadeClient.CheckWallet">func (*RenegadeClient) CheckWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">CheckWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>CheckWallet verifies the wallet&apos;s existence in the relayer&apos;s state and retrieves
+it from the blockchain if necessary.
+<p>This method first attempts to fetch the wallet from the relayer&apos;s local state
+using GetWallet().
+If successful, it returns the wallet immediately. If the wallet is not found in the local state,
+it initiates a blockchain lookup using LookupWallet() to retrieve the wallet information.
+<p>Returns:
+<ul>
+<li>*wallet.Wallet: The retrieved wallet, if found either in local state or on-chain.
+<li>error: An error if both local retrieval and on-chain lookup fail, nil otherwise.
+</ul>
+<p>This method is useful for ensuring that the client has the most up-to-date wallet
+information, especially in scenarios where the wallet might not be synchronized
+between the relayer and the blockchain.
+<h4 id="RenegadeClient.CreateWallet">func (*RenegadeClient) CreateWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">CreateWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>CreateWallet creates a new wallet derived from the client&apos;s wallet secrets.
+<p>Returns:
+<ul>
+<li>*api_types.CreateWalletResponse: Contains the task ID and wallet ID of the created wallet
+<li>error: An error if the wallet creation fails, nil otherwise
+</ul>
+<p>The method generates a new Renegade wallet using the client&apos;s wallet secrets,
+submits a creation request to the Renegade API, and returns the response.
+This wallet can be used for private transactions within the Renegade network.
+<h4 id="RenegadeClient.Deposit">func (*RenegadeClient) Deposit</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Deposit</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">mint</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="p">,</span><span class="w"> </span><span class="nx">ethPrivateKey</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/crypto/ecdsa"><span class="nx">ecdsa</span></a><span class="p">.</span><a href="https://pkg.go.dev/crypto/ecdsa#PrivateKey"><span class="nx">PrivateKey</span></a><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>Deposit deposits funds into the wallet associated with the client.
+<p>This method initiates a deposit transaction, adding the specified amount of
+a given token (identified by its mint address) to the client&apos;s wallet. It
+interacts with the Ethereum blockchain and the Renegade protocol to process
+the deposit.
+<p>Parameters:
+<ul>
+<li>mint: A pointer to a string representing the token&apos;s mint address.
+<li>amount: A pointer to a big.Int representing the amount to deposit.
+<li>ethPrivateKey: The Ethereum private key used to sign the transaction.
+</ul>
+<p>Returns:
+<ul>
+<li>*api_types.DepositResponse: Contains information about the deposit transaction,
+including the task ID and any relevant details from the Renegade protocol.
+<li>error: An error if the deposit process fails, nil otherwise.
+</ul>
+<p>The method handles the entire deposit flow, including updating the local wallet
+state, approving the Permit2 contract for spending, and submitting the deposit
+request to the Renegade relayer.
+<h4 id="RenegadeClient.GetBackOfQueueWallet">func (*RenegadeClient) GetBackOfQueueWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">GetBackOfQueueWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>GetBackOfQueueWallet retrieves the wallet at the back of the processing queue from the relayer.
+<p>This method sends a GET request to fetch the wallet state after all pending tasks
+in its queue have been processed. It&apos;s useful for getting the most up-to-date
+wallet state when there are known pending operations.
+<p>Returns:
+<ul>
+<li>*wallet.Wallet: The retrieved wallet at the back of the queue, if successful.
+<li>error: An error if the retrieval fails, nil otherwise.
+</ul>
+<p>The method uses the client&apos;s wallet ID to construct the API path and sends
+an authenticated GET request to the relayer.
+<h4 id="RenegadeClient.GetWallet">func (*RenegadeClient) GetWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">GetWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>GetWallet retrieves the current wallet state from the relayer.
+<p>Returns:
+<ul>
+<li>*wallet.Wallet: The retrieved wallet, if successful.
+<li>error: An error if the retrieval fails, nil otherwise.
+</ul>
+<p>This method sends a GET request to the relayer to fetch the current
+wallet state. It uses the client&apos;s wallet ID to construct the API path.
+The retrieved wallet data is converted from the API format to the internal
+wallet.Wallet type before being returned.
+<h4 id="RenegadeClient.LookupWallet">func (*RenegadeClient) LookupWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">LookupWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>LookupWallet looks up a wallet in the relayer from contract state.
+<p>This method sends a request to the relayer to retrieve wallet information
+from the blockchain. It uses the client&apos;s wallet secrets to construct the request.
+<p>Returns:
+<ul>
+<li>*api_types.LookupWalletResponse: Contains the wallet ID and task ID if successful.
+<li>error: An error if the lookup fails, nil otherwise.
+</ul>
+<p>The method constructs a LookupWalletRequest with the wallet ID, blinder seed,
+share seed, and private keychain (excluding the root key). It then sends a POST
+request to the relayer and returns the response.
+<h4 id="RenegadeClient.PayFees">func (*RenegadeClient) PayFees</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PayFees</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>PayFees initiates the fee payment process for the wallet.
+<p>This method sends a request to the Renegade API to pay any outstanding fees
+associated with the client&apos;s wallet. It handles the entire fee payment flow,
+including updating the local wallet state and submitting the fee payment
+request to the Renegade relayer.
+<p>Returns:
+<ul>
+<li>*wallet.Wallet: An updated wallet object reflecting the new state after fee payment.
+<li>error: An error if the fee payment process fails, nil otherwise.
+</ul>
+<p>The method waits for the fee payment to be processed before returning the updated wallet.
+<h4 id="RenegadeClient.PlaceOrder">func (*RenegadeClient) PlaceOrder</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PlaceOrder</span><span class="p">(</span><span class="nx">order</span><span class="w"> </span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Order"><span class="nx">Order</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>PlaceOrder creates an order on the Renegade API.
+<p>This method sends a request to the Renegade API to create an order for a specified
+token pair. It uses the client&apos;s wallet ID and the provided token details to construct
+the request.
+<p>Returns:
+<ul>
+<li>*api_types.CreateOrderResponse: Contains the order ID and task ID if successful.
+<li>error: An error if the order creation fails, nil otherwise.
+</ul>
+<h4 id="RenegadeClient.RefreshWallet">func (*RenegadeClient) RefreshWallet</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">RefreshWallet</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>RefreshWallet refreshes the relayer&apos;s view of the wallet&apos;s state by looking up
+the wallet on-chain.
+<p>This method sends a request to the relayer to update its local state with the latest on-chain
+information for the wallet associated with the client. It&apos;s useful for synchronizing the
+relayer&apos;s view with the current blockchain state, especially after on-chain transactions.
+<p>Returns:
+<ul>
+<li>*api_types.RefreshWalletResponse: Contains the task ID for the refresh operation.
+<li>error: An error if the refresh operation fails, nil otherwise.
+</ul>
+<p>The method uses the client&apos;s wallet ID to construct the API path and sends a POST request
+to the relayer. If successful, it returns the response containing the task ID for tracking
+the refresh operation.
+<h4 id="RenegadeClient.Withdraw">func (*RenegadeClient) Withdraw</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Withdraw</span><span class="p">(</span><span class="nx">mint</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>Withdraw initiates a withdrawal transaction, removing the specified amount
+of a given token (identified by its mint address) from the client&apos;s wallet. It
+interacts with the Ethereum blockchain and the Renegade protocol to process
+the withdrawal.
+<p>Parameters:
+<ul>
+<li>mint: A pointer to a string representing the token&apos;s mint address.
+<li>amount: A pointer to a big.Int representing the amount to withdraw.
+<li>ethPrivateKey: The Ethereum private key used to sign the transaction.
+</ul>
+<p>Returns:
+<ul>
+<li>*api_types.WithdrawResponse: Contains information about the withdrawal transaction,
+including the task ID and any relevant details from the Renegade protocol.
+<li>error: An error if the withdrawal process fails, nil otherwise.
+</ul>
+<h4 id="RenegadeClient.WithdrawToAddress">func (*RenegadeClient) WithdrawToAddress</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#RenegadeClient"><span class="nx">RenegadeClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">WithdrawToAddress</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">mint</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/math/big"><span class="nx">big</span></a><span class="p">.</span><a href="https://pkg.go.dev/math/big#Int"><span class="nx">Int</span></a><span class="p">,</span><span class="w"> </span><span class="nx">destination</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../../wallet#Wallet"><span class="nx">Wallet</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>WithdrawToAddress withdraws funds from the wallet to the given address
+</main>
+    <hr>
+    <footer>
+      <small id="generated-by-footer">
+        Generated with <a href="https://abhinav.github.io/doc2go/">doc2go</a>
+      </small>
+    </footer>
+    <script src="../../../../../_/js/permalink.js"></script></body>
+</html>
