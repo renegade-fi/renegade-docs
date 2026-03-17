@@ -1,11 +1,10 @@
 ---
-
-## sidebar_position: 4
-
+sidebar_position: 4
 title: Notes & Rate Limits
 hide_title: true
 description: Usage notes, limits, and resiliency guidance for the External Matches API
 slug: /external-matches/notes-and-rate-limits
+---
 
 ## Notes
 
