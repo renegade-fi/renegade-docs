@@ -3,7 +3,7 @@
 # Install Go and Python 3.13 (not available in Vercel's build image)
 source ./scripts/install-build-deps.sh
 
-./scripts/generate-go-docs.sh
+#./scripts/generate-go-docs.sh
 
 ./scripts/generate-python-docs.sh
 
