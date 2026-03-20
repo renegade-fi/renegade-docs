@@ -24,3 +24,4 @@ yarn-error.log*
 static/sdk/rust/*
 static/sdk/python/*
 static/sdk/typescript/*
+static/sdk/golang/*
