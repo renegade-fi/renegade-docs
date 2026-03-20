@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="doc2go">
+    <link href="../../../../_/css/main.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../../_/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../../_/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../../_/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="../../../../_/icons/favicon.ico"><title>crypto</title>
+</head>
+  <body>
+    <nav>
+        <a href="../../..">github.com</a>/<a href="../..">renegade-fi</a>/<a href="..">golang-sdk</a>/crypto<span class="navbar-right">
+          <a href="../../../..">Root</a> | <a href="#pkg-index">Index</a></span>
+      </nav>
+    <main><h2 id="pkg-overview">package crypto</h2>
+<pre class="chroma"><span class="kn">import</span><span class="w"> </span><span class="s">&#34;github.com/renegade-fi/golang-sdk/crypto&#34;</span></pre>
+<p>Package crypto provides cryptographic primitives for the Renegade SDK
+<h3 id="pkg-index">Index</h3>
+<ul>
+  <li><a href="#pkg-constants">Constants</a></li><li>
+      <a href="#Poseidon2Sponge">type Poseidon2Sponge</a>
+      <ul>
+          <li><a href="#NewPoseidon2Sponge">func NewPoseidon2Sponge() *Poseidon2Sponge</a></li>
+          <li><a href="#Poseidon2Sponge.Absorb">func (p *Poseidon2Sponge) Absorb(x fr.Element) error</a></li>
+          <li><a href="#Poseidon2Sponge.AbsorbBatch">func (p *Poseidon2Sponge) AbsorbBatch(x []fr.Element) error</a></li>
+          <li><a href="#Poseidon2Sponge.Hash">func (p *Poseidon2Sponge) Hash(seq []fr.Element) fr.Element</a></li>
+          <li><a href="#Poseidon2Sponge.Squeeze">func (p *Poseidon2Sponge) Squeeze() fr.Element</a></li>
+          <li><a href="#Poseidon2Sponge.SqueezeBatch">func (p *Poseidon2Sponge) SqueezeBatch(n int) []fr.Element</a></li>
+          </ul>
+      </li>
+  <li>
+      <a href="#PoseidonCSPRNG">type PoseidonCSPRNG</a>
+      <ul>
+          <li><a href="#NewPoseidonCSPRNG">func NewPoseidonCSPRNG(seed fr.Element) *PoseidonCSPRNG</a></li>
+          <li><a href="#PoseidonCSPRNG.Next">func (p *PoseidonCSPRNG) Next() fr.Element</a></li>
+          <li><a href="#PoseidonCSPRNG.NextN">func (p *PoseidonCSPRNG) NextN(n int) []fr.Element</a></li>
+          </ul>
+      </li>
+  </ul><h3 id="pkg-constants">Constants</h3>
+  <pre class="chroma"><span class="kd">const</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="c1">// R_F is the number of full rounds in the Poseidon permutation</span><span class="w">
+</span><span class="w">	</span><span id="R_F"><span class="nx">R_F</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="cp">//nolint:revive</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// R_P is the number of partial rounds in the Poseidon permutation</span><span class="w">
+</span><span class="w">	</span><span id="R_P"><span class="nx">R_P</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">56</span><span class="w"> </span><span class="cp">//nolint:revive</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// WIDTH is the width of the Poseidon permutation&#39;s code</span><span class="w">
+</span><span class="w">	</span><span id="WIDTH"><span class="nx">WIDTH</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// RATE is the rate of the sponge construction layered on the permutation</span><span class="w">
+</span><span class="w">	</span><span id="RATE"><span class="nx">RATE</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// CAPACITY is the capacity of the sponge construction layered on the permutation</span><span class="w">
+</span><span class="w">	</span><span id="CAPACITY"><span class="nx">CAPACITY</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="w">
+</span><span class="w">
+</span><span class="w">	</span><span class="c1">// ALPHA is the constant used to parameterize the S-box in the Poseidon permutation</span><span class="w">
+</span><span class="w">	</span><span id="ALPHA"><span class="nx">ALPHA</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">5</span><span class="w">
+</span><span class="w"></span><span class="p">)</span></pre>
+  <p>Poseidon2Sponge is a sponge
+<h3 id="pkg-types">Types</h3>
+  <h3 id="Poseidon2Sponge">type Poseidon2Sponge</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">Poseidon2Sponge</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// contains filtered or unexported fields</span><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>Poseidon2Sponge represents a sponge construction on top of the Poseidon2 permutation
+Modeled after the implementation in:
+<a href="https://github.com/renegade-fi/renegade/blob/main/renegade-crypto/src/hash/poseidon2.rs">https://github.com/renegade-fi/renegade/blob/main/renegade-crypto/src/hash/poseidon2.rs</a>
+The original paper can be found at:
+<a href="https://eprint.iacr.org/2023/323">https://eprint.iacr.org/2023/323</a>
+<h4 id="NewPoseidon2Sponge">func NewPoseidon2Sponge</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewPoseidon2Sponge</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a></pre>
+  <p>NewPoseidon2Sponge creates a new Poseidon2Sponge instance
+<h4 id="Poseidon2Sponge.Absorb">func (*Poseidon2Sponge) Absorb</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Absorb</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>Absorb absorbs a single scalar into the sponge
+<h4 id="Poseidon2Sponge.AbsorbBatch">func (*Poseidon2Sponge) AbsorbBatch</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a><span class="p">)</span><span class="w"> </span><span class="nf">AbsorbBatch</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="p">[]</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>AbsorbBatch absorbs a batch of scalars into the sponge
+<h4 id="Poseidon2Sponge.Hash">func (*Poseidon2Sponge) Hash</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Hash</span><span class="p">(</span><span class="nx">seq</span><span class="w"> </span><span class="p">[]</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a></pre>
+  <p>Hash hashes the given input and returns a single-squeeze
+<h4 id="Poseidon2Sponge.Squeeze">func (*Poseidon2Sponge) Squeeze</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Squeeze</span><span class="p">()</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a></pre>
+  <p>Squeeze squeezes a single scalar from the sponge
+<h4 id="Poseidon2Sponge.SqueezeBatch">func (*Poseidon2Sponge) SqueezeBatch</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#Poseidon2Sponge"><span class="nx">Poseidon2Sponge</span></a><span class="p">)</span><span class="w"> </span><span class="nf">SqueezeBatch</span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#int"><span class="kt">int</span></a><span class="p">)</span><span class="w"> </span><span class="p">[]</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a></pre>
+  <p>SqueezeBatch squeezes a batch of scalars from the sponge
+<h3 id="PoseidonCSPRNG">type PoseidonCSPRNG</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">PoseidonCSPRNG</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// contains filtered or unexported fields</span><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>PoseidonCSPRNG is a CSPRNG based on the Poseidon2 permutation
+<h4 id="NewPoseidonCSPRNG">func NewPoseidonCSPRNG</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewPoseidonCSPRNG</span><span class="p">(</span><span class="nx">seed</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a><span class="p">)</span><span class="w"> </span><span class="o">*</span><a href="#PoseidonCSPRNG"><span class="nx">PoseidonCSPRNG</span></a></pre>
+  <p>NewPoseidonCSPRNG creates a new PoseidonCSPRNG instance
+<h4 id="PoseidonCSPRNG.Next">func (*PoseidonCSPRNG) Next</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#PoseidonCSPRNG"><span class="nx">PoseidonCSPRNG</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Next</span><span class="p">()</span><span class="w"> </span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a></pre>
+  <p>Next returns the next scalar in the CSPRNG
+<h4 id="PoseidonCSPRNG.NextN">func (*PoseidonCSPRNG) NextN</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><a href="#PoseidonCSPRNG"><span class="nx">PoseidonCSPRNG</span></a><span class="p">)</span><span class="w"> </span><span class="nf">NextN</span><span class="p">(</span><span class="nx">n</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#int"><span class="kt">int</span></a><span class="p">)</span><span class="w"> </span><span class="p">[]</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr"><span class="nx">fr</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/consensys/gnark-crypto@v0.14.0/ecc/bn254/fr#Element"><span class="nx">Element</span></a></pre>
+  <p>NextN returns the next n scalars in the CSPRNG
+</main>
+    <hr>
+    <footer>
+      <small id="generated-by-footer">
+        Generated with <a href="https://abhinav.github.io/doc2go/">doc2go</a>
+      </small>
+    </footer>
+    <script src="../../../../_/js/permalink.js"></script></body>
+</html>
