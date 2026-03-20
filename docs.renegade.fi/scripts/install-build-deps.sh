@@ -18,9 +18,9 @@ curl -sL "https://github.com/indygreg/python-build-standalone/releases/download/
 export PATH="/tmp/python/bin:$PATH"
 python3 --version
 
-# Install Rust nightly
+# Install Rust nightly (Vercel has rustup pre-installed at /rust/bin)
 RUST_NIGHTLY="nightly-2025-11-25"
 echo "Installing Rust ${RUST_NIGHTLY}..."
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_NIGHTLY"
-export PATH="$HOME/.cargo/bin:$PATH"
+rustup toolchain install "$RUST_NIGHTLY"
+rustup default "$RUST_NIGHTLY"
 rustc --version
