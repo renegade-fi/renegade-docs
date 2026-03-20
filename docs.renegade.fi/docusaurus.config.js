@@ -30,11 +30,7 @@ const config = {
   url: DOCS_BASE_URL,
   baseUrl: "/",
   onBrokenLinks: "throw",
-  markdown: {
-    hooks: {
-      onBrokenMarkdownLinks: "warn",
-    },
-  },
+  onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
 
   plugins: [require.resolve("./plugins.js")],
