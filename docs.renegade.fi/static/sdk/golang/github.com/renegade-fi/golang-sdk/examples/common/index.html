@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="doc2go">
+    <link href="../../../../../_/css/main.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../../../_/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../../../_/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../../../_/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="../../../../../_/icons/favicon.ico"><title>common</title>
+</head>
+  <body>
+    <nav>
+        <a href="../../../..">github.com</a>/<a href="../../..">renegade-fi</a>/<a href="../..">golang-sdk</a>/<a href="..">examples</a>/common<span class="navbar-right">
+          <a href="../../../../..">Root</a> | <a href="#pkg-index">Index</a></span>
+      </nav>
+    <main><h2 id="pkg-overview">package common</h2>
+<pre class="chroma"><span class="kn">import</span><span class="w"> </span><span class="s">&#34;github.com/renegade-fi/golang-sdk/examples/common&#34;</span></pre>
+<p>Package common contains common functions for the examples
+<h3 id="pkg-index">Index</h3>
+<ul>
+  <li><a href="#pkg-constants">Constants</a></li><li><a href="#CreateArbitrumExternalMatchClient">func CreateArbitrumExternalMatchClient() (*external_match_client.ExternalMatchClient, error)</a></li>
+  <li><a href="#CreateBaseExternalMatchClient">func CreateBaseExternalMatchClient() (*external_match_client.ExternalMatchClient, error)</a></li>
+  <li><a href="#FindTokenAddr">func FindTokenAddr(symbol string, client *external_match_client.ExternalMatchClient) (string, error)</a></li>
+  <li><a href="#GetEthClient">func GetEthClient() (*ethclient.Client, error)</a></li>
+  <li><a href="#GetPrivateKey">func GetPrivateKey() (*ecdsa.PrivateKey, error)</a></li>
+  <li><a href="#SubmitBundle">func SubmitBundle(bundle external_match_client.ExternalMatchBundle) error</a></li>
+  <li><a href="#SubmitBundleWithChainID">func SubmitBundleWithChainID(bundle external_match_client.ExternalMatchBundle, chainID int64) error</a></li>
+  </ul><h3 id="pkg-constants">Constants</h3>
+  <pre class="chroma"><span class="kd">const</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="c1">// ChainID is the chain ID for the testnet</span><span class="w">
+</span><span class="w">	</span><span id="ArbitrumSepoliaChainID"><span class="nx">ArbitrumSepoliaChainID</span></span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="mi">421614</span><span class="w">
+</span><span class="w">	</span><span id="BaseSepoliaChainID"><span class="nx">BaseSepoliaChainID</span></span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="mi">84532</span><span class="w">
+</span><span class="w"></span><span class="p">)</span></pre>
+  <h3 id="pkg-functions">Functions</h3>
+  <h3 id="CreateArbitrumExternalMatchClient">func CreateArbitrumExternalMatchClient</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">CreateArbitrumExternalMatchClient</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../client/external_match_client"><span class="nx">external_match_client</span></a><span class="p">.</span><a href="../../client/external_match_client#ExternalMatchClient"><span class="nx">ExternalMatchClient</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+    <p>CreateArbitrumExternalMatchClient creates a new external match client using environment variables
+<h3 id="CreateBaseExternalMatchClient">func CreateBaseExternalMatchClient</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">CreateBaseExternalMatchClient</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="../../client/external_match_client"><span class="nx">external_match_client</span></a><span class="p">.</span><a href="../../client/external_match_client#ExternalMatchClient"><span class="nx">ExternalMatchClient</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+    <p>CreateBaseExternalMatchClient creates a new external match client for the Base network
+<h3 id="FindTokenAddr">func FindTokenAddr</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">FindTokenAddr</span><span class="p">(</span><span class="nx">symbol</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">*</span><a href="../../client/external_match_client"><span class="nx">external_match_client</span></a><span class="p">.</span><a href="../../client/external_match_client#ExternalMatchClient"><span class="nx">ExternalMatchClient</span></a><span class="p">)</span><span class="w"> </span><span class="p">(</span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+    <p>FindTokenAddr fetches the address of a token from the relayer,
+falling back to hardcoded testnet addresses if the API is unavailable
+<h3 id="GetEthClient">func GetEthClient</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">GetEthClient</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/ethclient"><span class="nx">ethclient</span></a><span class="p">.</span><a href="https://pkg.go.dev/github.com/ethereum/go-ethereum@v1.14.8/ethclient#Client"><span class="nx">Client</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+    <p>GetEthClient creates a new Ethereum client
+<h3 id="GetPrivateKey">func GetPrivateKey</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">GetPrivateKey</span><span class="p">()</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><a href="https://pkg.go.dev/crypto/ecdsa"><span class="nx">ecdsa</span></a><span class="p">.</span><a href="https://pkg.go.dev/crypto/ecdsa#PrivateKey"><span class="nx">PrivateKey</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+    <p>GetPrivateKey gets the private key from environment variables
+<h3 id="SubmitBundle">func SubmitBundle</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">SubmitBundle</span><span class="p">(</span><span class="nx">bundle</span><span class="w"> </span><a href="../../client/external_match_client"><span class="nx">external_match_client</span></a><span class="p">.</span><a href="../../client/external_match_client#ExternalMatchBundle"><span class="nx">ExternalMatchBundle</span></a><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+    <p>SubmitBundle submits the bundle to the Arbitrum Sepolia network
+<h3 id="SubmitBundleWithChainID">func SubmitBundleWithChainID</h3>
+    <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">SubmitBundleWithChainID</span><span class="p">(</span><span class="nx">bundle</span><span class="w"> </span><a href="../../client/external_match_client"><span class="nx">external_match_client</span></a><span class="p">.</span><a href="../../client/external_match_client#ExternalMatchBundle"><span class="nx">ExternalMatchBundle</span></a><span class="p">,</span><span class="w"> </span><span class="nx">chainID</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#int64"><span class="kt">int64</span></a><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+    <p>SubmitBundle submits the bundle with the given chain ID
+</main>
+    <hr>
+    <footer>
+      <small id="generated-by-footer">
+        Generated with <a href="https://abhinav.github.io/doc2go/">doc2go</a>
+      </small>
+    </footer>
+    <script src="../../../../../_/js/permalink.js"></script></body>
+</html>

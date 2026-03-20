@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="doc2go">
+    <link href="../../../../_/css/main.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../../../../_/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../../_/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../../../_/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="../../../../_/icons/favicon.ico"><title>client</title>
+</head>
+  <body>
+    <nav>
+        <a href="../../..">github.com</a>/<a href="../..">renegade-fi</a>/<a href="..">golang-sdk</a>/client<span class="navbar-right">
+          <a href="../../../..">Root</a> | <a href="#pkg-index">Index</a></span>
+      </nav>
+    <main><h2 id="pkg-overview">package client</h2>
+<pre class="chroma"><span class="kn">import</span><span class="w"> </span><span class="s">&#34;github.com/renegade-fi/golang-sdk/client&#34;</span></pre>
+<p>Package client provides a client for the renegade API
+<h3 id="pkg-index">Index</h3>
+<ul>
+  <li>
+      <a href="#HttpClient">type HttpClient</a>
+      <ul>
+          <li><a href="#NewHttpClient">func NewHttpClient(baseURL string, authKey *wallet.HmacKey) *HttpClient</a></li>
+          <li><a href="#HttpClient.Get">func (c *HttpClient) Get(path string, body interface{}) ([]byte, error)</a></li>
+          <li><a href="#HttpClient.GetJSON">func (c *HttpClient) GetJSON(path string, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.GetWithAuth">func (c *HttpClient) GetWithAuth(path string, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.GetWithAuthAndHeaders">func (c *HttpClient) GetWithAuthAndHeaders(path string, headers *http.Header, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.Post">func (c *HttpClient) Post(path string, body interface{}) ([]byte, error)</a></li>
+          <li><a href="#HttpClient.PostJSON">func (c *HttpClient) PostJSON(path string, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.PostWithAuth">func (c *HttpClient) PostWithAuth(path string, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.PostWithAuthAndHeaders">func (c *HttpClient) PostWithAuthAndHeaders(path string, headers *http.Header, body interface{}, response interface{}) error</a></li>
+          <li><a href="#HttpClient.PostWithAuthRaw">func (c *HttpClient) PostWithAuthRaw(path string, headers *http.Header, body interface{}) (int, []byte, error)</a></li>
+          </ul>
+      </li>
+  </ul><h3 id="pkg-types">Types</h3>
+  <h3 id="HttpClient">type HttpClient</h3>
+    <pre class="chroma"><span class="kd">type</span><span class="w"> </span><span class="nx">HttpClient</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">	</span><span class="c1">// contains filtered or unexported fields</span><span class="w">
+</span><span class="w"></span><span class="p">}</span></pre>
+    <p>HttpClient represents an HTTP client with a base URL and auth key
+<h4 id="NewHttpClient">func NewHttpClient</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="nf">NewHttpClient</span><span class="p">(</span><span class="nx">baseURL</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">authKey</span><span class="w"> </span><span class="o">*</span><a href="../wallet"><span class="nx">wallet</span></a><span class="p">.</span><a href="../wallet#HmacKey"><span class="nx">HmacKey</span></a><span class="p">)</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a></pre>
+  <p>NewHttpClient creates a new HttpClient with the given base URL and auth key
+<h4 id="HttpClient.Get">func (*HttpClient) Get</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Get</span><span class="p">(</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>Get performs a GET request to the specified path
+<h4 id="HttpClient.GetJSON">func (*HttpClient) GetJSON</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">GetJSON</span><span class="p">(</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>GetJSON performs a GET request and unmarshals the response into the provided interface
+<h4 id="HttpClient.GetWithAuth">func (*HttpClient) GetWithAuth</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">GetWithAuth</span><span class="p">(</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>GetWithAuth performs an authenticated GET request
+<h4 id="HttpClient.GetWithAuthAndHeaders">func (*HttpClient) GetWithAuthAndHeaders</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">GetWithAuthAndHeaders</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">headers</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/net/http"><span class="nx">http</span></a><span class="p">.</span><a href="https://pkg.go.dev/net/http#Header"><span class="nx">Header</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w">	</span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>GetWithAuthAndHeaders performs an authenticated GET request with additional headers
+<h4 id="HttpClient.Post">func (*HttpClient) Post</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">Post</span><span class="p">(</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="p">([]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>Post performs a POST request to the specified path
+<h4 id="HttpClient.PostJSON">func (*HttpClient) PostJSON</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PostJSON</span><span class="p">(</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w"> </span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>PostJSON performs a POST request and unmarshals the response into the provided interface
+<h4 id="HttpClient.PostWithAuth">func (*HttpClient) PostWithAuth</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PostWithAuth</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w">	</span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>PostWithAuth performs an authenticated POST request
+<h4 id="HttpClient.PostWithAuthAndHeaders">func (*HttpClient) PostWithAuthAndHeaders</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PostWithAuthAndHeaders</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">headers</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/net/http"><span class="nx">http</span></a><span class="p">.</span><a href="https://pkg.go.dev/net/http#Header"><span class="nx">Header</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w">	</span><span class="nx">response</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a></pre>
+  <p>PostWithAuthAndHeaders performs an authenticated POST request with additional headers
+<h4 id="HttpClient.PostWithAuthRaw">func (*HttpClient) PostWithAuthRaw</h4>
+  <pre class="chroma"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><a href="#HttpClient"><span class="nx">HttpClient</span></a><span class="p">)</span><span class="w"> </span><span class="nf">PostWithAuthRaw</span><span class="p">(</span><span class="w">
+</span><span class="w">	</span><span class="nx">path</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#string"><span class="kt">string</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">headers</span><span class="w"> </span><span class="o">*</span><a href="https://pkg.go.dev/net/http"><span class="nx">http</span></a><span class="p">.</span><a href="https://pkg.go.dev/net/http#Header"><span class="nx">Header</span></a><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="nx">body</span><span class="w"> </span><span class="kd">interface</span><span class="p">{},</span><span class="w">
+</span><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="p">(</span><a href="https://pkg.go.dev/builtin#int"><span class="kt">int</span></a><span class="p">,</span><span class="w"> </span><span class="p">[]</span><a href="https://pkg.go.dev/builtin#byte"><span class="kt">byte</span></a><span class="p">,</span><span class="w"> </span><a href="https://pkg.go.dev/builtin#error"><span class="kt">error</span></a><span class="p">)</span></pre>
+  <p>PostWithAuthRaw performs an authenticated POST request and returns the raw response
+<h3 id="pkg-directories">Directories</h3>
+
+<table>
+  <tbody>
+    <tr>
+        <td><a href="api_types">api_types</a></td>
+        <td>Package api_types provides API data structures for the Renegade SDK</td>
+      </tr>
+    <tr>
+        <td><a href="external_match_client">external_match_client</a></td>
+        <td></td>
+      </tr>
+    <tr>
+        <td><a href="renegade_client">renegade_client</a></td>
+        <td>Package client provides a client for the renegade API</td>
+      </tr>
+    </tbody>
+</table>
+</main>
+    <hr>
+    <footer>
+      <small id="generated-by-footer">
+        Generated with <a href="https://abhinav.github.io/doc2go/">doc2go</a>
+      </small>
+    </footer>
+    <script src="../../../../_/js/permalink.js"></script></body>
+</html>
