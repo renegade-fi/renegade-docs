@@ -17,3 +17,10 @@ echo "Installing Python ${PYTHON_VERSION}..."
 curl -sL "https://github.com/indygreg/python-build-standalone/releases/download/20250212/cpython-${PYTHON_VERSION}+20250212-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz" | tar -xz -C /tmp
 export PATH="/tmp/python/bin:$PATH"
 python3 --version
+
+# Install Rust nightly
+RUST_NIGHTLY="nightly-2025-11-25"
+echo "Installing Rust ${RUST_NIGHTLY}..."
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_NIGHTLY"
+export PATH="$HOME/.cargo/bin:$PATH"
+rustc --version
