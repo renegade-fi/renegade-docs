@@ -36,7 +36,7 @@ pip install .
 pip install pdoc
 
 echo "Generating docs..."
-pdoc renegade -o "$TMP_DIR/docs"
+pdoc ./renegade -o "$TMP_DIR/docs"
 
 echo "Copying docs to $STATIC_PY_DIR..."
 rm -rf "$STATIC_PY_DIR"
