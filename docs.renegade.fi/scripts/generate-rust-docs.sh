@@ -19,6 +19,12 @@ if cache_check "rust-docs" "$CACHE_KEY"; then
   exit 0
 fi
 
+# Install Rust nightly (only needed on cache miss)
+RUST_NIGHTLY="nightly-2025-11-25"
+echo "Installing Rust ${RUST_NIGHTLY}..."
+rustup toolchain install "$RUST_NIGHTLY"
+rustup default "$RUST_NIGHTLY"
+
 TMP_DIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$TMP_DIR"

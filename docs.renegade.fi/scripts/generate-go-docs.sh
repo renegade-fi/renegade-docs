@@ -19,6 +19,21 @@ if cache_check "go-docs" "$CACHE_KEY"; then
   exit 0
 fi
 
+# Install Go (only needed on cache miss)
+GO_VERSION="1.23.6"
+if cache_check "go-toolchain" "$GO_VERSION"; then
+  echo "Cache hit for Go ${GO_VERSION}, restoring..."
+  mkdir -p /tmp/go
+  cache_restore "go-toolchain" /tmp/go
+else
+  echo "Installing Go ${GO_VERSION}..."
+  curl -sL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" | tar -xz -C /tmp
+  cache_save "go-toolchain" /tmp/go "$GO_VERSION"
+fi
+export PATH="/tmp/go/bin:$PATH"
+export GOPATH="/tmp/gopath"
+export PATH="$GOPATH/bin:$PATH"
+
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 

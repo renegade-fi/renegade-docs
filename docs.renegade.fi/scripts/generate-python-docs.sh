@@ -19,6 +19,19 @@ if cache_check "python-docs" "$CACHE_KEY"; then
   exit 0
 fi
 
+# Install Python (only needed on cache miss)
+PYTHON_VERSION="3.13.2"
+if cache_check "python-toolchain" "$PYTHON_VERSION"; then
+  echo "Cache hit for Python ${PYTHON_VERSION}, restoring..."
+  mkdir -p /tmp/python
+  cache_restore "python-toolchain" /tmp/python
+else
+  echo "Installing Python ${PYTHON_VERSION}..."
+  curl -sL "https://github.com/astral-sh/python-build-standalone/releases/download/20250212/cpython-${PYTHON_VERSION}+20250212-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz" | tar -xz -C /tmp
+  cache_save "python-toolchain" /tmp/python "$PYTHON_VERSION"
+fi
+export PATH="/tmp/python/bin:$PATH"
+
 TMP_DIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$TMP_DIR"
