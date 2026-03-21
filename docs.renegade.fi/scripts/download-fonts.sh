@@ -3,6 +3,8 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+source "$SCRIPT_DIR/cache-utils.sh"
+
 # Read the command-line arguments
 S3_BUCKET="$1"
 S3_REGION="$2"
@@ -10,6 +12,16 @@ FONT_NAMES="$3"
 
 # Directory to store the downloaded font files
 DOWNLOAD_DIR="$PROJECT_ROOT/src/fonts"
+
+# Cache key is a hash of the font list (changes only when fonts are added/removed)
+CACHE_KEY="$(echo -n "$FONT_NAMES" | sha256sum | cut -d' ' -f1)"
+
+if cache_check "fonts" "$CACHE_KEY"; then
+  echo "Cache hit for fonts, restoring..."
+  cache_restore "fonts" "$DOWNLOAD_DIR"
+  echo "All font files restored from cache."
+  exit 0
+fi
 
 # Create the download directory if it doesn't exist
 mkdir -p "$DOWNLOAD_DIR"
@@ -32,4 +44,5 @@ for font_name in "${font_names[@]}"; do
   echo "Downloaded and moved $font_name to $DOWNLOAD_DIR."
 done
 
+cache_save "fonts" "$DOWNLOAD_DIR" "$CACHE_KEY"
 echo "All font files downloaded to $DOWNLOAD_DIR."

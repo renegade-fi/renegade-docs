@@ -8,8 +8,18 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATIC_RUST_DIR="$PROJECT_ROOT/static/sdk/rust"
 
 REPO_URL="https://github.com/renegade-fi/rust-sdk.git"
-TMP_DIR="$(mktemp -d)"
 
+source "$SCRIPT_DIR/cache-utils.sh"
+
+CACHE_KEY="$(get_remote_head "$REPO_URL")"
+if cache_check "rust-docs" "$CACHE_KEY"; then
+  echo "Cache hit for Rust docs ($CACHE_KEY), restoring..."
+  cache_restore "rust-docs" "$STATIC_RUST_DIR"
+  echo "Done. Rust docs restored from cache."
+  exit 0
+fi
+
+TMP_DIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$TMP_DIR"
 }
@@ -27,4 +37,5 @@ rm -rf "$STATIC_RUST_DIR"
 mkdir -p "$STATIC_RUST_DIR"
 cp -r target/doc/* "$STATIC_RUST_DIR/"
 
+cache_save "rust-docs" "$STATIC_RUST_DIR" "$CACHE_KEY"
 echo "Done. Rust docs available at static/sdk/rust/"

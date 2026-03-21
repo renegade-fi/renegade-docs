@@ -8,8 +8,18 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATIC_TS_DIR="$PROJECT_ROOT/static/sdk/typescript"
 
 REPO_URL="https://github.com/renegade-fi/typescript-sdk.git"
-TMP_DIR="$(mktemp -d)"
 
+source "$SCRIPT_DIR/cache-utils.sh"
+
+CACHE_KEY="$(get_remote_head "$REPO_URL")"
+if cache_check "ts-docs" "$CACHE_KEY"; then
+  echo "Cache hit for TypeScript docs ($CACHE_KEY), restoring..."
+  cache_restore "ts-docs" "$STATIC_TS_DIR"
+  echo "Done. TypeScript docs restored from cache."
+  exit 0
+fi
+
+TMP_DIR="$(mktemp -d)"
 cleanup() {
   rm -rf "$TMP_DIR"
 }
@@ -32,4 +42,5 @@ rm -rf "$STATIC_TS_DIR"
 mkdir -p "$STATIC_TS_DIR"
 cp -r docs/* "$STATIC_TS_DIR/"
 
+cache_save "ts-docs" "$STATIC_TS_DIR" "$CACHE_KEY"
 echo "Done. TypeScript docs available at static/sdk/typescript/"

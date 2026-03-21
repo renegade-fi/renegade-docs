@@ -8,6 +8,17 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 STATIC_GO_DIR="$PROJECT_ROOT/static/sdk/golang"
 
 REPO_URL="https://github.com/renegade-fi/golang-sdk.git"
+
+source "$SCRIPT_DIR/cache-utils.sh"
+
+CACHE_KEY="$(get_remote_head "$REPO_URL")"
+if cache_check "go-docs" "$CACHE_KEY"; then
+  echo "Cache hit for Go docs ($CACHE_KEY), restoring..."
+  cache_restore "go-docs" "$STATIC_GO_DIR"
+  echo "Done. Go docs restored from cache."
+  exit 0
+fi
+
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -27,4 +38,5 @@ rm -rf "$STATIC_GO_DIR"
 mkdir -p "$STATIC_GO_DIR"
 cp -r "$TMP_DIR/docs/"* "$STATIC_GO_DIR/"
 
+cache_save "go-docs" "$STATIC_GO_DIR" "$CACHE_KEY"
 echo "Done. Go docs available at static/sdk/golang/"
