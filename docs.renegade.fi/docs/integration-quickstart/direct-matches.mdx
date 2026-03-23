@@ -9,16 +9,14 @@ import TabItem from '@theme/TabItem';
 
 # Quickstart: Implementing Direct Matches
 
-Renegade uses the deposit-trade-withdraw pattern. Once a user deposits funds,
-they may submit or cancel orders. Our crossing network matches orders and
-settles them. Users may withdraw their funds at any time.
+Renegade settles trades atomically — tokens move directly from your EOA via
+Permit2 when an order is filled. No deposits or withdrawals are needed.
 
 The following example demonstrates how to use Renegade's SDK to:
 
-1. Deposit USDC into Renegade
+1. Approve Permit2 to spend your tokens
 2. Place an order to buy WETH
 3. Cancel a partially filled order
-4. Withdraw WETH from Renegade
 
 <Tabs queryString="sdk">
 <TabItem value="rust" label="Rust" default>
@@ -38,19 +36,18 @@ if client.get_account().await.is_err() {
     client.create_account().await?;
 }
 
-// 3. Approve & deposit USDC
+// 3. Approve Permit2 to spend USDC
 let usdc_mint: Address = USDC.parse()?;
-let deposit_amount: u128 = 100_000; // 0.1 USDC (6 decimals)
-// Perform any necessary ERC20 approvals
-ensure_allowances(&client, usdc_mint, deposit_amount, &signer).await?;
-client.deposit(usdc_mint, deposit_amount).await?;
+let input_amount: u128 = 100_000; // 0.1 USDC (6 decimals)
+ensure_allowances(&client, usdc_mint, input_amount, &signer).await?;
 
 // 4. Place a buy order for WETH
+//    When matched, USDC transfers directly from your EOA via Permit2
 let order = client
     .new_order_builder()
     .with_input_mint(USDC)?
     .with_output_mint(WETH)?
-    .with_input_amount(deposit_amount)
+    .with_input_amount(input_amount)
     .with_order_type(OrderType::PublicOrder)
     .build()?;
 
@@ -65,10 +62,6 @@ for order in orders {
     println!("Cancelling order... {}", &order.id);
     client.cancel_order(order.id).await?;
 }
-
-// 7. Withdraw USDC (no match occurred, so withdraw what we deposited)
-let usdc_balance = client.get_balance_by_mint(usdc_mint).await?;
-client.withdraw(usdc_mint, usdc_balance.amount).await?;
 ```
 
 </TabItem>

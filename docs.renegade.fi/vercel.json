@@ -1,1 +1,29 @@
-{}
+{
+  "redirects": [
+    {
+      "source": "/core-concepts/:path*",
+      "destination": "/concepts/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/getting-started/:path*",
+      "destination": "/integration-quickstart",
+      "permanent": true
+    },
+    {
+      "source": "/external-matches/:path*",
+      "destination": "/integration-quickstart/solver-rfqs",
+      "permanent": true
+    },
+    {
+      "source": "/technical-reference/typescript-sdk/:path*",
+      "destination": "/sdk/typescript/reference",
+      "permanent": true
+    },
+    {
+      "source": "/technical-reference/:path*",
+      "destination": "/sdk",
+      "permanent": true
+    }
+  ]
+}

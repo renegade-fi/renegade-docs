@@ -1,7 +1,7 @@
 ---
 sidebar_position: 3
-title: Whitelisted tokens
-description: Whitelisted tokens
+title: Whitelisted Tokens
+description: Whitelisted Tokens
 slug: /addresses-and-endpoints/whitelisted-tokens
 ---
 

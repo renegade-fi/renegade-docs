@@ -1,0 +1,53 @@
+---
+sidebar_position: 0
+title: Why Use Renegade?
+hide_title: true
+description: Renegade is a decentralized dark pool for spot liquidity.
+slug: /
+---
+
+import Figure from '../src/figure.js'
+import LogoLight from '@site/static/img/logo_light.svg'
+import LogoDark from '@site/static/img/logo_dark.svg'
+
+<div style={{ minHeight: "70px"}}>
+  <Figure
+    LightImage={LogoLight}
+    DarkImage={LogoDark}
+    isSvg={true}
+    width="40%"
+    widthMobile="70%"
+  />
+</div>
+
+Renegade is a decentralized dark pool for spot liquidity.
+
+As a "crossing network", Renegade matches complementary order flow at the middle of the Binance bid-ask spread, giving users midpoint pricing without routing through CEXes. Renegade has **>$100M/day of order flow** on our Base and Arbitrum deployments, and is coming soon to Ethereum L1.
+
+## Who Uses Renegade?
+
+- **Basis Traders** — Your spot execution is probably your biggest cost. Renegade matches your spot orders against >$100M/day in counterflow from retail aggregators at Binance midpoint. Cover your shorts with zero market impact when a match exists, and keep your normal routing when it doesn't.
+- **Solvers** — Over 50% of CowSwap solvers by volume already integrate Renegade. Including Renegade as an additional RFQ venue gives your solver access to deep midpoint liquidity that can improve settlement on any intent.
+- **Market Makers** — Inventory management is difficult. Renegade lets you rebalance at midpoint against non-toxic retail flow, providing a middle level of aggression between passively resting in the order book and crossing the spread yourself.
+- **Vault Managers** — Renegade is fully onchain, so you can tap into an additional source of counterflow while still maintaining onchain verifiability. For any market-neutral strategy that involves spot execution, Renegade can improve PnL.
+- **DEX Aggregators** — Since Renegade is pegged to Binance midpoint, the liquidity is very competitive when it exists. Integration is lightweight and feels like a standard quote/assemble RFQ integration.
+
+If you fit any of these and are not yet in touch, [reach out](https://t.me/chrisliambender) and we can help get you set up.
+
+## Why Use Renegade?
+
+- **Binance midpoint peg** — All swaps inside of Renegade are pegged to the middle of the bid-ask spread on Binance. When a counterparty exists inside of Renegade, you'll almost always get a better price than any other exchange.
+- **Non-toxic liquidity** — Renegade has >$100M/day in retail flow, largely from leading DEX aggregator products.
+- **Fully onchain** — No offchain entity holds custody of your funds; all swaps are directly settled against our smart contract.
+- **Opt-in privacy** — For privacy-sensitive traders, Renegade optionally lets you wrap your swaps inside of a zero-knowledge proof, preventing counterparties from understanding your identity or strategy.
+- **Counterparty tiering** — We can work with your fund to slice counterparties by toxicity, only matching you with counterparties with good markouts.
+- **Minimal fees** — For most integrators, fees will be as low as 1-2 basis points. See our full [fees table](/fees) for more details.
+
+If you're curious about the system architecture and how these properties are possible, check out the [Concepts](/concepts) section.
+
+## Trade on Renegade
+
+Jump to the [Integration Quickstart](/integration-quickstart) for instructions to get set up, and contact the team for a streamlined onboarding and quick bug fixes:
+
+- [@chrisliambender](https://t.me/chrisliambender) on Telegram.
+- [hello@renegade.fi](mailto:hello@renegade.fi) via email.

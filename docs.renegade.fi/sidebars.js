@@ -33,7 +33,18 @@ const sidebars = {
         "integration-quickstart/solver-rfqs",
       ],
     },
-    "concepts",
+    {
+      type: "category",
+      label: "Concepts",
+      collapsed: false,
+      collapsible: false,
+      items: [
+        "concepts/dark-pool-explainer",
+        "concepts/mpc-explainer",
+        "concepts/mpc-zkp",
+        "concepts/privacy",
+      ],
+    },
     {
       type: "category",
       label: "SDK Guide",

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
-title: Price reporter endpoints
-description: Price reporter endpoints
+title: Price Reporter Endpoints
+description: Price Reporter Endpoints
 slug: /addresses-and-endpoints/price-reporter
 ---
 
