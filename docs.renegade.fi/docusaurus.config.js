@@ -91,8 +91,13 @@ const config = {
           position: "right",
         },
         {
-          label: "Code",
+          label: "GitHub",
           href: "https://github.com/renegade-fi",
+          position: "right",
+        },
+        {
+          label: "Telegram",
+          href: "http://t.me/chrisliambender",
           position: "right",
         },
         {
