@@ -34,9 +34,14 @@ trap cleanup EXIT
 echo "Cloning rust-sdk into $TMP_DIR..."
 git clone --depth 1 "$REPO_URL" "$TMP_DIR"
 
+# rust-sdk gitignores Cargo.lock, but core2 (a transitive dep) is permanently
+# yanked, so a fresh resolution always fails. Inject a working lockfile that
+# this repo maintains. Refresh scripts/rust-sdk.Cargo.lock when --locked fails.
+cp "$SCRIPT_DIR/rust-sdk.Cargo.lock" "$TMP_DIR/Cargo.lock"
+
 echo "Running cargo doc..."
 cd "$TMP_DIR"
-RUSTC_BOOTSTRAP=1 cargo doc --no-deps
+RUSTC_BOOTSTRAP=1 cargo doc --no-deps --locked
 
 echo "Copying docs to $STATIC_RUST_DIR..."
 rm -rf "$STATIC_RUST_DIR"
