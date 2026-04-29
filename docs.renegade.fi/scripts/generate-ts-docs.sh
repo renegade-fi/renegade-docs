@@ -32,6 +32,16 @@ echo "Installing dependencies..."
 cd "$TMP_DIR"
 pnpm install
 
+# typedoc resolves TS via a peer dep; npx pulls the latest TypeScript, which no
+# longer auto-includes @types/node implicitly. Force-include it via tsconfig.
+node -e '
+const fs = require("fs");
+const file = "packages/external-match/tsconfig.build.json";
+const cfg = JSON.parse(fs.readFileSync(file, "utf8"));
+cfg.compilerOptions = { ...(cfg.compilerOptions || {}), types: ["node"] };
+fs.writeFileSync(file, JSON.stringify(cfg, null, 2));
+'
+
 echo "Running typedoc..."
 npx typedoc packages/external-match/src/index.ts \
   --tsconfig packages/external-match/tsconfig.build.json \
