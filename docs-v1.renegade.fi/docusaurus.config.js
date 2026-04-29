@@ -50,7 +50,7 @@ const config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          sidebarCollapsible: false,
+          sidebarCollapsible: true,
         },
         theme: {
           customCss: [
@@ -91,13 +91,23 @@ const config = {
           position: "right",
         },
         {
-          label: "GitHub",
-          href: "https://github.com/renegade-fi",
+          label: "Discord",
+          href: "https://discord.gg/renegade-fi",
           position: "right",
         },
         {
-          label: "Telegram",
-          href: "http://t.me/chrisliambender",
+          label: "Substack",
+          href: "https://renegadefi.substack.com",
+          position: "right",
+        },
+        {
+          label: "Whitepaper",
+          href: "https://whitepaper.renegade.fi",
+          position: "right",
+        },
+        {
+          label: "Code",
+          href: "https://github.com/renegade-fi",
           position: "right",
         },
         {

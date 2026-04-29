@@ -4,19 +4,22 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start --no-open",
+    "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
-    "serve": "docusaurus serve --no-open",
+    "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "format:write": "prettier --write \"**/*.{ts,tsx,css,json}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,css,json}\" --cache",
     "eslint:js": "npx eslint docusaurus.config.js sidebars.js src/**/*.js --fix --config ./.eslintrc.js",
     "eslint:md": "npx eslint docs/ --ext .md --fix --config ./.eslintrc.js",
-    "lint": "yarn run eslint:js && yarn run eslint:md"
+    "lint": "yarn run eslint:js && yarn run eslint:md",
+    "deploy:dev": "npm run build && bash ./scripts/deploy.sh --dev",
+    "deploy:prod": "npm run build && bash ./scripts/deploy.sh --prod",
+    "deploy:all": "npm run build && bash ./scripts/deploy.sh --dev && bash ./scripts/deploy.sh --prod"
   },
   "dependencies": {
     "@docusaurus/core": "^3.0.0",
@@ -61,12 +64,7 @@
     ]
   },
   "engines": {
-    "node": "24.x"
+    "node": ">=18.0"
   },
-  "packageManager": "pnpm@9.15.9",
-  "pnpm": {
-    "overrides": {
-      "@docsearch/react": "3.9.0"
-    }
-  }
+  "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81"
 }

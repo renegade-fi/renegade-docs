@@ -68,12 +68,8 @@
 }
 
 /* Header layout */
-.navbar__items--right {
-  flex: 1;
-  justify-content: center;
-}
 .search {
-  margin-left: auto;
+  margin-left: calc(42vw - 310px);
 }
 .DocSearch-Search-Icon {
   color: var(--docserach-muted-color) !important;

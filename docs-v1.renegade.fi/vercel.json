@@ -1,0 +1,9 @@
+{
+    "redirects": [
+      { 
+        "source": "/typescript-sdk/getting-started",
+        "destination": "/technical-reference/typescript-sdk", 
+        "permanent": true
+      }
+    ]
+  }

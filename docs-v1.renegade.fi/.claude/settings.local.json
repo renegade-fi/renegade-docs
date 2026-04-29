@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 20 npm run start 2>&1 || true)"
+    ]
+  }
+}
