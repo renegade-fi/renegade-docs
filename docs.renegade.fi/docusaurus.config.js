@@ -1,7 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-import 'dotenv/config';
 const { themes } = require("prism-react-renderer")
 const lightCodeTheme = themes.github
 const darkCodeTheme = themes.dracula
@@ -50,7 +49,7 @@ const config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          sidebarCollapsible: true,
+          sidebarCollapsible: false,
         },
         theme: {
           customCss: [
@@ -64,13 +63,6 @@ const config = {
   ],
 
   themeConfig: {
-    algolia: {
-      appId: process.env.ALGOLIA_APP_ID,
-      apiKey: process.env.ALGOLIA_API_KEY,
-      indexName: process.env.ALGOLIA_INDEX_NAME,
-      contextualSearch: true,
-      externalUrlRegex: "renegade.fi",
-    },
     colorMode: {
       defaultMode: "dark",
       disableSwitch: false,
@@ -89,29 +81,14 @@ const config = {
           position: "right",
         },
         {
-          label: "Discord",
-          href: "https://discord.gg/renegade-fi",
-          position: "right",
-        },
-        {
-          label: "Substack",
-          href: "https://renegadefi.substack.com",
-          position: "right",
-        },
-        {
-          label: "Whitepaper",
-          href: "https://whitepaper.renegade.fi",
-          position: "right",
-        },
-        {
-          label: "Code",
+          label: "GitHub",
           href: "https://github.com/renegade-fi",
           position: "right",
         },
         {
-          type: "search",
+          label: "Telegram",
+          href: "http://t.me/chrisliambender",
           position: "right",
-          className: "search",
         },
       ],
     },

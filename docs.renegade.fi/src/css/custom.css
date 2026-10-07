@@ -26,54 +26,10 @@
   background-attachment: fixed;
 }
 
-/* DocSearch-specific theming */
-[data-theme="light"] .DocSearch {
-  padding: 20px 15px 20px 20px;
-  --docsearch-muted-color: #888;
-  --docsearch-container-background: rgba(94, 100, 112, 0.7);
-  --docsearch-modal-background: var(--ifm-color-secondary-lighter);
-  --docsearch-searchbox-background: var(--ifm-color-secondary);
-  --docsearch-searchbox-focus-background: var(--ifm-navbar-background-color);
-  --docsearch-searchbox-shadow: inset 0 0 0 1px #888;
-  --docsearch-hit-background: var(--ifm-color-white);
-  --docsearch-hit-active-color: var(--ifm-color-primary);
-  --docsearch-footer-background: var(--ifm-color-white);
-}
-[data-theme="dark"] .DocSearch {
-  padding: 20px 15px 20px 20px;
-  --docsearch-muted-color: #888;
-  --docsearch-container-background: rgba(47, 55, 69, 0.7);
-  --docsearch-modal-background: var(--ifm-background-color);
-  --docsearch-searchbox-background: var(--ifm-background-color);
-  --docsearch-searchbox-focus-background: var(--ifm-navbar-background-color);
-  --docsearch-searchbox-shadow: inset 0 0 0 1px #888;
-  --docsearch-hit-background: var(--ifm-background-color);
-  --docsearch-hit-active-color: var(--ifm-color-primary);
-  --docsearch-footer-background: var(--ifm-background-surface-color);
-  --docsearch-text-color: #ccc;
-  --docsearch-key-shadow: inset 0 -2px 0 0 #363849, inset 0 0 1px 1px #575b75,
-    0 2px 2px 0 rgba(3, 4, 9, 0.3);
-  --docsearch-key-gradient: linear-gradient(
-    -26.5deg,
-    var(--ifm-color-emphasis-200) 0%,
-    var(--ifm-color-emphasis-100) 100%
-  );
-}
-.DocSearch-Hit a {
-  background-color: var(--imf-color-seconary) !important;
-}
-
-[aria-selected="true"].DocSearch-Hit a {
-  background-color: var(--imf-color-tertiary) !important;
-}
-
 /* Header layout */
-.search {
-  margin-left: calc(42vw - 310px);
-}
-.DocSearch-Search-Icon {
-  color: var(--docserach-muted-color) !important;
-  margin-right: 2px;
+.navbar__items--right {
+  flex: 1;
+  justify-content: center;
 }
 .navbar--fixed-top {
   height: 70px;
