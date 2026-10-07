@@ -59,15 +59,3 @@ A workflow is included at `.github/workflows/deploy.yml` that automatically:
 4. Deploys `build/` to GitHub Pages via `actions/deploy-pages`
 
 To use it, enable GitHub Pages in the repository settings and set the source to **GitHub Actions**.
-
-## Algolia Search (optional)
-
-TODO: figure this out
-
-To enable Algolia search, set the following environment variables:
-
-```bash
-export ALGOLIA_APP_ID=<your-app-id>
-export ALGOLIA_API_KEY=<your-api-key>
-export ALGOLIA_INDEX_NAME=<your-index-name>
-```

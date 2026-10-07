@@ -1,7 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-import 'dotenv/config';
 const { themes } = require("prism-react-renderer")
 const lightCodeTheme = themes.github
 const darkCodeTheme = themes.dracula
@@ -64,15 +63,6 @@ const config = {
   ],
 
   themeConfig: {
-    ...(process.env.ALGOLIA_APP_ID && {
-      algolia: {
-        appId: process.env.ALGOLIA_APP_ID,
-        apiKey: process.env.ALGOLIA_API_KEY,
-        indexName: process.env.ALGOLIA_INDEX_NAME,
-        contextualSearch: true,
-        externalUrlRegex: "renegade.fi",
-      },
-    }),
     colorMode: {
       defaultMode: "dark",
       disableSwitch: false,
@@ -99,11 +89,6 @@ const config = {
           label: "Telegram",
           href: "http://t.me/chrisliambender",
           position: "right",
-        },
-        {
-          type: "search",
-          position: "right",
-          className: "search",
         },
       ],
     },
